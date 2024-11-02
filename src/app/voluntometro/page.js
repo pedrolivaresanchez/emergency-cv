@@ -75,14 +75,6 @@ export default function Voluntometro() {
       .gte('created_at', today)
       .lte('created_at', today + 'T23:59:59.999Z');
 
-    // log data of Torrent location
-    console.log(
-      'Torrent',
-      data
-        .filter((v) => v.location?.includes('Torrent'))
-        .map((v) => ({ type: v.type, name: v.name }))
-    );
-
     if (pueblos.length > 0) {
       const helpCards = pueblos.map((pueblo) => {
         const helpNeeded = data.filter(
