@@ -28,7 +28,7 @@ export default function SolicitarAyuda() {
   // Primero vamos a actualizar los tipos de ayuda para que coincidan con la base de datos
 const tiposAyudaOptions = [
   { id: 'limpieza', label: 'Limpieza/Desescombro' },
-  { id: 'transporte', label: 'Transporte/Evacuación' },
+  { id: 'evacuacion', label: 'Transporte/Evacuación' },
   { id: 'alojamiento', label: 'Alojamiento temporal' },
   { id: 'distribucion', label: 'Distribución de suministros' },
   { id: 'rescate', label: 'Equipo de rescate' },
