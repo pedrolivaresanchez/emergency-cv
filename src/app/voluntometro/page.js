@@ -161,7 +161,6 @@ export default function Voluntometro() {
 
       setStatus({ isSubmitting: false, error: null, success: true });
       setShowModal(false);
-      // fetchVolunteers(); // Refresh the counts
       fetchPueblos();
       fetchHelpRequests();
 
