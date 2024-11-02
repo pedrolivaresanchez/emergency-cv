@@ -17,21 +17,19 @@ export default function SolicitarAyuda() {
     situacionEspecial: '',
     contacto: '',
     consentimiento: false,
-    pueblo: ''
+    pueblo: '',
   });
 
   const [status, setStatus] = useState({
     isSubmitting: false,
     error: null,
-    success: false
+    success: false,
   });
 
   const [towns, setTowns] = useState([]);
 
   async function fetchTowns() {
-    const { data, error } = await supabase
-      .from('towns')
-      .select('id, name');
+    const { data, error } = await supabase.from('towns').select('id, name');
 
     if (error) {
       console.error('Error fetching towns:', error);
@@ -53,15 +51,15 @@ export default function SolicitarAyuda() {
     { id: 'rescate', label: 'Equipo de rescate' },
     { id: 'medica', label: 'Asistencia médica' },
     { id: 'psicologico', label: 'Apoyo psicológico' },
-    { id: 'logistico', label: 'Apoyo logístico' }
+    { id: 'logistico', label: 'Apoyo logístico' },
   ];
 
   const handleTipoAyudaChange = (tipo) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       tiposAyuda: prev.tiposAyuda.includes(tipo)
-        ? prev.tiposAyuda.filter(t => t !== tipo)
-        : [...prev.tiposAyuda, tipo]
+        ? prev.tiposAyuda.filter((t) => t !== tipo)
+        : [...prev.tiposAyuda, tipo],
     }));
   };
 
@@ -94,16 +92,13 @@ export default function SolicitarAyuda() {
         contact_info: formData.contacto,
         additional_info: {
           special_situations: formData.situacionEspecial || null,
-          consent: true
+          consent: true,
         },
         town_id: formData.pueblo,
-        status: 'active'
+        status: 'active',
       };
 
-      const { data, error } = await supabase
-        .from('help_requests')
-        .insert([helpRequestData])
-        .select();
+      const { data, error } = await supabase.from('help_requests').insert([helpRequestData]).select();
 
       if (error) {
         throw new Error(error.message);
@@ -121,27 +116,26 @@ export default function SolicitarAyuda() {
         situacionEspecial: '',
         contacto: '',
         pueblo: '',
-        consentimiento: false
+        consentimiento: false,
       });
 
       setStatus({ isSubmitting: false, error: null, success: true });
-      setTimeout(() => setStatus(prev => ({ ...prev, success: false })), 5000);
-
+      setTimeout(() => setStatus((prev) => ({ ...prev, success: false })), 5000);
     } catch (error) {
       console.error('Error al enviar solicitud:', error.message);
       setStatus({
         isSubmitting: false,
         error: `Error al enviar la solicitud: ${error.message}`,
-        success: false
+        success: false,
       });
     }
   };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -154,8 +148,7 @@ export default function SolicitarAyuda() {
           <div>
             <h2 className="text-red-800 font-bold">EMERGENCIA ACTIVA - Inundaciones CV</h2>
             <p className="text-red-700 text-sm mt-1">
-              Para emergencias médicas inmediatas, llame al 112. Este formulario es para
-              coordinar ayuda y asistencia.
+              Para emergencias médicas inmediatas, llame al 112. Este formulario es para coordinar ayuda y asistencia.
             </p>
           </div>
         </div>
@@ -173,32 +166,29 @@ export default function SolicitarAyuda() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nombre completo
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
             <input
               type="text"
               name="nombre"
               value={formData.nombre}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ubicación exacta *
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Ubicación exacta *</label>
             <AddressAutocomplete
               onSelect={(address) => {
                 setFormData({
                   ...formData,
                   ubicacion: address.fullAddress,
-                  coordinates: address.coordinates ? {
-                    lat: address.coordinates.lat,
-                    lng: address.coordinates.lon
-                  } : null
+                  coordinates: address.coordinates
+                    ? {
+                        lat: address.coordinates.lat,
+                        lng: address.coordinates.lon,
+                      }
+                    : null,
                 });
               }}
               placeholder="Calle, número, piso, ciudad..."
@@ -210,17 +200,14 @@ export default function SolicitarAyuda() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tipo de ayuda necesaria
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de ayuda necesaria</label>
             <div className="grid md:grid-cols-2 gap-2">
               {tiposAyudaOptions.map((tipo) => (
                 <label
                   key={tipo.id}
-                  className={`flex items-center p-3 rounded cursor-pointer ${formData.tiposAyuda.includes(tipo.id)
-                      ? 'bg-red-50 text-red-800'
-                      : 'bg-gray-50 hover:bg-gray-100'
-                    }`}
+                  className={`flex items-center p-3 rounded cursor-pointer ${
+                    formData.tiposAyuda.includes(tipo.id) ? 'bg-red-50 text-red-800' : 'bg-gray-50 hover:bg-gray-100'
+                  }`}
                 >
                   <input
                     type="checkbox"
@@ -235,9 +222,7 @@ export default function SolicitarAyuda() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Número de personas
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Número de personas</label>
             <input
               type="number"
               name="numeroPersonas"
@@ -245,14 +230,11 @@ export default function SolicitarAyuda() {
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
               min="1"
-
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Descripción de la situación
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Descripción de la situación</label>
             <textarea
               name="descripcion"
               value={formData.descripcion}
@@ -260,20 +242,16 @@ export default function SolicitarAyuda() {
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
               rows="3"
               placeholder="Describa su situación actual y el tipo de ayuda que necesita"
-
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nivel de urgencia
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Nivel de urgencia</label>
             <select
               name="urgencia"
               value={formData.urgencia}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-
             >
               <option value="alta">Alta - Necesito ayuda inmediata</option>
               <option value="media">Media - Puedo esperar unas horas</option>
@@ -282,9 +260,7 @@ export default function SolicitarAyuda() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Situaciones especiales
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Situaciones especiales</label>
             <textarea
               name="situacionEspecial"
               value={formData.situacionEspecial}
@@ -296,9 +272,7 @@ export default function SolicitarAyuda() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Teléfono de contacto
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono de contacto</label>
             <input
               type="tel"
               name="contacto"
@@ -306,16 +280,16 @@ export default function SolicitarAyuda() {
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
               placeholder="Teléfono móvil preferiblemente"
-
             />
           </div>
-          { /* Pueblos */}
+          {/* Pueblos */}
           <div>
             <div className="flex flex-row justify-between mb-2 items-end">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Pueblo
-              </label>
-              <a href="mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro" className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Pueblo</label>
+              <a
+                href="mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro"
+                className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
+              >
                 <Mail className="h-5 w-5" />
                 Solicitar nuevo pueblo
               </a>
@@ -342,21 +316,19 @@ export default function SolicitarAyuda() {
               checked={formData.consentimiento}
               onChange={handleChange}
               className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-
             />
             <label className="ml-2 block text-sm text-gray-700">
-              Doy mi consentimiento para el tratamiento de los datos proporcionados y confirmo que la
-              información proporcionada es verídica.
+              Doy mi consentimiento para el tratamiento de los datos proporcionados y confirmo que la información
+              proporcionada es verídica.
             </label>
           </div>
 
           <button
             type="submit"
             disabled={status.isSubmitting}
-            className={`w-full ${status.isSubmitting
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-red-500 hover:bg-red-600'
-              } text-white py-3 px-4 rounded-lg font-semibold`}
+            className={`w-full ${
+              status.isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'
+            } text-white py-3 px-4 rounded-lg font-semibold`}
           >
             {status.isSubmitting ? 'Enviando solicitud...' : 'Enviar Solicitud de Ayuda'}
           </button>
@@ -368,9 +340,7 @@ export default function SolicitarAyuda() {
           <div className="flex items-center">
             <Check className="h-5 w-5 text-green-500 mr-2" />
             <div>
-              <p className="text-green-700 font-medium">
-                Su solicitud de ayuda ha sido registrada correctamente.
-              </p>
+              <p className="text-green-700 font-medium">Su solicitud de ayuda ha sido registrada correctamente.</p>
               <p className="text-green-600 text-sm mt-1">
                 Se está coordinando la ayuda. En caso de empeorar la situación, contacte al 112.
               </p>
