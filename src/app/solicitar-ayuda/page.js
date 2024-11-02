@@ -12,6 +12,7 @@ export default function SolicitarAyuda() {
     coordinates: null,
     tiposAyuda: [],
     numeroPersonas: '',
+    neededPeople: '',
     descripcion: '',
     urgencia: 'alta',
     situacionEspecial: '',
@@ -26,29 +27,29 @@ export default function SolicitarAyuda() {
   });
 
   // Primero vamos a actualizar los tipos de ayuda para que coincidan con la base de datos
-const tiposAyudaOptions = [
-  { id: 'limpieza', label: 'Limpieza/Desescombro' },
-  { id: 'transporte', label: 'Transporte/Evacuación' },
-  { id: 'alojamiento', label: 'Alojamiento temporal' },
-  { id: 'distribucion', label: 'Distribución de suministros' },
-  { id: 'rescate', label: 'Equipo de rescate' },
-  { id: 'medica', label: 'Asistencia médica' },
-  { id: 'psicologico', label: 'Apoyo psicológico' },
-  { id: 'logistico', label: 'Apoyo logístico' }
-];
+  const tiposAyudaOptions = [
+    { id: 'limpieza', label: 'Limpieza/Desescombro' },
+    { id: 'transporte', label: 'Transporte/Evacuación' },
+    { id: 'alojamiento', label: 'Alojamiento temporal' },
+    { id: 'distribucion', label: 'Distribución de suministros' },
+    { id: 'rescate', label: 'Equipo de rescate' },
+    { id: 'medica', label: 'Asistencia médica' },
+    { id: 'psicologico', label: 'Apoyo psicológico' },
+    { id: 'logistico', label: 'Apoyo logístico' }
+  ];
 
   const handleTipoAyudaChange = (tipo) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       tiposAyuda: prev.tiposAyuda.includes(tipo)
-        ? prev.tiposAyuda.filter(t => t !== tipo)
+        ? prev.tiposAyuda.filter((t) => t !== tipo)
         : [...prev.tiposAyuda, tipo]
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.ubicacion) {
       alert('La ubicación es un campo obligatorio');
       return;
@@ -66,12 +67,17 @@ const tiposAyudaOptions = [
         type: 'necesita',
         name: formData.nombre,
         location: formData.ubicacion,
-        latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : null,
-        longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : null,
+        latitude: formData.coordinates
+          ? parseFloat(formData.coordinates.lat)
+          : null,
+        longitude: formData.coordinates
+          ? parseFloat(formData.coordinates.lng)
+          : null,
         help_type: formData.tiposAyuda,
         description: formData.descripcion,
         urgency: formData.urgencia,
         number_of_people: parseInt(formData.numeroPersonas) || 1,
+        needed_people: parseInt(formData.neededPeople) || 1,
         contact_info: formData.contacto,
         additional_info: {
           special_situations: formData.situacionEspecial || null,
@@ -104,8 +110,10 @@ const tiposAyudaOptions = [
       });
 
       setStatus({ isSubmitting: false, error: null, success: true });
-      setTimeout(() => setStatus(prev => ({ ...prev, success: false })), 5000);
-
+      setTimeout(
+        () => setStatus((prev) => ({ ...prev, success: false })),
+        5000
+      );
     } catch (error) {
       console.error('Error al enviar solicitud:', error.message);
       setStatus({
@@ -118,7 +126,7 @@ const tiposAyudaOptions = [
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
@@ -131,10 +139,12 @@ const tiposAyudaOptions = [
         <div className="flex items-start">
           <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 mr-2" />
           <div>
-            <h2 className="text-red-800 font-bold">EMERGENCIA ACTIVA - Inundaciones CV</h2>
+            <h2 className="text-red-800 font-bold">
+              EMERGENCIA ACTIVA - Inundaciones CV
+            </h2>
             <p className="text-red-700 text-sm mt-1">
-              Para emergencias médicas inmediatas, llame al 112. Este formulario es para 
-              coordinar ayuda y asistencia.
+              Para emergencias médicas inmediatas, llame al 112. Este formulario
+              es para coordinar ayuda y asistencia.
             </p>
           </div>
         </div>
@@ -149,7 +159,7 @@ const tiposAyudaOptions = [
       {/* Formulario principal */}
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h1 className="text-2xl font-bold mb-6">Solicitar Ayuda</h1>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -161,7 +171,6 @@ const tiposAyudaOptions = [
               value={formData.nombre}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-              
             />
           </div>
 
@@ -174,17 +183,20 @@ const tiposAyudaOptions = [
                 setFormData({
                   ...formData,
                   ubicacion: address.fullAddress,
-                  coordinates: address.coordinates ? {
-                    lat: address.coordinates.lat,
-                    lng: address.coordinates.lon
-                  } : null
+                  coordinates: address.coordinates
+                    ? {
+                        lat: address.coordinates.lat,
+                        lng: address.coordinates.lon
+                      }
+                    : null
                 });
               }}
               placeholder="Calle, número, piso, ciudad..."
               required
             />
             <p className="mt-1 text-sm text-gray-500">
-              Incluya todos los detalles posibles para poder localizarle (campo obligatorio)
+              Incluya todos los detalles posibles para poder localizarle (campo
+              obligatorio)
             </p>
           </div>
 
@@ -194,7 +206,7 @@ const tiposAyudaOptions = [
             </label>
             <div className="grid md:grid-cols-2 gap-2">
               {tiposAyudaOptions.map((tipo) => (
-                <label 
+                <label
                   key={tipo.id}
                   className={`flex items-center p-3 rounded cursor-pointer ${
                     formData.tiposAyuda.includes(tipo.id)
@@ -216,7 +228,7 @@ const tiposAyudaOptions = [
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Número de personas
+              Número de personas afectadas
             </label>
             <input
               type="number"
@@ -225,7 +237,19 @@ const tiposAyudaOptions = [
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
               min="1"
-              
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Número de personas necesarias
+            </label>
+            <input
+              type="number"
+              name="neededPeople"
+              value={formData.neededPeople}
+              onChange={handleChange}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
+              min="1"
             />
           </div>
 
@@ -240,7 +264,6 @@ const tiposAyudaOptions = [
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
               rows="3"
               placeholder="Describa su situación actual y el tipo de ayuda que necesita"
-              
             />
           </div>
 
@@ -253,7 +276,6 @@ const tiposAyudaOptions = [
               value={formData.urgencia}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-              
             >
               <option value="alta">Alta - Necesito ayuda inmediata</option>
               <option value="media">Media - Puedo esperar unas horas</option>
@@ -286,7 +308,6 @@ const tiposAyudaOptions = [
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
               placeholder="Teléfono móvil preferiblemente"
-              
             />
           </div>
 
@@ -298,11 +319,11 @@ const tiposAyudaOptions = [
               checked={formData.consentimiento}
               onChange={handleChange}
               className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-              
             />
             <label className="ml-2 block text-sm text-gray-700">
-              Doy mi consentimiento para el tratamiento de los datos proporcionados y confirmo que la
-              información proporcionada es verídica.
+              Doy mi consentimiento para el tratamiento de los datos
+              proporcionados y confirmo que la información proporcionada es
+              verídica.
             </label>
           </div>
 
@@ -310,12 +331,14 @@ const tiposAyudaOptions = [
             type="submit"
             disabled={status.isSubmitting}
             className={`w-full ${
-              status.isSubmitting 
-                ? 'bg-gray-400 cursor-not-allowed' 
+              status.isSubmitting
+                ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-red-500 hover:bg-red-600'
             } text-white py-3 px-4 rounded-lg font-semibold`}
           >
-            {status.isSubmitting ? 'Enviando solicitud...' : 'Enviar Solicitud de Ayuda'}
+            {status.isSubmitting
+              ? 'Enviando solicitud...'
+              : 'Enviar Solicitud de Ayuda'}
           </button>
         </form>
       </div>
@@ -329,7 +352,8 @@ const tiposAyudaOptions = [
                 Su solicitud de ayuda ha sido registrada correctamente.
               </p>
               <p className="text-green-600 text-sm mt-1">
-                Se está coordinando la ayuda. En caso de empeorar la situación, contacte al 112.
+                Se está coordinando la ayuda. En caso de empeorar la situación,
+                contacte al 112.
               </p>
             </div>
           </div>
