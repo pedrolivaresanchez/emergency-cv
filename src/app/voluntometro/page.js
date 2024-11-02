@@ -72,7 +72,6 @@ export default function Voluntometro() {
     const { data, error } = await supabase
       .from('help_requests')
       .select('*')
-      // .eq('type', 'necesita')
       .gte('created_at', today)
       .lte('created_at', today + 'T23:59:59.999Z');
 
