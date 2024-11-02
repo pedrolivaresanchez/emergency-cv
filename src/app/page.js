@@ -1,8 +1,14 @@
 'use client';
 
-import { MapPin, Clock } from 'lucide-react';
+import { MapPin, Clock, AlertCircle, Phone, Heart, Users, Package, Truck } from 'lucide-react';
 
 export default function Home() {
+  const emergencyNumbers = [
+    { name: 'Emergencias', number: '112', description: 'Para situaciones de peligro inmediato' },
+    { name: 'Policía Local', number: '092', description: 'Asistencia y seguridad local' },
+    { name: 'Personas Desaparecidas', number: '900 365 112', description: 'Búsqueda y localización' }
+  ];
+
   const collectionPoints = [
     {
       area: "CATARROJA/ALBAL",
@@ -55,106 +61,162 @@ export default function Home() {
     }
   ];
 
+  const mainActions = [
+    {
+      title: "Necesito Ayuda",
+      description: "Solicita asistencia urgente",
+      icon: AlertCircle,
+      path: "/solicitar-ayuda",
+      color: "red",
+      priority: "high"
+    },
+    {
+      title: "Quiero Ayudar",
+      description: "Regístrate como voluntario",
+      icon: Heart,
+      path: "/ofrecer-ayuda",
+      color: "green",
+      priority: "high"
+    },
+    {
+      title: "Personas Desaparecidas",
+      description: "Reportar o buscar personas",
+      icon: Users,
+      path: "https://desaparecidosdana.pythonanywhere.com/",
+      color: "purple",
+      priority: "high"
+    },
+    {
+      title: "Puntos de Recogida",
+      description: "Gestionar donaciones",
+      icon: Package,
+      path: "/punto-recogida",
+      color: "blue"
+    }
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* Disclaimer */}
-      <div className="bg-yellow-100 border-l-4 border-yellow-500 p-6 rounded-lg shadow-lg">
-        <h2 className="text-lg font-bold text-yellow-800">Aviso Importante</h2>
-        <p className="text-yellow-700 text-lg font-semibold">
-          Por favor, use mascarillas y guantes al ofrecer ayuda para garantizar la seguridad de todos.
-        </p>
+    <div className="container mx-auto p-4 space-y-8 max-w-7xl">
+      {/* Sección de Emergencia */}
+      <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg shadow-lg">
+        <div className="flex items-start gap-4">
+          <AlertCircle className="h-6 w-6 text-red-500 flex-shrink-0" />
+          <div>
+            <h2 className="text-xl font-bold text-red-800 mb-2">EMERGENCIA ACTIVA - DANA</h2>
+            <div className="prose prose-sm text-red-700">
+              <p className="mb-2">
+                Situación de emergencia activa por DANA en la Comunitat Valenciana.
+              </p>
+              <p className="font-medium">
+                Para emergencias médicas inmediatas, llame al 112.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Puntos de Recogida Oficiales */}
-      <div className="bg-orange-50 border-l-4 border-orange-500 p-6 rounded-lg shadow-lg">
-        <div className="flex items-center mb-4">
-          <MapPin className="h-6 w-6 text-orange-500 mr-2" />
-          <h2 className="text-xl font-bold text-orange-800">Quedadas de ayuda</h2>
+      {/* Acciones Principales - Más grandes y prominentes */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {mainActions.map((action) => (
+          <a
+            key={action.title}
+            href={action.path}
+            className={`bg-white p-8 rounded-lg shadow-lg border-l-4 
+              border-${action.color}-500 hover:shadow-xl transition-all hover:-translate-y-1
+              ${action.priority === 'high' ? 'md:col-span-1 relative overflow-hidden' : ''}`}
+          >
+            {action.priority === 'high' && (
+              <div className="absolute top-0 right-0 bg-red-500 text-white px-4 py-1 rounded-bl-lg text-sm">
+                Prioritario
+              </div>
+            )}
+            <div className="flex items-center gap-4 mb-4">
+              <action.icon className={`h-8 w-8 text-${action.color}-500`} />
+              <h3 className={`text-xl font-bold text-${action.color}-600`}>{action.title}</h3>
+            </div>
+            <p className="text-gray-600">{action.description}</p>
+          </a>
+        ))}
+      </div>
+
+      {/* Sección de Donaciones de la Generalitat */}
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-yellow-500 p-4">
+          <h2 className="text-2xl font-bold text-white text-center">
+            Cuenta Solidaria Generalitat Valenciana
+          </h2>
         </div>
         
-        <div className="flex items-center mb-4 text-orange-700">
-          <Clock className="h-5 w-5 mr-2" />
-          <p className="font-semibold">Horario: 10:00 am todos los días</p>
+        <div className="p-6 space-y-6">
+          <div className="bg-yellow-50 p-6 rounded-lg text-center">
+            <p className="text-lg font-medium text-yellow-800 mb-4">
+              Número de cuenta oficial para donaciones:
+            </p>
+            <div className="bg-white p-4 rounded-lg inline-block mx-auto font-mono text-xl mb-4">
+              ES94 0081 0693 61 0002423445
+            </div>
+            <button 
+              onClick={() => {
+                navigator.clipboard.writeText('ES94 0081 0693 61 0002423445');
+                alert('Número de cuenta copiado al portapapeles');
+              }}
+              className="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 
+                transition-colors flex items-center gap-2 mx-auto"
+            >
+              📋 Copiar número de cuenta
+            </button>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <h3 className="font-semibold text-blue-800 mb-2">Compromiso Banco Sabadell</h3>
+              <p className="text-blue-700">
+                Por cada euro donado, el banco aportará otro euro adicional 
+                (mínimo garantizado: 500.000€)
+              </p>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-semibold text-gray-800 mb-2">Información Oficial</h3>
+              <p className="text-gray-600">
+                Iniciativa de la Generalitat Valenciana en colaboración con la 
+                Conselleria de Hacienda y Banco Sabadell para ayudar a los afectados.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Puntos de Encuentro */}
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <MapPin className="h-6 w-6 text-orange-500" />
+          <h2 className="text-xl font-bold text-gray-800">Puntos de Encuentro</h2>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {collectionPoints.map((point, index) => (
-            <div 
-              key={index}
-              className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow"
-            >
-              <h3 className="font-bold text-orange-600 mb-2">{point.area}</h3>
-              <p className="text-gray-600 text-sm mb-1">{point.address}</p>
-              <p className="text-gray-600 text-sm mb-1">{point.postalCode} {point.city}</p>
-              {point.location && (
-                <p className="text-gray-500 text-sm font-medium mt-2">
-                  Ubicación: {point.location}
-                </p>
-              )}
+        <div className="bg-orange-50 p-4 rounded-lg mb-6">
+          <div className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-orange-500" />
+            <p className="font-medium text-orange-800">
+              Horario de encuentro: 10:00 am todos los días
+            </p>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {collectionPoints.map((point) => (
+            <div key={point.area} className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow">
+              <h3 className="font-bold text-gray-800 mb-2">{point.area}</h3>
+              <div className="space-y-1 text-sm text-gray-600">
+                <p>{point.address}</p>
+                <p>{point.postalCode} {point.city}</p>
+                {point.location && (
+                  <p className="text-orange-600 font-medium mt-2">
+                    Punto de referencia: {point.location}
+                  </p>
+                )}
+              </div>
             </div>
           ))}
-        </div>
-      </div>
-
-      {/* Accesos rápidos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <a 
-          href="/solicitar-ayuda"
-          className="block p-6 bg-white rounded-lg shadow-lg border-l-4 border-red-500 hover:shadow-xl transition-shadow"
-        >
-          <h2 className="text-xl font-bold text-red-600 mb-2">Necesito Ayuda</h2>
-          <p className="text-gray-600">
-            Solicita asistencia urgente si te encuentras en una situación de emergencia.
-          </p>
-        </a>
-
-        <a 
-          href="/ofrecer-ayuda"
-          className="block p-6 bg-white rounded-lg shadow-lg border-l-4 border-green-500 hover:shadow-xl transition-shadow"
-        >
-          <h2 className="text-xl font-bold text-green-600 mb-2">Quiero Ayudar</h2>
-          <p className="text-gray-600">
-            Regístrate como voluntario o indica qué tipo de ayuda puedes ofrecer.
-          </p>
-        </a>
-
-        <a 
-          href="https://desaparecidosdana.pythonanywhere.com/"
-          className="block p-6 bg-white rounded-lg shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition-shadow"
-        >
-          <h2 className="text-xl font-bold text-purple-600 mb-2">Personas Desaparecidas</h2>
-          <p className="text-gray-600">
-            Reporta o consulta información sobre personas desaparecidas.
-          </p>
-        </a>
-
-        <a 
-          href="/punto-recogida"
-          className="block p-6 bg-white rounded-lg shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition-shadow"
-        >
-          <h2 className="text-xl font-bold text-blue-600 mb-2">Puntos de Recogida</h2>
-          <p className="text-gray-600">
-            Encuentra o registra puntos de recogida de ayuda humanitaria.
-          </p>
-        </a>
-      </div>
-
-      {/* Información adicional */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-xl font-bold mb-4">Teléfonos de Emergencia</h2>
-        <div className="space-y-2">
-          <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
-            <span className="font-semibold">Emergencias</span>
-            <span className="text-red-600 font-bold">112</span>
-          </div>
-          <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
-            <span className="font-semibold">Policía Local</span>
-            <span className="text-red-600 font-bold">092</span>
-          </div>
-          <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
-            <span className="font-semibold">Personas Desaparecidas</span>
-            <span className="text-red-600 font-bold">900 365 112</span>
-          </div>
         </div>
       </div>
     </div>

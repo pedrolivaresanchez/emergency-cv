@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { HeartHandshake, Check } from 'lucide-react';
 import { helpRequestService } from '@/lib/service';
+import AddressAutocomplete from '@/components/AddressAutocomplete';
 
 export default function OfrecerAyuda() {
   const [formData, setFormData] = useState({
@@ -25,16 +26,17 @@ export default function OfrecerAyuda() {
     success: false
   });
 
-  const tiposAyudaOptions = [
-    { id: 'transporte', label: 'Transporte/Evacuación' },
-    { id: 'alojamiento', label: 'Alojamiento temporal' },
-    { id: 'suministros', label: 'Distribución de suministros' },
-    { id: 'rescate', label: 'Equipo de rescate' },
-    { id: 'medico', label: 'Asistencia médica' },
-    { id: 'psicologico', label: 'Apoyo psicológico' },
-    { id: 'limpieza', label: 'Limpieza/Desescombro' },
-    { id: 'logistica', label: 'Apoyo logístico' }
-  ];
+  // Primero vamos a actualizar los tipos de ayuda para que coincidan con la base de datos
+const tiposAyudaOptions = [
+  { id: 'limpieza', label: 'Limpieza/Desescombro' },
+  { id: 'evacuacion', label: 'Transporte/Evacuación' },
+  { id: 'alojamiento', label: 'Alojamiento temporal' },
+  { id: 'distribucion', label: 'Distribución de suministros' },
+  { id: 'rescate', label: 'Equipo de rescate' },
+  { id: 'medica', label: 'Asistencia médica' },
+  { id: 'psicologico', label: 'Apoyo psicológico' },
+  { id: 'logistico', label: 'Apoyo logístico' }
+];
 
   const diasSemana = [
     'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'
@@ -61,37 +63,43 @@ export default function OfrecerAyuda() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Solo validar el protocolo
+    // Validación de ubicación
+    if (!formData.ubicacion) {
+      alert('La ubicación es obligatoria');
+      return;
+    }
+
     if (!formData.aceptaProtocolo) {
       alert('Debes aceptar el protocolo de actuación');
       return;
     }
-  
+
     setStatus({ isSubmitting: true, error: null, success: false });
-  
+
     try {
       const helpOfferData = {
         type: 'ofrece',
-        name: formData.nombre || null,
-        contact_info: JSON.stringify({
-          phone: formData.telefono || null,
-          email: formData.email || null
-        }),
-        location: formData.ubicacion || null,
-        help_type: formData.tiposAyuda.length > 0 ? formData.tiposAyuda : null,
-        description: formData.comentarios || null,
-        resources: JSON.stringify({
-          vehicle: formData.vehiculo || null,
-          availability: formData.disponibilidad || [],
-          radius: formData.radio || null,
-          experience: formData.experiencia || null
-        }),
-        status: 'active'
+        name: formData.nombre,
+        location: formData.ubicacion,
+        description: formData.comentarios,
+        contact_info: formData.telefono,
+        additional_info: {
+          email: formData.email,
+          experience: formData.experiencia
+        },
+        status: 'active',
+        resources: {
+          vehicle: formData.vehiculo,
+          availability: formData.disponibilidad,
+          radius: formData.radio
+        },
+        latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : null,
+        longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : null,
+        help_type: formData.tiposAyuda
       };
-  
+
       const result = await helpRequestService.create(helpOfferData);
-  
-      // Limpiar formulario
+
       setFormData({
         nombre: '',
         telefono: '',
@@ -105,10 +113,10 @@ export default function OfrecerAyuda() {
         comentarios: '',
         aceptaProtocolo: false
       });
-  
+
       setStatus({ isSubmitting: false, error: null, success: true });
       setTimeout(() => setStatus(prev => ({ ...prev, success: false })), 5000);
-  
+
     } catch (error) {
       console.error('Error al registrar oferta de ayuda:', error);
       setStatus({
@@ -190,16 +198,25 @@ export default function OfrecerAyuda() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ubicación
+              Ubicación exacta <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
-              value={formData.ubicacion}
-              onChange={(e) => setFormData({...formData, ubicacion: e.target.value})}
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              placeholder="Ciudad o zona desde donde puedes ayudar"
-              
+            <AddressAutocomplete
+              onSelect={(address) => {
+                setFormData({
+                  ...formData,
+                  ubicacion: address.fullAddress,
+                  coordinates: address.coordinates ? {
+                    lat: address.coordinates.lat,
+                    lng: address.coordinates.lon
+                  } : null
+                });
+              }}
+              placeholder="Calle, número, piso, ciudad..."
+              required
             />
+            <p className="mt-1 text-sm text-gray-500">
+              Incluya todos los detalles posibles para poder localizarle (campo obligatorio)
+            </p>
           </div>
 
           {/* Tipos de ayuda */}

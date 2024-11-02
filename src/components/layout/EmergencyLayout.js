@@ -2,36 +2,35 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 
 export default function EmergencyLayout({ children }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [isClient, setIsClient] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Por defecto abierto
 
   useEffect(() => {
-    setIsClient(true); // Solo establecer `true` en el cliente
+    // Ajustar el estado inicial basado en el tamaño de la pantalla
+    const handleResize = () => {
+      setIsSidebarOpen(window.innerWidth >= 768); // 768px es el breakpoint de md en Tailwind
+    };
+
+    // Establecer estado inicial
+    handleResize();
+
+    // Escuchar cambios de tamaño de ventana
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar isOpen={sidebarOpen} toggle={toggleSidebar} />
-
-      <main
-        className={`transition-all duration-300 ease-in-out ${
-          sidebarOpen ? 'md:ml-64' : 'ml-0'
-        }`}
-      >
-        <div className="p-6">
-          <div className="max-w-4xl mx-auto">
-            {isClient ? children : null}
-          </div>
-        </div>
-      </main>
+    <div className="min-h-screen bg-gray-100">
+      <Sidebar isOpen={isSidebarOpen} toggle={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <div className={`transition-margin duration-300 ${isSidebarOpen ? 'md:ml-64' : 'ml-0'}`}>
+        <main className="p-4">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

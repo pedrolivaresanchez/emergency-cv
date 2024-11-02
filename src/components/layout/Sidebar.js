@@ -13,16 +13,18 @@ import {
   Menu,
   X,
   AlertCircle,
-  Home
+  Home,
+  Thermometer,
+  Truck
 } from 'lucide-react';
 
 const menuItems = [
   {
     icon: Home,
     title: "Inicio",
-    description: "Volver a la página principal",
     path: "/",
-    color: "text-gray-600"
+    color: "text-gray-600",
+    isHome: true
   },
   {
     icon: AlertCircle,
@@ -33,9 +35,16 @@ const menuItems = [
     highlight: true
   },
   {
+    icon: Thermometer,
+    title: "Voluntómetro",
+    description: "Medidor de voluntarios por localidad",
+    path: "/voluntometro",
+    color: "text-orange-500"
+  },
+  {
     icon: Search,
     title: "Solicitar Ayuda",
-    description: "Si necesitas asistencia urgente",
+    description: "Si necesitas asistencia",
     path: "/solicitar-ayuda",
     color: "text-red-600"
   },
@@ -48,8 +57,8 @@ const menuItems = [
   },
   {
     icon: UserSearch,
-    title: "Persona Desaparecida",
-    description: "Reportar o buscar personas",
+    title: "Desaparecidos",
+    description: "Reportar personas",
     path: "https://desaparecidosdana.pythonanywhere.com/",
     color: "text-purple-600"
   },
@@ -59,6 +68,13 @@ const menuItems = [
     description: "Gestionar donaciones",
     path: "/punto-recogida",
     color: "text-blue-600"
+  },
+  {
+    icon: Truck,
+    title: "Puntos de Entrega",
+    description: "Para transportistas y logística",
+    path: "/puntos-entrega",
+    color: "text-gray-800"
   }
 ];
 
@@ -68,10 +84,10 @@ export default function Sidebar({ isOpen, toggle }) {
 
   return (
     <>
-      {/* Mobile overlay */}
+      {/* Quitamos el overlay con fondo negro */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          className="fixed inset-0 z-20 md:hidden"
           onClick={toggle}
         />
       )}
@@ -90,10 +106,10 @@ export default function Sidebar({ isOpen, toggle }) {
         className={`fixed top-0 left-0 h-full bg-white shadow-xl z-30 
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-          w-64`}
+          w-64 flex flex-col`}
       >
         {/* Logo or title */}
-        <div className="p-4 border-b">
+        <div className="p-4 border-b flex-shrink-0">
           <Link href="/" passHref>
             <h1 className="text-xl font-bold text-gray-800 cursor-pointer">
               Ayuda Dana
@@ -101,8 +117,8 @@ export default function Sidebar({ isOpen, toggle }) {
           </Link>
         </div>
 
-        {/* Menu items */}
-        <nav className="p-4">
+        {/* Menu items - Contenedor con scroll */}
+        <nav className="p-4 flex-1 overflow-y-auto">
           <div className="space-y-2">
             {menuItems.map((item) => (
               <button
@@ -111,31 +127,44 @@ export default function Sidebar({ isOpen, toggle }) {
                   router.push(item.path);
                   if (window.innerWidth < 768) toggle();
                 }}
-                className={`w-full text-left p-4 rounded-lg transition-colors ${
-                  pathname === item.path 
-                    ? 'bg-gray-100 shadow-sm' 
-                    : 'hover:bg-gray-50'
-                } ${
-                  item.highlight 
-                    ? 'bg-red-50 border-2 border-red-200 hover:bg-red-100 animate-pulse' 
-                    : ''
+                className={`w-full text-left transition-colors ${
+                  item.isHome ? 
+                    'p-3 rounded-lg flex items-center gap-2 hover:bg-gray-50' : 
+                    `p-4 rounded-lg ${
+                      pathname === item.path 
+                        ? 'bg-gray-100 shadow-sm' 
+                        : 'hover:bg-gray-50'
+                    } ${
+                      item.highlight 
+                        ? 'bg-red-50 border-2 border-red-200 hover:bg-red-100 animate-pulse' 
+                        : ''
+                    }`
                 }`}
               >
-                <div className="flex items-center mb-2">
-                  <item.icon className={`h-6 w-6 ${item.color} mr-3 ${
-                    item.highlight ? 'animate-bounce' : ''
-                  }`} />
-                  <span className={`font-semibold ${
-                    item.highlight ? 'text-red-700' : ''
-                  }`}>
-                    {item.title}
-                  </span>
-                </div>
-                <p className={`text-sm ml-9 ${
-                  item.highlight ? 'text-red-600' : 'text-gray-600'
-                }`}>
-                  {item.description}
-                </p>
+                {item.isHome ? (
+                  <>
+                    <item.icon className="h-5 w-5 text-gray-600" />
+                    <span className="font-medium text-gray-800">{item.title}</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center mb-2">
+                      <item.icon className={`h-6 w-6 ${item.color} mr-3 ${
+                        item.highlight ? 'animate-bounce' : ''
+                      }`} />
+                      <span className={`font-semibold ${
+                        item.highlight ? 'text-red-700' : ''
+                      }`}>
+                        {item.title}
+                      </span>
+                    </div>
+                    <p className={`text-sm ml-9 ${
+                      item.highlight ? 'text-red-600' : 'text-gray-600'
+                    }`}>
+                      {item.description}
+                    </p>
+                  </>
+                )}
               </button>
             ))}
           </div>

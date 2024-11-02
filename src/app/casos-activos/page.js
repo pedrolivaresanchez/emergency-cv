@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapPin } from 'lucide-react';
+import { MapPin, Phone, Mail, Calendar, AlertTriangle, User, HeartHandshake, Users } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 export default function CasosActivos() {
@@ -143,40 +143,53 @@ export default function CasosActivos() {
                   </span>
                 </div>
                 <p className="text-gray-700 mb-4">{caso.description}</p>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-gray-500" />
                     <span className="font-semibold">Ubicación:</span> {caso.location}
                   </div>
-                  <div>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-gray-500" />
                     <span className="font-semibold">Fecha:</span>{' '}
                     {new Date(caso.created_at).toLocaleDateString()}
                   </div>
-                  {caso.contact_info && typeof caso.contact_info === 'object' && (
-                    <>
-                      {caso.contact_info.phone && (
-                        <div>
-                          <span className="font-semibold">Número de tlf:</span> {caso.contact_info.phone}
-                        </div>
-                      )}
-                      {caso.contact_info.email && (
-                        <div>
-                          <span className="font-semibold">Email:</span> {caso.contact_info.email}
-                        </div>
-                      )}
-                    </>
+                  {/* Información de contacto */}
+                  {caso.contact_info && (
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-gray-500" />
+                      <span className="font-semibold">Contacto:</span> {caso.contact_info}
+                    </div>
                   )}
                   {caso.urgency && (
-                    <div>
-                      <span className="font-semibold">Urgencia:</span>{' '}
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className={`h-4 w-4 ${
+                        caso.urgency === 'alta' ? 'text-red-500' :
+                        caso.urgency === 'media' ? 'text-yellow-500' :
+                        'text-green-500'
+                      }`} />
+                      <span className="font-semibold">Urgencia:</span>
                       <span className={`${
-                        caso.urgency === 'high' ? 'text-red-600' :
-                        caso.urgency === 'medium' ? 'text-yellow-600' :
+                        caso.urgency === 'alta' ? 'text-red-600 font-semibold' :
+                        caso.urgency === 'media' ? 'text-yellow-600' :
                         'text-green-600'
                       }`}>
                         {caso.urgency === 'alta' ? 'Alta' :
                          caso.urgency === 'media' ? 'Media' :
                          'Baja'}
                       </span>
+                    </div>
+                  )}
+                  {/* Información adicional */}
+                  {caso.additional_info?.special_situations && (
+                    <div className="mt-2 bg-gray-50 p-3 rounded">
+                      <span className="font-semibold block mb-1">Situaciones especiales:</span>
+                      <p className="text-gray-700">{caso.additional_info.special_situations}</p>
+                    </div>
+                  )}
+                  {caso.number_of_people && (
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-gray-500" />
+                      <span className="font-semibold">Personas afectadas:</span> {caso.number_of_people}
                     </div>
                   )}
                 </div>
@@ -190,64 +203,91 @@ export default function CasosActivos() {
             {ofertas.map((caso) => (
               <div key={caso.id} className="bg-white p-6 rounded-lg shadow-lg border-l-4 border-green-500">
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg font-bold text-green-600">
-                    Ofrece: {caso.help_type ? 
-                      (typeof caso.help_type === 'string' ? 
-                        caso.help_type.split(',').join(', ') : 
-                        Array.isArray(caso.help_type) ? 
-                          caso.help_type.join(', ') : 
-                          caso.help_type
-                      ) : "Ayuda general"}
-                  </h3>
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-bold text-green-600 flex items-center gap-2">
+                      <HeartHandshake className="h-5 w-5" />
+                      Ofrece: {Array.isArray(caso.help_type) ? 
+                        caso.help_type.map(tipo => {
+                          const tipoAyuda = {
+                            'transporte': 'Transporte/Evacuación',
+                            'alojamiento': 'Alojamiento temporal',
+                            'distribucion': 'Distribución de suministros',
+                            'rescate': 'Equipo de rescate',
+                            'medica': 'Asistencia médica',
+                            'psicologico': 'Apoyo psicológico',
+                            'desescombro': 'Limpieza/Desescombro',
+                            'logistico': 'Apoyo logístico'
+                          }[tipo] || tipo;
+                          return tipoAyuda;
+                        }).join(', ') : 
+                        "Ayuda general"}
+                    </h3>
+                    {caso.name && (
+                      <p className="text-gray-600 flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        <span className="font-semibold">Nombre:</span> {caso.name}
+                      </p>
+                    )}
+                  </div>
                   <span className="px-3 py-1 rounded-full bg-green-100 text-green-800 text-sm font-medium">
                     {caso.status === 'active' ? 'Activo' : 'Inactivo'}
                   </span>
                 </div>
                 <p className="text-gray-700 mb-4">{caso.description}</p>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-semibold">Ubicación:</span> {caso.location}
-                  </div>
-                  <div>
+                <div className="space-y-2 text-sm">
+                  {caso.location && (
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-gray-500" />
+                      <span className="font-semibold">Ubicación:</span> {caso.location}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-gray-500" />
                     <span className="font-semibold">Fecha:</span>{' '}
                     {new Date(caso.created_at).toLocaleDateString()}
                   </div>
-                  {/* Información de contacto */}
                   {caso.contact_info && (
-                    <div className="col-span-2 space-y-2">
-                      {typeof caso.contact_info === 'object' ? (
-                        <>
-                          {caso.contact_info.name && (
-                            <div>
-                              <span className="font-semibold">Nombre:</span> {caso.contact_info.name}
-                            </div>
-                          )}
-                          {caso.contact_info.phone && (
-                            <div>
-                              <span className="font-semibold">Contacto:</span> {caso.contact_info.phone}
-                            </div>
-                          )}
-                          {caso.contact_info.email && (
-                            <div>
-                              <span className="font-semibold">Email:</span> {caso.contact_info.email}
-                            </div>
-                          )}
-                          {caso.contact_info.additional_info && (
-                            <div>
-                              <span className="font-semibold">Información adicional:</span> {caso.contact_info.additional_info}
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        <div>
-                          <span className="font-semibold">Contacto:</span> {caso.contact_info}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  {caso.availability && (
-                    <div className="col-span-2">
-                      <span className="font-semibold">Disponibilidad:</span> {caso.availability}
+                    <div className="space-y-2">
+                      {(() => {
+                        // Intentamos parsear el contact_info si es un string JSON
+                        let contactInfo = caso.contact_info;
+                        try {
+                          if (typeof caso.contact_info === 'string') {
+                            contactInfo = JSON.parse(caso.contact_info);
+                          }
+                        } catch (e) {
+                          // Si falla el parse, usamos el string original
+                          contactInfo = caso.contact_info;
+                        }
+
+                        // Si es un objeto con phone y/o email
+                        if (typeof contactInfo === 'object' && contactInfo !== null) {
+                          return (
+                            <>
+                              {contactInfo.phone && (
+                                <div className="flex items-center gap-2">
+                                  <Phone className="h-4 w-4 text-gray-500" />
+                                  <span className="font-semibold">Teléfono:</span> {contactInfo.phone}
+                                </div>
+                              )}
+                              {contactInfo.email && (
+                                <div className="flex items-center gap-2">
+                                  <Mail className="h-4 w-4 text-gray-500" />
+                                  <span className="font-semibold">Email:</span> {contactInfo.email}
+                                </div>
+                              )}
+                            </>
+                          );
+                        }
+
+                        // Si es un string simple
+                        return (
+                          <div className="flex items-center gap-2">
+                            <Phone className="h-4 w-4 text-gray-500" />
+                            <span className="font-semibold">Contacto:</span> {contactInfo}
+                          </div>
+                        );
+                      })()}
                     </div>
                   )}
                 </div>

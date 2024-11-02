@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@react-google-maps/api": "^2.20.3",
     "@supabase/supabase-js": "^2.46.1",
     "leaflet": "^1.9.4",

@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import { AlertTriangle, Check } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import AddressAutocomplete from '@/components/AddressAutocomplete';
 
 export default function SolicitarAyuda() {
   const [formData, setFormData] = useState({
     nombre: '',
     ubicacion: '',
-    tipoAyuda: 'evacuacion',
+    coordinates: null,
+    tiposAyuda: [],
     numeroPersonas: '',
     descripcion: '',
     urgencia: 'alta',
@@ -23,9 +25,35 @@ export default function SolicitarAyuda() {
     success: false
   });
 
+  // Primero vamos a actualizar los tipos de ayuda para que coincidan con la base de datos
+const tiposAyudaOptions = [
+  { id: 'limpieza', label: 'Limpieza/Desescombro' },
+  { id: 'transporte', label: 'Transporte/Evacuación' },
+  { id: 'alojamiento', label: 'Alojamiento temporal' },
+  { id: 'distribucion', label: 'Distribución de suministros' },
+  { id: 'rescate', label: 'Equipo de rescate' },
+  { id: 'medica', label: 'Asistencia médica' },
+  { id: 'psicologico', label: 'Apoyo psicológico' },
+  { id: 'logistico', label: 'Apoyo logístico' }
+];
+
+  const handleTipoAyudaChange = (tipo) => {
+    setFormData(prev => ({
+      ...prev,
+      tiposAyuda: prev.tiposAyuda.includes(tipo)
+        ? prev.tiposAyuda.filter(t => t !== tipo)
+        : [...prev.tiposAyuda, tipo]
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (!formData.ubicacion) {
+      alert('La ubicación es un campo obligatorio');
+      return;
+    }
+
     if (!formData.consentimiento) {
       alert('Debe aceptar el consentimiento para enviar la solicitud');
       return;
@@ -38,7 +66,9 @@ export default function SolicitarAyuda() {
         type: 'necesita',
         name: formData.nombre,
         location: formData.ubicacion,
-        help_type: [formData.tipoAyuda],
+        latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : null,
+        longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : null,
+        help_type: formData.tiposAyuda,
         description: formData.descripcion,
         urgency: formData.urgencia,
         number_of_people: parseInt(formData.numeroPersonas) || 1,
@@ -63,7 +93,8 @@ export default function SolicitarAyuda() {
       setFormData({
         nombre: '',
         ubicacion: '',
-        tipoAyuda: 'evacuacion',
+        coordinates: null,
+        tiposAyuda: [],
         numeroPersonas: '',
         descripcion: '',
         urgencia: 'alta',
@@ -136,57 +167,66 @@ export default function SolicitarAyuda() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ubicación exacta
+              Ubicación exacta *
             </label>
-            <input
-              type="text"
-              name="ubicacion"
-              value={formData.ubicacion}
-              onChange={handleChange}
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
+            <AddressAutocomplete
+              onSelect={(address) => {
+                setFormData({
+                  ...formData,
+                  ubicacion: address.fullAddress,
+                  coordinates: address.coordinates ? {
+                    lat: address.coordinates.lat,
+                    lng: address.coordinates.lon
+                  } : null
+                });
+              }}
               placeholder="Calle, número, piso, ciudad..."
-              
+              required
             />
             <p className="mt-1 text-sm text-gray-500">
-              Incluya todos los detalles posibles para poder localizarle (calle, número, piso, puerta, ciudad)
+              Incluya todos los detalles posibles para poder localizarle (campo obligatorio)
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Tipo de ayuda necesaria
-              </label>
-              <select
-                name="tipoAyuda"
-                value={formData.tipoAyuda}
-                onChange={handleChange}
-                className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-                
-              >
-                <option value="evacuacion">Evacuación urgente</option>
-                <option value="agua">Agua potable</option>
-                <option value="alimentos">Alimentos</option>
-                <option value="medicinas">Medicinas</option>
-                <option value="ropa">Ropa/Mantas</option>
-                <option value="otros">Otros</option>
-              </select>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tipo de ayuda necesaria
+            </label>
+            <div className="grid md:grid-cols-2 gap-2">
+              {tiposAyudaOptions.map((tipo) => (
+                <label 
+                  key={tipo.id}
+                  className={`flex items-center p-3 rounded cursor-pointer ${
+                    formData.tiposAyuda.includes(tipo.id)
+                      ? 'bg-red-50 text-red-800'
+                      : 'bg-gray-50 hover:bg-gray-100'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={formData.tiposAyuda.includes(tipo.id)}
+                    onChange={() => handleTipoAyudaChange(tipo.id)}
+                    className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                  />
+                  <span className="ml-2">{tipo.label}</span>
+                </label>
+              ))}
             </div>
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Número de personas
-              </label>
-              <input
-                type="number"
-                name="numeroPersonas"
-                value={formData.numeroPersonas}
-                onChange={handleChange}
-                className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-                min="1"
-                
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Número de personas
+            </label>
+            <input
+              type="number"
+              name="numeroPersonas"
+              value={formData.numeroPersonas}
+              onChange={handleChange}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
+              min="1"
+              
+            />
           </div>
 
           <div>
