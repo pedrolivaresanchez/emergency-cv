@@ -11,6 +11,9 @@ export default function CasosActivos() {
   const [puntosRecogida, setPuntosRecogida] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filtroUrgencia, setFiltroUrgencia] = useState('todas');
+  const [filtroPueblo, setFiltroPueblo] = useState('todos');
+  const [towns, setTowns] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -65,7 +68,28 @@ export default function CasosActivos() {
     }
 
     fetchData();
+    fetchTowns();
   }, []);
+	
+
+  async function fetchTowns() {
+    const { data, error } = await supabase
+      .from('towns')
+      .select('id, name');
+
+    if (error) {
+      console.error('Error fetching towns:', error);
+      return;
+    }
+
+    setTowns(data);
+  }
+  const solicitudesFiltradas = solicitudes.filter(caso => {
+    const cumpleUrgencia = filtroUrgencia === 'todas' ? true : caso.urgency === filtroUrgencia;
+    const cumplePueblo = filtroPueblo === 'todos' ? true : caso.town_id === parseInt(filtroPueblo);
+    return cumpleUrgencia && cumplePueblo;
+  });
+
 
   if (loading) {
     return (
@@ -131,8 +155,37 @@ export default function CasosActivos() {
       {/* Lista de casos */}
       <div className="grid gap-4">
         {activeTab === 'solicitudes' && (
+					<>
+					{/* FILTROS  */}
+					<div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
+						<p className="font-bold text-md">Filtros</p>
+						<div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
+              <select
+                value={filtroUrgencia}
+                onChange={(e) => setFiltroUrgencia(e.target.value)}
+                className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+              >
+                <option value="todas">Todas las prioridades</option>
+                <option value="alta">Alta prioridad</option>
+                <option value="media">Media prioridad</option>
+                <option value="baja">Baja prioridad</option>
+              </select>
+              <select
+                value={filtroPueblo}
+                onChange={(e) => setFiltroPueblo(e.target.value)}
+                className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+              >
+                <option value="todos">Todos los pueblos</option>
+                {towns.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+					</div>
+      </div>
           <div className="grid gap-4">
-            {solicitudes.map((caso) => (
+            {solicitudesFiltradas.map((caso) => (
               <div key={caso.id} className={`bg-white p-4 rounded-lg shadow-lg border-l-4 ${
                         caso.urgency === 'alta' ? 'border-red-500' :
                         caso.urgency === 'media' ? 'border-yellow-500' :
@@ -218,6 +271,7 @@ export default function CasosActivos() {
               </div>
             ))}
           </div>
+					</>
         )}
 
         {activeTab === 'ofertas' && (
