@@ -49,6 +49,13 @@ const menuItems = [
     color: "text-red-600"
   },
   {
+    icon: HeartHandshake,
+    title: "Ofrecer Ayuda",
+    description: "Si puedes ayudar a otros",
+    path: "/ofrecer-ayuda",
+    color: "text-green-600"
+  },
+  {
     icon: UserSearch,
     title: "Desaparecidos",
     description: "Reportar personas",

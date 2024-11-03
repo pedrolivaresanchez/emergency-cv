@@ -38,7 +38,7 @@ export default function OfferHelp({ town, onClose }) {
     experiencia: '',
     comentarios: '',
     aceptaProtocolo: false,
-    pueblo: town.id || ''
+    pueblo: town ? town.id : ''
   });
 
   const [status, setStatus] = useState({
@@ -152,13 +152,13 @@ export default function OfferHelp({ town, onClose }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg p-6 max-w-2xl w-full relative flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className={`bg-white rounded-lg p-6 w-full relative flex flex-col gap-6 ${town ? 'max-w-2xl' : ''}`}>
       {/* Banner informativo */}
       <div className="bg-green-50 border-green-500 p-4 rounded">
         <div className="flex items-start">
           <HeartHandshake className="h-5 w-5 text-green-500 mt-0.5 mr-2" />
           <div>
-            <h2 className="text-green-800 font-semibold">Me apunto como voluntario en { town.name }</h2>
+            <h2 className="text-green-800 font-semibold">Me apunto como voluntario { town ? "en " + town.name : "" }</h2>
             <p className="text-green-700 text-sm mt-1">
               Al registrarte como voluntario, te comprometes a seguir las indicaciones de las autoridades y los protocolos establecidos.
             </p>
