@@ -6,32 +6,7 @@ import { HeartHandshake, Check, Mail, Thermometer } from 'lucide-react';
 import { helpRequestService } from '@/lib/service';
 
 export default function Voluntometro() {
-  const [pueblos, setPueblos] = useState([
-    { name: 'Aldaia', count: 0 },
-    { name: 'Alfafar', count: 0 },
-    { name: 'Albal', count: 0 },
-    { name: 'Alcudia', count: 0 },
-    { name: 'Algemesí', count: 0 },
-    { name: 'Bugarra', count: 0 },
-    { name: 'Catarroja', count: 0 },
-    { name: 'Castelló', count: 0 },
-    { name: 'Cheste', count: 0 },
-    { name: 'Chiva', count: 0 },
-    { name: 'Gestalgar', count: 0 },
-    { name: 'Guadassuar', count: 0 },
-    { name: "L'Alcúdia", count: 0 },
-    { name: 'Manuel', count: 0 },
-    { name: 'Massanassa', count: 0 },
-    { name: 'Montserrat', count: 0 },
-    { name: 'Paiporta', count: 0 },
-    { name: 'Pedralba', count: 0 },
-    { name: 'Riba-roja de Túria', count: 0 },
-    { name: 'Sedaví', count: 0 },
-    { name: 'Sot de Chera', count: 0 },
-    { name: 'Torrent', count: 0 },
-    { name: 'Utiel', count: 0 },
-    { name: 'Villar del Arzobispo', count: 0 }
-  ]);
+  const [pueblos, setPueblos] = useState([]);
 
   const [selectedPueblo, setSelectedPueblo] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -73,32 +48,56 @@ export default function Voluntometro() {
   const [showNewTownModal, setShowNewTownModal] = useState(false);
   const [newTownName, setNewTownName] = useState('');
 
-  useEffect(() => {
-    fetchVolunteers();
-  }, []);
+	useEffect(() => {
+		fetchVolunteers();
+	}, []);
+	
 
-  async function fetchVolunteers() {
-    const today = new Date().toISOString().split('T')[0];
-    
-    const { data, error } = await supabase
-      .from('help_requests')
-      .select('*')
-      .eq('type', 'ofrece')
-      .gte('created_at', today)
-      .lte('created_at', today + 'T23:59:59.999Z');
-
-    if (error) {
-      console.error('Error fetching volunteers:', error);
-      return;
-    }
-
-    const updatedPueblos = pueblos.map(pueblo => {
-      const volunteers = data.filter(v => v.location === pueblo.name).length;
-      return { ...pueblo, count: volunteers };
-    });
-
-    setPueblos(updatedPueblos);
-  }
+	async function fetchVolunteers() {
+		const today = new Date().toISOString().split('T')[0];
+	
+		const { data: towns, error: townError } = await supabase
+			.from('towns')
+			.select('id, name');
+	
+		if (townError) {
+			console.log('Error fetching towns:', townError);
+			return;
+		}
+	
+		const { data, error } = await supabase
+			.from('help_requests')
+			.select('*')
+			.in('type', ['ofrece', 'necesita'])
+			.gte('created_at', today)
+			.lte('created_at', `${today}T23:59:59.999Z`);
+	
+		if (error) {
+			console.log('Error fetching help requests:', error);
+			return;
+		}
+	
+		const volunteersCount = new Map();
+		const needHelpCount = new Map();
+	
+		data.forEach(person => {
+			const townId = person.town_id;
+			if (person.type === 'ofrece') {
+				volunteersCount.set(townId, (volunteersCount.get(townId) || 0) + 1);
+			} else if (person.type === 'necesita') {
+				needHelpCount.set(townId, (needHelpCount.get(townId) || 0) + 1);
+			}
+		});
+	
+		const updatedPueblos = towns.map(town => ({
+			id: town.id,
+			name: town.name,
+			count: volunteersCount.get(town.id) || 0,
+			needHelp: needHelpCount.get(town.id) || 0
+		}));
+	
+		setPueblos(updatedPueblos);
+	}
 
   const handleTipoAyudaChange = (tipo) => {
     setFormData(prev => ({
@@ -166,7 +165,7 @@ export default function Voluntometro() {
   
       setStatus({ isSubmitting: false, error: null, success: true });
       setShowModal(false);
-      fetchVolunteers(); // Refresh the counts
+      fetchVolunteers();
       
       setTimeout(() => setStatus(prev => ({ ...prev, success: false })), 5000);
   
@@ -196,18 +195,22 @@ export default function Voluntometro() {
     setNewTownName('');
   };
 
-  const getTopAndBottomPueblos = () => {
-    const pueblosConVoluntarios = pueblos.filter(pueblo => pueblo.count > 0);
-    const pueblosSinVoluntarios = pueblos.filter(pueblo => pueblo.count === 0);
-    
-    const sortedPueblos = [...pueblosConVoluntarios].sort((a, b) => b.count - a.count);
-    
-    return {
-      top: sortedPueblos.slice(0, 2),
-      bottom: pueblosSinVoluntarios.slice(0, 2)
-    };
-  };
+	const getTopAndBottomPueblos = () => {
+    const sortedPueblos = [...pueblos].sort((a, b) => {
+        const volunteersDiffA = a.count - a.needHelp;
+        const volunteersDiffB = b.count - b.needHelp;
+        if (volunteersDiffA !== volunteersDiffB) {
+            return volunteersDiffB - volunteersDiffA;
+        } else {
+            return b.count - a.count;
+        }
+    });
 
+    return {
+        top: sortedPueblos.slice(0, 2),
+        bottom: sortedPueblos.slice(-2).reverse()
+    };
+};
   return (
     <div className="container mx-auto p-4">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -227,50 +230,65 @@ export default function Voluntometro() {
       </div>
 
       {/* Widget de Estadísticas actualizado */}
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-        <h2 className="text-lg font-semibold mb-4 text-orange-500">
-          Resumen de Voluntarios del {getFechaHoy()}
-        </h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h3 className="text-green-600 font-medium">Mayor participación hoy</h3>
-            {getTopAndBottomPueblos().top.length > 0 ? (
-              getTopAndBottomPueblos().top.map((pueblo) => (
-                <div 
-                  key={pueblo.name}
-                  className="flex items-center justify-between bg-green-50 p-3 rounded-lg"
-                >
-                  <span className="font-medium">{pueblo.name}</span>
-                  <div className="flex items-center">
-                    <span className="text-green-600 font-bold">{pueblo.count}</span>
-                    <span className="text-gray-500 ml-1">voluntarios</span>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-gray-500 italic">
-                No hay voluntarios registrados hoy
-              </div>
-            )}
+			<div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+  <h2 className="text-lg font-semibold mb-4 text-orange-500">
+    Resumen de Voluntarios del {getFechaHoy()}
+  </h2>
+  <div className="grid md:grid-cols-2 gap-6">
+    <div className="space-y-4">
+      <h3 className="text-green-600 font-medium">Mayor participación hoy</h3>
+      {getTopAndBottomPueblos().top.length > 0 ? (
+        getTopAndBottomPueblos().top.map((pueblo) => (
+          <div 
+            key={pueblo.id}
+            className="flex flex-col xl:flex-row items-start md:items-center justify-between bg-green-50 p-3 rounded-lg"
+          >
+            <span className="font-medium">{pueblo.name}</span>
+            <div className="flex flex-col lg:flex-row items-start md:items-center">
+							<div>
+							<span className="text-green-600 font-bold">{pueblo.count}</span>
+							<span className="text-gray-500 ml-1">voluntarios</span>
+							</div>
+            	<span className="text-semibold px-2 hidden lg:block">|</span>
+							<div>
+								<span className="text-green-600 font-bold">{pueblo.needHelp}</span>
+								<span className="text-gray-500 ml-1">necesitan ayuda</span>
+							</div>
+            </div>
           </div>
-          
-          <div className="space-y-4">
-            <h3 className="text-red-600 font-medium">Necesitan más apoyo</h3>
-            {getTopAndBottomPueblos().bottom.map((pueblo) => (
-              <div 
-                key={pueblo.name}
-                className="flex items-center justify-between bg-red-50 p-3 rounded-lg"
-              >
-                <span className="font-medium">{pueblo.name}</span>
-                <div className="flex items-center">
-                  <span className="text-red-600 font-bold">{pueblo.count}</span>
-                  <span className="text-gray-500 ml-1">voluntarios</span>
-                </div>
-              </div>
-            ))}
+        ))
+      ) : (
+        <div className="text-gray-500 italic">
+          No hay voluntarios registrados hoy
+        </div>
+      )}
+    </div>
+
+    <div className="space-y-4">
+      <h3 className="text-red-600 font-medium">Necesitan más apoyo</h3>
+      {getTopAndBottomPueblos().bottom.map((pueblo) => (
+        <div 
+          key={pueblo.id}
+          className="flex flex-col xl:flex-row items-start md:items-center justify-between bg-red-50 p-3 rounded-lg"
+        >
+          <span className="font-medium">{pueblo.name}</span>
+          <div className="flex flex-col lg:flex-row items-start md:items-center">
+						<div>
+							<span className="text-red-600 font-bold">{pueblo.count}</span>
+							<span className="text-gray-500 ml-1">voluntarios</span>
+						</div>
+            <span className="text-semibold px-2 hidden lg:block">|</span>
+						<div>
+							<span className="text-red-600 font-bold">{pueblo.needHelp}</span>
+							<span className="text-gray-500 ml-1">necesitan ayuda</span>
+						</div>
           </div>
         </div>
-      </div>
+      ))}
+    </div>
+  </div>
+</div>
+
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {pueblos.map((pueblo) => (
