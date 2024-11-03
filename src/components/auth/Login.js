@@ -61,9 +61,9 @@ export default function Login({ onSuccessCallback }) {
     <>
       {user && (
         <div className={`bg-white rounded-lg p-6 w-full relative flex flex-col gap-6`}>
-          <div>La sesion ya esta iniciada</div>
+          <div>La sesión ya esta iniciada</div>
           <div className="text-blue-400 hover:cursor-pointer" onClick={logOut}>
-            Cerrar sesion
+            Cerrar sesión
           </div>
         </div>
       )}
