@@ -229,7 +229,16 @@ export default function CasosActivos() {
                 </div>
                 <p className="text-gray-700 mb-4 break-words">{caso.description}</p>
                 <div className="space-y-2 text-sm">
-
+                  {
+                    caso.town_id && (
+                      <div className="flex items-start gap-2">
+                        <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
+                        <span className="break-words">
+                          <span className="font-semibold">Pueblo:</span> {towns[caso.town_id-1].name}
+                        </span>
+                      </div>
+                    )
+                  }
                   <div className="flex items-start gap-2">
                     <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                     <span className="break-words">
