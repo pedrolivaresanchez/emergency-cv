@@ -17,7 +17,7 @@ export default function SolicitarAyuda() {
     situacionEspecial: '',
     contacto: '',
     consentimiento: false,
-		pueblo: ''
+    pueblo: ''
   });
 
   const [status, setStatus] = useState({
@@ -26,35 +26,35 @@ export default function SolicitarAyuda() {
     success: false
   });
 
-	const [towns, setTowns] = useState([]);
+  const [towns, setTowns] = useState([]);
 
-	async function fetchTowns() {
-		const { data, error } = await supabase
-			.from('towns')
-			.select('id, name');
-		
-		if (error) {
-			console.error('Error fetching towns:', error);
-			return;
-		}
-		
-		setTowns(data);
-	}
-	
-	useEffect(() => {
-		fetchTowns();
-	}, []);
+  async function fetchTowns() {
+    const { data, error } = await supabase
+      .from('towns')
+      .select('id, name');
 
-const tiposAyudaOptions = [
-  { id: 'limpieza', label: 'Limpieza/Desescombro' },
-  { id: 'evacuacion', label: 'Transporte/Evacuación' },
-  { id: 'alojamiento', label: 'Alojamiento temporal' },
-  { id: 'distribucion', label: 'Distribución de suministros' },
-  { id: 'rescate', label: 'Equipo de rescate' },
-  { id: 'medica', label: 'Asistencia médica' },
-  { id: 'psicologico', label: 'Apoyo psicológico' },
-  { id: 'logistico', label: 'Apoyo logístico' }
-];
+    if (error) {
+      console.error('Error fetching towns:', error);
+      return;
+    }
+
+    setTowns(data);
+  }
+
+  useEffect(() => {
+    fetchTowns();
+  }, []);
+
+  const tiposAyudaOptions = [
+    { id: 'limpieza', label: 'Limpieza/Desescombro' },
+    { id: 'evacuacion', label: 'Transporte/Evacuación' },
+    { id: 'alojamiento', label: 'Alojamiento temporal' },
+    { id: 'distribucion', label: 'Distribución de suministros' },
+    { id: 'rescate', label: 'Equipo de rescate' },
+    { id: 'medica', label: 'Asistencia médica' },
+    { id: 'psicologico', label: 'Apoyo psicológico' },
+    { id: 'logistico', label: 'Apoyo logístico' }
+  ];
 
   const handleTipoAyudaChange = (tipo) => {
     setFormData(prev => ({
@@ -67,7 +67,7 @@ const tiposAyudaOptions = [
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.ubicacion) {
       alert('La ubicación es un campo obligatorio');
       return;
@@ -96,7 +96,7 @@ const tiposAyudaOptions = [
           special_situations: formData.situacionEspecial || null,
           consent: true
         },
-				town_id: formData.pueblo,
+        town_id: formData.pueblo,
         status: 'active'
       };
 
@@ -120,7 +120,7 @@ const tiposAyudaOptions = [
         urgencia: 'alta',
         situacionEspecial: '',
         contacto: '',
-				pueblo: '',
+        pueblo: '',
         consentimiento: false
       });
 
@@ -154,7 +154,7 @@ const tiposAyudaOptions = [
           <div>
             <h2 className="text-red-800 font-bold">EMERGENCIA ACTIVA - Inundaciones CV</h2>
             <p className="text-red-700 text-sm mt-1">
-              Para emergencias médicas inmediatas, llame al 112. Este formulario es para 
+              Para emergencias médicas inmediatas, llame al 112. Este formulario es para
               coordinar ayuda y asistencia.
             </p>
           </div>
@@ -170,7 +170,7 @@ const tiposAyudaOptions = [
       {/* Formulario principal */}
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h1 className="text-2xl font-bold mb-6">Solicitar Ayuda</h1>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -182,7 +182,7 @@ const tiposAyudaOptions = [
               value={formData.nombre}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-              
+
             />
           </div>
 
@@ -215,13 +215,12 @@ const tiposAyudaOptions = [
             </label>
             <div className="grid md:grid-cols-2 gap-2">
               {tiposAyudaOptions.map((tipo) => (
-                <label 
+                <label
                   key={tipo.id}
-                  className={`flex items-center p-3 rounded cursor-pointer ${
-                    formData.tiposAyuda.includes(tipo.id)
+                  className={`flex items-center p-3 rounded cursor-pointer ${formData.tiposAyuda.includes(tipo.id)
                       ? 'bg-red-50 text-red-800'
                       : 'bg-gray-50 hover:bg-gray-100'
-                  }`}
+                    }`}
                 >
                   <input
                     type="checkbox"
@@ -246,7 +245,7 @@ const tiposAyudaOptions = [
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
               min="1"
-              
+
             />
           </div>
 
@@ -261,7 +260,7 @@ const tiposAyudaOptions = [
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
               rows="3"
               placeholder="Describa su situación actual y el tipo de ayuda que necesita"
-              
+
             />
           </div>
 
@@ -274,7 +273,7 @@ const tiposAyudaOptions = [
               value={formData.urgencia}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-              
+
             >
               <option value="alta">Alta - Necesito ayuda inmediata</option>
               <option value="media">Media - Puedo esperar unas horas</option>
@@ -307,34 +306,34 @@ const tiposAyudaOptions = [
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
               placeholder="Teléfono móvil preferiblemente"
-              
+
             />
           </div>
-					{ /* Pueblos */}
-					<div>
-						<div className="flex flex-row justify-between mb-2 items-end">
-						<label className="block text-sm font-medium text-gray-700 mb-1">
-							Pueblo
-						</label>
-						<a href="mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro" className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap">
-							<Mail className="h-5 w-5" />
-							Solicitar nuevo pueblo
-							</a>
-						</div>
-						<select
-							name="pueblo"
-							value={formData.pueblo}
-							onChange={handleChange}
-							className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-						>
-							<option value="">Selecciona un pueblo</option>
-							{towns.map((item) => (
-								<option key={item.id} value={item.id}>
-									{item.name}
-								</option>
-							))}
-						</select>
-					</div>
+          { /* Pueblos */}
+          <div>
+            <div className="flex flex-row justify-between mb-2 items-end">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Pueblo
+              </label>
+              <a href="mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro" className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap">
+                <Mail className="h-5 w-5" />
+                Solicitar nuevo pueblo
+              </a>
+            </div>
+            <select
+              name="pueblo"
+              value={formData.pueblo}
+              onChange={handleChange}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
+            >
+              <option value="">Selecciona un pueblo</option>
+              {towns.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+          </div>
           {/* Consentimiento */}
           <div className="flex items-start">
             <input
@@ -343,7 +342,7 @@ const tiposAyudaOptions = [
               checked={formData.consentimiento}
               onChange={handleChange}
               className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-              
+
             />
             <label className="ml-2 block text-sm text-gray-700">
               Doy mi consentimiento para el tratamiento de los datos proporcionados y confirmo que la
@@ -354,11 +353,10 @@ const tiposAyudaOptions = [
           <button
             type="submit"
             disabled={status.isSubmitting}
-            className={`w-full ${
-              status.isSubmitting 
-                ? 'bg-gray-400 cursor-not-allowed' 
+            className={`w-full ${status.isSubmitting
+                ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-red-500 hover:bg-red-600'
-            } text-white py-3 px-4 rounded-lg font-semibold`}
+              } text-white py-3 px-4 rounded-lg font-semibold`}
           >
             {status.isSubmitting ? 'Enviando solicitud...' : 'Enviar Solicitud de Ayuda'}
           </button>
