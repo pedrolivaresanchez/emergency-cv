@@ -5,7 +5,6 @@ import { HeartHandshake, Check, Mail } from 'lucide-react';
 import { helpRequestService } from '@/lib/service';
 import { supabase } from '@/lib/supabase';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
-import {mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions} from "@/helpers/constants";
 
 export default function OfferHelp({ town, onClose, isModal }) {
   const [towns, setTowns] = useState([]);
@@ -46,7 +45,16 @@ export default function OfferHelp({ town, onClose, isModal }) {
     success: false,
   });
 
-  const tiposAyudaOptions = mapToIdAndLabel(_tiposAyudaOptions);
+  const tiposAyudaOptions = [
+    { id: 'limpieza', label: 'Limpieza/Desescombro' },
+    { id: 'evacuacion', label: 'Transporte/Evacuación' },
+    { id: 'alojamiento', label: 'Alojamiento temporal' },
+    { id: 'distribucion', label: 'Distribución de suministros' },
+    { id: 'rescate', label: 'Equipo de rescate' },
+    { id: 'medica', label: 'Asistencia médica' },
+    { id: 'psicologico', label: 'Apoyo psicológico' },
+    { id: 'logistico', label: 'Apoyo logístico' },
+  ];
 
   const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
