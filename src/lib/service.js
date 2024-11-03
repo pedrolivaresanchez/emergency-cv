@@ -2,14 +2,20 @@ import { supabase } from './supabase';
 
 export const helpRequestService = {
   async create(data) {
-    const { data: result, error } = await supabase.from('help_requests').insert([data]).select();
+    const { data: result, error } = await supabase
+      .from('help_requests')
+      .insert([data])
+      .select();
 
     if (error) throw error;
     return result[0];
   },
 
   async getAll() {
-    const { data, error } = await supabase.from('help_requests').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabase
+      .from('help_requests')
+      .select('*')
+      .order('created_at', { ascending: false });
 
     if (error) throw error;
     return data;
@@ -24,12 +30,15 @@ export const helpRequestService = {
 
     if (error) throw error;
     return data;
-  },
+  }
 };
 
 export const missingPersonService = {
   async create(data) {
-    const { data: result, error } = await supabase.from('missing_persons').insert([data]).select();
+    const { data: result, error } = await supabase
+      .from('missing_persons')
+      .insert([data])
+      .select();
 
     if (error) throw error;
     return result[0];
@@ -44,7 +53,7 @@ export const missingPersonService = {
 
     if (error) throw error;
     return data;
-  },
+  }
 };
 
 export const collectionPointService = {
@@ -56,27 +65,25 @@ export const collectionPointService = {
       if (!data.city) throw new Error('La ciudad es requerida');
       if (!data.contact_name) throw new Error('El nombre del responsable es requerido');
       if (!data.contact_phone) throw new Error('El teléfono de contacto es requerido');
-
+      
       const { data: result, error } = await supabase
         .from('collection_points')
-        .insert([
-          {
-            ...data,
-            created_at: new Date().toISOString(),
-            last_updated: new Date().toISOString(),
-          },
-        ])
+        .insert([{
+          ...data,
+          created_at: new Date().toISOString(),
+          last_updated: new Date().toISOString()
+        }])
         .select();
-
+      
       if (error) {
         console.error('Supabase error:', error);
         throw new Error(error.message);
       }
-
+      
       if (!result || result.length === 0) {
         throw new Error('No se pudo crear el punto de recogida');
       }
-
+      
       return result[0];
     } catch (error) {
       console.error('Service error:', error);
@@ -93,14 +100,17 @@ export const collectionPointService = {
 
     if (error) throw error;
     return data;
-  },
+  }
 };
 
 export const mapService = {
   async getAllMapPoints() {
     try {
       // Get help requests
-      const helpRequestsResponse = await supabase.from('help_requests').select('*').eq('status', 'active');
+      const helpRequestsResponse = await supabase
+        .from('help_requests')
+        .select('*')
+        .eq('status', 'active');
 
       if (helpRequestsResponse.error) {
         console.error('Help Requests Error:', helpRequestsResponse.error);
@@ -108,7 +118,10 @@ export const mapService = {
       }
 
       // Get missing persons
-      const missingPersonsResponse = await supabase.from('missing_persons').select('*').eq('status', 'active');
+      const missingPersonsResponse = await supabase
+        .from('missing_persons')
+        .select('*')
+        .eq('status', 'active');
 
       if (missingPersonsResponse.error) {
         console.error('Missing Persons Error:', missingPersonsResponse.error);
@@ -116,7 +129,10 @@ export const mapService = {
       }
 
       // Get collection points
-      const collectionPointsResponse = await supabase.from('collection_points').select('*').eq('status', 'active');
+      const collectionPointsResponse = await supabase
+        .from('collection_points')
+        .select('*')
+        .eq('status', 'active');
 
       if (collectionPointsResponse.error) {
         console.error('Collection Points Error:', collectionPointsResponse.error);
@@ -131,22 +147,26 @@ export const mapService = {
       return {
         helpRequests: helpRequestsResponse.data || [],
         missingPersons: missingPersonsResponse.data || [],
-        collectionPoints: collectionPointsResponse.data || [],
+        collectionPoints: collectionPointsResponse.data || []
       };
+
     } catch (error) {
       console.error('MapService Error Details:', {
         message: error.message,
-        error: error,
+        error: error
       });
       throw new Error(error.message || 'Error al obtener los datos del mapa');
     }
-  },
+  }
 };
 
 // Add this function to test the connection
 export const testSupabaseConnection = async () => {
   try {
-    const { data, error } = await supabase.from('help_requests').select('count').single();
+    const { data, error } = await supabase
+      .from('help_requests')
+      .select('count')
+      .single();
 
     if (error) {
       console.error('Supabase Connection Error:', error);

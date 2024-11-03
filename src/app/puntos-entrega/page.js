@@ -18,7 +18,7 @@ export default function PuntosEntrega() {
     schedule: '',
     additional_info: '',
     coordinates: null,
-    status: 'active',
+    status: 'active'
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -28,9 +28,22 @@ export default function PuntosEntrega() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
-  const vehicleTypes = ['Camión grande (>3500kg)', 'Camión mediano', 'Furgoneta grande', 'Furgoneta mediana', 'Otro'];
+  const vehicleTypes = [
+    'Camión grande (>3500kg)',
+    'Camión mediano',
+    'Furgoneta grande',
+    'Furgoneta mediana',
+    'Otro'
+  ];
 
-  const cargoTypes = ['Alimentos', 'Ropa', 'Productos de limpieza', 'Material de construcción', 'Mobiliario', 'Varios'];
+  const cargoTypes = [
+    'Alimentos',
+    'Ropa',
+    'Productos de limpieza',
+    'Material de construcción',
+    'Mobiliario',
+    'Varios'
+  ];
 
   useEffect(() => {
     fetchPoints();
@@ -58,8 +71,8 @@ export default function PuntosEntrega() {
 
     try {
       const requiredFields = ['name', 'location', 'contact_phone'];
-      const missingFields = requiredFields.filter((field) => !formData[field]);
-
+      const missingFields = requiredFields.filter(field => !formData[field]);
+      
       if (missingFields.length > 0) {
         throw new Error('Por favor completa todos los campos obligatorios');
       }
@@ -79,12 +92,14 @@ export default function PuntosEntrega() {
         additional_info: formData.additional_info || null,
         latitude: formData.coordinates?.lat ? parseFloat(formData.coordinates.lat) : null,
         longitude: formData.coordinates?.lon ? parseFloat(formData.coordinates.lon) : null,
-        status: 'active',
+        status: 'active'
       };
 
       console.log('PointData for submission:', pointData); // Debug log
 
-      const { error: insertError } = await supabase.from('delivery_points').insert([pointData]);
+      const { error: insertError } = await supabase
+        .from('delivery_points')
+        .insert([pointData]);
 
       if (insertError) throw insertError;
 
@@ -92,7 +107,7 @@ export default function PuntosEntrega() {
       setSuccess(true);
       setShowForm(false);
       setFormData(initialFormData);
-
+      
       setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
       console.error('Error al registrar punto de entrega:', error);
@@ -113,7 +128,7 @@ export default function PuntosEntrega() {
           onClick={() => setShowForm(true)}
           className="flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors whitespace-nowrap"
         >
-          <Truck className="h-5 w-5" />
+					<Truck className="h-5 w-5"/>
           Registrar Punto de Entrega
         </button>
       </div>
@@ -131,11 +146,9 @@ export default function PuntosEntrega() {
                     <span className="text-sm">{point.location}</span>
                   </div>
                 </div>
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    point.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}
-                >
+                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  point.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                }`}>
                   {point.status === 'active' ? 'Activo' : 'Inactivo'}
                 </span>
               </div>
@@ -183,7 +196,9 @@ export default function PuntosEntrega() {
         ) : (
           <div className="col-span-full bg-gray-50 rounded-lg p-8 text-center">
             <Truck className="h-12 w-12 text-gray-800 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">No hay puntos de entrega registrados</h3>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              No hay puntos de entrega registrados
+            </h3>
             <p className="text-gray-600 mb-4">
               Sé el primero en registrar un punto de entrega para ayudar con la logística de suministros.
             </p>
@@ -206,39 +221,45 @@ export default function PuntosEntrega() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del punto *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Nombre del punto *
+                  </label>
                   <input
                     type="text"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
                     className="w-full p-2 border rounded"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Ciudad
+                  </label>
                   <input
                     type="text"
                     value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    onChange={(e) => setFormData({...formData, city: e.target.value})}
                     className="w-full p-2 border rounded"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Dirección exacta *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Dirección exacta *
+                </label>
                 <AddressAutocomplete
                   onSelect={(address) => {
                     console.log('Address selected:', address); // Debug log
-                    setFormData((prev) => ({
+                    setFormData(prev => ({
                       ...prev,
                       location: address.fullAddress,
                       city: address.details.city,
                       coordinates: {
                         lat: address.coordinates.lat,
-                        lon: address.coordinates.lon,
-                      },
+                        lon: address.coordinates.lon
+                      }
                     }));
                   }}
                   placeholder="Buscar dirección..."
@@ -247,43 +268,45 @@ export default function PuntosEntrega() {
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de vehículos</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tipo de vehículos
+                  </label>
                   <select
                     value={formData.vehicle_type}
-                    onChange={(e) => setFormData({ ...formData, vehicle_type: e.target.value })}
+                    onChange={(e) => setFormData({...formData, vehicle_type: e.target.value})}
                     className="w-full p-2 border rounded"
                   >
                     <option value="">Seleccionar...</option>
                     {vehicleTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
+                      <option key={type} value={type}>{type}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de carga</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tipo de carga
+                  </label>
                   <select
                     value={formData.cargo_type}
-                    onChange={(e) => setFormData({ ...formData, cargo_type: e.target.value })}
+                    onChange={(e) => setFormData({...formData, cargo_type: e.target.value})}
                     className="w-full p-2 border rounded"
                   >
                     <option value="">Seleccionar...</option>
                     {cargoTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
+                      <option key={type} value={type}>{type}</option>
                     ))}
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Horario de recepción</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Horario de recepción
+                </label>
                 <input
                   type="text"
                   value={formData.schedule}
-                  onChange={(e) => setFormData({ ...formData, schedule: e.target.value })}
+                  onChange={(e) => setFormData({...formData, schedule: e.target.value})}
                   className="w-full p-2 border rounded"
                   placeholder="Ej: Lunes a Viernes 9:00-18:00"
                 />
@@ -291,40 +314,48 @@ export default function PuntosEntrega() {
 
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Persona de contacto</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Persona de contacto
+                  </label>
                   <input
                     type="text"
                     value={formData.contact_name}
-                    onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
+                    onChange={(e) => setFormData({...formData, contact_name: e.target.value})}
                     className="w-full p-2 border rounded"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Teléfono *
+                  </label>
                   <input
                     type="tel"
                     value={formData.contact_phone}
-                    onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                    onChange={(e) => setFormData({...formData, contact_phone: e.target.value})}
                     className="w-full p-2 border rounded"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email
+                  </label>
                   <input
                     type="email"
                     value={formData.contact_email}
-                    onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
+                    onChange={(e) => setFormData({...formData, contact_email: e.target.value})}
                     className="w-full p-2 border rounded"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Información adicional</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Información adicional
+                </label>
                 <textarea
                   value={formData.additional_info}
-                  onChange={(e) => setFormData({ ...formData, additional_info: e.target.value })}
+                  onChange={(e) => setFormData({...formData, additional_info: e.target.value})}
                   className="w-full p-2 border rounded"
                   rows="3"
                   placeholder="Instrucciones especiales, requisitos, etc."
@@ -350,8 +381,7 @@ export default function PuntosEntrega() {
                   {loading ? 'Registrando...' : 'Registrar punto'}
                 </button>
               </div>
-            </form>
-          </div>
+            </form></div>
         </div>
       )}
 
@@ -359,15 +389,19 @@ export default function PuntosEntrega() {
       {success && (
         <div className="fixed bottom-4 right-4 bg-green-100 border-l-4 border-green-500 p-4 rounded shadow-lg z-50">
           <div className="flex items-center">
-            <div className="text-green-700">Punto de entrega registrado correctamente</div>
+            <div className="text-green-700">
+              Punto de entrega registrado correctamente
+            </div>
           </div>
         </div>
       )}
-
+      
       {error && (
         <div className="fixed bottom-4 right-4 bg-red-100 border-l-4 border-red-500 p-4 rounded shadow-lg z-50">
           <div className="flex items-center">
-            <div className="text-red-700">{error}</div>
+            <div className="text-red-700">
+              {error}
+            </div>
           </div>
         </div>
       )}

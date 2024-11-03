@@ -14,16 +14,23 @@ export default function PuntoRecogida() {
     contact_phone: '',
     accepted_items: [],
     urgent_needs: '',
-    status: 'active',
+    status: 'active'
   });
 
   const [status, setStatus] = useState({
     isSubmitting: false,
     error: null,
-    success: false,
+    success: false
   });
 
-  const tiposAyuda = ['Alimentos', 'Agua', 'Ropa', 'Mantas', 'Medicamentos', 'Productos de higiene'];
+  const tiposAyuda = [
+    'Alimentos',
+    'Agua',
+    'Ropa',
+    'Mantas',
+    'Medicamentos',
+    'Productos de higiene'
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +38,8 @@ export default function PuntoRecogida() {
 
     try {
       // Validar campos requeridos
-      if (!formData.name || !formData.location || !formData.city || !formData.contact_name || !formData.contact_phone) {
+      if (!formData.name || !formData.location || !formData.city || 
+          !formData.contact_name || !formData.contact_phone) {
         throw new Error('Por favor, complete todos los campos obligatorios');
       }
 
@@ -40,7 +48,9 @@ export default function PuntoRecogida() {
       }
 
       // Insertar en Supabase directamente
-      const { error } = await supabase.from('collection_points').insert([formData]);
+      const { error } = await supabase
+        .from('collection_points')
+        .insert([formData]);
 
       if (error) throw error;
 
@@ -54,17 +64,18 @@ export default function PuntoRecogida() {
         contact_phone: '',
         accepted_items: [],
         urgent_needs: '',
-        status: 'active',
+        status: 'active'
       });
 
       setStatus({ isSubmitting: false, error: null, success: true });
-      setTimeout(() => setStatus((prev) => ({ ...prev, success: false })), 5000);
+      setTimeout(() => setStatus(prev => ({ ...prev, success: false })), 5000);
+
     } catch (error) {
       console.error('Error:', error);
       setStatus({
         isSubmitting: false,
         error: error.message || 'Error al registrar el punto de recogida',
-        success: false,
+        success: false
       });
     }
   };
@@ -91,60 +102,77 @@ export default function PuntoRecogida() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del centro*</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nombre del centro*
+            </label>
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => setFormData({...formData, name: e.target.value})}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+              
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Dirección completa*</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Dirección completa*
+            </label>
             <input
               type="text"
               value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              onChange={(e) => setFormData({...formData, location: e.target.value})}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+              
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Ciudad*</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Ciudad*
+            </label>
             <input
               type="text"
               value={formData.city}
-              onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+              onChange={(e) => setFormData({...formData, city: e.target.value})}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+              
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Persona responsable*</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Persona responsable*
+            </label>
             <input
               type="text"
               value={formData.contact_name}
-              onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
+              onChange={(e) => setFormData({...formData, contact_name: e.target.value})}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+              
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono de contacto*</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Teléfono de contacto*
+            </label>
             <input
               type="tel"
               value={formData.contact_phone}
-              onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+              onChange={(e) => setFormData({...formData, contact_phone: e.target.value})}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+              
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Tipos de ayuda que se aceptan*</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tipos de ayuda que se aceptan*
+            </label>
             <div className="grid grid-cols-2 gap-2">
               {tiposAyuda.map((tipo) => (
-                <label
+                <label 
                   key={tipo}
                   className={`flex items-center p-3 rounded cursor-pointer ${
                     formData.accepted_items.includes(tipo)
@@ -158,8 +186,8 @@ export default function PuntoRecogida() {
                     onChange={(e) => {
                       const newItems = e.target.checked
                         ? [...formData.accepted_items, tipo]
-                        : formData.accepted_items.filter((item) => item !== tipo);
-                      setFormData({ ...formData, accepted_items: newItems });
+                        : formData.accepted_items.filter(item => item !== tipo);
+                      setFormData({...formData, accepted_items: newItems});
                     }}
                     className="sr-only"
                   />
@@ -170,10 +198,12 @@ export default function PuntoRecogida() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Necesidades urgentes</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Necesidades urgentes
+            </label>
             <textarea
               value={formData.urgent_needs}
-              onChange={(e) => setFormData({ ...formData, urgent_needs: e.target.value })}
+              onChange={(e) => setFormData({...formData, urgent_needs: e.target.value})}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
               rows="2"
               placeholder="¿Qué se necesita con más urgencia?"
@@ -184,7 +214,9 @@ export default function PuntoRecogida() {
             type="submit"
             disabled={status.isSubmitting}
             className={`w-full ${
-              status.isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+              status.isSubmitting 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-blue-500 hover:bg-blue-600'
             } text-white py-3 px-4 rounded-lg font-semibold`}
           >
             {status.isSubmitting ? 'Registrando...' : 'Registrar Punto de Recogida'}
