@@ -14,8 +14,20 @@ export default function CasosActivos() {
   const [error, setError] = useState(null);
   const [filtroUrgencia, setFiltroUrgencia] = useState('todas');
   const [filtroPueblo, setFiltroPueblo] = useState('todos');
+  const [filtroOferta, setFiltroOferta] = useState('todas');
   const [towns, setTowns] = useState([]);
   const [showModal, setShowModal] = useState(false);
+
+	const tipoAyuda = {
+		'limpieza': 'Limpieza/Desescombro',
+		'evacuacion': 'Transporte/Evacuación',
+		'alojamiento': 'Alojamiento temporal',
+		'distribucion': 'Distribución de suministros',
+		'rescate': 'Equipo de rescate',
+		'medica': 'Asistencia médica',
+		'psicologico': 'Apoyo psicológico',
+		'logistico': 'Apoyo logístico'
+	}
 
   useEffect(() => {
     async function fetchData() {
@@ -92,6 +104,13 @@ export default function CasosActivos() {
     return cumpleUrgencia && cumplePueblo;
   });
 
+	console.log(ofertas);
+	const ofertasFiltradas = ofertas.filter(oferta => {
+		const cumpleOferta = filtroOferta === 'todas' 
+    ? true 
+    : oferta.help_type && oferta.help_type.includes(filtroOferta)
+		return cumpleOferta;
+	});	
   const closeModal = () => {
     setShowModal(false);
   };
@@ -288,17 +307,7 @@ export default function CasosActivos() {
                         <span className="font-semibold">Necesita:</span> {
                         Array.isArray(caso.help_type) ? 
                           caso.help_type.map(tipo => {
-                            const tipoAyuda = {
-                              'limpieza': 'Limpieza/Desescombro',
-                              'evacuacion': 'Transporte/Evacuación',
-                              'alojamiento': 'Alojamiento temporal',
-                              'distribucion': 'Distribución de suministros',
-                              'rescate': 'Equipo de rescate',
-                              'medica': 'Asistencia médica',
-                              'psicologico': 'Apoyo psicológico',
-                              'logistico': 'Apoyo logístico'
-                            }[tipo] || tipo;
-                            return tipoAyuda;
+                            return tipoAyuda[tipo];
                           }).join(', ') : 
                           "Ayuda general"}
                       </span>
@@ -326,8 +335,31 @@ export default function CasosActivos() {
         )}
 
         {activeTab === 'ofertas' && (
+					<>
+					{/* FILTROS  */}
+					<div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
+						<p className="font-bold text-md">Filtros</p>
+						<div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
+						<select
+						value={filtroOferta}
+						onChange={(e) => setFiltroOferta(e.target.value)}
+						className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+						>
+							<option value="todas">Todas las ofertas</option>
+							{
+								Object.entries(tipoAyuda).map(([key, value]) => (
+									<option key={key} value={key}>{value}</option>
+								))
+							}
+						</select>
+					</div>
+      </div>
           <div className="grid gap-4">
-            {ofertas.map((caso) => (
+            {ofertasFiltradas.length === 0 ? (
+              <div className="bg-white rounded-lg shadow-lg border border-gray-300 text-center flex justify-center items-center p-10 flex-col gap-5">
+                <p className="text-gray-700 text-lg font-medium">No se encontraron ofertas que coincidan con los filtros.</p>
+              </div>
+            ) : (ofertasFiltradas.map((caso) => (
               <div key={caso.id} className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-green-500 overflow-hidden">
                 <div className="flex justify-start mb-2">
                   <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap bg-green-100 text-green-800">
@@ -430,8 +462,9 @@ export default function CasosActivos() {
                   </div>
                 )}
               </div>
-            ))}
+            )))}
           </div>
+					</>
         )}
 
         {activeTab === 'puntos' && puntosRecogida.map((punto) => (
