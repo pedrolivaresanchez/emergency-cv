@@ -1,23 +1,31 @@
 'use client';
-import { useEffect, useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import {
-  AlertTriangle,
-  Calendar,
-  Eye,
-  HeartHandshake,
   MapPin,
+  Phone,
+  Mail,
+  Calendar,
+  AlertTriangle,
+  User,
+  HeartHandshake,
+  Users,
+  Truck,
+  Search,
+  Package,
   MapPinned,
   Megaphone,
-  Package,
-  Phone,
-  Search,
-  Truck,
-  User,
-  Users,
+  MapPinIcon,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import OfferHelp from '@/components/OfferHelp';
-import Link from 'next/link';
+import Mapa from '@/components/map/map';
+import { getMarkerBySolicitud } from '@/helpers/format';
+import SolicitudCard from '@/components/SolicitudCard';
+import { tiposAyudaOptions } from '@/helpers/constants';
+
+const PAIPORTA_LAT_LNG = [-0.41667, 39.43333];
+
 export default function CasosActivos() {
   const [activeTab, setActiveTab] = useState('solicitudes');
   const [solicitudes, setSolicitudes] = useState([]);
@@ -29,37 +37,44 @@ export default function CasosActivos() {
   const [filtroPueblo, setFiltroPueblo] = useState('todos');
   const [towns, setTowns] = useState([]);
   const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
         setError(null);
+
         const { data: solicitudesData, error: solicitudesError } = await supabase
           .from('help_requests')
           .select('*')
           .eq('type', 'necesita')
           .order('created_at', { ascending: false });
+
         if (solicitudesError) {
           console.error('Error fetching solicitudes:', solicitudesError);
           setSolicitudes([]);
         } else {
           setSolicitudes(solicitudesData || []);
         }
+
         const { data: ofertasData, error: ofertasError } = await supabase
           .from('help_requests')
           .select('*')
           .eq('type', 'ofrece')
           .order('created_at', { ascending: false });
+
         if (ofertasError) {
           console.error('Error fetching ofertas:', ofertasError);
           setOfertas([]);
         } else {
           setOfertas(ofertasData || []);
         }
+
         const { data: puntosData, error: puntosError } = await supabase
           .from('collection_points')
           .select('*')
           .order('created_at', { ascending: false });
+
         if (puntosError) {
           console.error('Error fetching puntos:', puntosError);
           setPuntosRecogida([]);
@@ -73,15 +88,19 @@ export default function CasosActivos() {
         setLoading(false);
       }
     }
+
     fetchData();
     fetchTowns();
   }, []);
+
   async function fetchTowns() {
     const { data, error } = await supabase.from('towns').select('id, name');
+
     if (error) {
       console.error('Error fetching towns:', error);
       return;
     }
+
     setTowns(data);
   }
   const solicitudesFiltradas = solicitudes.filter((caso) => {
@@ -89,9 +108,11 @@ export default function CasosActivos() {
     const cumplePueblo = filtroPueblo === 'todos' ? true : caso.town_id === parseInt(filtroPueblo);
     return cumpleUrgencia && cumplePueblo;
   });
+
   const closeModal = () => {
     setShowModal(false);
   };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -99,6 +120,7 @@ export default function CasosActivos() {
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
@@ -106,11 +128,15 @@ export default function CasosActivos() {
       </div>
     );
   }
+
+  // const puntosDeRecogidaMarkers = puntosRecogida.map(p => getMarkerByPuntoDeRecogida).filter(Boolean)
+  const solicitudesMarkers = solicitudes.map((sol) => getMarkerBySolicitud(sol, towns)).filter(Boolean);
+
   return (
     <>
       <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
         {/* Tabs mejorados */}
-        <div className="grid grid-cols-3 gap-2 bg-white p-2 rounded-lg shadow">
+        <div className="grid grid-cols-4 gap-2 bg-white p-2 rounded-lg shadow">
           <button
             onClick={() => setActiveTab('solicitudes')}
             className={`flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-colors ${
@@ -144,7 +170,20 @@ export default function CasosActivos() {
             <Package className="h-6 w-6 mb-1" />
             <span className="text-xs sm:text-sm font-medium">P. Recogida ({puntosRecogida.length})</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('mapa')}
+            className={`flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-colors ${
+              activeTab === 'mapa'
+                ? 'bg-yellow-500 text-white'
+                : 'bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <MapPinIcon className="h-6 w-6 mb-1" />
+            <span className="text-xs sm:text-sm font-medium">Mapa ayuda ({solicitudes.length})</span>
+          </button>
         </div>
+
         {/* Lista de casos */}
         <div className="grid gap-4">
           {activeTab === 'solicitudes' && (
@@ -183,6 +222,7 @@ export default function CasosActivos() {
                     <p className="text-gray-700 text-lg font-medium">
                       No se encontraron solicitudes que coincidan con los filtros.
                     </p>
+
                     <button
                       onClick={() => {
                         setShowModal(true);
@@ -194,165 +234,12 @@ export default function CasosActivos() {
                     </button>
                   </div>
                 ) : (
-                  solicitudesFiltradas.map((caso) => (
-                    <div
-                      key={caso.id}
-                      className={`bg-white p-4 rounded-lg shadow-lg border-l-4 ${
-                        caso.urgency === 'alta'
-                          ? 'border-red-500'
-                          : caso.urgency === 'media'
-                            ? 'border-yellow-500'
-                            : 'border-green-500'
-                      } overflow-hidden`}
-                    >
-                      <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-4">
-                        <h3
-                          className={`text-lg font-bold break-words ${
-                            caso.urgency === 'alta'
-                              ? 'text-red-600'
-                              : caso.urgency === 'media'
-                                ? 'text-yellow-600'
-                                : 'text-green-500'
-                          }`}
-                        >
-                          {caso.name || 'Necesita Ayuda'}
-                        </h3>
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap ${
-                            caso.status === 'pending'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : caso.status === 'in_progress'
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-green-100 text-green-800'
-                          }`}
-                        >
-                          {caso.status === 'pending'
-                            ? 'Pendiente'
-                            : caso.status === 'in_progress'
-                              ? 'En proceso'
-                              : 'Activo'}
-                        </span>
-                      </div>
-                      <p className="text-gray-700 mb-4 break-words">{caso.description}</p>
-                      <div className="space-y-2 text-sm">
-                        {caso.town_id && (
-                          <div className="flex items-start gap-2">
-                            <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                            <span className="break-words">
-                              <span className="font-semibold">Pueblo:</span> {towns[caso.town_id - 1].name}
-                            </span>
-                          </div>
-                        )}
-                        <div className="flex items-start gap-2">
-                          <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                          <span className="break-words">
-                            <span className="font-semibold">Ubicación:</span> {caso.location}
-                          </span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <Calendar className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                          <span className="break-words">
-                            <span className="font-semibold">Fecha:</span>{' '}
-                            {new Date(caso.created_at).toLocaleDateString() +
-                              ' ' +
-                              new Date(caso.created_at).toLocaleTimeString([], {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              })}
-                          </span>
-                        </div>
-                        {caso.contact_info && (
-                          <div className="flex items-start gap-2">
-                            <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                            <span className="break-words">
-                              <span className="font-semibold">Contacto:</span> {caso.contact_info}
-                            </span>
-                          </div>
-                        )}
-                        {caso.urgency && (
-                          <div className="flex items-start gap-2">
-                            <AlertTriangle
-                              className={`h-4 w-4 flex-shrink-0 mt-1 ${
-                                caso.urgency === 'alta'
-                                  ? 'text-red-500'
-                                  : caso.urgency === 'media'
-                                    ? 'text-yellow-500'
-                                    : 'text-green-500'
-                              }`}
-                            />
-                            <span className="break-words">
-                              <span className="font-semibold">Urgencia:</span>
-                              <span
-                                className={`ml-1 ${
-                                  caso.urgency === 'alta'
-                                    ? 'text-red-600 font-semibold'
-                                    : caso.urgency === 'media'
-                                      ? 'text-yellow-600'
-                                      : 'text-green-600'
-                                }`}
-                              >
-                                {caso.urgency === 'alta' ? 'Alta' : caso.urgency === 'media' ? 'Media' : 'Baja'}
-                              </span>
-                            </span>
-                          </div>
-                        )}
-                        {caso.help_type && (
-                          <div className="flex items-start gap-2">
-                            <Megaphone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                            <span className="break-words">
-                              <span className="font-semibold">Necesita:</span>{' '}
-                              {Array.isArray(caso.help_type)
-                                ? caso.help_type
-                                    .map((tipo) => {
-                                      const tipoAyuda =
-                                        {
-                                          limpieza: 'Limpieza/Desescombro',
-                                          evacuacion: 'Transporte/Evacuación',
-                                          alojamiento: 'Alojamiento temporal',
-                                          distribucion: 'Distribución de suministros',
-                                          rescate: 'Equipo de rescate',
-                                          medica: 'Asistencia médica',
-                                          psicologico: 'Apoyo psicológico',
-                                          logistico: 'Apoyo logístico',
-                                        }[tipo] || tipo;
-                                      return tipoAyuda;
-                                    })
-                                    .join(', ')
-                                : 'Ayuda general'}
-                            </span>
-                          </div>
-                        )}
-                        {caso.additional_info?.special_situations && (
-                          <div className="mt-2 bg-gray-50 p-3 rounded">
-                            <span className="font-semibold block mb-1">Situaciones especiales:</span>
-                            <p className="text-gray-700 break-words">{caso.additional_info.special_situations}</p>
-                          </div>
-                        )}
-                        {caso.number_of_people && (
-                          <div className="flex items-start gap-2">
-                            <Users className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                            <span className="break-words">
-                              <span className="font-semibold">Personas afectadas:</span> {caso.number_of_people}
-                            </span>
-                          </div>
-                        )}
-                        {/* Botón con ícono de ojo */}
-                        <div className="flex justify-end mt-4">
-                          <Link
-                            className="inline-flex items-center px-3 py-2 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600"
-                            href={`/casos-activos/${caso.id}`}
-                          >
-                            <Eye className="w-4 h-4 mr-2" />
-                            Ver detalle
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  ))
+                  solicitudesFiltradas.map((caso) => <SolicitudCard towns={towns} key={caso.id} caso={caso} />)
                 )}
               </div>
             </>
           )}
+
           {activeTab === 'ofertas' && (
             <div className="grid gap-4">
               {ofertas.map((caso) => (
@@ -365,6 +252,7 @@ export default function CasosActivos() {
                       {caso.status === 'active' ? 'Activo' : 'Inactivo'}
                     </span>
                   </div>
+
                   <div className="space-y-2 mb-4">
                     <h3 className="text-lg font-bold text-green-600">
                       <div className="flex items-start gap-2">
@@ -374,18 +262,7 @@ export default function CasosActivos() {
                           {Array.isArray(caso.help_type)
                             ? caso.help_type
                                 .map((tipo) => {
-                                  const tipoAyuda =
-                                    {
-                                      limpieza: 'Limpieza/Desescombro',
-                                      evacuacion: 'Transporte/Evacuación',
-                                      alojamiento: 'Alojamiento temporal',
-                                      distribucion: 'Distribución de suministros',
-                                      rescate: 'Equipo de rescate',
-                                      medica: 'Asistencia médica',
-                                      psicologico: 'Apoyo psicológico',
-                                      logistico: 'Apoyo logístico',
-                                    }[tipo] || tipo;
-                                  return tipoAyuda;
+                                  return tiposAyudaOptions[tipo] || tipo;
                                 })
                                 .join(', ')
                             : 'Ayuda general'}
@@ -401,6 +278,7 @@ export default function CasosActivos() {
                       </div>
                     )}
                   </div>
+
                   <div className="space-y-2 text-sm">
                     {caso.contact_info && (
                       <div className="flex items-start gap-2">
@@ -413,6 +291,7 @@ export default function CasosActivos() {
                         </span>
                       </div>
                     )}
+
                     {caso.resources && (
                       <>
                         {(() => {
@@ -420,6 +299,7 @@ export default function CasosActivos() {
                           try {
                             resources =
                               typeof caso.resources === 'string' ? JSON.parse(caso.resources) : caso.resources;
+
                             return resources.vehicle ? (
                               <div className="flex items-start gap-2">
                                 <Truck className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
@@ -434,6 +314,7 @@ export default function CasosActivos() {
                         })()}
                       </>
                     )}
+
                     {caso.location && (
                       <div className="flex items-start gap-2">
                         <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
@@ -442,19 +323,18 @@ export default function CasosActivos() {
                         </span>
                       </div>
                     )}
+
                     <div className="flex items-start gap-2">
                       <Calendar className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                       <span className="break-words">
                         <span className="font-semibold">Fecha:</span>{' '}
                         {new Date(caso.created_at).toLocaleDateString() +
                           ' ' +
-                          new Date(caso.created_at).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
+                          new Date(caso.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                   </div>
+
                   {caso.description && (
                     <div className="mt-4 bg-gray-50 p-3 rounded">
                       <span className="font-semibold block mb-1">Comentarios:</span>
@@ -465,6 +345,7 @@ export default function CasosActivos() {
               ))}
             </div>
           )}
+
           {activeTab === 'puntos' &&
             puntosRecogida.map((punto) => (
               <div key={punto.id} className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-blue-500">
@@ -525,8 +406,11 @@ export default function CasosActivos() {
                 </div>
               </div>
             ))}
+
+          {activeTab === 'mapa' && <Mapa markers={solicitudesMarkers} center={PAIPORTA_LAT_LNG} zoom={10}></Mapa>}
         </div>
       </div>
+
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
           <OfferHelp town={towns[filtroPueblo - 1]} onClose={closeModal} isModal={true} />
