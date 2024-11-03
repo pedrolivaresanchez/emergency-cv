@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import Link from 'next/link';
+
 import {
   MapPin,
   Phone,
@@ -56,10 +58,7 @@ export default function CasoDetalle() {
     fetchTowns();
   }, [id]);
 
-  const handleBack = () => {
-    // router.back();
-    router.push('/casos-activos');
-  };
+
 
   if (loading) {
     return (
@@ -73,28 +72,30 @@ export default function CasoDetalle() {
     return (
       <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
         <p className="text-red-700">No se encontró el caso.</p>
-        <button
-          onClick={handleBack}
-          className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 mt-4
+        <Link href="/casos-activos">
+          <button
+            className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 mt-4
              sm:mx-auto sm:block"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Volver
-        </button>
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver
+          </button>
+        </Link>
       </div>
     );
   }
   return (
     <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
-      <div className={"flex justify-end"}>
-        <button
-          onClick={handleBack}
-          className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 mt-1
+      <div className={'flex justify-end'}>
+        <Link href="/casos-activos">
+          <button
+            className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 mt-4
              sm:mx-auto sm:block"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Volver
-        </button>
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver
+          </button>
+        </Link>
       </div>
       <div
         className={`bg-white p-6 rounded-lg shadow-lg border-l-4 ${

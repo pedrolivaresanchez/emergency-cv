@@ -20,6 +20,7 @@ import {
 import { supabase } from '@/lib/supabase';
 import OfferHelp from '@/components/OfferHelp';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function CasosActivos() {
   const [activeTab, setActiveTab] = useState('solicitudes');
@@ -32,7 +33,6 @@ export default function CasosActivos() {
   const [filtroPueblo, setFiltroPueblo] = useState('todos');
   const [towns, setTowns] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     async function fetchData() {
@@ -108,9 +108,7 @@ export default function CasosActivos() {
     const cumplePueblo = filtroPueblo === 'todos' ? true : caso.town_id === parseInt(filtroPueblo);
     return cumpleUrgencia && cumplePueblo;
   });
-  const handleClick = (id) => {
-    router.push(`/casos-activos/${id}`);
-  };
+
   const closeModal = () => {
     setShowModal(false);
   };
@@ -223,13 +221,13 @@ export default function CasosActivos() {
               </button>
               </div>
             ) : (solicitudesFiltradas.map((caso) => (
-              <div onClick={()=>handleClick(caso.id)}
+              <div
                              key={caso.id} className={`bg-white p-4 rounded-lg shadow-lg border-l-4 ${
                         caso.urgency === 'alta' ? 'border-red-500' :
                         caso.urgency === 'media' ? 'border-yellow-500' :
                         'border-green-500'
                       } overflow-hidden`}>
-                <div onClick={() => handleClick(caso.id)} className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-4">
                   <h3 className={`text-lg font-bold break-words ${
                         caso.urgency === 'alta' ? 'text-red-600' :
                         caso.urgency === 'media' ? 'text-yellow-600' :
@@ -340,13 +338,15 @@ export default function CasosActivos() {
                   )}
                   {/* Botón con ícono de ojo */}
                   <div className="flex justify-end mt-4">
+                    <Link href={`/casos-activos/${caso.id}`}>
+
                     <button
-                      onClick={() => handleClick(caso.id)}
                       className="inline-flex items-center px-3 py-2 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600"
                     >
                       <Eye className="w-4 h-4 mr-2" />
                       Ver detalle
                     </button>
+                      </Link>
                   </div>
                 </div>
               </div>
