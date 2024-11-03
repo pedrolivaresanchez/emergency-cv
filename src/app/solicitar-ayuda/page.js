@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { AlertTriangle, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { AlertTriangle, Check, Mail } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 
@@ -16,7 +16,8 @@ export default function SolicitarAyuda() {
     urgencia: 'alta',
     situacionEspecial: '',
     contacto: '',
-    consentimiento: false
+    consentimiento: false,
+		pueblo: ''
   });
 
   const [status, setStatus] = useState({
@@ -25,7 +26,25 @@ export default function SolicitarAyuda() {
     success: false
   });
 
-  // Primero vamos a actualizar los tipos de ayuda para que coincidan con la base de datos
+	const [towns, setTowns] = useState([]);
+
+	async function fetchTowns() {
+		const { data, error } = await supabase
+			.from('towns')
+			.select('id, name');
+		
+		if (error) {
+			console.error('Error fetching towns:', error);
+			return;
+		}
+		
+		setTowns(data);
+	}
+	
+	useEffect(() => {
+		fetchTowns();
+	}, []);
+
 const tiposAyudaOptions = [
   { id: 'limpieza', label: 'Limpieza/Desescombro' },
   { id: 'evacuacion', label: 'Transporte/Evacuación' },
@@ -77,6 +96,7 @@ const tiposAyudaOptions = [
           special_situations: formData.situacionEspecial || null,
           consent: true
         },
+				town_id: formData.pueblo,
         status: 'active'
       };
 
@@ -100,6 +120,7 @@ const tiposAyudaOptions = [
         urgencia: 'alta',
         situacionEspecial: '',
         contacto: '',
+				pueblo: '',
         consentimiento: false
       });
 
@@ -289,7 +310,31 @@ const tiposAyudaOptions = [
               
             />
           </div>
-
+					{ /* Pueblos */}
+					<div>
+						<div className="flex flex-row justify-between mb-2 items-end">
+						<label className="block text-sm font-medium text-gray-700 mb-1">
+							Pueblo
+						</label>
+						<a href="mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro" className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap">
+							<Mail className="h-5 w-5" />
+							Solicitar nuevo pueblo
+							</a>
+						</div>
+						<select
+							name="pueblo"
+							value={formData.pueblo}
+							onChange={handleChange}
+							className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
+						>
+							<option value="">Selecciona un pueblo</option>
+							{towns.map((item) => (
+								<option key={item.id} value={item.id}>
+									{item.name}
+								</option>
+							))}
+						</select>
+					</div>
           {/* Consentimiento */}
           <div className="flex items-start">
             <input
