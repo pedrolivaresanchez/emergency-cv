@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { MapPin, Phone, Mail, Calendar, AlertTriangle, User, HeartHandshake, Users, Truck, Search, Package, MapPinned, Megaphone } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import OfferHelp from '@/components/OfferHelp';
+import Pagination from '@/components/Pagination';
 
 export default function CasosActivos() {
   const [activeTab, setActiveTab] = useState('solicitudes');
@@ -16,6 +17,8 @@ export default function CasosActivos() {
   const [filtroPueblo, setFiltroPueblo] = useState('todos');
   const [towns, setTowns] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     async function fetchData() {
@@ -72,6 +75,10 @@ export default function CasosActivos() {
     fetchData();
     fetchTowns();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab])
 	
 
   async function fetchTowns() {
@@ -110,6 +117,18 @@ export default function CasosActivos() {
         <p className="text-red-700">{error}</p>
       </div>
     );
+  }
+
+  const items = {
+    solicitudes: solicitudesFiltradas.length,
+    ofertas: ofertas.length,
+    puntos: puntosRecogida.length,
+  };
+  
+  const numPages = Math.ceil(items[activeTab] / itemsPerPage) || 0;
+
+  function onPageChange(page) {
+    setCurrentPage(page);
   }
 
   return (
@@ -203,7 +222,7 @@ export default function CasosActivos() {
                 Ofrecer ayuda a {towns[filtroPueblo-1].name}
               </button>
               </div>
-            ) : (solicitudesFiltradas.map((caso) => (
+            ) : (solicitudesFiltradas.slice((currentPage - 1) * itemsPerPage, (currentPage - 1) * itemsPerPage + itemsPerPage).map((caso) => (
               <div key={caso.id} className={`bg-white p-4 rounded-lg shadow-lg border-l-4 ${
                         caso.urgency === 'alta' ? 'border-red-500' :
                         caso.urgency === 'media' ? 'border-yellow-500' :
@@ -327,7 +346,7 @@ export default function CasosActivos() {
 
         {activeTab === 'ofertas' && (
           <div className="grid gap-4">
-            {ofertas.map((caso) => (
+            {ofertas.slice((currentPage - 1) * itemsPerPage, (currentPage - 1) * itemsPerPage + itemsPerPage).map((caso) => (
               <div key={caso.id} className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-green-500 overflow-hidden">
                 <div className="flex justify-start mb-2">
                   <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap bg-green-100 text-green-800">
@@ -434,7 +453,7 @@ export default function CasosActivos() {
           </div>
         )}
 
-        {activeTab === 'puntos' && puntosRecogida.map((punto) => (
+        {activeTab === 'puntos' && puntosRecogida.slice((currentPage - 1) * itemsPerPage, (currentPage - 1) * itemsPerPage + itemsPerPage).map((punto) => (
           <div key={punto.id} className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-blue-500">
             <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-4">
               <div>
@@ -495,6 +514,9 @@ export default function CasosActivos() {
             </div>
           </div>
         ))}
+      </div>
+      <div className='flex items-center justify-center'>
+        <Pagination currentPage={currentPage} totalPages={numPages} onPageChange={onPageChange}/>
       </div>
     </div>
 
