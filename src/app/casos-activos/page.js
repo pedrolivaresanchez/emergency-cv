@@ -133,9 +133,17 @@ export default function CasosActivos() {
         {activeTab === 'solicitudes' && (
           <div className="grid gap-4">
             {solicitudes.map((caso) => (
-              <div key={caso.id} className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-red-500 overflow-hidden">
+              <div key={caso.id} className={`bg-white p-4 rounded-lg shadow-lg border-l-4 ${
+                        caso.urgency === 'alta' ? 'border-red-500' :
+                        caso.urgency === 'media' ? 'border-yellow-500' :
+                        'border-green-500'
+                      } overflow-hidden`}>
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-4">
-                  <h3 className="text-lg font-bold text-red-600 break-words">
+                  <h3 className={`text-lg font-bold break-words ${
+                        caso.urgency === 'alta' ? 'text-red-500' :
+                        caso.urgency === 'media' ? 'text-yellow-500' :
+                        'text-green-500'
+                      }`}>
                     {caso.name || "Necesita Ayuda"}
                   </h3>
                   <span className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap ${
