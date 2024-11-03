@@ -185,7 +185,11 @@ export default function CasosActivos() {
 					</div>
       </div>
           <div className="grid gap-4">
-            {solicitudesFiltradas.map((caso) => (
+            {solicitudesFiltradas.length === 0 ? (
+              <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-300 text-center">
+                <p className="text-gray-700">No se encontraron solicitudes que coincidan con los filtros.</p>
+              </div>
+            ) : (solicitudesFiltradas.map((caso) => (
               <div key={caso.id} className={`bg-white p-4 rounded-lg shadow-lg border-l-4 ${
                         caso.urgency === 'alta' ? 'border-red-500' :
                         caso.urgency === 'media' ? 'border-yellow-500' :
@@ -269,7 +273,7 @@ export default function CasosActivos() {
                   )}
                 </div>
               </div>
-            ))}
+            )))}
           </div>
 					</>
         )}
