@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { MapPin } from 'lucide-react';
 
-export default function AddressAutocomplete({ onSelect, placeholder = "Buscar dirección...", initialValue = "" }) {
+export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar dirección...', initialValue = '' }) {
   const [query, setQuery] = useState(initialValue);
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,16 +29,16 @@ export default function AddressAutocomplete({ onSelect, placeholder = "Buscar di
     setIsLoading(true);
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&countrycodes=es&limit=5&addressdetails=1`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&countrycodes=es&limit=5&addressdetails=1`,
       );
       const data = await response.json();
-      
-      const formattedSuggestions = data.map(item => {
+
+      const formattedSuggestions = data.map((item) => {
         // Create a readable address line
         const addressParts = [];
         if (item.address?.road) addressParts.push(item.address.road);
         if (item.address?.house_number) addressParts.push(item.address.house_number);
-        
+
         // Create a readable locality line
         const localityParts = [];
         if (item.address?.postcode) localityParts.push(item.address.postcode);
@@ -47,10 +47,7 @@ export default function AddressAutocomplete({ onSelect, placeholder = "Buscar di
         }
         if (item.address?.state) localityParts.push(item.address.state);
 
-        const fullAddress = [
-          addressParts.join(' '),
-          localityParts.join(', ')
-        ].filter(Boolean).join(', ');
+        const fullAddress = [addressParts.join(' '), localityParts.join(', ')].filter(Boolean).join(', ');
 
         return {
           display_name: item.display_name,
@@ -64,8 +61,8 @@ export default function AddressAutocomplete({ onSelect, placeholder = "Buscar di
             house_number: item.address?.house_number || '',
             postcode: item.address?.postcode || '',
             city: item.address?.city || item.address?.town || item.address?.village || '',
-            state: item.address?.state || ''
-          }
+            state: item.address?.state || '',
+          },
         };
       });
 
@@ -82,7 +79,7 @@ export default function AddressAutocomplete({ onSelect, placeholder = "Buscar di
   const handleInputChange = (e) => {
     const value = e.target.value;
     setQuery(value);
-    
+
     // Cuando el usuario escribe manualmente, enviamos solo el texto
     onSelect({
       fullAddress: value,
@@ -92,8 +89,8 @@ export default function AddressAutocomplete({ onSelect, placeholder = "Buscar di
         house_number: '',
         postcode: '',
         city: '',
-        state: ''
-      }
+        state: '',
+      },
     });
 
     // Solo buscar sugerencias si hay más de 3 caracteres
@@ -115,9 +112,9 @@ export default function AddressAutocomplete({ onSelect, placeholder = "Buscar di
       fullAddress: suggestion.full_address,
       coordinates: {
         lat: suggestion.lat,
-        lon: suggestion.lon
+        lon: suggestion.lon,
       },
-      details: suggestion.address
+      details: suggestion.address,
     });
   };
 
@@ -148,13 +145,9 @@ export default function AddressAutocomplete({ onSelect, placeholder = "Buscar di
               onClick={() => handleSelect(suggestion)}
               className="w-full text-left px-4 py-2 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
             >
-              <p className="font-medium text-gray-800">
-                {suggestion.formatted_address}
-              </p>
+              <p className="font-medium text-gray-800">{suggestion.formatted_address}</p>
               {suggestion.formatted_locality && (
-                <p className="text-sm text-gray-600">
-                  {suggestion.formatted_locality}
-                </p>
+                <p className="text-sm text-gray-600">{suggestion.formatted_locality}</p>
               )}
             </button>
           ))}

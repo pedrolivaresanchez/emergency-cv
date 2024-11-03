@@ -27,9 +27,7 @@ export default function EmergencyLayout({ children }) {
     <div className="min-h-screen bg-gray-100">
       <Sidebar isOpen={isSidebarOpen} toggle={() => setIsSidebarOpen(!isSidebarOpen)} />
       <div className={`transition-margin duration-300 ${isSidebarOpen ? 'md:ml-64' : 'ml-0'}`}>
-        <main className="p-4">
-          {children}
-        </main>
+        <main className="p-4">{children}</main>
       </div>
     </div>
   );
