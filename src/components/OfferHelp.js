@@ -6,7 +6,7 @@ import { helpRequestService } from '@/lib/service';
 import { supabase } from '@/lib/supabase';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 
-export default function OfferHelp({ town, onClose }) {
+export default function OfferHelp({ town, onClose, isModal }) {
   const [towns, setTowns] = useState([]);
 
   async function fetchTowns() {
@@ -387,7 +387,8 @@ export default function OfferHelp({ town, onClose }) {
           </div>
         </div>
         <div className="flex flex-col sm:flex-row gap-4">
-        <button
+        {isModal && (
+          <button
           type="submit"
           className={`w-full bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-lg font-semibold 
               focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2`}
@@ -395,6 +396,7 @@ export default function OfferHelp({ town, onClose }) {
         >
           Cancelar
         </button>
+        )}
         <button
             type="submit"
             disabled={status.isSubmitting}
