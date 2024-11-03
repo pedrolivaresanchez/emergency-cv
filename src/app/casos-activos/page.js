@@ -467,7 +467,7 @@ export default function CasosActivos() {
 
     {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-          <OfferHelp town={towns[filtroPueblo-1]} onClose={closeModal} />
+          <OfferHelp town={towns[filtroPueblo-1]} onClose={closeModal} isModal={true} />
         </div>
     )}
     </>
