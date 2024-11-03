@@ -249,7 +249,7 @@ export default function CasosActivos() {
                     <Calendar className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                     <span className="break-words">
                       <span className="font-semibold">Fecha:</span>{' '}
-                      {new Date(caso.created_at).toLocaleDateString()}
+                      {new Date(caso.created_at).toLocaleDateString() + " " + new Date(caso.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </span>
                   </div>
                   {caso.contact_info && (
@@ -418,7 +418,7 @@ export default function CasosActivos() {
                     <Calendar className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                     <span className="break-words">
                       <span className="font-semibold">Fecha:</span>{' '}
-                      {new Date(caso.created_at).toLocaleDateString()}
+                      {new Date(caso.created_at).toLocaleDateString() + " " + new Date(caso.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </span>
                   </div>
                 </div>
