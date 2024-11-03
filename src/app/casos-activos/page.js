@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapPin, Phone, Mail, Calendar, AlertTriangle, User, HeartHandshake, Users, Truck, Search, Package, MapPinned } from 'lucide-react';
+import { MapPin, Phone, Mail, Calendar, AlertTriangle, User, HeartHandshake, Users, Truck, Search, Package, MapPinned, Megaphone } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import OfferHelp from '@/components/OfferHelp';
 
@@ -278,6 +278,29 @@ export default function CasosActivos() {
                            caso.urgency === 'media' ? 'Media' :
                            'Baja'}
                         </span>
+                      </span>
+                    </div>
+                  )}
+                  {caso.help_type && (
+                    <div className="flex items-start gap-2">
+                      <Megaphone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
+                      <span className="break-words">
+                        <span className="font-semibold">Necesita:</span> {
+                        Array.isArray(caso.help_type) ? 
+                          caso.help_type.map(tipo => {
+                            const tipoAyuda = {
+                              'limpieza': 'Limpieza/Desescombro',
+                              'evacuacion': 'Transporte/Evacuación',
+                              'alojamiento': 'Alojamiento temporal',
+                              'distribucion': 'Distribución de suministros',
+                              'rescate': 'Equipo de rescate',
+                              'medica': 'Asistencia médica',
+                              'psicologico': 'Apoyo psicológico',
+                              'logistico': 'Apoyo logístico'
+                            }[tipo] || tipo;
+                            return tipoAyuda;
+                          }).join(', ') : 
+                          "Ayuda general"}
                       </span>
                     </div>
                   )}
