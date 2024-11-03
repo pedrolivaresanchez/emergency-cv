@@ -1,6 +1,6 @@
 'use client';
 
-import { MapPin, Clock, AlertCircle, Phone, Heart, Users, Package, Truck } from 'lucide-react';
+import { MapPin, Clock, AlertCircle, Heart, Users, Package } from 'lucide-react';
 
 export default function Home() {
   const emergencyNumbers = [
@@ -137,53 +137,6 @@ export default function Home() {
             <p className="text-gray-600">{action.description}</p>
           </a>
         ))}
-      </div>
-
-      {/* Sección de Donaciones de la Generalitat */}
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="bg-yellow-500 p-4">
-          <h2 className="text-2xl font-bold text-white text-center">
-            Cuenta Solidaria Generalitat Valenciana
-          </h2>
-        </div>
-        
-        <div className="p-6 space-y-6">
-          <div className="bg-yellow-50 p-6 rounded-lg text-center">
-            <p className="text-lg font-medium text-yellow-800 mb-4">
-              Número de cuenta oficial para donaciones:
-            </p>
-            <div className="bg-white p-4 rounded-lg inline-block mx-auto font-mono text-xl mb-4">
-              ES94 0081 0693 61 0002423445
-            </div>
-            <button 
-              onClick={() => {
-                navigator.clipboard.writeText('ES94 0081 0693 61 0002423445');
-                alert('Número de cuenta copiado al portapapeles');
-              }}
-              className="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 
-                transition-colors flex items-center gap-2 mx-auto"
-            >
-              📋 Copiar número de cuenta
-            </button>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-blue-800 mb-2">Compromiso Banco Sabadell</h3>
-              <p className="text-blue-700">
-                Por cada euro donado, el banco aportará otro euro adicional 
-                (mínimo garantizado: 500.000€)
-              </p>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-gray-800 mb-2">Información Oficial</h3>
-              <p className="text-gray-600">
-                Iniciativa de la Generalitat Valenciana en colaboración con la 
-                Conselleria de Hacienda y Banco Sabadell para ayudar a los afectados.
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Puntos de Encuentro */}
