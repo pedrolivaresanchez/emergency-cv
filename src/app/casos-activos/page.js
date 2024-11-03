@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapPin, Phone, Mail, Calendar, AlertTriangle, User, HeartHandshake, Users, Truck, Search, Package } from 'lucide-react';
+import { MapPin, Phone, Mail, Calendar, AlertTriangle, User, HeartHandshake, Users, Truck, Search, Package, MapPinned } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import OfferHelp from '@/components/OfferHelp';
 
@@ -229,6 +229,16 @@ export default function CasosActivos() {
                 </div>
                 <p className="text-gray-700 mb-4 break-words">{caso.description}</p>
                 <div className="space-y-2 text-sm">
+                  {
+                    caso.town_id && (
+                      <div className="flex items-start gap-2">
+                        <MapPinned className="h-4 w-4 text-gray-900 flex-shrink-0 mt-1" />
+                        <span className="break-words">
+                          <span className="font-semibold">Pueblo:</span> {towns[caso.town_id].name}
+                        </span>
+                      </div>
+                    )
+                  }
                   <div className="flex items-start gap-2">
                     <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                     <span className="break-words">
