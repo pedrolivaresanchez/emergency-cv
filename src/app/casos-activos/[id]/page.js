@@ -1,22 +1,9 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
-
-import {
-  MapPin,
-  Phone,
-  Calendar,
-  AlertTriangle,
-  User,
-  Users,
-  MapPinned,
-  Megaphone,
-  ArrowLeft,
-} from 'lucide-react';
-
+import { AlertTriangle, ArrowLeft, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
 export default function CasoDetalle() {
   const params = useParams();
   const router = useRouter();
@@ -24,15 +11,9 @@ export default function CasoDetalle() {
   const [caso, setCaso] = useState(null);
   const [towns, setTowns] = useState([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     async function fetchCaso() {
-      const { data, error } = await supabase
-        .from('help_requests')
-        .select('*')
-        .eq('id', id)
-        .single();
-
+      const { data, error } = await supabase.from('help_requests').select('*').eq('id', id).single();
       if (error) {
         console.error('Error fetching caso:', error);
       } else {
@@ -40,26 +21,17 @@ export default function CasoDetalle() {
       }
       setLoading(false);
     }
-
     async function fetchTowns() {
-      const { data, error } = await supabase
-        .from('towns')
-        .select('id, name');
-
+      const { data, error } = await supabase.from('towns').select('id, name');
       if (error) {
         console.error('Error fetching towns:', error);
         return;
       }
-
       setTowns(data);
     }
-
     fetchCaso();
     fetchTowns();
   }, [id]);
-
-
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -67,19 +39,17 @@ export default function CasoDetalle() {
       </div>
     );
   }
-
   if (!caso) {
     return (
       <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
         <p className="text-red-700">No se encontró el caso.</p>
-        <Link href="/casos-activos">
-          <button
-            className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 mt-4
+        <Link
+          className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 mt-4
              sm:mx-auto sm:block"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver
-          </button>
+          href="/casos-activos"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Volver
         </Link>
       </div>
     );
@@ -87,14 +57,13 @@ export default function CasoDetalle() {
   return (
     <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
       <div className={'flex justify-end'}>
-        <Link href="/casos-activos">
-          <button
-            className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 mt-4
+        <Link
+          className="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 mt-4
              sm:mx-auto sm:block"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver
-          </button>
+          href="/casos-activos"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Volver
         </Link>
       </div>
       <div
