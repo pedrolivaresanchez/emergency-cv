@@ -17,15 +17,14 @@ export default function Login({ onSuccessCallback }) {
   });
 
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
+
+  const refreshUser = async () => {
+    const response = await authService.getSessionUser();
+    setUser(response.data.user);
+  };
 
   useEffect(() => {
-    async function fetchData() {
-      const response = await authService.getSessionUser();
-      setUser(response.data.user);
-      setError(response.error);
-    }
-    fetchData();
+    refreshUser();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -131,6 +130,10 @@ export default function Login({ onSuccessCallback }) {
       {isSignUp && (
         <SignUp
           onBackButtonClicked={() => {
+            setIsSignUp(false);
+          }}
+          onSuccessCallback={() => {
+            refreshUser();
             setIsSignUp(false);
           }}
         />
