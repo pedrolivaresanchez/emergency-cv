@@ -1,4 +1,5 @@
 import { AlertTriangle, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
+import {tiposAyudaOptions} from "@/helpers/constants";
 
 export default function SolicitudCard({ caso, towns }) {
   return (
@@ -104,18 +105,7 @@ export default function SolicitudCard({ caso, towns }) {
                 {Array.isArray(caso.help_type)
                   ? caso.help_type
                       .map((tipo) => {
-                        const tipoAyuda =
-                          {
-                            limpieza: 'Limpieza/Desescombro',
-                            evacuacion: 'Transporte/Evacuación',
-                            alojamiento: 'Alojamiento temporal',
-                            distribucion: 'Distribución de suministros',
-                            rescate: 'Equipo de rescate',
-                            medica: 'Asistencia médica',
-                            psicologico: 'Apoyo psicológico',
-                            logistico: 'Apoyo logístico',
-                          }[tipo] || tipo;
-                        return tipoAyuda;
+                        return tiposAyudaOptions[tipo] || tipo;
                       })
                       .join(', ')
                   : 'Ayuda general'}

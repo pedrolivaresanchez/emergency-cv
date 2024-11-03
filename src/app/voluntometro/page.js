@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { HeartHandshake, Check, Mail, Thermometer } from 'lucide-react';
 import { helpRequestService } from '@/lib/service';
+import {mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions} from "@/helpers/constants";
 
 export default function Voluntometro() {
   const [pueblos, setPueblos] = useState([]);
@@ -30,17 +31,7 @@ export default function Voluntometro() {
     aceptaProtocolo: false,
   });
 
-  const tiposAyudaOptions = [
-    { id: 'transporte', label: 'Transporte/Evacuación' },
-    { id: 'alojamiento', label: 'Alojamiento temporal' },
-    { id: 'suministros', label: 'Distribución de suministros' },
-    { id: 'rescate', label: 'Equipo de rescate' },
-    { id: 'medico', label: 'Asistencia médica' },
-    { id: 'psicologico', label: 'Apoyo psicológico' },
-    { id: 'limpieza', label: 'Limpieza/Desescombro' },
-    { id: 'logistica', label: 'Apoyo logístico' },
-  ];
-
+  const tiposAyudaOptions = mapToIdAndLabel(_tiposAyudaOptions)
   const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
   const [showNewTownModal, setShowNewTownModal] = useState(false);

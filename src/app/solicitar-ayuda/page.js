@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { AlertTriangle, Check, Mail } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
-import { parseToIdAndLabel, tiposAyudaOptions } from '@/helpers/constants';
+import { mapToIdAndLabel, tiposAyudaOptions } from '@/helpers/constants';
 
 export default function SolicitarAyuda() {
   const [formData, setFormData] = useState({
@@ -192,7 +192,7 @@ export default function SolicitarAyuda() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de ayuda necesaria</label>
             <div className="grid md:grid-cols-2 gap-2">
-              {parseToIdAndLabel(tiposAyudaOptions).map((tipo) => (
+              {mapToIdAndLabel(tiposAyudaOptions).map((tipo) => (
                 <label
                   key={tipo.id}
                   className={`flex items-center p-3 rounded cursor-pointer ${

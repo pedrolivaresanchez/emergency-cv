@@ -9,7 +9,7 @@ export const tiposAyudaOptions = {
   logistico: 'Apoyo logístico',
 };
 
-export const parseToIdAndLabel = (data) => {
+export const mapToIdAndLabel = (data) => {
   return Object.keys(data).map((key) => ({
     id: key,
     label: data[key],
