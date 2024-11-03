@@ -126,8 +126,9 @@ export default function PuntosEntrega() {
         </h1>
         <button
           onClick={() => setShowForm(true)}
-          className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+          className="flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors whitespace-nowrap"
         >
+					<Truck className="h-5 w-5"/>
           Registrar Punto de Entrega
         </button>
       </div>

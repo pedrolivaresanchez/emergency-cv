@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { MapPin, Phone, Mail, Calendar, AlertTriangle, User, HeartHandshake, Users, Truck, Search, Package } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import OfferHelp from '@/components/OfferHelp';
 
 export default function CasosActivos() {
   const [activeTab, setActiveTab] = useState('solicitudes');
@@ -14,6 +15,7 @@ export default function CasosActivos() {
   const [filtroUrgencia, setFiltroUrgencia] = useState('todas');
   const [filtroPueblo, setFiltroPueblo] = useState('todos');
   const [towns, setTowns] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -90,6 +92,9 @@ export default function CasosActivos() {
     return cumpleUrgencia && cumplePueblo;
   });
 
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   if (loading) {
     return (
@@ -108,6 +113,7 @@ export default function CasosActivos() {
   }
 
   return (
+    <>
     <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
       {/* Tabs mejorados */}
       <div className="grid grid-cols-3 gap-2 bg-white p-2 rounded-lg shadow">
@@ -186,8 +192,16 @@ export default function CasosActivos() {
       </div>
           <div className="grid gap-4">
             {solicitudesFiltradas.length === 0 ? (
-              <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-300 text-center">
-                <p className="text-gray-700">No se encontraron solicitudes que coincidan con los filtros.</p>
+              <div className="bg-white rounded-lg shadow-lg border border-gray-300 text-center flex justify-center items-center p-10 flex-col gap-5">
+                <p className="text-gray-700 text-lg font-medium">No se encontraron solicitudes que coincidan con los filtros.</p>
+                
+              <button
+                onClick={() => { setShowModal(true) }}
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
+              >
+                <HeartHandshake className="w-5 h-5" />
+                Ofrecer ayuda a {towns[filtroPueblo-1].name}
+              </button>
               </div>
             ) : (solicitudesFiltradas.map((caso) => (
               <div key={caso.id} className={`bg-white p-4 rounded-lg shadow-lg border-l-4 ${
@@ -450,5 +464,12 @@ export default function CasosActivos() {
         ))}
       </div>
     </div>
+
+    {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+          <OfferHelp town={towns[filtroPueblo-1]} onClose={closeModal} />
+        </div>
+    )}
+    </>
   );
 }
