@@ -160,3 +160,27 @@ export const testSupabaseConnection = async () => {
     return false;
   }
 };
+
+export const authService = {
+  async getSessionUser() {
+    return supabase.auth.getUser();
+  },
+  async signUp(email, password, nombre, telefono) {
+    return supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          nombre,
+          telefono,
+        },
+      },
+    });
+  },
+  async signOut() {
+    return supabase.auth.signOut();
+  },
+  async signIn(email, password) {
+    return supabase.auth.signInWithPassword({ email, password });
+  },
+};
