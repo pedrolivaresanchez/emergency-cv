@@ -140,8 +140,8 @@ export default function CasosActivos() {
                       } overflow-hidden`}>
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-4">
                   <h3 className={`text-lg font-bold break-words ${
-                        caso.urgency === 'alta' ? 'text-red-500' :
-                        caso.urgency === 'media' ? 'text-yellow-500' :
+                        caso.urgency === 'alta' ? 'text-red-600' :
+                        caso.urgency === 'media' ? 'text-yellow-600' :
                         'text-green-500'
                       }`}>
                     {caso.name || "Necesita Ayuda"}
