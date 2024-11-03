@@ -6,9 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "prettier:check": "prettier . --check",
-    "prettier:write": "prettier . --write"
+    "lint": "next lint"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -24,9 +22,7 @@
   "devDependencies": {
     "eslint": "^8",
     "eslint-config-next": "15.0.2",
-    "eslint-config-prettier": "^9.1.0",
     "postcss": "^8",
-    "prettier": "3.3.3",
     "tailwindcss": "^3.4.1"
   }
 }
