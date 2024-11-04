@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Package } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { isValidPhone } from '@/helpers/utils';
 
 export default function PuntoRecogida() {
   const [formData, setFormData] = useState({
@@ -134,8 +135,11 @@ export default function PuntoRecogida() {
             <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono de contacto*</label>
             <input
               type="tel"
+              pattern="[0-9]{1,9}"
+              maxlength="9"
+              placeholder="Teléfono móvil preferiblemente (sin el prefijo +34)"
               value={formData.contact_phone}
-              onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, contact_phone: isValidPhone(e.target.value) })}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
             />
           </div>
