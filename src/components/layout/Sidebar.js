@@ -32,7 +32,7 @@ const menuItems = [
     title: 'Casos Activos',
     description: 'Ver todos los casos activos',
     path: '/casos-activos',
-    color: 'text-red-600',
+    color: 'text-orange-600',
     highlight: true,
   },
   {
@@ -40,7 +40,7 @@ const menuItems = [
     title: 'Voluntómetro',
     description: 'Medidor de voluntarios por localidad',
     path: '/voluntometro',
-    color: 'text-orange-500',
+    color: 'text-yellow-500',
   },
   {
     icon: Search,
@@ -107,7 +107,7 @@ export default function Sidebar({ isOpen, toggle }) {
         {/* Logo or title */}
         <div className="p-4 border-b flex-shrink-0">
           <Link href="/" passHref>
-            <h1 className="text-xl font-bold text-gray-800 cursor-pointer">Ayuda Dana</h1>
+            <h1 className="text-xl font-bold text-gray-800 cursor-pointer">Ajuda Dana</h1>
           </Link>
         </div>
 
@@ -143,9 +143,9 @@ export default function Sidebar({ isOpen, toggle }) {
                   <>
                     <div className="flex items-center mb-2">
                       <item.icon className={`h-6 w-6 ${item.color} mr-3 ${item.highlight ? 'animate-bounce' : ''}`} />
-                      <span className={`font-semibold ${item.highlight ? 'text-red-700' : ''}`}>{item.title}</span>
+                      <span className={`font-semibold ${item.highlight ? 'text-orange-700' : ''}`}>{item.title}</span>
                     </div>
-                    <p className={`text-sm ml-9 ${item.highlight ? 'text-red-600' : 'text-gray-600'}`}>
+                    <p className={`text-sm ml-9 ${item.highlight ? 'text-orange-600' : 'text-gray-600'}`}>
                       {item.description}
                     </p>
                   </>
