@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Ajuda Dana Valencia
 
-## Getting Started
+Este proyecto tiene el objetivo de ayudar a las personas afectadas por las danas en Valencia. La página web está diseñada para proporcionar una presentación moderna y atractiva que centralice información útil, alertas en tiempo real y recursos de apoyo. A través de una interfaz intuitiva, los usuarios podrán acceder rápidamente a mapas interactivos y contactos de ayuda.
 
-First, run the development server:
+## Tech Stack
+
+![NextJS](https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+
+![Supabase](https://shields.io/badge/supabase-black?logo=supabase&style=for-the-badge)
+
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+
+## Correr Localmente
+
+Clona el proyecto
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/pedrolivaresanchez/emergency-cv.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Dirigete al directorio del proyecto
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+cd emergency-cv
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Instala las dependencias
 
-## Learn More
+```bash
+npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+o con PNPM (recomendado por su eficiencia y rapidez)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm install
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Inicia el servidor
 
-## Deploy on Vercel
+```bash
+npm run start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+o
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm run start
+```
+
+## Variables de entorno
+
+Para correr este proyecto, necesitarás agregar las siguientes variable de entorno `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` en tu archivo .env
+
+Encontraras un archivo .env.example para usar de referencia
+
+## Contribuciones
+
+Las contribuciones son siempre bienvenidas.
+
+Consulta `contributing.md` para saber cómo empezar.
