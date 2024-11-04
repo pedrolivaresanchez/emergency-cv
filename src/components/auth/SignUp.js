@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ArrowBigLeft } from 'lucide-react';
-import { authService } from '../../lib/service';
+import { authService } from '@/lib/service';
 
 export default function SignUp({ onSuccessCallback, onBackButtonClicked }) {
   const [formData, setFormData] = useState({
