@@ -1,7 +1,6 @@
 import React from 'react';
 
-const Pagination = ({ currentPage, totalPages, activeTab, onPageChange }) => {
-    console.log(currentPage, totalPages, activeTab)
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     const getPageNumbers = () => {
         const pageNumbers = [];
         const rangeSize = 1; // Número de páginas a mostrar alrededor de la actual
@@ -49,7 +48,7 @@ const Pagination = ({ currentPage, totalPages, activeTab, onPageChange }) => {
         className={`px-3 py-1 border rounded-md text-gray-600 hover:bg-gray-100 ${
             currentPage === 1 ? "hidden" : ""
         }`}
-        onClick={() => onPageChange(activeTab, currentPage - 1)}
+        onClick={() => onPageChange(currentPage - 1)}
       >
         Anterior
       </button>
@@ -58,7 +57,7 @@ const Pagination = ({ currentPage, totalPages, activeTab, onPageChange }) => {
       {getPageNumbers().map((page, index) => (
         <button
           key={index}
-          onClick={() => typeof page === 'number' && onPageChange(activeTab, page)}
+          onClick={() => typeof page === 'number' && onPageChange(page)}
           className={`px-3 py-1 border rounded-md ${
             page === currentPage
               ? 'bg-blue-500 text-white'
@@ -75,7 +74,7 @@ const Pagination = ({ currentPage, totalPages, activeTab, onPageChange }) => {
         className={`px-3 py-1 border rounded-md text-gray-600 hover:bg-gray-100 ${
             currentPage === totalPages ? "hidden" : ""
         }`}
-        onClick={() => onPageChange(activeTab, currentPage + 1)}
+        onClick={() => onPageChange(currentPage + 1)}
         
       >
         Siguiente
