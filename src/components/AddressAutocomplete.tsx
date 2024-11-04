@@ -1,18 +1,28 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, FC, ChangeEvent } from 'react';
 import { MapPin } from 'lucide-react';
-
-export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar dirección...', initialValue = '' }) {
+type AddressAutocompleteProps = {
+  onSelect: (address: any) => void;
+  required: boolean;
+  placeholder?: string;
+  initialValue?: string;
+};
+const AddressAutocomplete: FC<AddressAutocompleteProps> = ({
+  onSelect,
+  placeholder = 'Buscar dirección...',
+  initialValue = '',
+  required = false,
+}) => {
   const [query, setQuery] = useState(initialValue);
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const wrapperRef = useRef(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
       }
     }
@@ -20,7 +30,7 @@ export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar di
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const searchAddress = async (searchQuery) => {
+  const searchAddress = async (searchQuery: any) => {
     if (!searchQuery || searchQuery.length < 3) {
       setSuggestions([]);
       return;
@@ -33,7 +43,7 @@ export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar di
       );
       const data = await response.json();
 
-      const formattedSuggestions = data.map((item) => {
+      const formattedSuggestions = data.map((item: any) => {
         // Create a readable address line
         const addressParts = [];
         if (item.address?.road) addressParts.push(item.address.road);
@@ -76,7 +86,7 @@ export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar di
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
 
@@ -105,7 +115,7 @@ export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar di
     }
   };
 
-  const handleSelect = (suggestion) => {
+  const handleSelect = (suggestion: any) => {
     setQuery(suggestion.full_address);
     setShowSuggestions(false);
     onSelect({
@@ -127,6 +137,7 @@ export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar di
           onChange={handleInputChange}
           placeholder={placeholder}
           className="w-full p-2 pr-10 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          required={required}
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
           {isLoading ? (
@@ -139,7 +150,7 @@ export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar di
 
       {showSuggestions && suggestions.length > 0 && (
         <div className="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg max-h-60 overflow-auto">
-          {suggestions.map((suggestion, index) => (
+          {suggestions.map((suggestion: any, index: number) => (
             <button
               key={index}
               onClick={() => handleSelect(suggestion)}
@@ -155,4 +166,6 @@ export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar di
       )}
     </div>
   );
-}
+};
+
+export default AddressAutocomplete;

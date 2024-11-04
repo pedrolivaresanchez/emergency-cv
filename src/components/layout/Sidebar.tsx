@@ -2,7 +2,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { FC, memo } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -77,8 +77,11 @@ const menuItems = [
     color: 'text-gray-800',
   },
 ];
-
-export default function Sidebar({ isOpen, toggle }) {
+type SidebarProps = {
+  isOpen: boolean;
+  toggle: () => void;
+};
+const Sidebar: FC<SidebarProps> = ({ isOpen, toggle }) => {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -161,4 +164,6 @@ export default function Sidebar({ isOpen, toggle }) {
       </div>
     </>
   );
-}
+};
+
+export default memo(Sidebar);

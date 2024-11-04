@@ -1,7 +1,12 @@
 import { AlertTriangle, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
 import { tiposAyudaOptions } from '@/helpers/constants';
+import { FC } from 'react';
 
-export default function SolicitudCard({ caso, towns }) {
+type SolicitudCardProps = {
+  caso: any;
+  towns: any;
+};
+const SolicitudCard: FC<SolicitudCardProps> = ({ caso, towns }) => {
   return (
     <>
       <div
@@ -104,7 +109,7 @@ export default function SolicitudCard({ caso, towns }) {
                 <span className="font-semibold">Necesita:</span>{' '}
                 {Array.isArray(caso.help_type)
                   ? caso.help_type
-                      .map((tipo) => {
+                      .map((tipo: string) => {
                         return tiposAyudaOptions[tipo] || tipo;
                       })
                       .join(', ')
@@ -130,4 +135,6 @@ export default function SolicitudCard({ caso, towns }) {
       </div>
     </>
   );
-}
+};
+
+export default SolicitudCard;

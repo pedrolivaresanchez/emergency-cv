@@ -1,7 +1,8 @@
 import { supabase } from './supabase';
+import { CollectionPointData, HelpOfferData, MissingPersonData } from '../types/DataPoints';
 
 export const helpRequestService = {
-  async create(data) {
+  async create(data: HelpOfferData) {
     const { data: result, error } = await supabase.from('help_requests').insert([data]).select();
 
     if (error) throw error;
@@ -15,7 +16,7 @@ export const helpRequestService = {
     return data;
   },
 
-  async getByType(type) {
+  async getByType(type: string) {
     const { data, error } = await supabase
       .from('help_requests')
       .select('*')
@@ -28,7 +29,7 @@ export const helpRequestService = {
 };
 
 export const missingPersonService = {
-  async create(data) {
+  async create(data: MissingPersonData) {
     const { data: result, error } = await supabase.from('missing_persons').insert([data]).select();
 
     if (error) throw error;
@@ -48,7 +49,7 @@ export const missingPersonService = {
 };
 
 export const collectionPointService = {
-  create: async (data) => {
+  create: async (data: CollectionPointData) => {
     try {
       // Validate required fields
       if (!data.name) throw new Error('El nombre del centro es requerido');
@@ -133,7 +134,7 @@ export const mapService = {
         missingPersons: missingPersonsResponse.data || [],
         collectionPoints: collectionPointsResponse.data || [],
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('MapService Error Details:', {
         message: error.message,
         error: error,
@@ -165,7 +166,7 @@ export const authService = {
   async getSessionUser() {
     return supabase.auth.getUser();
   },
-  async signUp(email, password, nombre, telefono) {
+  async signUp(email: string, password: string, nombre: string, telefono: string) {
     return supabase.auth.signUp({
       email,
       password,
@@ -180,7 +181,7 @@ export const authService = {
   async signOut() {
     return supabase.auth.signOut();
   },
-  async signIn(email, password) {
+  async signIn(email: string, password: string) {
     return supabase.auth.signInWithPassword({ email, password });
   },
 };

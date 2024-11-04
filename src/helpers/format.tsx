@@ -1,7 +1,9 @@
-import SolicitudCard from '@/components/SolicitudCard';
 import ReactDOMServer from 'react-dom/server';
+import { ReactNode } from 'react';
+import SolicitudCard from '@/components/SolicitudCard';
+import { tiposAyudaOptions } from '@/helpers/constants';
 
-export const getMarkerBySolicitud = (solicitud, towns) => {
+export const getMarkerBySolicitud = (solicitud: any, towns: any) => {
   // TODO think if possible getLatLng from a given location
   if (!solicitud.latitude || !solicitud.longitude) {
     return null;
@@ -16,7 +18,7 @@ export const getMarkerBySolicitud = (solicitud, towns) => {
   };
 };
 
-export const getMarkerColorBySolicitud = (solicitud) => {
+export const getMarkerColorBySolicitud = (solicitud: any) => {
   switch (solicitud.urgency) {
     case 'baja':
       return '#00FF00';
@@ -28,11 +30,11 @@ export const getMarkerColorBySolicitud = (solicitud) => {
       return '#000000';
   }
 };
-export const getMarkerDescriptionBySolicitudAndTowns = (solicitud, towns) => {
+export const getMarkerDescriptionBySolicitudAndTowns = (solicitud: any, towns: any) => {
   return ReactDOMServer.renderToString(<SolicitudCard key={solicitud.id} caso={solicitud} towns={towns} />);
 };
 
-export const getMarkerByPuntoDeRecogida = (ptoDeRecogida) => {
+export const getMarkerByPuntoDeRecogida = (ptoDeRecogida: any) => {
   // TODO think if possible getLatLng from a given location
   if (!ptoDeRecogida.latitude || !ptoDeRecogida.longitude) {
     return null;
@@ -48,7 +50,7 @@ export const getMarkerByPuntoDeRecogida = (ptoDeRecogida) => {
   };
 };
 
-export const getMarkerDescriptionByPuntoDeRecogida = (ptoDeRecogida) => {
+export const getMarkerDescriptionByPuntoDeRecogida = (ptoDeRecogida: any) => {
   return `
         <div class="p-4 bg-white rounded-lg max-w-xs overflow-y-scroll">
             <h2 class="text-sm font-bold text-gray-800 mb-2">${ptoDeRecogida.contact_name}</h2>
@@ -61,7 +63,7 @@ export const getMarkerDescriptionByPuntoDeRecogida = (ptoDeRecogida) => {
     `;
 };
 
-export const getMarkerByOferta = (oferta) => {
+export const getMarkerByOferta = (oferta: any) => {
   // TODO think if possible getLatLng from a given location
   if (!oferta.latitude || !oferta.longitude) {
     return null;
@@ -75,7 +77,7 @@ export const getMarkerByOferta = (oferta) => {
   };
 };
 
-export const getMarkerDescriptionByOferta = (oferta) => {
+export const getMarkerDescriptionByOferta = (oferta: any) => {
   return `
         <div class="p-4 bg-white rounded-lg max-w-xs overflow-y-scroll">
             <h2 class="text-sm font-bold text-gray-800 mb-2">${oferta.name}</h2>

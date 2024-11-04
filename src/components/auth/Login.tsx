@@ -2,24 +2,35 @@
 
 import SignUp from '@/components/auth/SignUp';
 import { authService } from '@/lib/service';
-import { useEffect, useState } from 'react';
+import { FC, FormEvent, useEffect, useState } from 'react';
+import { User } from '@supabase/auth-js';
 
-export default function Login({ onSuccessCallback }) {
+type LoginProps = {
+  onSuccessCallback?: () => void;
+};
+const Login: FC<LoginProps> = ({ onSuccessCallback }) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  const [status, setStatus] = useState({
+  const [status, setStatus] = useState<{
+    isSubmitting: boolean;
+    error: string | null;
+    success: boolean;
+  }>({
     isSubmitting: false,
     error: null,
     success: false,
   });
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User>();
 
   const refreshUser = async () => {
     const response = await authService.getSessionUser();
+    if (response.error) {
+      return;
+    }
     setUser(response.data.user);
   };
 
@@ -27,7 +38,7 @@ export default function Login({ onSuccessCallback }) {
     refreshUser();
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setStatus({ isSubmitting: true, error: null, success: false });
@@ -53,7 +64,7 @@ export default function Login({ onSuccessCallback }) {
   const logOut = async () => {
     const response = await authService.signOut();
     if (!response.error) {
-      setUser(null);
+      setUser(undefined);
     }
   };
 
@@ -140,4 +151,6 @@ export default function Login({ onSuccessCallback }) {
       )}
     </>
   );
-}
+};
+
+export default Login;

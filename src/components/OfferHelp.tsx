@@ -1,14 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FC, FormEvent } from 'react';
 import { HeartHandshake, Check, Mail } from 'lucide-react';
 import { helpRequestService } from '@/lib/service';
 import { supabase } from '@/lib/supabase';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
-
-export default function OfferHelp({ town, onClose, isModal }) {
-  const [towns, setTowns] = useState([]);
+type OfferHelpProps = {
+  town?: any;
+  onClose: () => void;
+  isModal: boolean;
+};
+const OfferHelp: FC<OfferHelpProps> = ({ town, onClose, isModal }) => {
+  const [towns, setTowns] = useState<{ id: string; name: string }[]>([]);
 
   async function fetchTowns() {
     const { data, error } = await supabase.from('towns').select('id, name');
@@ -25,7 +29,26 @@ export default function OfferHelp({ town, onClose, isModal }) {
     fetchTowns();
   }, []);
 
-  const [formData, setFormData] = useState({
+  type FormData = {
+    nombre: string;
+    telefono: string;
+    email: string;
+    ubicacion: string;
+    tiposAyuda: string[];
+    vehiculo: string;
+    disponibilidad: string[];
+    radio: number;
+    experiencia: string;
+    comentarios: string;
+    aceptaProtocolo: boolean;
+    pueblo: string;
+    coordinates: {
+      lat: string;
+      lng: string;
+    } | null;
+  };
+
+  const [formData, setFormData] = useState<FormData>({
     nombre: '',
     telefono: '',
     email: '',
@@ -38,9 +61,17 @@ export default function OfferHelp({ town, onClose, isModal }) {
     comentarios: '',
     aceptaProtocolo: false,
     pueblo: town ? town.id : '',
+    coordinates: {
+      lat: '',
+      lng: '',
+    },
   });
 
-  const [status, setStatus] = useState({
+  const [status, setStatus] = useState<{
+    isSubmitting: boolean;
+    error: string | null;
+    success: boolean;
+  }>({
     isSubmitting: false,
     error: null,
     success: false,
@@ -50,7 +81,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
 
   const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
-  const handleTipoAyudaChange = (tipo) => {
+  const handleTipoAyudaChange = (tipo: any) => {
     setFormData((prev) => ({
       ...prev,
       tiposAyuda: prev.tiposAyuda.includes(tipo)
@@ -59,7 +90,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
     }));
   };
 
-  const handleDisponibilidadChange = (dia) => {
+  const handleDisponibilidadChange = (dia: any) => {
     setFormData((prev) => ({
       ...prev,
       disponibilidad: prev.disponibilidad.includes(dia)
@@ -68,7 +99,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     // Validación de ubicación
@@ -122,13 +153,17 @@ export default function OfferHelp({ town, onClose, isModal }) {
         comentarios: '',
         aceptaProtocolo: false,
         pueblo: '',
+        coordinates: {
+          lat: '',
+          lng: '',
+        },
       });
       setStatus({ isSubmitting: false, error: null, success: true });
       setTimeout(() => {
         setStatus((prev) => ({ ...prev, success: false }));
         onClose();
       }, 5000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al registrar oferta de ayuda:', error);
       setStatus({
         isSubmitting: false,
@@ -203,7 +238,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
             Ubicación exacta <span className="text-red-500">*</span>
           </label>
           <AddressAutocomplete
-            onSelect={(address) => {
+            onSelect={(address: any) => {
               setFormData({
                 ...formData,
                 ubicacion: address.fullAddress,
@@ -301,7 +336,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
             value={formData.experiencia}
             onChange={(e) => setFormData({ ...formData, experiencia: e.target.value })}
             className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            rows="3"
+            rows={3}
             placeholder="Describe tu experiencia en situaciones similares, formación, etc."
           />
         </div>
@@ -312,7 +347,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
             value={formData.comentarios}
             onChange={(e) => setFormData({ ...formData, comentarios: e.target.value })}
             className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            rows="3"
+            rows={3}
             placeholder="Información adicional que quieras compartir"
           />
         </div>
@@ -320,7 +355,9 @@ export default function OfferHelp({ town, onClose, isModal }) {
         {/* Pueblos */}
         <div>
           <div className="flex flex-row justify-between mb-2 items-end">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Pueblo  <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Pueblo <span className="text-red-500">*</span>
+            </label>
             <a
               href="mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro"
               className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
@@ -395,4 +432,6 @@ export default function OfferHelp({ town, onClose, isModal }) {
       )}
     </form>
   );
-}
+};
+
+export default OfferHelp;

@@ -1,4 +1,4 @@
-export const tiposAyudaOptions = {
+export const tiposAyudaOptions: Record<string, string> = {
   limpieza: 'Limpieza/Desescombro',
   evacuacion: 'Transporte/Evacuación',
   alojamiento: 'Alojamiento temporal',
@@ -9,16 +9,16 @@ export const tiposAyudaOptions = {
   logistico: 'Apoyo logístico',
 };
 
-export const tiposAyudaAcepta = [
-  "Alimentos",
-  "Ropa",
-  "Mantas",
-  "Agua",
-  "Productos de higiene",
-  "Medicamentos"
-]
+export const tiposAyudaAcepta: string[] = [
+  'Alimentos',
+  'Ropa',
+  'Mantas',
+  'Agua',
+  'Productos de higiene',
+  'Medicamentos',
+];
 
-export const mapToIdAndLabel = (data) => {
+export const mapToIdAndLabel = (data: any) => {
   return Object.keys(data).map((key) => ({
     id: key,
     label: data[key],

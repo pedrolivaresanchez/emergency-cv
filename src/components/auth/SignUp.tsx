@@ -1,23 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { FC, FormEvent, useState } from 'react';
 import { ArrowBigLeft } from 'lucide-react';
 import { authService } from '@/lib/service';
 
-export default function SignUp({ onSuccessCallback, onBackButtonClicked }) {
+type SignUpProps = {
+  onSuccessCallback?: (data: any) => void;
+  onBackButtonClicked?: () => void;
+};
+const SignUp: FC<SignUpProps> = ({ onSuccessCallback, onBackButtonClicked }) => {
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
     password: '',
     telefono: '',
   });
-  const [status, setStatus] = useState({
+  const [status, setStatus] = useState<{
+    isSubmitting: boolean;
+    error: string | null;
+    success: boolean;
+  }>({
     isSubmitting: false,
     error: null,
     success: false,
   });
 
-  const setError = (mensaje) => {
+  const setError = (mensaje: string) => {
     setStatus({
       isSubmitting: false,
       error: mensaje,
@@ -25,7 +33,7 @@ export default function SignUp({ onSuccessCallback, onBackButtonClicked }) {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setStatus({ isSubmitting: true, error: null, success: false });
@@ -153,4 +161,6 @@ export default function SignUp({ onSuccessCallback, onBackButtonClicked }) {
       )}
     </form>
   );
-}
+};
+
+export default SignUp;

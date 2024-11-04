@@ -1,9 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, FC, memo } from 'react';
 import { AlertTriangle, Menu, X } from 'lucide-react';
 
-export default function Header({ toggleSidebar, isOpen }) {
+type HeaderProps = {
+  toggleSidebar: () => void;
+  isOpen: boolean;
+};
+const Header: FC<HeaderProps> = ({ toggleSidebar, isOpen }) => {
   const [currentTime, setCurrentTime] = useState('');
 
   useEffect(() => {
@@ -60,4 +64,6 @@ export default function Header({ toggleSidebar, isOpen }) {
       </div>
     </header>
   );
-}
+};
+
+export default memo(Header);

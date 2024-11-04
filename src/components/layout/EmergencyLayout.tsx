@@ -2,10 +2,12 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo, FC } from 'react';
 import Sidebar from './Sidebar';
-
-export default function EmergencyLayout({ children }) {
+type EmergencyLayoutProps = {
+  children: React.ReactNode;
+};
+const EmergencyLayout: FC<EmergencyLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Por defecto abierto
 
   useEffect(() => {
@@ -31,4 +33,6 @@ export default function EmergencyLayout({ children }) {
       </div>
     </div>
   );
-}
+};
+
+export default memo(EmergencyLayout);
