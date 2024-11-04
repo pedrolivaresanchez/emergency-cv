@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapPin, Phone, Calendar, User, HeartHandshake, Users, Truck, Search, Package, MapPinIcon } from 'lucide-react';
+import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import SolicitudCard from '@/components/SolicitudCard';
 import Pagination from '@/components/Pagination';
