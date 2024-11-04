@@ -21,7 +21,7 @@ function PhoneForm({ onSubmit, onCancel }) {
     <form onSubmit={handleSubmit}>
       <div className="mb-6 text-gray-600">
         <p className="text-sm leading-relaxed">
-          Necesitamos tu número de teléfono para poder asociar cualquier ofertas o solicitudes de ayuda que hayas creado
+          Necesitamos tu número de teléfono para poder asociar cualquier oferta o solicitud de ayuda que hayas creado
           previamente con tu número.
         </p>
         <p className="mt-2 text-sm text-gray-500">
