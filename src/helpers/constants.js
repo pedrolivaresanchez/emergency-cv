@@ -9,6 +9,15 @@ export const tiposAyudaOptions = {
   logistico: 'Apoyo logístico',
 };
 
+export const tiposAyudaAcepta = [
+  "Alimentos",
+  "Ropa",
+  "Mantas",
+  "Agua",
+  "Productos de higiene",
+  "Medicamentos"
+]
+
 export const mapToIdAndLabel = (data) => {
   return Object.keys(data).map((key) => ({
     id: key,
