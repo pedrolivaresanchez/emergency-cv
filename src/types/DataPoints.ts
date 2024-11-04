@@ -14,19 +14,21 @@ export interface CollectionPointData extends DataPoint {
 export interface HelpOfferData extends DataPoint {
   help_type: string[] | null;
   description: string | null;
-  resources: {
-    vehicle: string;
-    availability: string[];
-    radius: number;
-  };
+  resources:
+    | {
+        vehicle: string;
+        availability: string[];
+        radius: number;
+      }
+    | string;
   status: string;
-  additional_info: {
+  additional_info?: {
     email: string;
     experience: string;
   };
-  latitude: number | null;
-  longitude: number | null;
-  town_id: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  town_id?: string;
 }
 
 export interface MissingPersonData extends DataPoint {

@@ -4,13 +4,35 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { AlertTriangle, ArrowLeft, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
+import { StatusType, UrgencyType } from '@/types/default';
 
-export default function CasoDetalle() {
+type CaseProps = {
+  id: string;
+  name: string;
+  urgency: UrgencyType;
+  status: StatusType;
+  description: string;
+  town_id?: string;
+  location: string;
+  created_at: string;
+  contact_info?: string;
+  help_type?: string[];
+  additional_info?: {
+    special_situations?: string;
+  };
+  number_of_people?: number;
+};
+
+const CasoDetalle = () => {
   const params = useParams();
-  const router = useRouter();
   const { id } = params;
-  const [caso, setCaso] = useState(null);
-  const [towns, setTowns] = useState([]);
+  const [caso, setCaso] = useState<CaseProps>();
+  const [towns, setTowns] = useState<
+    {
+      id: string;
+      name: string;
+    }[]
+  >([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     async function fetchCaso() {
@@ -205,4 +227,6 @@ export default function CasoDetalle() {
       </div>
     </div>
   );
-}
+};
+
+export default CasoDetalle;

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, FC, ChangeEvent } from 'react';
 import { MapPin } from 'lucide-react';
 type AddressAutocompleteProps = {
   onSelect: (address: any) => void;
-  required: boolean;
+  required?: boolean;
   placeholder?: string;
   initialValue?: string;
 };

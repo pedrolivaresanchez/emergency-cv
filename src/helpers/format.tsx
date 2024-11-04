@@ -2,8 +2,9 @@ import ReactDOMServer from 'react-dom/server';
 import { ReactNode } from 'react';
 import SolicitudCard from '@/components/SolicitudCard';
 import { tiposAyudaOptions } from '@/helpers/constants';
+import { MarkersType } from '@/types/Markers';
 
-export const getMarkerBySolicitud = (solicitud: any, towns: any) => {
+export const getMarkerBySolicitud = (solicitud: any, towns: any): MarkersType | null => {
   // TODO think if possible getLatLng from a given location
   if (!solicitud.latitude || !solicitud.longitude) {
     return null;

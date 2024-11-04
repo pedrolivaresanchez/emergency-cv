@@ -1,11 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { UserSearch, AlertCircle, Phone, Check } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
-export default function PersonaDesaparecida() {
-  const [formData, setFormData] = useState({
+type MissingPersonReport = {
+  nombreCompleto: string;
+  edad: string;
+  genero: string;
+  altura: string;
+  complexion: string;
+  descripcionFisica: string;
+  ropa: string;
+  lugarUltimaVez: string;
+  fechaUltimaVez: string;
+  horaUltimaVez: string;
+  circunstancias: string;
+  condicionesMedicas: string;
+  nombreReportante: string;
+  parentesco: string;
+  telefonoContacto: string;
+  telefonoAlternativo: string;
+  consentimiento: boolean;
+};
+
+const PersonaDesaparecida = () => {
+  const [formData, setFormData] = useState<MissingPersonReport>({
     // Datos personales
     nombreCompleto: '',
     edad: '',
@@ -35,7 +55,11 @@ export default function PersonaDesaparecida() {
     consentimiento: false,
   });
 
-  const [status, setStatus] = useState({
+  const [status, setStatus] = useState<{
+    isSubmitting: boolean;
+    error: string | null;
+    success: boolean;
+  }>({
     isSubmitting: false,
     error: null,
     success: false,
@@ -43,7 +67,7 @@ export default function PersonaDesaparecida() {
 
   // En el handleSubmit, reemplazar con:
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.consentimiento) {
@@ -209,7 +233,7 @@ export default function PersonaDesaparecida() {
                 value={formData.descripcionFisica}
                 onChange={(e) => setFormData({ ...formData, descripcionFisica: e.target.value })}
                 className="w-full p-2 border rounded focus:ring-2 focus:ring-purple-500"
-                rows="3"
+                rows={3}
                 placeholder="Color de pelo, ojos, marcas distintivas, etc."
               />
             </div>
@@ -220,7 +244,7 @@ export default function PersonaDesaparecida() {
                 value={formData.ropa}
                 onChange={(e) => setFormData({ ...formData, ropa: e.target.value })}
                 className="w-full p-2 border rounded focus:ring-2 focus:ring-purple-500"
-                rows="2"
+                rows={2}
               />
             </div>
           </div>
@@ -267,7 +291,7 @@ export default function PersonaDesaparecida() {
                 value={formData.circunstancias}
                 onChange={(e) => setFormData({ ...formData, circunstancias: e.target.value })}
                 className="w-full p-2 border rounded focus:ring-2 focus:ring-purple-500"
-                rows="3"
+                rows={3}
               />
             </div>
           </div>
@@ -343,4 +367,4 @@ export default function PersonaDesaparecida() {
       )}
     </div>
   );
-}
+};

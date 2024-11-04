@@ -1,11 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { Package } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
-export default function PuntoRecogida() {
-  const [formData, setFormData] = useState({
+const PuntoRecogida = () => {
+  const [formData, setFormData] = useState<{
+    name: string;
+    type: 'permanente' | 'temporal';
+    location: string;
+    city: string;
+    contact_name: string;
+    contact_phone: string;
+    accepted_items: string[];
+    urgent_needs: string;
+    status: string;
+  }>({
     name: '',
     type: 'permanente',
     location: '',
@@ -17,7 +27,11 @@ export default function PuntoRecogida() {
     status: 'active',
   });
 
-  const [status, setStatus] = useState({
+  const [status, setStatus] = useState<{
+    isSubmitting: boolean;
+    error: string | null;
+    success: boolean;
+  }>({
     isSubmitting: false,
     error: null,
     success: false,
@@ -25,7 +39,7 @@ export default function PuntoRecogida() {
 
   const tiposAyuda = ['Alimentos', 'Agua', 'Ropa', 'Mantas', 'Medicamentos', 'Productos de higiene'];
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus({ isSubmitting: true, error: null, success: false });
 
@@ -59,7 +73,7 @@ export default function PuntoRecogida() {
 
       setStatus({ isSubmitting: false, error: null, success: true });
       setTimeout(() => setStatus((prev) => ({ ...prev, success: false })), 5000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
       setStatus({
         isSubmitting: false,
@@ -175,7 +189,7 @@ export default function PuntoRecogida() {
               value={formData.urgent_needs}
               onChange={(e) => setFormData({ ...formData, urgent_needs: e.target.value })}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-              rows="2"
+              rows={2}
               placeholder="¿Qué se necesita con más urgencia?"
             />
           </div>
@@ -193,4 +207,6 @@ export default function PuntoRecogida() {
       </div>
     </div>
   );
-}
+};
+
+export default PuntoRecogida;

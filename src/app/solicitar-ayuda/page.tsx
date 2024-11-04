@@ -1,13 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent, ChangeEvent } from 'react';
 import { AlertTriangle, Check, Mail } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions } from '@/helpers/constants';
+import { UrgencyType } from '@/types/default';
 
-export default function SolicitarAyuda() {
-  const [formData, setFormData] = useState({
+const SolicitarAyuda = () => {
+  const [formData, setFormData] = useState<{
+    nombre: string;
+    ubicacion: string;
+    coordinates: { lat: string; lng: string } | null;
+    tiposAyuda: string[];
+    numeroPersonas: string;
+    descripcion: string;
+    urgencia: UrgencyType;
+    situacionEspecial: string;
+    contacto: string;
+    consentimiento: boolean;
+    pueblo: string;
+  }>({
     nombre: '',
     ubicacion: '',
     coordinates: null,
@@ -21,13 +34,22 @@ export default function SolicitarAyuda() {
     pueblo: '',
   });
 
-  const [status, setStatus] = useState({
+  const [status, setStatus] = useState<{
+    isSubmitting: boolean;
+    error: string | null;
+    success: boolean;
+  }>({
     isSubmitting: false,
     error: null,
     success: false,
   });
 
-  const [towns, setTowns] = useState([]);
+  const [towns, setTowns] = useState<
+    {
+      id: string;
+      name: string;
+    }[]
+  >([]);
 
   async function fetchTowns() {
     const { data, error } = await supabase.from('towns').select('id, name');
@@ -44,7 +66,7 @@ export default function SolicitarAyuda() {
     fetchTowns();
   }, []);
 
-  const handleTipoAyudaChange = (tipo) => {
+  const handleTipoAyudaChange = (tipo: any) => {
     setFormData((prev) => ({
       ...prev,
       tiposAyuda: prev.tiposAyuda.includes(tipo)
@@ -53,7 +75,7 @@ export default function SolicitarAyuda() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.ubicacion) {
@@ -111,7 +133,7 @@ export default function SolicitarAyuda() {
 
       setStatus({ isSubmitting: false, error: null, success: true });
       setTimeout(() => setStatus((prev) => ({ ...prev, success: false })), 5000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al enviar solicitud:', error.message);
       setStatus({
         isSubmitting: false,
@@ -121,11 +143,11 @@ export default function SolicitarAyuda() {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -230,7 +252,7 @@ export default function SolicitarAyuda() {
               value={formData.descripcion}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-              rows="3"
+              rows={3}
               placeholder="Describa su situación actual y el tipo de ayuda que necesita"
             />
           </div>
@@ -256,7 +278,7 @@ export default function SolicitarAyuda() {
               value={formData.situacionEspecial}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-              rows="2"
+              rows={2}
               placeholder="Personas mayores, niños pequeños, personas con movilidad reducida, necesidades médicas, mascotas..."
             />
           </div>
@@ -340,4 +362,6 @@ export default function SolicitarAyuda() {
       )}
     </div>
   );
-}
+};
+
+export default SolicitarAyuda;

@@ -1,18 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  MapPin,
-  Phone,
-  Calendar,
-  User,
-  HeartHandshake,
-  Users,
-  Truck,
-  Search,
-  Package,
-  MapPinIcon,
-} from 'lucide-react';
+import { MapPin, Phone, Calendar, User, HeartHandshake, Users, Truck, Search, Package, MapPinIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import OfferHelp from '@/components/OfferHelp';
 import Mapa from '@/components/map/map';
@@ -20,44 +9,48 @@ import { getMarkerBySolicitud } from '@/helpers/format';
 import SolicitudCard from '@/components/SolicitudCard';
 import { tiposAyudaOptions, tiposAyudaAcepta } from '@/helpers/constants';
 import Pagination from '@/components/Pagination';
+import { MarkersType } from '@/types/Markers';
 
-const PAIPORTA_LAT_LNG = [-0.41667, 39.43333];
+const PAIPORTA_LAT_LNG: [number, number] = [-0.41667, 39.43333];
 
-export default function CasosActivos() {
-  const [activeTab, setActiveTab] = useState('solicitudes');
-  const [solicitudes, setSolicitudes] = useState([]);
-  const [ofertas, setOfertas] = useState([]);
-  const [puntos, setPuntos] = useState([]);
+const CasosActivos = () => {
+  const [activeTab, setActiveTab] = useState<string>('solicitudes');
+  const [solicitudes, setSolicitudes] = useState<any[]>([]);
+  const [ofertas, setOfertas] = useState<any[]>([]);
+  const [puntos, setPuntos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [towns, setTowns] = useState([]);
+  const [error, setError] = useState<string>();
+  const [towns, setTowns] = useState<{ id: number; name: string }[]>([]);
   const [showModal, setShowModal] = useState(false);
 
   const itemsPerPage = 10;
 
-  const numPages = (count) => {
+  const numPages = (count: number) => {
     return Math.ceil(count / itemsPerPage) || 0;
   };
 
-  const [currentPage, setCurrentPage] = useState({
+  const [currentPage, setCurrentPage] = useState<Record<string, number>>({
     solicitudes: 1,
     ofertas: 1,
     puntos: 1,
   });
 
-  const changePage = (type, newPage) => {
+  const changePage = (type: any, newPage: any) => {
     setCurrentPage((prev) => ({
       ...prev,
       [type]: newPage,
     }));
   };
 
-  const [filtroSolicitudes, setFiltroSolicitudes] = useState({
+  const [filtroSolicitudes, setFiltroSolicitudes] = useState<{
+    urgencia: string;
+    pueblo: string | number;
+  }>({
     urgencia: 'todas',
     pueblo: 'todos',
   });
 
-  const changeSolicitudesFilter = (type, newFilter) => {
+  const changeSolicitudesFilter = (type: any, newFilter: any) => {
     setFiltroSolicitudes((prev) => ({
       ...prev,
       [type]: newFilter,
@@ -68,31 +61,34 @@ export default function CasosActivos() {
     ayuda: 'todas',
   });
 
-  const changeOfertasFilter = (type, newFilter) => {
+  const changeOfertasFilter = (type: any, newFilter: any) => {
     setFiltroOfertas((prev) => ({
       ...prev,
       [type]: newFilter,
     }));
   };
 
-  const [filtroPuntos, setFiltroPuntos] = useState({
+  const [filtroPuntos, setFiltroPuntos] = useState<Record<string, string>>({
     acepta: 'todos',
   });
 
-  const changePuntosFilter = (type, newFilter) => {
+  const changePuntosFilter = (type: any, newFilter: any) => {
     setFiltroPuntos((prev) => ({
       ...prev,
       [type]: newFilter,
     }));
   };
 
-  const [currentCount, setCurrentCount] = useState({
+  const [currentCount, setCurrentCount] = useState<Record<string, number>>({
     solicitudesCount: 0,
     ofertasCount: 0,
     puntosCount: 0,
+    solicitudes: 0,
+    ofertas: 0,
+    puntos: 0,
   });
 
-  const changeCount = (type, newCount) => {
+  const changeCount = (type: any, newCount: any) => {
     setCurrentCount((prev) => ({
       ...prev,
       [type]: newCount,
@@ -117,7 +113,7 @@ export default function CasosActivos() {
     async function fetchRequests() {
       try {
         setLoading(true);
-        setError(null);
+        setError(undefined);
 
         // Comenzamos la consulta
         const query = supabase.from('help_requests').select('*', { count: 'exact' }).eq('type', 'necesita');
@@ -163,7 +159,7 @@ export default function CasosActivos() {
     async function fetchOffers() {
       try {
         setLoading(true);
-        setError(null);
+        setError(undefined);
 
         // Comenzamos la consulta
         const query = supabase.from('help_requests').select('*', { count: 'exact' }).eq('type', 'ofrece');
@@ -202,7 +198,7 @@ export default function CasosActivos() {
     async function fetchPoints() {
       try {
         setLoading(true);
-        setError(null);
+        setError(undefined);
 
         // Comenzamos la consulta
         const query = supabase.from('collection_points').select('*', { count: 'exact' });
@@ -258,7 +254,9 @@ export default function CasosActivos() {
   }
 
   // const puntosDeRecogidaMarkers = puntosRecogida.map(p => getMarkerByPuntoDeRecogida).filter(Boolean)
-  const solicitudesMarkers = solicitudes.map((sol) => getMarkerBySolicitud(sol, towns)).filter(Boolean);
+  const solicitudesMarkers: MarkersType[] = solicitudes
+    .map((sol) => getMarkerBySolicitud(sol, towns))
+    .filter((marker) => marker !== null);
 
   return (
     <>
@@ -324,7 +322,7 @@ export default function CasosActivos() {
                     className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
                   >
                     <option value="todos">Todos los pueblos</option>
-                    {towns.map((item) => (
+                    {towns?.map((item) => (
                       <option key={item.id} value={item.id}>
                         {item.name}
                       </option>
@@ -346,7 +344,8 @@ export default function CasosActivos() {
                       className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
                     >
                       <HeartHandshake className="w-5 h-5" />
-                      Ofrecer ayuda a {filtroSolicitudes.pueblo === "todos" ? "" : towns[filtroSolicitudes.pueblo - 1].name}
+                      Ofrecer ayuda a{' '}
+                      {filtroSolicitudes.pueblo === 'todos' ? '' : towns[Number(filtroSolicitudes.pueblo) - 1].name}
                     </button>
                   </div>
                 ) : (
@@ -396,7 +395,7 @@ export default function CasosActivos() {
                             Ofrece:{' '}
                             {Array.isArray(caso.help_type)
                               ? caso.help_type
-                                  .map((tipo) => {
+                                  .map((tipo: any) => {
                                     return tiposAyudaOptions[tipo] || tipo;
                                   })
                                   .join(', ')
@@ -568,7 +567,7 @@ export default function CasosActivos() {
           <div className="flex items-center justify-center">
             <Pagination
               currentPage={currentPage[activeTab]}
-              totalPages={numPages(currentCount[activeTab])}
+              totalPages={numPages(currentCount[activeTab] as number)}
               activeTab={activeTab}
               onPageChange={changePage}
             />
@@ -578,9 +577,11 @@ export default function CasosActivos() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-          <OfferHelp town={towns[filtroSolicitudes.pueblo - 1]} onClose={closeModal} isModal={true} />
+          <OfferHelp town={towns[(filtroSolicitudes.pueblo as number) - 1]} onClose={closeModal} isModal={true} />
         </div>
       )}
     </>
   );
-}
+};
+
+export default CasosActivos;

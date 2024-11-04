@@ -8,8 +8,8 @@ import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
 type OfferHelpProps = {
   town?: any;
-  onClose: () => void;
-  isModal: boolean;
+  onClose?: () => void;
+  isModal?: boolean;
 };
 const OfferHelp: FC<OfferHelpProps> = ({ town, onClose, isModal }) => {
   const [towns, setTowns] = useState<{ id: string; name: string }[]>([]);
@@ -161,7 +161,7 @@ const OfferHelp: FC<OfferHelpProps> = ({ town, onClose, isModal }) => {
       setStatus({ isSubmitting: false, error: null, success: true });
       setTimeout(() => {
         setStatus((prev) => ({ ...prev, success: false }));
-        onClose();
+        onClose && onClose();
       }, 5000);
     } catch (error: any) {
       console.error('Error al registrar oferta de ayuda:', error);

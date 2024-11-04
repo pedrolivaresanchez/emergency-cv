@@ -1,23 +1,46 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FC, FormEvent } from 'react';
 import { supabase } from '@/lib/supabase';
 import { HeartHandshake, Check, Mail, Thermometer } from 'lucide-react';
 import { helpRequestService } from '@/lib/service';
 import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
 
-export default function Voluntometro() {
-  const [pueblos, setPueblos] = useState([]);
+const Voluntometro: FC = () => {
+  const [pueblos, setPueblos] = useState<
+    {
+      id: string | number; // Adjust type based on the actual type of town.id
+      name: string;
+      count: number;
+      needHelp: number;
+    }[]
+  >([]);
 
-  const [selectedPueblo, setSelectedPueblo] = useState(null);
+  const [selectedPueblo, setSelectedPueblo] = useState<string>();
   const [showModal, setShowModal] = useState(false);
-  const [status, setStatus] = useState({
+  const [status, setStatus] = useState<{
+    isSubmitting: boolean;
+    error: string | null;
+    success: boolean;
+  }>({
     isSubmitting: false,
     error: null,
     success: false,
   });
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    nombre: string;
+    telefono: string;
+    email: string;
+    ubicacion: string;
+    tiposAyuda: string[];
+    vehiculo: string;
+    disponibilidad: string[];
+    radio: number;
+    experiencia: string;
+    comentarios: string;
+    aceptaProtocolo: boolean;
+  }>({
     nombre: '',
     telefono: '',
     email: '',
@@ -85,7 +108,7 @@ export default function Voluntometro() {
     setPueblos(updatedPueblos);
   }
 
-  const handleTipoAyudaChange = (tipo) => {
+  const handleTipoAyudaChange = (tipo: any) => {
     setFormData((prev) => ({
       ...prev,
       tiposAyuda: prev.tiposAyuda.includes(tipo)
@@ -94,7 +117,7 @@ export default function Voluntometro() {
     }));
   };
 
-  const handleDisponibilidadChange = (dia) => {
+  const handleDisponibilidadChange = (dia: any) => {
     setFormData((prev) => ({
       ...prev,
       disponibilidad: prev.disponibilidad.includes(dia)
@@ -103,7 +126,7 @@ export default function Voluntometro() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.aceptaProtocolo) {
@@ -154,7 +177,7 @@ export default function Voluntometro() {
       fetchVolunteers();
 
       setTimeout(() => setStatus((prev) => ({ ...prev, success: false })), 5000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al registrar oferta de ayuda:', error);
       setStatus({
         isSubmitting: false,
@@ -173,7 +196,7 @@ export default function Voluntometro() {
     });
   };
 
-  const handleNewTownSubmit = (e) => {
+  const handleNewTownSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     window.location.href = `mailto:info@ajudadana.es?subject=${encodeURIComponent('Solicitud de nuevo pueblo para Voluntómetro')}&body=${encodeURIComponent(`Solicito añadir el siguiente pueblo al Voluntómetro:\n\nNombre del pueblo: ${newTownName}`)}`;
     setShowNewTownModal(false);
@@ -426,7 +449,7 @@ export default function Voluntometro() {
                   value={formData.experiencia}
                   onChange={(e) => setFormData({ ...formData, experiencia: e.target.value })}
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  rows="3"
+                  rows={3}
                   placeholder="Describe tu experiencia en situaciones similares, formación, etc."
                 />
               </div>
@@ -437,7 +460,7 @@ export default function Voluntometro() {
                   value={formData.comentarios}
                   onChange={(e) => setFormData({ ...formData, comentarios: e.target.value })}
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  rows="3"
+                  rows={3}
                   placeholder="Información adicional que quieras compartir"
                 />
               </div>
@@ -517,4 +540,6 @@ export default function Voluntometro() {
       )}
     </div>
   );
-}
+};
+
+export default Voluntometro;

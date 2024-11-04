@@ -1,11 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FC, FormEvent } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Truck, MapPin, Phone, Mail, Calendar, Package } from 'lucide-react';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 
-export default function PuntosEntrega() {
+type FormDataType = {
+  name: string;
+  location: string;
+  city: string;
+  contact_name: string;
+  contact_phone: string;
+  contact_email: string;
+  vehicle_type: string;
+  cargo_type: string;
+  schedule: string;
+  additional_info: string;
+  coordinates: { lat: string; lng: string; lon?: string } | null;
+  status: string;
+};
+
+const PuntosEntrega: FC = () => {
   const initialFormData = {
     name: '',
     location: '',
@@ -21,11 +36,11 @@ export default function PuntosEntrega() {
     status: 'active',
   };
 
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState<FormDataType>(initialFormData);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [points, setPoints] = useState([]);
-  const [error, setError] = useState(null);
+  const [points, setPoints] = useState<any[]>([]);
+  const [error, setError] = useState<string>();
   const [success, setSuccess] = useState(false);
 
   const vehicleTypes = ['Camión grande (>3500kg)', 'Camión mediano', 'Furgoneta grande', 'Furgoneta mediana', 'Otro'];
@@ -51,14 +66,14 @@ export default function PuntosEntrega() {
     }
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+    setError(undefined);
 
     try {
-      const requiredFields = ['name', 'location', 'contact_phone'];
-      const missingFields = requiredFields.filter((field) => !formData[field]);
+      const requiredFields: (keyof FormDataType)[] = ['name', 'location', 'contact_phone'];
+      const missingFields: string[] = requiredFields.filter((field) => !formData[field]);
 
       if (missingFields.length > 0) {
         throw new Error('Por favor completa todos los campos obligatorios');
@@ -94,7 +109,7 @@ export default function PuntosEntrega() {
       setFormData(initialFormData);
 
       setTimeout(() => setSuccess(false), 3000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al registrar punto de entrega:', error);
       setError(error.message || 'Error al registrar el punto de entrega');
     } finally {
@@ -328,7 +343,7 @@ export default function PuntosEntrega() {
                   value={formData.additional_info}
                   onChange={(e) => setFormData({ ...formData, additional_info: e.target.value })}
                   className="w-full p-2 border rounded"
-                  rows="3"
+                  rows={3}
                   placeholder="Instrucciones especiales, requisitos, etc."
                 />
               </div>
@@ -375,4 +390,6 @@ export default function PuntosEntrega() {
       )}
     </div>
   );
-}
+};
+
+export default PuntosEntrega;
