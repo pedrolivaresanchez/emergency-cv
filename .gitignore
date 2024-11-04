@@ -29,15 +29,25 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+#locks
+bun.lockb
+pnpm-lock.yaml
+package-lock.json
+
 # env files (can opt-in for commiting if needed)
-.env*
+.env
+.env.production
+.env.local
 
 # vercel
 .vercel
 
-# IDE
-.idea
+# jetbrains setting folder
+.idea/
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# docker data
+/docker/postgres-data
