@@ -1,6 +1,6 @@
 'use client';
 
-import { MapPin, Clock, AlertCircle, Heart, Users, Package } from 'lucide-react';
+import { MapPin, Clock, AlertCircle, Heart, Users, Package, Thermometer, Cross } from 'lucide-react';
 
 export default function Home() {
   const emergencyNumbers = [
@@ -63,9 +63,23 @@ export default function Home() {
 
   const mainActions = [
     {
+      title: 'Casos activos',
+      description: 'Observa los casos activos',
+      icon: AlertCircle,
+      path: '/casos-activos',
+      color: 'orange',
+    },
+    {
+      title: 'Voluntómetro',
+      description: 'Mira los voluntarios',
+      icon: Thermometer,
+      path: '/voluntometro',
+      color: 'yellow',
+    },
+    {
       title: 'Necesito Ayuda',
       description: 'Solicita asistencia urgente',
-      icon: AlertCircle,
+      icon: Cross,
       path: '/solicitar-ayuda',
       color: 'red',
       priority: 'high',
