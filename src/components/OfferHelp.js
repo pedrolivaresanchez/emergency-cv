@@ -5,7 +5,7 @@ import { HeartHandshake, Check, Mail } from 'lucide-react';
 import { helpRequestService } from '@/lib/service';
 import { supabase } from '@/lib/supabase';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
-import {mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions} from "@/helpers/constants";
+import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
 
 export default function OfferHelp({ town, onClose, isModal }) {
   const [towns, setTowns] = useState([]);
@@ -33,7 +33,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
     tiposAyuda: [],
     vehiculo: '',
     disponibilidad: [],
-    radio: '',
+    radio: 1,
     experiencia: '',
     comentarios: '',
     aceptaProtocolo: false,
@@ -117,7 +117,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
         tiposAyuda: [],
         vehiculo: '',
         disponibilidad: [],
-        radio: '',
+        radio: 1,
         experiencia: '',
         comentarios: '',
         aceptaProtocolo: false,
@@ -288,7 +288,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
           <input
             type="number"
             value={formData.radio}
-            onChange={(e) => setFormData({ ...formData, radio: e.target.value })}
+            onChange={(e) => setFormData({ ...formData, radio: Number(e.target.value) })}
             className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
             min="1"
             placeholder="¿Cuántos kilómetros puedes desplazarte?"

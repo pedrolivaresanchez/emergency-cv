@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { HeartHandshake, Check, Mail, Thermometer } from 'lucide-react';
 import { helpRequestService } from '@/lib/service';
-import {mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions} from "@/helpers/constants";
+import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
 
 export default function Voluntometro() {
   const [pueblos, setPueblos] = useState([]);
@@ -25,13 +25,13 @@ export default function Voluntometro() {
     tiposAyuda: [],
     vehiculo: '',
     disponibilidad: [],
-    radio: '',
+    radio: 1,
     experiencia: '',
     comentarios: '',
     aceptaProtocolo: false,
   });
 
-  const tiposAyudaOptions = mapToIdAndLabel(_tiposAyudaOptions)
+  const tiposAyudaOptions = mapToIdAndLabel(_tiposAyudaOptions);
   const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
   const [showNewTownModal, setShowNewTownModal] = useState(false);
@@ -143,7 +143,7 @@ export default function Voluntometro() {
         tiposAyuda: [],
         vehiculo: '',
         disponibilidad: [],
-        radio: '',
+        radio: 1,
         experiencia: '',
         comentarios: '',
         aceptaProtocolo: false,
@@ -413,7 +413,7 @@ export default function Voluntometro() {
                 <input
                   type="number"
                   value={formData.radio}
-                  onChange={(e) => setFormData({ ...formData, radio: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, radio: Number(e.target.value) })}
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   min="1"
                   placeholder="¿Cuántos kilómetros puedes desplazarte?"
@@ -468,7 +468,7 @@ export default function Voluntometro() {
                       tiposAyuda: [],
                       vehiculo: '',
                       disponibilidad: [],
-                      radio: '',
+                      radio: 1,
                       experiencia: '',
                       comentarios: '',
                       aceptaProtocolo: false,
