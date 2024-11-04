@@ -5,6 +5,7 @@ import { MapPin, Phone, Calendar, User, HeartHandshake, Users, Truck, Search, Pa
 import { supabase } from '@/lib/supabase';
 import { tiposAyudaAcepta } from '@/helpers/constants';
 import Pagination from '@/components/Pagination';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type PuntosProps = {
   towns: {
@@ -13,6 +14,8 @@ type PuntosProps = {
   }[];
 };
 const Puntos: FC<PuntosProps> = ({ towns }) => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
   const [showModal, setShowModal] = useState(false);
@@ -26,12 +29,16 @@ const Puntos: FC<PuntosProps> = ({ towns }) => {
     return Math.ceil(count / itemsPerPage) || 0;
   };
 
-  const [filtroData, setFiltroData] = useState<{
-    acepta: string;
-    ayuda?: string;
-    pueblo?: string;
-  }>({
-    acepta: 'todos',
+  const updateFilter = (filter: any, value: any) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set(filter, value);
+    router.push(`?${params.toString()}`);
+  };
+
+  const [filtroData, setFiltroData] = useState({
+    acepta: searchParams.get('acepta') || 'todos',
+    ayuda: 'todas',
+    pueblo: 'todos',
   });
 
   const changeDataFilter = (type: any, newFilter: any) => {
@@ -39,10 +46,12 @@ const Puntos: FC<PuntosProps> = ({ towns }) => {
       ...prev,
       [type]: newFilter,
     }));
+    updateFilter(type, newFilter);
   };
 
   function changePage(newPage: number) {
     setCurrentPage(newPage);
+    updateFilter('page', newPage);
   }
 
   useEffect(() => {
