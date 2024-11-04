@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import Pagination from '@/components/Pagination';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { HelpRequestData } from '@/types/Requests';
 
 type OfertasProps = {
   towns: {
@@ -20,7 +21,7 @@ const Ofertas: FC<OfertasProps> = ({ towns }) => {
   const [error, setError] = useState<string>();
   const [showModal, setShowModal] = useState(false);
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<HelpRequestData[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentCount, setCurrentCount] = useState(0);
 

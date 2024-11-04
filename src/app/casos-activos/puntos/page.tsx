@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { tiposAyudaAcepta } from '@/helpers/constants';
 import Pagination from '@/components/Pagination';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { CollectionPointData } from '@/types/Requests';
 
 type PuntosProps = {
   towns: {
@@ -20,7 +21,7 @@ const Puntos: FC<PuntosProps> = ({ towns }) => {
   const [error, setError] = useState<string>();
   const [showModal, setShowModal] = useState(false);
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<CollectionPointData[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentCount, setCurrentCount] = useState(0);
 
@@ -76,6 +77,7 @@ const Puntos: FC<PuntosProps> = ({ towns }) => {
           console.log('Error fetching solicitudes:', error);
           setData([]);
         } else {
+          console.log(data);
           setData(data || []);
           setCurrentCount(count!);
         }

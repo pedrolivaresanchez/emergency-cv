@@ -6,8 +6,8 @@ import { supabase } from '@/lib/supabase';
 import SolicitudCard from '@/components/SolicitudCard';
 import Pagination from '@/components/Pagination';
 import OfferHelp from '@/components/OfferHelp';
-import { CaseProps } from '@/types/default';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { HelpRequestData } from '@/types/Requests';
 
 type SolicitudesProps = {
   towns: {
@@ -21,7 +21,7 @@ const Solicitudes: FC<SolicitudesProps> = ({ towns }) => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
-  const [data, setData] = useState<CaseProps[]>([]);
+  const [data, setData] = useState<HelpRequestData[]>([]);
   const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
   const [currentCount, setCurrentCount] = useState(0);
 

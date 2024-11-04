@@ -5,13 +5,17 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { AlertTriangle, ArrowLeft, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
 import SolicitudCard from '@/components/SolicitudCard';
+import { FC } from 'react';
+import { TownType } from '@/types/default';
+import { HelpRequestData } from '@/types/Requests';
 
-export default function CasoDetalle() {
+const CasoDetalle: FC = () => {
   const params = useParams();
   const { id } = params;
-  const [caso, setCaso] = useState(null);
-  const [towns, setTowns] = useState([]);
+  const [caso, setCaso] = useState<HelpRequestData>();
+  const [towns, setTowns] = useState<TownType[]>([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     async function fetchCaso() {
       const { data, error } = await supabase.from('help_requests').select('*').eq('id', id).single();
@@ -72,4 +76,6 @@ export default function CasoDetalle() {
       <SolicitudCard towns={towns} key={caso.id} caso={caso} />
     </div>
   );
-}
+};
+
+export default CasoDetalle;

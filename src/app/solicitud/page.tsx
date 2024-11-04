@@ -1,7 +1,8 @@
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { FC, memo } from 'react';
 
-export default function Solicitud() {
+const Solicitud: FC = () => {
   return (
     <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
       <div className="flex justify-start">
@@ -18,4 +19,6 @@ export default function Solicitud() {
       </div>
     </div>
   );
-}
+};
+
+export default memo(Solicitud);

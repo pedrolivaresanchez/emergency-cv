@@ -7,9 +7,9 @@ import { FC } from 'react';
 type SolicitudCardProps = {
   caso: any;
   towns: any;
-  isHref: boolean;
+  isHref?: boolean;
 };
-const SolicitudCard: FC<SolicitudCardProps> = ({ caso, towns, isHref }) => {
+const SolicitudCard: FC<SolicitudCardProps> = ({ caso, towns, isHref = false }) => {
   return (
     <>
       <div
