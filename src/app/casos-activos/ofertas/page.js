@@ -5,8 +5,12 @@ import { MapPin, Phone, Calendar, User, HeartHandshake, Users, Truck, Search, Pa
 import { supabase } from '@/lib/supabase';
 import Pagination from '@/components/Pagination';
 import { tiposAyudaOptions } from '@/helpers/constants';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Ofertas({ towns }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -19,8 +23,14 @@ export default function Ofertas({ towns }) {
     return Math.ceil(count / itemsPerPage) || 0;
   };
 
+  const updateFilter = (filter, value) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set(filter, value);
+    router.push(`?${params.toString()}`);
+  };
+
   const [filtroData, setFiltroData] = useState({
-    ayuda: 'todas',
+    ayuda: searchParams.get('acepta') || 'todas',
   });
 
   const changeDataFilter = (type, newFilter) => {
@@ -28,10 +38,12 @@ export default function Ofertas({ towns }) {
       ...prev,
       [type]: newFilter,
     }));
+    updateFilter(type, newFilter);
   };
 
   function changePage(newPage) {
     setCurrentPage(newPage);
+    updateFilter("page", newPage);
   }
 
   useEffect(() => {

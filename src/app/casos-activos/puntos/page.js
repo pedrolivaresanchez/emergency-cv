@@ -5,8 +5,12 @@ import { MapPin, Phone, Calendar, User, HeartHandshake, Users, Truck, Search, Pa
 import { supabase } from '@/lib/supabase';
 import { tiposAyudaAcepta } from '@/helpers/constants';
 import Pagination from '@/components/Pagination';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Puntos({ towns }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -19,8 +23,14 @@ export default function Puntos({ towns }) {
     return Math.ceil(count / itemsPerPage) || 0;
   };
 
+  const updateFilter = (filter, value) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set(filter, value);
+    router.push(`?${params.toString()}`);
+  };
+
   const [filtroData, setFiltroData] = useState({
-    acepta: 'todos',
+    acepta: searchParams.get('acepta') || 'todos',
   });
 
   const changeDataFilter = (type, newFilter) => {
@@ -28,10 +38,12 @@ export default function Puntos({ towns }) {
       ...prev,
       [type]: newFilter,
     }));
+    updateFilter(type, newFilter);
   };
 
   function changePage(newPage) {
     setCurrentPage(newPage);
+    updateFilter("page", newPage);
   }
 
   useEffect(() => {

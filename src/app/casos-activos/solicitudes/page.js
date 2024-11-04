@@ -6,15 +6,18 @@ import { supabase } from '@/lib/supabase';
 import SolicitudCard from '@/components/SolicitudCard';
 import Pagination from '@/components/Pagination';
 import OfferHelp from '@/components/OfferHelp';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Solicitudes({ towns }) {
-  console.log(towns);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
   const [currentCount, setCurrentCount] = useState(0);
 
   const [showModal, setShowModal] = useState(false);
@@ -27,9 +30,15 @@ export default function Solicitudes({ towns }) {
     return Math.ceil(count / itemsPerPage) || 0;
   };
 
+  const updateFilter = (filter, value) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set(filter, value);
+    router.push(`?${params.toString()}`);
+  };
+
   const [filtroData, setFiltroData] = useState({
-    urgencia: 'todas',
-    pueblo: 'todos',
+    urgencia: searchParams.get('urgencia') || 'todas',
+    pueblo: searchParams.get('pueblo') || 'todos',
   });
 
   const changeDataFilter = (type, newFilter) => {
@@ -37,10 +46,12 @@ export default function Solicitudes({ towns }) {
       ...prev,
       [type]: newFilter,
     }));
+    updateFilter(type, newFilter);
   };
 
   function changePage(newPage) {
     setCurrentPage(newPage);
+    updateFilter("page", newPage);
   }
 
   useEffect(() => {
