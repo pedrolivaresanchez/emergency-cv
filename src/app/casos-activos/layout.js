@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase';
 import TabNavigation from '@/components/TabNavigation';
 
 const getTowns = async () => {
-  const { data, error } = await supabase.from('towns').select('id, name');
+  const { data, error } = await supabase.from('towns').select('id, name').order('id', { ascending: true });
   if (error) {
     throw new Error('Error fetching towns:', error);
   }
@@ -55,7 +55,6 @@ export default async function CasosActivosLayout() {
 
   return (
     <>
-    
       <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
         <TabNavigation count={count} towns={towns} />
       </div>

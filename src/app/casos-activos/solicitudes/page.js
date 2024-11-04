@@ -8,6 +8,8 @@ import Pagination from '@/components/Pagination';
 import OfferHelp from '@/components/OfferHelp';
 
 export default function Solicitudes({ towns }) {
+  console.log(towns);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -52,7 +54,7 @@ export default function Solicitudes({ towns }) {
 
         // Solo agregar filtro si no es "todos"
         if (filtroData.pueblo !== 'todos') {
-          query.eq('town_id', (filtroData.pueblo-1));
+          query.eq('town_id', filtroData.pueblo);
         }
 
         // Solo agregar filtro si no es "todas"

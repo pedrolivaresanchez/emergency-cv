@@ -42,7 +42,7 @@ export default function SolicitudCard({ caso, towns, isHref }) {
               <div className="flex items-start gap-2">
                 <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                 <span className="break-words">
-                  <span className="font-semibold">Pueblo:</span> {towns[caso.town_id]?.name || ''}
+                  <span className="font-semibold">Pueblo:</span> {towns[caso.town_id - 1]?.name || ''}
                 </span>
               </div>
             )}
@@ -130,18 +130,14 @@ export default function SolicitudCard({ caso, towns, isHref }) {
             )}
           </div>
           {isHref && (
-          <Link
-            href={`/solicitud/${caso.id}`}
-            className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto  ${
-              caso.urgency === 'alta'
-                ? 'bg-red-500'
-                : caso.urgency === 'media'
-                  ? 'bg-yellow-500'
-                  : 'bg-green-500'
-            }`}
-          >
-            Ver solicitud
-          </Link>
+            <Link
+              href={`/solicitud/${caso.id}`}
+              className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto  ${
+                caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
+              }`}
+            >
+              Ver solicitud
+            </Link>
           )}
         </div>
       </div>
