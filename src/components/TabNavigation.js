@@ -6,6 +6,7 @@ import Solicitudes from '@/app/casos-activos/solicitudes/page';
 import { HeartHandshake, Package, Search } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Tab from './Tab';
+import { Suspense } from 'react';
 
 export default function TabNavigation({ count = { solicitudes: 0, ofertas: 0, puntos: 0 }, towns }) {
   const pathname = usePathname();
@@ -30,12 +31,28 @@ export default function TabNavigation({ count = { solicitudes: 0, ofertas: 0, pu
         </Tab>
       </div>
       <div className="grid gap-4">
-        {pathname === '/casos-activos/solicitudes' && <Solicitudes towns={towns} />}
-        {pathname === '/casos-activos' && <Solicitudes towns={towns} />}
+        {pathname === '/casos-activos/solicitudes' && (
+          <Suspense fallback={<div>Loading...</div>}>
+            <Solicitudes towns={towns} />
+          </Suspense>
+        )}
+        {pathname === '/casos-activos' && (
+          <Suspense fallback={<div>Loading...</div>}>
+            <Solicitudes towns={towns} />
+          </Suspense>
+        )}
 
-        {pathname === '/casos-activos/ofertas' && <Ofertas towns={towns} />}
+        {pathname === '/casos-activos/ofertas' && (
+          <Suspense fallback={<div>Loading...</div>}>
+            <Ofertas towns={towns} />
+          </Suspense>
+        )}
 
-        {pathname === '/casos-activos/puntos' && <Puntos />}
+        {pathname === '/casos-activos/puntos' && (
+          <Suspense fallback={<div>Loading...</div>}>
+            <Puntos towns={towns} />
+          </Suspense>
+        )}
 
         {/* {pathname === '/casos-activos/mapa' && (
           <Mapa markers={solicitudesMarkers} center={PAIPORTA_LAT_LNG} zoom={10}></Mapa>
