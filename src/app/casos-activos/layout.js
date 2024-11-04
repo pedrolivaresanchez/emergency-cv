@@ -49,7 +49,6 @@ export default async function CasosActivosLayout() {
   const towns = await getTowns();
 
   const count = await getCount();
-  console.log(count);
   // const puntosDeRecogidaMarkers = puntosRecogida.map(p => getMarkerByPuntoDeRecogida).filter(Boolean)
   // const solicitudesMarkers = solicitudes.map((sol) => getMarkerBySolicitud(sol, towns)).filter(Boolean);
 
