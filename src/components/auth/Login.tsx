@@ -2,8 +2,9 @@
 
 import SignUp from '@/components/auth/SignUp';
 import { authService } from '@/lib/service';
-import { FC, FormEvent, useEffect, useState } from 'react';
-import { User } from '@supabase/auth-js';
+
+import { FC, FormEvent, useState } from 'react';
+import SocialButton from './SocialButton';
 
 type LoginProps = {
   onSuccessCallback?: () => void;
@@ -24,20 +25,6 @@ const Login: FC<LoginProps> = ({ onSuccessCallback }) => {
     success: false,
   });
 
-  const [user, setUser] = useState<User>();
-
-  const refreshUser = async () => {
-    const response = await authService.getSessionUser();
-    if (response.error) {
-      return;
-    }
-    setUser(response.data.user);
-  };
-
-  useEffect(() => {
-    refreshUser();
-  }, []);
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -50,35 +37,20 @@ const Login: FC<LoginProps> = ({ onSuccessCallback }) => {
 
     const response = await authService.signIn(formData.email, formData.password);
     if (response.error) {
-      setStatus({ isSubmitting: false, error: 'El email o contraseña son invalidos', success: false });
+      setStatus({ isSubmitting: false, error: 'El email o contraseña son inválidos', success: false });
       return;
     }
 
     setStatus({ isSubmitting: false, error: null, success: true });
-    setUser(response.data.user);
+
     if (typeof onSuccessCallback === 'function') {
       onSuccessCallback();
     }
   };
 
-  const logOut = async () => {
-    const response = await authService.signOut();
-    if (!response.error) {
-      setUser(undefined);
-    }
-  };
-
   return (
     <>
-      {user && (
-        <div className={`bg-white rounded-lg p-6 w-full relative flex flex-col gap-6`}>
-          <div>La sesión ya esta iniciada</div>
-          <div className="text-blue-400 hover:cursor-pointer" onClick={logOut}>
-            Cerrar sesión
-          </div>
-        </div>
-      )}
-      {!isSignUp && !user && (
+      {!isSignUp && (
         <form onSubmit={handleSubmit} className={`bg-white rounded-lg p-6 w-full relative flex flex-col gap-6`}>
           <div className="space-y-6 max-h-[65vh] overflow-y-auto p-2">
             {/* Email */}
@@ -125,7 +97,7 @@ const Login: FC<LoginProps> = ({ onSuccessCallback }) => {
                 } text-white py-3 px-4 rounded-lg font-semibold 
           focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2`}
               >
-                {status.isSubmitting ? 'Iniciando sesion...' : 'Inicia Sesion'}
+                {status.isSubmitting ? 'Iniciando sesión...' : 'Inicia Sesión'}
               </button>
             </div>
 
@@ -136,6 +108,11 @@ const Login: FC<LoginProps> = ({ onSuccessCallback }) => {
               </div>
             )}
           </div>
+
+          <div className="p-2">
+            <p className="text-center text-gray-700 mb-2">O prueba con estas opciones:</p>
+            <SocialButton provider="google">Inicia sesión con Google</SocialButton>
+          </div>
         </form>
       )}
       {isSignUp && (
@@ -144,7 +121,6 @@ const Login: FC<LoginProps> = ({ onSuccessCallback }) => {
             setIsSignUp(false);
           }}
           onSuccessCallback={() => {
-            refreshUser();
             setIsSignUp(false);
           }}
         />

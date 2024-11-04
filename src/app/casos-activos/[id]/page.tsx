@@ -1,27 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { AlertTriangle, ArrowLeft, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
-import { StatusType, UrgencyType } from '@/types/default';
-
-type CaseProps = {
-  id: string;
-  name: string;
-  urgency: UrgencyType;
-  status: StatusType;
-  description: string;
-  town_id?: string;
-  location: string;
-  created_at: string;
-  contact_info?: string;
-  help_type?: string[];
-  additional_info?: {
-    special_situations?: string;
-  };
-  number_of_people?: number;
-};
+import { CaseProps } from '@/types/default';
 
 const CasoDetalle = () => {
   const params = useParams();

@@ -17,6 +17,7 @@ import {
   Thermometer,
   Truck,
 } from 'lucide-react';
+import UserInfo from '../UserInfo';
 
 const menuItems = [
   {
@@ -111,6 +112,11 @@ const Sidebar: FC<SidebarProps> = ({ isOpen, toggle }) => {
           <Link href="/" passHref>
             <h1 className="text-xl font-bold text-gray-800 cursor-pointer">Ayuda Dana</h1>
           </Link>
+        </div>
+
+        {/* User info and login */}
+        <div className="p-4">
+          <UserInfo />
         </div>
 
         {/* Menu items - Contenedor con scroll */}

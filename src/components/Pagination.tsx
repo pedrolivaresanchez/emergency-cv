@@ -2,8 +2,8 @@ import React, { FC } from 'react';
 type PaginationProps = {
   currentPage: number;
   totalPages: number;
-  activeTab: string;
-  onPageChange: (tab: string, page: number) => void;
+  activeTab?: string;
+  onPageChange: (page: number) => void;
 };
 const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, activeTab, onPageChange }) => {
   console.log(currentPage, totalPages, activeTab);
@@ -52,7 +52,7 @@ const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, activeTab, o
       {/* Botón de retroceso */}
       <button
         className={`px-3 py-1 border rounded-md text-gray-600 hover:bg-gray-100 ${currentPage === 1 ? 'hidden' : ''}`}
-        onClick={() => onPageChange(activeTab, currentPage - 1)}
+        onClick={() => onPageChange(currentPage - 1)}
       >
         Anterior
       </button>
@@ -61,7 +61,7 @@ const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, activeTab, o
       {getPageNumbers().map((page, index) => (
         <button
           key={index}
-          onClick={() => typeof page === 'number' && onPageChange(activeTab, page)}
+          onClick={() => typeof page === 'number' && onPageChange(page)}
           className={`px-3 py-1 border rounded-md ${
             page === currentPage ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'
           }`}
@@ -76,7 +76,7 @@ const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, activeTab, o
         className={`px-3 py-1 border rounded-md text-gray-600 hover:bg-gray-100 ${
           currentPage === totalPages ? 'hidden' : ''
         }`}
-        onClick={() => onPageChange(activeTab, currentPage + 1)}
+        onClick={() => onPageChange(currentPage + 1)}
       >
         Siguiente
       </button>
