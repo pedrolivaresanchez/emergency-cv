@@ -1,9 +1,27 @@
 export function Modal({ isOpen, onClose, title, children }) {
   if (!isOpen) return null;
 
+  const handleBackdropClick = (e) => {
+    // Cerrar solo si se clicka en el backdrop (y no en el contenido del modal)
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  // El contenido del modal en sí no debería causar un backdrop click
+  const handleModalClick = (e) => {
+    e.stopPropagation();
+  };
+
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full m-4">
+    <div
+      className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center"
+      onClick={handleBackdropClick}
+    >
+      <div
+        className="relative bg-white rounded-lg shadow-xl max-w-md w-full m-4"
+        onClick={handleModalClick} // Previene que los clicks hagan bubble up
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
