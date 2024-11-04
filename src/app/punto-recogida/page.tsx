@@ -3,6 +3,7 @@
 import { FormEvent, useState } from 'react';
 import { Package } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { isValidPhone, isNumericOrSpaces } from '@/helpers/utils';
 
 const PuntoRecogida = () => {
   const [formData, setFormData] = useState<{
@@ -51,6 +52,10 @@ const PuntoRecogida = () => {
 
       if (formData.accepted_items.length === 0) {
         throw new Error('Seleccione al menos un tipo de ayuda');
+      }
+
+      if (!isValidPhone(formData.contact_phone)) {
+        throw new Error('El teléfono de contacto no es válido');
       }
 
       // Insertar en Supabase directamente
@@ -148,8 +153,13 @@ const PuntoRecogida = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono de contacto*</label>
             <input
               type="tel"
+              pattern="[0-9]{1,9}"
+              maxLength="9"
+              placeholder="Teléfono móvil preferiblemente (sin el prefijo +34)"
               value={formData.contact_phone}
-              onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+              onChange={(e) =>
+                isNumericOrSpaces(e.target.value) && setFormData({ ...formData, contact_phone: e.target.value })
+              }
               className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
             />
           </div>

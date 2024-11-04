@@ -5,7 +5,8 @@ import { AlertTriangle, Check, Mail } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions } from '@/helpers/constants';
-import { UrgencyType } from '@/types/default';
+import { isValidPhone } from '@/helpers/utils';
+import { HelpRequestUrgencyType } from '@/types/Requests';
 
 const SolicitarAyuda = () => {
   const [formData, setFormData] = useState<{
@@ -15,7 +16,7 @@ const SolicitarAyuda = () => {
     tiposAyuda: string[];
     numeroPersonas: string;
     descripcion: string;
-    urgencia: UrgencyType;
+    urgencia: HelpRequestUrgencyType;
     situacionEspecial: string;
     contacto: string;
     consentimiento: boolean;
@@ -101,7 +102,7 @@ const SolicitarAyuda = () => {
         description: formData.descripcion,
         urgency: formData.urgencia,
         number_of_people: parseInt(formData.numeroPersonas) || 1,
-        contact_info: formData.contacto,
+        contact_info: isValidPhone(formData.contacto),
         additional_info: {
           special_situations: formData.situacionEspecial || null,
           consent: true,
@@ -289,9 +290,11 @@ const SolicitarAyuda = () => {
               type="tel"
               name="contacto"
               value={formData.contacto}
+              pattern="[0-9]{1,9}"
+              maxLength={9}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-              placeholder="Teléfono móvil preferiblemente"
+              placeholder="Teléfono móvil preferiblemente (sin el prefijo +34)"
             />
           </div>
           {/* Pueblos */}
