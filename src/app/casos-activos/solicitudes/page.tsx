@@ -169,12 +169,7 @@ const Solicitudes: FC<SolicitudesProps> = ({ towns }) => {
         )}
       </div>
       <div className="flex items-center justify-center">
-        <Pagination
-          activeTab={'solicitudes'}
-          currentPage={currentPage}
-          totalPages={numPages(currentCount)}
-          onPageChange={changePage}
-        />
+        <Pagination currentPage={currentPage} totalPages={numPages(currentCount)} onPageChange={changePage} />
       </div>
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
