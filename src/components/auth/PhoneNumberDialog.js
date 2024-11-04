@@ -45,17 +45,10 @@ function PhoneForm({ onSubmit, onCancel }) {
 
       <div className="flex justify-end space-x-2">
         <button
-          type="button"
-          onClick={onCancel}
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-        >
-          Cancelar
-        </button>
-        <button
           type="submit"
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
-          Confirmar
+          Guardar
         </button>
       </div>
     </form>
@@ -108,7 +101,7 @@ export function PhoneNumberDialog() {
   }, []);
 
   return (
-    <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="¿Cuál es tu número de teléfono?">
+    <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="¿Cuál es tu número de teléfono?" allowClose={false}>
       <PhoneForm onSubmit={handleSubmit} onCancel={() => setIsOpen(false)} />
     </Modal>
   );
