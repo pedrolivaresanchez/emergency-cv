@@ -1,7 +1,7 @@
 import { AlertTriangle, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
 import {tiposAyudaOptions} from "@/helpers/constants";
 
-export default function SolicitudCard({ caso, town }) {
+export default function SolicitudCard({ caso, towns }) {
   return (
     <>
       <div
@@ -40,7 +40,7 @@ export default function SolicitudCard({ caso, town }) {
             <div className="flex items-start gap-2">
               <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
               <span className="break-words">
-                <span className="font-semibold">Pueblo:</span> {town}
+                <span className="font-semibold">Pueblo:</span> {towns[caso.town_id].name}
               </span>
             </div>
           )}

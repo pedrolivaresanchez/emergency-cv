@@ -346,11 +346,11 @@ export default function CasosActivos() {
                       className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
                     >
                       <HeartHandshake className="w-5 h-5" />
-                      {/* Ofrecer ayuda a {towns === "todos" ? "" : towns[filtroSolicitudes.pueblo - 1].name} */}
+                      Ofrecer ayuda a {filtroSolicitudes.pueblo === "todos" ? "" : towns[filtroSolicitudes.pueblo - 1].name}
                     </button>
                   </div>
                 ) : (
-                  solicitudes.map((caso) => <SolicitudCard town={''} key={caso.id} caso={caso} />)
+                  solicitudes.map((caso) => <SolicitudCard towns={towns} key={caso.id} caso={caso} />)
                 )}
               </div>
             </>
