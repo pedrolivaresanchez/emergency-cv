@@ -7,6 +7,7 @@ import SolicitudCard from '@/components/SolicitudCard';
 import Pagination from '@/components/Pagination';
 import OfferHelp from '@/components/OfferHelp';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { tiposAyudaOptions } from '@/helpers/constants';
 
 export default function Solicitudes({ towns }) {
 
@@ -38,6 +39,7 @@ export default function Solicitudes({ towns }) {
 
   const [filtroData, setFiltroData] = useState({
     urgencia: searchParams.get('urgencia') || 'todas',
+    tipoAyuda: searchParams.get('tipoAyuda') || 'todas',
     pueblo: searchParams.get('pueblo') || 'todos',
   });
 
@@ -62,6 +64,11 @@ export default function Solicitudes({ towns }) {
 
         // Comenzamos la consulta
         const query = supabase.from('help_requests').select('*', { count: 'exact' }).eq('type', 'necesita');
+
+        // Solo agregar filtro si no es "todos"
+        if (filtroData.tipoAyuda !== 'todas') {
+          query.contains('help_type', [filtroData.tipoAyuda]);
+        }
 
         // Solo agregar filtro si no es "todos"
         if (filtroData.pueblo !== 'todos') {
@@ -118,6 +125,18 @@ export default function Solicitudes({ towns }) {
       <div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
         <p className="font-bold text-md">Filtros</p>
         <div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
+          <select
+            value={filtroData.tipoAyuda}
+            onChange={(e) => changeDataFilter('tipoAyuda', e.target.value)}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+          >
+            <option value="todas">Todas las necesidades</option>
+            {Object.entries(tiposAyudaOptions).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
           <select
             value={filtroData.urgencia}
             onChange={(e) => changeDataFilter('urgencia', e.target.value)}
