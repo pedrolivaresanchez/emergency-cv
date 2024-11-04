@@ -47,3 +47,32 @@ Este mensaje indica que se han añadido instrucciones de instalación local en e
 ¡Gracias por contribuir! Tu ayuda hace una gran diferencia para el proyecto.
 
 <br/>
+
+## Desarrollo local - levantar db de desarrollo local
+
+### Pre requisitos
+
+- [docker](https://docs.docker.com/engine/install/) y [docker compose](https://docs.docker.com/compose/install/)
+- [cli de supabase](https://supabase.com/docs/guides/local-development/cli/getting-started)
+
+### Instalar self hosted supabase
+
+```
+cd ${DIRECTORIO_DE_EMERGENCY_CV}
+supabase login
+supabase init
+supabase link --project-ref nmvcsenkfqbdlfdtiqdo
+supabase start
+```
+
+### Para hacer cambios en el schema
+
+- Editar como queremos que sea en local (studio de supabase)
+- Ejecutar el comando:
+
+```
+// nombre de la migracion es indicativo, no tiene nigun efecto
+supabase db diff -f ${NOMBRE_DE_LA_MIGRACION}
+```
+
+- Esto generara una migracion en el local, hay que añadir esto al PR y github actions lo pondra en produccion.
