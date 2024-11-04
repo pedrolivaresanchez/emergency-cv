@@ -2,6 +2,8 @@
 
 import { MapPin, Clock, AlertCircle, Heart, Users, Package, Thermometer, Cross } from 'lucide-react';
 
+import { PhoneNumberDialog } from '@/components/auth/PhoneNumberDialog';
+
 export default function Home() {
   const emergencyNumbers = [
     { name: 'Emergencias', number: '112', description: 'Para situaciones de peligro inmediato' },
@@ -110,76 +112,79 @@ export default function Home() {
   ];
 
   return (
-    <div className="container mx-auto p-4 space-y-8 max-w-7xl">
-      {/* Sección de Emergencia */}
-      <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg shadow-lg">
-        <div className="flex items-start gap-4">
-          <AlertCircle className="h-6 w-6 text-red-500 flex-shrink-0" />
-          <div>
-            <h2 className="text-xl font-bold text-red-800 mb-2">EMERGENCIA ACTIVA - DANA</h2>
-            <div className="prose prose-sm text-red-700">
-              <p className="mb-2">Situación de emergencia activa por DANA en la Comunitat Valenciana.</p>
-              <p className="font-medium">Para emergencias médicas inmediatas, llame al 112.</p>
+    <>
+      <PhoneNumberDialog />
+      <div className="container mx-auto p-4 space-y-8 max-w-7xl">
+        {/* Sección de Emergencia */}
+        <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg shadow-lg">
+          <div className="flex items-start gap-4">
+            <AlertCircle className="h-6 w-6 text-red-500 flex-shrink-0" />
+            <div>
+              <h2 className="text-xl font-bold text-red-800 mb-2">EMERGENCIA ACTIVA - DANA</h2>
+              <div className="prose prose-sm text-red-700">
+                <p className="mb-2">Situación de emergencia activa por DANA en la Comunitat Valenciana.</p>
+                <p className="font-medium">Para emergencias médicas inmediatas, llame al 112.</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Acciones Principales - Más grandes y prominentes */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {mainActions.map((action) => (
-          <a
-            key={action.title}
-            href={action.path}
-            className={`bg-white p-8 rounded-lg shadow-lg border-l-4 
+        {/* Acciones Principales - Más grandes y prominentes */}
+        <div className="grid md:grid-cols-2 gap-6">
+          {mainActions.map((action) => (
+            <a
+              key={action.title}
+              href={action.path}
+              className={`bg-white p-8 rounded-lg shadow-lg border-l-4 
               border-${action.color}-500 hover:shadow-xl transition-all hover:-translate-y-1
               ${action.priority === 'high' ? 'md:col-span-1 relative overflow-hidden' : ''}`}
-          >
-            {action.priority === 'high' && (
-              <div className="absolute top-0 right-0 bg-red-500 text-white px-4 py-1 rounded-bl-lg text-sm">
-                Prioritario
+            >
+              {action.priority === 'high' && (
+                <div className="absolute top-0 right-0 bg-red-500 text-white px-4 py-1 rounded-bl-lg text-sm">
+                  Prioritario
+                </div>
+              )}
+              <div className="flex items-center gap-4 mb-4">
+                <action.icon className={`h-8 w-8 text-${action.color}-500`} />
+                <h3 className={`text-xl font-bold text-${action.color}-600`}>{action.title}</h3>
               </div>
-            )}
-            <div className="flex items-center gap-4 mb-4">
-              <action.icon className={`h-8 w-8 text-${action.color}-500`} />
-              <h3 className={`text-xl font-bold text-${action.color}-600`}>{action.title}</h3>
-            </div>
-            <p className="text-gray-600">{action.description}</p>
-          </a>
-        ))}
-      </div>
-
-      {/* Puntos de Encuentro */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <MapPin className="h-6 w-6 text-orange-500" />
-          <h2 className="text-xl font-bold text-gray-800">Puntos de Encuentro</h2>
-        </div>
-
-        <div className="bg-orange-50 p-4 rounded-lg mb-6">
-          <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-orange-500" />
-            <p className="font-medium text-orange-800">Horario de encuentro: 10:00 am todos los días</p>
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {collectionPoints.map((point) => (
-            <div key={point.area} className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow">
-              <h3 className="font-bold text-gray-800 mb-2">{point.area}</h3>
-              <div className="space-y-1 text-sm text-gray-600">
-                <p>{point.address}</p>
-                <p>
-                  {point.postalCode} {point.city}
-                </p>
-                {point.location && (
-                  <p className="text-orange-600 font-medium mt-2">Punto de referencia: {point.location}</p>
-                )}
-              </div>
-            </div>
+              <p className="text-gray-600">{action.description}</p>
+            </a>
           ))}
         </div>
+
+        {/* Puntos de Encuentro */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <MapPin className="h-6 w-6 text-orange-500" />
+            <h2 className="text-xl font-bold text-gray-800">Puntos de Encuentro</h2>
+          </div>
+
+          <div className="bg-orange-50 p-4 rounded-lg mb-6">
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-orange-500" />
+              <p className="font-medium text-orange-800">Horario de encuentro: 10:00 am todos los días</p>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {collectionPoints.map((point) => (
+              <div key={point.area} className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow">
+                <h3 className="font-bold text-gray-800 mb-2">{point.area}</h3>
+                <div className="space-y-1 text-sm text-gray-600">
+                  <p>{point.address}</p>
+                  <p>
+                    {point.postalCode} {point.city}
+                  </p>
+                  {point.location && (
+                    <p className="text-orange-600 font-medium mt-2">Punto de referencia: {point.location}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
