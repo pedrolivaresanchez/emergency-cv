@@ -235,10 +235,12 @@ export default function PuntosEntrega() {
                       ...prev,
                       location: address.fullAddress,
                       city: address.details.city,
-                      coordinates: {
-                        lat: address.coordinates.lat,
-                        lon: address.coordinates.lon,
-                      },
+                      coordinates: address.coordinates
+                        ? {
+                            lat: address.coordinates.lat,
+                            lng: address.coordinates.lon,
+                          }
+                        : null,
                     }));
                   }}
                   placeholder="Buscar dirección..."
