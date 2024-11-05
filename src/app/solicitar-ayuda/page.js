@@ -65,6 +65,7 @@ export default function SolicitarAyuda() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    /* Form validation */
     if (!formData.ubicacion) {
       alert('La ubicación es un campo obligatorio');
       return;
@@ -76,7 +77,7 @@ export default function SolicitarAyuda() {
     }
 
     if (!isValidPhone(formData.contacto)) {
-      alert('El teléfono de contacto no es válido. Si has usado espacios, elimínalos.');
+      alert('El teléfono de contacto no es válido.');
       return;
     }
 
@@ -147,8 +148,8 @@ export default function SolicitarAyuda() {
     }));
   };
 
-  const handlePhoneChange = useCallback((e) => {
-    setFormData((formData) => ({ ...formData, contacto: e.target.value }));
+  const handlePhoneChange = useCallback((phoneNumber) => {
+    setFormData((formData) => ({ ...formData, contacto: phoneNumber }));
   }, []);
 
   return (
