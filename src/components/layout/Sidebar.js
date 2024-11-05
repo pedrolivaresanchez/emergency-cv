@@ -111,11 +111,6 @@ export default function Sidebar({ isOpen, toggle }) {
           </Link>
         </div>
 
-        {/* User info and login */}
-        <div className="p-4">
-          <UserInfo />
-        </div>
-
         {/* Menu items - Contenedor con scroll */}
         <nav className="p-4 flex-1 overflow-y-auto">
           <div className="space-y-2">
@@ -154,6 +149,11 @@ export default function Sidebar({ isOpen, toggle }) {
             ))}
           </div>
         </nav>
+
+        {/* User info and login */}
+        <div className="p-4">
+          <UserInfo />
+        </div>
 
         {/* Toggle button for desktop */}
         <button
