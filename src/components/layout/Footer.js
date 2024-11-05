@@ -7,6 +7,9 @@ const Footer = () => {
             Web creada por personas voluntarias,{' '}
             <span className="block sm:inline">independiente de cualquier organismo.</span>
           </p>
+          <a className="text-gray-400 text-sm" href="mailto:info@ajudadana.es">
+            info@ajudadana.es
+          </a>
           <p className="text-gray-400 text-xs">© {new Date().getFullYear()} Emergency CV</p>
         </div>
       </div>
