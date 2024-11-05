@@ -1,7 +1,8 @@
 import { supabase } from './supabase/client';
+import { HelpRequestAssignmentData, HelpRequestData } from '@/types/Requests';
 
 export const helpRequestService = {
-  async createRequest(requestData:any) {
+  async createRequest(requestData:HelpRequestData) {
     const { data, error } = await supabase.from('help_requests').insert([requestData]).select();
 
     if (error) throw error;
@@ -13,6 +14,13 @@ export const helpRequestService = {
 
     if (error) throw error;
     return data;
+  },
+
+  async assign(requestData:HelpRequestAssignmentData) {
+    const { data, error } = await supabase.from('help_request_assignments').insert([requestData]).select();
+
+    if (error) throw error;
+    return data[0];
   },
 
   async getByType(type:any) {
