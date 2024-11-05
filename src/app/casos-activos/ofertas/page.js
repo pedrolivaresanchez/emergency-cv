@@ -43,7 +43,7 @@ export default function Ofertas({ towns }) {
 
   function changePage(newPage) {
     setCurrentPage(newPage);
-    updateFilter("page", newPage);
+    updateFilter('page', newPage);
   }
 
   useEffect(() => {
@@ -102,23 +102,23 @@ export default function Ofertas({ towns }) {
   return (
     <>
       {/* FILTROS  */}
-              <div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
-                <p className="font-bold text-md">Filtros</p>
-                <div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
-                  <select
-                    value={filtroData.ayuda}
-                    onChange={(e) => changeDataFilter('ayuda', e.target.value)}
-                    className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
-                  >
-                    <option value="todas">Todas las ofertas</option>
-                    {Object.entries(tiposAyudaOptions).map(([key, value]) => (
-                      <option key={key} value={key}>
-                        {value}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
+        <p className="font-bold text-md">Filtros</p>
+        <div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
+          <select
+            value={filtroData.ayuda}
+            onChange={(e) => changeDataFilter('ayuda', e.target.value)}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+          >
+            <option value="todas">Todas las ofertas</option>
+            {Object.entries(tiposAyudaOptions).map(([key, value]) => (
+              <option key={key} value={key}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
       <div className="grid gap-4">
         {data.length === 0 ? (
           <div className="bg-white rounded-lg shadow-lg border border-gray-300 text-center flex justify-center items-center p-10 flex-col gap-5">
@@ -142,7 +142,10 @@ export default function Ofertas({ towns }) {
               key={caso.id}
               className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-green-500 overflow-hidden"
             >
-              <div className="flex justify-start mb-2">
+              <div className="flex justify-between mb-2">
+                <span className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap mr-2 bg-purple-300`}>
+                  Referencia: {caso.id}
+                </span>
                 <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap bg-green-100 text-green-800">
                   {caso.status === 'active' ? 'Activo' : 'Inactivo'}
                 </span>
@@ -180,9 +183,7 @@ export default function Ofertas({ towns }) {
                     <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                     <span className="break-words">
                       <span className="font-semibold">Teléfono:</span>{' '}
-                      {typeof caso.contact_info === 'string'
-                        ? caso.contact_info
-                        : JSON.parse(caso.contact_info).phone}
+                      {typeof caso.contact_info === 'string' ? caso.contact_info : JSON.parse(caso.contact_info).phone}
                     </span>
                   </div>
                 )}
@@ -192,8 +193,7 @@ export default function Ofertas({ towns }) {
                     {(() => {
                       let resources;
                       try {
-                        resources =
-                          typeof caso.resources === 'string' ? JSON.parse(caso.resources) : caso.resources;
+                        resources = typeof caso.resources === 'string' ? JSON.parse(caso.resources) : caso.resources;
 
                         return resources.vehicle ? (
                           <div className="flex items-start gap-2">
