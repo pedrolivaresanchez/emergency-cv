@@ -4,6 +4,7 @@
 
 import { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
+import Footer from './Footer';
 
 export default function EmergencyLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Por defecto abierto
@@ -29,6 +30,7 @@ export default function EmergencyLayout({ children }) {
       <div className={`transition-margin duration-300 ${isSidebarOpen ? 'md:ml-64' : 'ml-0'}`}>
         <main className="p-4">{children}</main>
       </div>
+      <Footer />
     </div>
   );
 }
