@@ -4,6 +4,8 @@ import { MapPin, Clock, AlertCircle, Heart, Users, Package, Thermometer, Cross }
 
 import PhoneNumberDialog from '@/components/auth/PhoneNumberDialog';
 
+import Image from 'next/image';
+
 export default function Home() {
   const emergencyNumbers = [
     { name: 'Emergencias', number: '112', description: 'Para situaciones de peligro inmediato' },
@@ -133,14 +135,37 @@ export default function Home() {
             <AlertCircle className="h-6 w-6 text-red-500 flex-shrink-0" />
             <div className="w-full">
               <h2 className="text-xl font-bold text-red-800 mb-2">PARA PERSONAS CON DIFICULTADES TECNICAS</h2>
-              <div className="prose prose-sm text-red-700">
+              <div className="flex flex-col text-red-700 space-y-2">
+                <p className="font-bold">
+                  AVISO IMPORTANTE: Esta información es sólo para personas que tengan dificultades técnicas a la hora de
+                  pedir ayuda.
+                </p>
                 <p className="mb-2">
                   Hemos habilitado el número{' '}
                   <a className="font-bold text-blue-600 hover:text-blue-800" href="tel:+34626675591">
                     626 675 591
-                  </a>{' '} [<a href="https://wa.me/34626675591">WhatsApp</a>]
-                  para facilitar la petición de ayuda a aquellas personas que encuentren complicado usar la página web.
+                  </a>{' '}
+                  para facilitar la petición de ayuda a aquellas personas que encuentren complicado usar la página web.{' '}
                 </p>
+                <p className="font-bold">
+                  ¡Importante! No saturéis el teléfono si podéis usar la página web, por favor. Si tenéis alguna duda
+                  sobre la página web o deseáis aportar nuevas ideas, por favor escríbenos a{' '}
+                  <a className="text-blue-600 hover:text-blue-800" href="mailto:info@ajudadana.es">
+                    info@ajudadana.es
+                  </a>
+                </p>
+                <p>También puedes contactar con nosotros a través de:</p>
+                <a className="text-blue-600 hover:text-blue-800 flex space-x-2" href="https://wa.me/34626675591">
+                  <Image
+                    src={
+                      'https://upload.wikimedia.org/wikipedia/commons/a/a7/2062095_application_chat_communication_logo_whatsapp_icon.svg'
+                    }
+                    alt="Whatsapp icon"
+                    height={20}
+                    width={20}
+                  />
+                  <span className="font-semibold">WhatsApp</span>
+                </a>
               </div>
             </div>
           </div>
