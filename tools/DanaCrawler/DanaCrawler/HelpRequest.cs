@@ -19,7 +19,7 @@ internal sealed class HelpRequest : BaseModel
     [PrimaryKey("id")]
     public int DbId { get; init; }
 
-    public string Id => $"ajudadana-{DbId}";
+    public int Id => DbId;
 
     [Column("country_id")]
     public int CountryId { get; init; }
