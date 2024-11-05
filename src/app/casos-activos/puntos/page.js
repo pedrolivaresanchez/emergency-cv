@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { MapPin, Phone, Calendar, User, HeartHandshake, Users, Truck, Search, Package, MapPinIcon } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { tiposAyudaAcepta } from '@/helpers/constants';
 import Pagination from '@/components/Pagination';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -43,7 +43,7 @@ export default function Puntos({ towns }) {
 
   function changePage(newPage) {
     setCurrentPage(newPage);
-    updateFilter("page", newPage);
+    updateFilter('page', newPage);
   }
 
   useEffect(() => {

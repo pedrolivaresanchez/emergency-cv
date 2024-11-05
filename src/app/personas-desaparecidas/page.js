@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { UserSearch, AlertCircle, Phone, Check } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 
 export default function PersonaDesaparecida() {
   const [formData, setFormData] = useState({

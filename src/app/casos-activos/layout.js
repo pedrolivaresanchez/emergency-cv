@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import TabNavigation from '@/components/TabNavigation';
 
 const getTowns = async () => {

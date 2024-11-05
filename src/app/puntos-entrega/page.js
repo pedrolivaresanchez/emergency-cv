@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { Truck, MapPin, Phone, Mail, Calendar, Package } from 'lucide-react';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 

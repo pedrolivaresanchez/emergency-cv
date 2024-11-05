@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { Mail, Thermometer } from 'lucide-react';
 import OfferHelp from '@/components/OfferHelp';
 import { useModal } from '@/context/EmergencyProvider';

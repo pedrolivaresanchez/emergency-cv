@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Package } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { isValidPhone, isNumericOrSpaces } from '@/helpers/utils';
 
 export default function PuntoRecogida() {
