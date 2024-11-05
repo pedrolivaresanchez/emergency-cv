@@ -2,7 +2,7 @@
 
 import { MapPin, Clock, AlertCircle, Heart, Users, Package, Thermometer, Cross } from 'lucide-react';
 
-import { PhoneNumberDialog } from '@/components/auth/PhoneNumberDialog';
+import PhoneNumberDialog from '@/components/auth/PhoneNumberDialog';
 
 export default function Home() {
   const emergencyNumbers = [
