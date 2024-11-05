@@ -96,16 +96,6 @@ export default function Voluntometro() {
           <Thermometer className="h-8 w-8" />
           Voluntómetro
         </h1>
-        <button
-          onClick={() => {
-            window.location.href =
-              'mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro';
-          }}
-          className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
-        >
-          <Mail className="h-5 w-5" />
-          Solicitar nuevo pueblo
-        </button>
       </div>
 
       {/* Widget de Estadísticas actualizado */}
