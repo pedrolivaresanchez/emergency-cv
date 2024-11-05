@@ -2,6 +2,12 @@ import { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
+const urgencyToColor = {
+  alta: '#ef4444', //text-red-500
+  media: '#f59e0b', //text-amber-500
+  baja: '#10b981', //text-emerald-500
+};
+
 export default function Map({ center = [0, 0], zoom = 2, markers = [] }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
@@ -23,7 +29,7 @@ export default function Map({ center = [0, 0], zoom = 2, markers = [] }) {
 
     markers.forEach((markerData) => {
       new maplibregl.Marker({
-        color: markerData.color,
+        color: urgencyToColor[markerData.urgency],
       })
         .setLngLat(markerData.coordinates)
         .setPopup(
