@@ -149,6 +149,21 @@ export default function SolicitarAyuda() {
           </div>
         </div>
       </div>
+      <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
+        <div className="flex items-start">
+          <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 mr-2" />
+          <div>
+            <h2 className="text-red-800 font-bold">PARA PERSONAS CON DIFICULTADES TECNICAS</h2>
+            <p className="text-red-700 text-sm mt-1">
+              Hemos habilitado el número{' '}
+              <a className="font-bold text-blue-600 hover:text-blue-800" href="tel:+34626675591">
+                626 675 591
+              </a>{' '}
+              para facilitar la petición de ayuda a aquellas personas que encuentren complicado usar la página web.
+            </p>
+          </div>
+        </div>
+      </div>
 
       {status.error && (
         <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
