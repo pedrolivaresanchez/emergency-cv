@@ -6,6 +6,7 @@ import { authService } from '@/lib/service';
 
 import { PhoneInput } from '@/components/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/format';
+import { isValidPhone } from '@/helpers/utils';
 
 export default function SignUp({ onSuccessCallback, onBackButtonClicked }) {
   const [formData, setFormData] = useState({
@@ -28,12 +29,18 @@ export default function SignUp({ onSuccessCallback, onBackButtonClicked }) {
     });
   };
 
-  const handlePhoneChange = useCallback((e) => {
-    setFormData((formData) => ({ ...formData, telefono: e.target.value }));
+  const handlePhoneChange = useCallback((phoneNumber) => {
+    setFormData((formData) => ({ ...formData, telefono: phoneNumber }));
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    /* Form validation */
+    if (!isValidPhone(formData.telefono)) {
+      alert('El teléfono de contacto no es válido.');
+      return;
+    }
 
     setStatus({ isSubmitting: true, error: null, success: false });
 
