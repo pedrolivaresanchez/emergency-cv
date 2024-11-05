@@ -183,4 +183,7 @@ export const authService = {
   async signIn(email, password) {
     return supabase.auth.signInWithPassword({ email, password });
   },
+  async updateUser(metadata) {
+    return supabase.auth.updateUser({ ...metadata });
+  },
 };
