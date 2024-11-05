@@ -149,6 +149,18 @@ export default function SolicitarAyuda() {
           </div>
         </div>
       </div>
+      <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
+        <div className="flex items-start">
+          <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 mr-2" />
+          <div>
+            <h2 className="text-red-800 font-bold">PARA LAS PERSONAS MAYORES</h2>
+            <p className="text-red-700 text-sm mt-1">
+              Las personas mayores que tengan problemas utilizando la página web, pueden solicitar ayuda a través del
+              siguiente número: <span className="font-bold">626 675 591</span>.
+            </p>
+          </div>
+        </div>
+      </div>
 
       {status.error && (
         <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
