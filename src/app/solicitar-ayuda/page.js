@@ -11,8 +11,10 @@ import { helpRequestService } from '@/lib/service';
 import { PhoneInput } from '@/components/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/format';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function SolicitarAyuda() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     nombre: '',
     ubicacion: '',
@@ -25,6 +27,7 @@ export default function SolicitarAyuda() {
     contacto: '',
     consentimiento: false,
     pueblo: '',
+    email: '',
   });
 
   const [status, setStatus] = useState({
@@ -39,7 +42,7 @@ export default function SolicitarAyuda() {
     const { data, error } = await supabase.from('towns').select('id, name');
 
     if (error) {
-      console.error('Error fetching towns:', error);
+      console.log('Error fetching towns:', error);
       return;
     }
 
@@ -94,6 +97,7 @@ export default function SolicitarAyuda() {
         additional_info: {
           special_situations: formData.situacionEspecial || null,
           consent: true,
+          email: formData.email,
         },
         town_id: formData.pueblo,
         status: 'active',
@@ -121,9 +125,12 @@ export default function SolicitarAyuda() {
       });
 
       setStatus({ isSubmitting: false, error: null, success: true });
-      setTimeout(() => setStatus((prev) => ({ ...prev, success: false })), 5000);
+      setTimeout(() => {
+        setStatus((prev) => ({ ...prev, success: false }));
+        router.push('/casos-activos/solicitudes');
+      }, 5000);
     } catch (error) {
-      console.error('Error al enviar solicitud:', error.message);
+      console.log('Error al enviar solicitud:', error.message);
       setStatus({
         isSubmitting: false,
         error: `Error al enviar la solicitud: ${error.message}`,
@@ -210,19 +217,39 @@ export default function SolicitarAyuda() {
         <h1 className="text-2xl font-bold mb-6">Solicitar Ayuda</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
-            <input
-              type="text"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleChange}
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-            />
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
+              <input
+                type="text"
+                name="nombre"
+                value={formData.nombre}
+                onChange={handleChange}
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              />
+            </div>
+            <PhoneInput phoneNumber={formData.contacto} onChange={handlePhoneChange} required />
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Ubicación exacta *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Correo electrónico <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              required
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              Se utilizara para que puedas eliminar o editar la información de tu solicitud (campo obligatorio)
+            </p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Ubicación exacta <span className="text-red-500">*</span>
+            </label>
             <AddressAutocomplete
               onSelect={(address) => {
                 setFormData({
@@ -315,12 +342,12 @@ export default function SolicitarAyuda() {
               placeholder="Personas mayores, niños pequeños, personas con movilidad reducida, necesidades médicas, mascotas..."
             />
           </div>
-
-          <PhoneInput phoneNumber={formData.contacto} onChange={handlePhoneChange} />
           {/* Pueblos */}
           <div>
             <div className="flex flex-row justify-between mb-2 items-end">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Pueblo</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Pueblo <span className="text-red-500">*</span>
+              </label>
               <a
                 href="mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro"
                 className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
@@ -334,6 +361,7 @@ export default function SolicitarAyuda() {
               value={formData.pueblo}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
+              required
             >
               <option value="">Selecciona un pueblo</option>
               {towns.map((item) => (
@@ -345,14 +373,14 @@ export default function SolicitarAyuda() {
           </div>
           {/* Consentimiento */}
           <div className="flex items-start">
-            <input
-              type="checkbox"
-              name="consentimiento"
-              checked={formData.consentimiento}
-              onChange={handleChange}
-              className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-            />
-            <label className="ml-2 block text-sm text-gray-700">
+            <label className="ml-2 block text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                name="consentimiento"
+                checked={formData.consentimiento}
+                onChange={handleChange}
+                className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded mr-2"
+              />
               Doy mi consentimiento para el tratamiento de los datos proporcionados y confirmo que la información
               proporcionada es verídica.
             </label>
