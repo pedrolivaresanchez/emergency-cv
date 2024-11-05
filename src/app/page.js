@@ -138,7 +138,7 @@ export default function Home() {
                   Hemos habilitado el número{' '}
                   <a className="font-bold text-blue-600 hover:text-blue-800" href="tel:+34626675591">
                     626 675 591
-                  </a>{' '}
+                  </a>{' '} [<a href="https://wa.me/34626675591">WhatsApp</a>]
                   para facilitar la petición de ayuda a aquellas personas que encuentren complicado usar la página web.
                 </p>
               </div>
