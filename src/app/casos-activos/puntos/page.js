@@ -55,6 +55,34 @@ export default function Puntos({ towns }) {
   }
 
   useEffect(() => {
+    async function fetchCities() {
+      try {
+        setError(null);
+
+        // Comenzamos la consulta
+        const query = supabase.from('distinct_collection_cities').select('city');
+
+        // Ejecutar la consulta
+        const { data, count, error } = await query;
+        if (error) {
+          console.log('Error fetching ciudades:', error);
+          setCityOptions([]);
+        } else {
+          const trimmedCities = data.map((punto) => punto.city.trim());
+          const cities = [...new Set(trimmedCities)].sort();
+          setCityOptions(cities || []);
+          setCurrentCount(count);
+        }
+      } catch (err) {
+        console.log('Error general:', err);
+        setError('Error de conexión.');
+      }
+    }
+
+    fetchCities();
+  }, []);
+
+  useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
@@ -68,9 +96,8 @@ export default function Puntos({ towns }) {
           query.contains('accepted_items', [filtroData.ayuda]);
         }
 
-        const hasCityFilter = filtroData.ciudad !== 'todas';
-        if (hasCityFilter) {
-          query.eq('city', filtroData.ciudad);
+        if (filtroData.ciudad !== 'todas') {
+          query.ilike('city', filtroData.ciudad);
         }
 
         // Ejecutar la consulta con paginación
@@ -83,7 +110,6 @@ export default function Puntos({ towns }) {
           setData([]);
         } else {
           setData(data || []);
-          if (!hasCityFilter) extractCities(data);
           setCurrentCount(count);
         }
       } catch (err) {
@@ -141,8 +167,8 @@ export default function Puntos({ towns }) {
             className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
           >
             <option value="todas">Todas las ciudades</option>
-            {cityOptions.map((city) => (
-              <option key={city} value={city}>
+            {cityOptions.map((city, i) => (
+              <option key={i} value={city}>
                 {city}
               </option>
             ))}
@@ -163,7 +189,7 @@ export default function Puntos({ towns }) {
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
             >
               <HeartHandshake className="w-5 h-5" />
-              Ofrecer ayuda a {filtroData.pueblo === 'todos' ? '' : towns[filtroData.pueblo - 1].name}
+              Ofrecer ayuda a {filtroData.ciudad === 'todos' ? '' : filtroData.ciudad}
             </button>
           </div>
         ) : (
