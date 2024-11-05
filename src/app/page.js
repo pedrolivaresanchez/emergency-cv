@@ -116,6 +116,16 @@ export default function Home() {
       address: 'C/ de Vicent Puchol, 11, Pobles del Sud, 46026 València, Valencia',
       location: 'https://maps.app.goo.gl/qkuXMKKM9X63itBq8',
     },
+    {
+      name: 'ALDAIA - Centro Matilde Salvador',
+      address: 'C/ Mestre Serrano, 42, Piso 1 - Puerta 1, 46960 Aldaia, Valencia',
+      location: 'https://maps.app.goo.gl/vLZRc7W9WTmnhHWn6',
+    },
+    {
+      name: 'ALDAIA - Parroquia de la Anunciación',
+      address: 'C/ Iglesia, 1, 46960 Aldaia, Valencia',
+      location: 'https://maps.app.goo.gl/MAo6hwFMUxAjkFv67',
+    },
   ];
 
   const mainActions = [
