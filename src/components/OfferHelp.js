@@ -72,14 +72,14 @@ export default function OfferHelp({ town, onClose, isModal }) {
     }));
   };
 
-  const handlePhoneChange = useCallback((e) => {
-    setFormData((formData) => ({ ...formData, telefono: e.target.value }));
+  const handlePhoneChange = useCallback((phoneNumber) => {
+    setFormData((formData) => ({ ...formData, telefono: phoneNumber }));
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación de ubicación
+    // Form validation
     if (!formData.ubicacion) {
       alert('La ubicación es obligatoria');
       return;
@@ -91,7 +91,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
     }
 
     if (!isValidPhone(formData.telefono)) {
-      alert('El teléfono de contacto no es válido. Si has usado espacios, elimínalos.');
+      alert('El teléfono de contacto no es válido.');
       return;
     }
 
