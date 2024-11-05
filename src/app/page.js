@@ -1,6 +1,6 @@
 'use client';
 
-import { MapPin, Clock, AlertCircle, Heart, Users, Package, Thermometer, Cross } from 'lucide-react';
+import { MapPin, Clock, AlertCircle, Heart, Users, Package, Thermometer, Cross, Navigation } from 'lucide-react';
 
 import PhoneNumberDialog from '@/components/auth/PhoneNumberDialog';
 
@@ -62,6 +62,59 @@ export default function Home() {
       postalCode: '46017',
       city: 'Valencia',
       location: 'Consum',
+    },
+  ];
+
+  const medicalCenters = [
+    {
+      name: 'PICANYA - RESIDENCIA SOLIMAR',
+      address: 'Av. Ricardo Capella, 4, 46210 Picanya, Valencia',
+      location: 'https://maps.app.goo.gl/t7qFNX4b6eH5HjMJ6',
+    },
+    {
+      name: 'PAIPORTA - CEIP LLuís Vives',
+      address: 'Carrer Marqués del Turia, 59, 46200 Paiporta, València',
+      location: 'https://maps.app.goo.gl/EcbuAxHtJaXh4SHd7',
+    },
+    {
+      name: 'LA TORRE - Centro municipal de personas mayores',
+      address: 'Carrer Benidoleig, 9, Pobles del Sud, 46017 València, Valencia',
+      location: 'https://maps.app.goo.gl/ZS87MfGakwpBvP8v6',
+    },
+    {
+      name: 'ALFAFAR, la tauleta',
+      address: 'Carrer la tauleta 38',
+      location: 'https://maps.app.goo.gl/anTLDsHJnVZuBjPbA',
+    },
+    {
+      name: 'ALFAFAR - Parque Alcosa Bar Hogar del Jubilado Barrio Orba',
+      address: 'C. Algemesí, 11, 46910 Alfafar, Valencia',
+      location: 'https://maps.app.goo.gl/ktk4nqKa44tgxhDh9',
+    },
+    {
+      name: 'BENETUSSER - CEIP Blasco Ibañez',
+      address: 'Passatge Maestra Rogelia Antón, s/n, 46910 Benetússer, Valencia',
+      location: 'https://maps.app.goo.gl/G2EPM6zzkSCtdcnq7',
+    },
+    {
+      name: 'CATARROJA - La Florida universitaria',
+      address: 'Carrer del Rei En Jaume I, 2, 46470 Catarroja, Valencia',
+      location: 'https://maps.app.goo.gl/dCNsCVweDzhk2SdVA',
+    },
+    {
+      name: 'MASSANASA - Ayuntamiento Massanasa',
+      address: 'Pl. de les Escoles Velles, 1, 46470 Masanasa, Valencia',
+      location: 'https://maps.app.goo.gl/1J8HV2QqSMJp1TEPA',
+    },
+    {
+      name: 'SEDAVI - IES Sedaví',
+      address: 'Avinguda del País Valencià, 26, 46910 Sedaví, Valencia',
+      location: 'https://maps.app.goo.gl/ykSRKdJ2mJzHYt1Z9',
+    },
+    {
+      name: 'CASTELLAR - Centro de salud habitual',
+      address: 'C/ de Vicent Puchol, 11, Pobles del Sud, 46026 València, Valencia',
+      location: 'https://maps.app.goo.gl/qkuXMKKM9X63itBq8',
     },
   ];
 
@@ -195,35 +248,62 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Puntos de Encuentro */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <MapPin className="h-6 w-6 text-orange-500" />
-            <h2 className="text-xl font-bold text-gray-800">Puntos de Encuentro</h2>
-          </div>
-
-          <div className="bg-orange-50 p-4 rounded-lg mb-6">
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-orange-500" />
-              <p className="font-medium text-orange-800">Horario de encuentro: 10:00 am todos los días</p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto p-6">
+          {/* Puntos de Encuentro */}
+          <div className="bg-white rounded-lg shadow-lg p-6 h-full">
+            <div className="flex items-center gap-3 mb-6 border-b pb-4">
+              <MapPin className="h-6 w-6 text-orange-500" />
+              <h2 className="text-xl font-bold text-gray-800">Puntos de Encuentro</h2>
+            </div>
+            <div className="bg-orange-50 p-4 rounded-lg mb-6">
+              <div className="flex items-center gap-2">
+                <Clock className="h-5 w-5 text-orange-500" />
+                <p className="font-medium text-orange-800">Horario de encuentro: 10:00 am todos los días</p>
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-1 xl:grid-cols-2 gap-4">
+              {collectionPoints.map((point) => (
+                <div key={point.area} className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow">
+                  <h3 className="font-bold text-gray-800 mb-2">{point.area}</h3>
+                  <div className="space-y-1 text-sm text-gray-600">
+                    <p>{point.address}</p>
+                    <p>
+                      {point.postalCode} {point.city}
+                    </p>
+                    {point.location && (
+                      <p className="text-orange-600 font-medium mt-2">Punto de referencia: {point.location}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {collectionPoints.map((point) => (
-              <div key={point.area} className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow">
-                <h3 className="font-bold text-gray-800 mb-2">{point.area}</h3>
-                <div className="space-y-1 text-sm text-gray-600">
-                  <p>{point.address}</p>
-                  <p>
-                    {point.postalCode} {point.city}
-                  </p>
-                  {point.location && (
-                    <p className="text-orange-600 font-medium mt-2">Punto de referencia: {point.location}</p>
-                  )}
+          {/* Puntos Medicos */}
+          <div className="bg-white rounded-lg shadow-lg p-6 h-full">
+            <div className="flex items-center gap-3 mb-6 border-b pb-4">
+              <MapPin className="h-6 w-6 text-blue-600" />
+              <h2 className="text-xl font-bold text-gray-800">Puntos Médicos</h2>
+            </div>
+            <div className="grid sm:grid-cols-1 xl:grid-cols-2 gap-4">
+              {medicalCenters.map((center) => (
+                <div
+                  key={center.name}
+                  className="group bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-shadow hover:shadow-md"
+                >
+                  <h3 className="font-bold text-gray-800 mb-2">{center.name}</h3>
+                  <a
+                    href={center.location}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 group-hover:underline"
+                  >
+                    <Navigation className="h-4 w-4" />
+                    <span className="line-clamp-2">{center.address}</span>
+                  </a>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
