@@ -178,12 +178,15 @@ export default function OfferHelp({ town, onClose, isModal }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Teléfono <span className="text-red-500">*</span>
+            </label>
             <input
               type="tel"
               value={formData.telefono}
               onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              required
             />
           </div>
         </div>
@@ -320,7 +323,9 @@ export default function OfferHelp({ town, onClose, isModal }) {
         {/* Pueblos */}
         <div>
           <div className="flex flex-row justify-between mb-2 items-end">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Pueblo  <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Pueblo <span className="text-red-500">*</span>
+            </label>
             <a
               href="mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro"
               className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
