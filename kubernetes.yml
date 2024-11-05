@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emergency-cv--webapp--deployment
+  namespace: production
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: emergency-cv--webapp
+  template:
+    metadata:
+      labels:
+        app: emergency-cv--webapp
+    spec:
+      containers:
+        - name: emergency-cv--webapp
+          image: "localhost:30500/emergency-cv/webapp:VAR_GITHUB_COMMIT_HASH"
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: emergency-cv--webapp--service
+  namespace: production
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3000
+  selector:
+    app: emergency-cv--webapp
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: emergency-cv--webapp--build--job
+  namespace: production
+spec:
+  template:
+    spec:
+      containers:
+        - name: kaniko
+          image: gcr.io/kaniko-project/executor:latest
+          args:
+            - "--context=git://VAR_GITHUB_TOKEN@github.com/pedrolivaresanchez/emergency-cv.git"
+            - "--dockerfile=Dockerfile"
+            - "--destination=idl-apps--container-registry-service:5000/emergency-cv/webapp:VAR_GITHUB_COMMIT_HASH"
+            - "--insecure"
+            - "--skip-tls-verify"
+      restartPolicy: Never
+  backoffLimit: 2
