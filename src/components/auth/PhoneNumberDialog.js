@@ -71,7 +71,6 @@ const PhoneNumberDialog = () => {
       if (metadata.telefono) {
         return;
       }
-      console.log('now');
       toggleModal();
     };
 
