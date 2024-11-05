@@ -31,7 +31,7 @@ export default function SolicitarAyuda() {
   const [towns, setTowns] = useState([]);
 
   async function fetchTowns() {
-    const { data, error } = await supabase.from('towns').select('id, name');
+    const { data, error } = await supabase.from('towns').select('id, name').order('name', { ascending: true });
 
     if (error) {
       console.error('Error fetching towns:', error);
