@@ -22,23 +22,13 @@ COMMENT ON COLUMN "public"."help_request_assignments"."phone_number" IS 'Número
 COMMENT ON COLUMN "public"."help_request_assignments"."people_count" IS 'Cantidad de personas asignadas';
 COMMENT ON COLUMN "public"."help_request_assignments"."user_id" IS 'ID del usuario que creó el registro';
 
--- Permitir SELECT e INSERT para el rol anon
-GRANT SELECT, INSERT ON TABLE public.help_request_assignments TO anon;
+-- Permitir SELECT para el rol anon
+GRANT SELECT ON TABLE public.help_request_assignments TO anon;
 
 -- Permitir SELECT, INSERT, UPDATE y DELETE para el rol authenticated
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.help_request_assignments TO authenticated;
 
 ALTER TABLE public.help_request_assignments ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "anon_can_insert"
-ON public.help_request_assignments
-FOR INSERT
-WITH CHECK (true);  -- Permite a cualquiera realizar la inserción sin restricciones adicionales.
-
-CREATE POLICY "anon_can_select"
-ON public.help_request_assignments
-FOR SELECT
-USING (true);  -- Permite a cualquiera leer todos los registros.
 
 CREATE POLICY "authenticated_can_update_own_records"
 ON public.help_request_assignments
