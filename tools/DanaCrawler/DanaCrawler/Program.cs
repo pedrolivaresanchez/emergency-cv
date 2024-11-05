@@ -20,7 +20,7 @@ builder.Services.AddSerilog((services, logConfiguration) =>
         .Enrich.FromLogContext()
         .WriteTo.Console()
         .WriteTo.DatadogLogs(
-            apiKey: "test",
+            apiKey: builder.Configuration["Datadog:ApiKey"],
             source: "dana-crawler",
             service: "dana-crawler-service",
             host: Environment.MachineName,
