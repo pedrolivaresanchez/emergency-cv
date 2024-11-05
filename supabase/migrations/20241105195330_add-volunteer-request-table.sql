@@ -33,7 +33,7 @@ ALTER TABLE public.help_request_assignments ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "anon_can_insert"
 ON public.help_request_assignments
 FOR INSERT
-USING (true);  -- Permite a cualquiera realizar la inserción sin restricciones adicionales.
+WITH CHECK (true);  -- Permite a cualquiera realizar la inserción sin restricciones adicionales.
 
 CREATE POLICY "anon_can_select"
 ON public.help_request_assignments
