@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { Truck, MapPin, Phone, Mail, Calendar, Package } from 'lucide-react';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 
@@ -198,7 +198,7 @@ export default function PuntosEntrega() {
         )}
       </div>
 
-      {/* Modal de formulario */}
+      {/* Modal2 de formulario */}
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full">

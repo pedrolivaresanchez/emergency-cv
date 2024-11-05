@@ -1,11 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { HeartHandshake, Check, Mail } from 'lucide-react';
 import { helpRequestService } from '@/lib/service';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
+import { isValidPhone } from '@/helpers/utils';
+
+import { PhoneInput } from '@/components/PhoneInput';
+import { formatPhoneNumber } from '@/helpers/format';
 
 export default function OfferHelp({ town, onClose, isModal }) {
   const [towns, setTowns] = useState([]);
@@ -68,10 +72,14 @@ export default function OfferHelp({ town, onClose, isModal }) {
     }));
   };
 
+  const handlePhoneChange = useCallback((phoneNumber) => {
+    setFormData((formData) => ({ ...formData, telefono: phoneNumber }));
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación de ubicación
+    // Form validation
     if (!formData.ubicacion) {
       alert('La ubicación es obligatoria');
       return;
@@ -79,6 +87,11 @@ export default function OfferHelp({ town, onClose, isModal }) {
 
     if (!formData.aceptaProtocolo) {
       alert('Debes aceptar el protocolo de actuación');
+      return;
+    }
+
+    if (!isValidPhone(formData.telefono)) {
+      alert('El teléfono de contacto no es válido.');
       return;
     }
 
@@ -90,7 +103,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
         name: formData.nombre,
         location: formData.ubicacion,
         description: formData.comentarios,
-        contact_info: formData.telefono,
+        contact_info: formatPhoneNumber(formData.telefono),
         additional_info: {
           email: formData.email,
           experience: formData.experiencia,
@@ -107,7 +120,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
         town_id: formData.pueblo,
       };
 
-      const result = await helpRequestService.create(helpOfferData);
+      const result = await helpRequestService.createRequest(helpOfferData);
 
       setFormData({
         nombre: '',
@@ -177,18 +190,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
               className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Teléfono <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="tel"
-              value={formData.telefono}
-              onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              required
-            />
-          </div>
+          <PhoneInput phoneNumber={formData.telefono} onChange={handlePhoneChange} required />
         </div>
 
         <div>
@@ -326,13 +328,6 @@ export default function OfferHelp({ town, onClose, isModal }) {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Pueblo <span className="text-red-500">*</span>
             </label>
-            <a
-              href="mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro"
-              className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
-            >
-              <Mail className="h-5 w-5" />
-              Solicitar nuevo pueblo
-            </a>
           </div>
           <select
             name="pueblo"

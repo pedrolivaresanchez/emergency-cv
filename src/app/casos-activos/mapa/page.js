@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';

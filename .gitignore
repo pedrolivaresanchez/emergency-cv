@@ -51,3 +51,8 @@ next-env.d.ts
 
 # docker data
 /docker/postgres-data
+
+# vscode
+.vscode
+
+.kubeconfig

@@ -1,21 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { HeartHandshake, Check, Mail, Thermometer } from 'lucide-react';
-import { helpRequestService } from '@/lib/service';
-import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
+import { supabase } from '@/lib/supabase/client';
+import { Mail, Thermometer } from 'lucide-react';
 import OfferHelp from '@/components/OfferHelp';
+import { useModal } from '@/context/EmergencyProvider';
+import Modal from '@/components/Modal';
 
 export default function Voluntometro() {
   const [pueblos, setPueblos] = useState([]);
-
-  const [showModal, setShowModal] = useState(false);
+  const { showModal, toggleModal } = useModal();
 
   const [town, setTown] = useState(0);
 
   const closeModal = () => {
-    setShowModal(false);
+    toggleModal(false);
   };
 
   useEffect(() => {
@@ -97,16 +96,6 @@ export default function Voluntometro() {
           <Thermometer className="h-8 w-8" />
           Voluntómetro
         </h1>
-        <button
-          onClick={() => {
-            window.location.href =
-              'mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro';
-          }}
-          className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
-        >
-          <Mail className="h-5 w-5" />
-          Solicitar nuevo pueblo
-        </button>
       </div>
 
       {/* Widget de Estadísticas actualizado */}
@@ -175,7 +164,7 @@ export default function Voluntometro() {
               </div>
               <button
                 onClick={() => {
-                  setShowModal(true);
+                  toggleModal(true);
                   setTown(pueblo);
                 }}
                 className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
@@ -189,9 +178,11 @@ export default function Voluntometro() {
 
       {/* Modal with full form */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+        <Modal>
           <OfferHelp town={town} onClose={closeModal} isModal={true} />
-        </div>
+        </Modal>
+        // <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+        // </div>
       )}
     </div>
   );

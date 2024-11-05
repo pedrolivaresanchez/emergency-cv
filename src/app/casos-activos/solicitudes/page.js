@@ -2,15 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { HeartHandshake } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
 import Pagination from '@/components/Pagination';
 import OfferHelp from '@/components/OfferHelp';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
+import Modal from '@/components/Modal';
+import { useModal } from '@/context/EmergencyProvider';
 
 export default function Solicitudes({ towns }) {
-
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -20,11 +21,10 @@ export default function Solicitudes({ towns }) {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
   const [currentCount, setCurrentCount] = useState(0);
-
-  const [showModal, setShowModal] = useState(false);
+  const { showModal, toggleModal } = useModal();
 
   const closeModal = () => {
-    setShowModal(false);
+    toggleModal(false);
   };
   const itemsPerPage = 10;
   const numPages = (count) => {
@@ -53,7 +53,7 @@ export default function Solicitudes({ towns }) {
 
   function changePage(newPage) {
     setCurrentPage(newPage);
-    updateFilter("page", newPage);
+    updateFilter('page', newPage);
   }
 
   useEffect(() => {
@@ -170,7 +170,7 @@ export default function Solicitudes({ towns }) {
 
             <button
               onClick={() => {
-                setShowModal(true);
+                toggleModal(true);
               }}
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
             >
@@ -186,9 +186,9 @@ export default function Solicitudes({ towns }) {
         <Pagination currentPage={currentPage} totalPages={numPages(currentCount)} onPageChange={changePage} />
       </div>
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+        <Modal>
           <OfferHelp town={towns[filtroData.pueblo - 1]} onClose={closeModal} isModal={true} />
-        </div>
+        </Modal>
       )}
     </>
   );

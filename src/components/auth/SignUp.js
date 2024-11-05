@@ -1,8 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ArrowBigLeft } from 'lucide-react';
 import { authService } from '@/lib/service';
+
+import { PhoneInput } from '@/components/PhoneInput';
+import { formatPhoneNumber } from '@/helpers/format';
+import { isValidPhone } from '@/helpers/utils';
 
 export default function SignUp({ onSuccessCallback, onBackButtonClicked }) {
   const [formData, setFormData] = useState({
@@ -25,8 +29,18 @@ export default function SignUp({ onSuccessCallback, onBackButtonClicked }) {
     });
   };
 
+  const handlePhoneChange = useCallback((phoneNumber) => {
+    setFormData((formData) => ({ ...formData, telefono: phoneNumber }));
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    /* Form validation */
+    if (!isValidPhone(formData.telefono)) {
+      alert('El teléfono de contacto no es válido.');
+      return;
+    }
 
     setStatus({ isSubmitting: true, error: null, success: false });
 
@@ -42,6 +56,7 @@ export default function SignUp({ onSuccessCallback, onBackButtonClicked }) {
       setError('Rellena correctamente el campo teléfono');
       return;
     }
+    const formatedPhoneNumber = formatPhoneNumber(formData.telefono);
 
     // email
     // const emailValido = new RegExp('^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$');
@@ -56,7 +71,7 @@ export default function SignUp({ onSuccessCallback, onBackButtonClicked }) {
       return;
     }
 
-    const response = await authService.signUp(formData.email, formData.password, formData.nombre, formData.telefono);
+    const response = await authService.signUp(formData.email, formData.password, formData.nombre, formatedPhoneNumber);
     if (response.error) {
       setError('Ha habido un error inesperado creando el usuario');
       return;
@@ -96,15 +111,7 @@ export default function SignUp({ onSuccessCallback, onBackButtonClicked }) {
 
         {/* Telefono */}
         <div className="grid gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-            <input
-              type="tel"
-              value={formData.telefono}
-              onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            />
-          </div>
+          <PhoneInput phoneNumber={formData.telefono} onChange={handlePhoneChange} />
         </div>
         {/* Email */}
         <div className="grid gap-4">

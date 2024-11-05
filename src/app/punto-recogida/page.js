@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Package } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
-import { isValidPhone, isNumericOrSpaces } from '@/helpers/utils';
+import { supabase } from '@/lib/supabase/client';
+import { isValidPhone } from '@/helpers/utils';
+import { PhoneInput } from '@/components/PhoneInput';
 
 export default function PuntoRecogida() {
   const [formData, setFormData] = useState({
@@ -26,6 +27,10 @@ export default function PuntoRecogida() {
 
   const tiposAyuda = ['Alimentos', 'Agua', 'Ropa', 'Mantas', 'Medicamentos', 'Productos de higiene'];
 
+  const handlePhoneChange = useCallback((phoneNumber) => {
+    setFormData((formData) => ({ ...formData, contact_phone: phoneNumber }));
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus({ isSubmitting: true, error: null, success: false });
@@ -41,7 +46,8 @@ export default function PuntoRecogida() {
       }
 
       if (!isValidPhone(formData.contact_phone)) {
-        throw new Error('El teléfono de contacto no es válido');
+        alert('El teléfono de contacto no es válido.');
+        return;
       }
 
       // Insertar en Supabase directamente
@@ -135,20 +141,7 @@ export default function PuntoRecogida() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono de contacto*</label>
-            <input
-              type="tel"
-              pattern="[0-9]{1,9}"
-              maxLength="9"
-              placeholder="Teléfono móvil preferiblemente (sin el prefijo +34)"
-              value={formData.contact_phone}
-              onChange={(e) =>
-                isNumericOrSpaces(e.target.value) && setFormData({ ...formData, contact_phone: e.target.value })
-              }
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <PhoneInput phoneNumber={formData.contact_phone} onChange={handlePhoneChange} required />
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Tipos de ayuda que se aceptan*</label>

@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/client';
 import { redirect } from 'next/navigation';
 
 export default function SocialButton({ provider, children }) {
