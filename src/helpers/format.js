@@ -88,3 +88,8 @@ export const getMarkerDescriptionByOferta = (oferta) => {
         </div>
     `;
 };
+
+export const formatPhoneNumber = (value) => {
+  // Remove white spaces and non-digit characters
+  return value.replace(/\s/g, '').replace(/\D/g, '');
+};

@@ -4,6 +4,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Modal } from '@/components/Modal';
 import { authService } from '@/lib/service';
+import { PhoneInput } from '@/components/PhoneInput';
+import { formatPhoneNumber } from '@/helpers/format';
 
 function PhoneForm({ onSubmit, onCancel }) {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -11,11 +13,16 @@ function PhoneForm({ onSubmit, onCancel }) {
   const handleSubmit = useCallback(
     (e) => {
       e.preventDefault();
-      onSubmit(phoneNumber);
+      const formatedPhoneNumber = formatPhoneNumber(phoneNumber);
+      onSubmit(formatedPhoneNumber);
       setPhoneNumber('');
     },
     [onSubmit, phoneNumber],
   );
+
+  const handleChange = useCallback((e) => {
+    setPhoneNumber(e.target.value);
+  }, []);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -28,20 +35,7 @@ function PhoneForm({ onSubmit, onCancel }) {
           Tu número de teléfono no será usado con ningún otro propósito ni compartido con terceras personas.
         </p>
       </div>
-      <div className="mb-4">
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-          Número de teléfono
-        </label>
-        <input
-          type="tel"
-          id="phone"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="612345678"
-          required
-        />
-      </div>
+      <PhoneInput onChange={handleChange} phoneNumber={phoneNumber} />
 
       <div className="flex justify-end space-x-2">
         <button
