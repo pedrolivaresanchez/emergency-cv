@@ -15,7 +15,8 @@
       "dom.iterable",
       "esnext"
     ],
-    "allowJs": true,
+    "allowJs": false,
+    "checkJs": false,
     "noEmit": true,
     "incremental": true,
     "moduleResolution": "node",
@@ -32,9 +33,11 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "declarations.d.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/*.js"
   ]
 }
