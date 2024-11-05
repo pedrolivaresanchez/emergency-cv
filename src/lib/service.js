@@ -1,11 +1,11 @@
 import { supabase } from './supabase';
 
 export const helpRequestService = {
-  async create(data) {
-    const { data: result, error } = await supabase.from('help_requests').insert([data]).select();
+  async createRequest(requestData) {
+    const { data, error } = await supabase.from('help_requests').insert([requestData]).select();
 
     if (error) throw error;
-    return result[0];
+    return data[0];
   },
 
   async getAll() {

@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions } from '@/helpers/constants';
 import { isValidPhone } from '@/helpers/utils';
+import { helpRequestService } from '@/lib/service';
 
 export default function SolicitarAyuda() {
   const [formData, setFormData] = useState({
@@ -94,7 +95,7 @@ export default function SolicitarAyuda() {
         status: 'active',
       };
 
-      const { data, error } = await supabase.from('help_requests').insert([helpRequestData]).select();
+      const { error } = await helpRequestService.createRequest(helpRequestData);
 
       if (error) {
         throw new Error(error.message);

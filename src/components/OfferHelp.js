@@ -107,7 +107,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
         town_id: formData.pueblo,
       };
 
-      const result = await helpRequestService.create(helpOfferData);
+      const result = await helpRequestService.createRequest(helpOfferData);
 
       setFormData({
         nombre: '',
