@@ -131,12 +131,15 @@ export default function Home() {
         <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg shadow-lg">
           <div className="flex items-start gap-4">
             <AlertCircle className="h-6 w-6 text-red-500 flex-shrink-0" />
-            <div>
-              <h2 className="text-xl font-bold text-red-800 mb-2">PARA LAS PERSONAS MAYORES</h2>
+            <div className="w-full">
+              <h2 className="text-xl font-bold text-red-800 mb-2">PARA PERSONAS CON DIFICULTADES TECNICAS</h2>
               <div className="prose prose-sm text-red-700">
                 <p className="mb-2">
-                  Las personas mayores que tengan problemas utilizando la página web, pueden solicitar ayuda a través
-                  del siguiente número: <span className="font-bold">626 675 591</span>.
+                  Hemos habilitado el número{' '}
+                  <a className="font-bold text-blue-600 hover:text-blue-800" href="tel:+34626675591">
+                    626 675 591
+                  </a>{' '}
+                  para facilitar la petición de ayuda a aquellas personas que encuentren complicado usar la página web.
                 </p>
               </div>
             </div>
