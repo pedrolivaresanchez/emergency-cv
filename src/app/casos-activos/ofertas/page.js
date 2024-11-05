@@ -142,7 +142,10 @@ export default function Ofertas({ towns }) {
               key={caso.id}
               className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-green-500 overflow-hidden"
             >
-              <div className="flex justify-start mb-2">
+              <div className="flex justify-between mb-2">
+                <span className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap mr-2 bg-purple-300`}>
+                  Referencia: {caso.id}
+                </span>
                 <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap bg-green-100 text-green-800">
                   {caso.status === 'active' ? 'Activo' : 'Inactivo'}
                 </span>

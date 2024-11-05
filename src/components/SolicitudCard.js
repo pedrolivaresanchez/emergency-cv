@@ -23,17 +23,22 @@ export default function SolicitudCard({ caso, towns, isHref }) {
           >
             {caso.name || 'Necesita Ayuda'}
           </h3>
-          <span
-            className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap ${
-              caso.status === 'pending'
-                ? 'bg-yellow-100 text-yellow-800'
-                : caso.status === 'in_progress'
-                  ? 'bg-blue-100 text-blue-800'
-                  : 'bg-green-100 text-green-800'
-            }`}
-          >
-            {caso.status === 'pending' ? 'Pendiente' : caso.status === 'in_progress' ? 'En proceso' : 'Activo'}
-          </span>
+          <div>
+            <span className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap mr-2 bg-purple-300`}>
+              Referencia: {caso.id}
+            </span>
+            <span
+              className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap ${
+                caso.status === 'pending'
+                  ? 'bg-yellow-100 text-yellow-800'
+                  : caso.status === 'in_progress'
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'bg-green-100 text-green-800'
+              }`}
+            >
+              {caso.status === 'pending' ? 'Pendiente' : caso.status === 'in_progress' ? 'En proceso' : 'Activo'}
+            </span>
+          </div>
         </div>
         <p className="text-gray-700 mb-4 break-words">{caso.description}</p>
         <div className="flex flex-col sm:flex-row justify-between items-start md:items-end gap-4">

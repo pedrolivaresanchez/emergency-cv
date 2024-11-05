@@ -146,9 +146,14 @@ export default function Puntos({ towns }) {
                     <span className="text-sm break-words">{punto.location}</span>
                   </div>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-medium whitespace-nowrap">
-                  {punto.status === 'active' ? 'Activo' : 'Inactivo'}
-                </span>
+                <div>
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap mr-2 bg-purple-300`}>
+                    Referencia: {punto.id}
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-medium whitespace-nowrap">
+                    {punto.status === 'active' ? 'Activo' : 'Inactivo'}
+                  </span>
+                </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mt-4">
                 <div className="break-words">
