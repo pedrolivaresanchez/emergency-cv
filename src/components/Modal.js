@@ -1,41 +1,11 @@
-import { FC, MouseEvent, ReactNode } from 'react';
 import { useModal } from '@/context/EmergencyProvider';
 
-type MaxWidth =
-  | 'xs'
-  | 'sm'
-  | 'md'
-  | 'lg'
-  | 'xl'
-  | '2xl'
-  | '3xl'
-  | '4xl'
-  | '5xl'
-  | '6xl'
-  | '7xl'
-  | 'full'
-  | 'min'
-  | 'max'
-  | 'fit'
-  | 'prose'
-  | 'screen-sm'
-  | 'screen-md'
-  | 'screen-lg'
-  | 'screen-xl'
-  | 'screen-2xl';
-
-type ModalProps = {
-  children: ReactNode;
-  maxWidth?: MaxWidth;
-  allowClose?: boolean;
-};
-
-const Modal: FC<ModalProps> = ({ children, maxWidth = '2xl', allowClose = true }) => {
+const Modal = ({ children, maxWidth = 'max-w-2xl', allowClose = true }) => {
   const { showModal, toggleModal } = useModal();
 
   if (!showModal) return null;
 
-  const handleBackdropClick = (e: MouseEvent<HTMLDivElement>) => {
+  const handleBackdropClick = (e) => {
     if (allowClose && e.target === e.currentTarget) {
       toggleModal();
     }
@@ -46,7 +16,7 @@ const Modal: FC<ModalProps> = ({ children, maxWidth = '2xl', allowClose = true }
       className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center"
       onClick={handleBackdropClick}
     >
-      <div className={`relative bg-white rounded-lg shadow-xl max-w-${maxWidth} w-full m-4`}>
+      <div className={`relative bg-white rounded-lg shadow-xl ${maxWidth} w-full m-4`}>
         {allowClose && (
           <button
             onClick={() => toggleModal()}

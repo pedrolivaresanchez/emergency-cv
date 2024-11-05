@@ -1,20 +1,16 @@
 'use client';
 
-import React, { FC, FormEvent, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import Modal from '@/components/Modal';
 import { authService } from '@/lib/service';
 import { useModal } from '@/context/EmergencyProvider';
 
-type PhoneFormProps = {
-  onSubmit: (phoneNumber: string) => void;
-};
-
-const PhoneForm: FC<PhoneFormProps> = ({ onSubmit }) => {
+const PhoneForm = ({ onSubmit }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
 
   const handleSubmit = useCallback(
-    (e: FormEvent<HTMLFormElement>) => {
+    (e) => {
       e.preventDefault();
       onSubmit(phoneNumber);
       setPhoneNumber('');
@@ -74,23 +70,21 @@ const PhoneNumberDialog = () => {
     const fetchNumber = async () => {
       const { data: session, error: errorGettingUser } = await authService.getSessionUser();
       if (!session.user || errorGettingUser) {
-        // Si el usuario no esta logeado, no hacer nada
         return;
       }
 
       const metadata = session.user.user_metadata;
       if (metadata.telefono) {
-        // Si ya hay telefono, no hacer nada
         return;
       }
-
+      console.log('now');
       toggleModal();
     };
 
     fetchNumber();
   }, []);
 
-  const handleSubmit = useCallback(async (phoneNumber: string) => {
+  const handleSubmit = useCallback(async (phoneNumber) => {
     const { data: session, error: errorGettingUser } = await authService.getSessionUser();
 
     if (!session.user || errorGettingUser) {
@@ -112,7 +106,7 @@ const PhoneNumberDialog = () => {
   }, []);
 
   return (
-    <Modal maxWidth={'md'} allowClose={false}>
+    <Modal maxWidth={'max-w-md'} allowClose={false}>
       <PhoneForm onSubmit={handleSubmit} />
     </Modal>
   );
