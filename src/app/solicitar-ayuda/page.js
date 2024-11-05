@@ -240,10 +240,9 @@ export default function SolicitarAyuda() {
               value={formData.email}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              required
             />
             <p className="mt-1 text-sm text-gray-500">
-              Se utilizara para que puedas eliminar o editar la información de tu solicitud (campo obligatorio)
+              Se utilizara para que puedas eliminar o editar la información de tu solicitud
             </p>
           </div>
           <div>
