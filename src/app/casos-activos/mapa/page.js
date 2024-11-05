@@ -79,9 +79,6 @@ export default function Mapa({ towns }) {
         if (filtroData.acepta !== 'todos') {
           query.contains('accepted_items', [filtroData.acepta]);
         }
-        if (filtroData.urgencia !== 'todas') {
-          pickupQuery.eq('urgency', filtroData.urgencia);
-        }
 
         const { data: pickupData, error: pickupError } = await pickupQuery.order('created_at', { ascending: false });
 
