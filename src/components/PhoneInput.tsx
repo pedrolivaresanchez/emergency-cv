@@ -1,6 +1,12 @@
 import React from 'react';
 
-export function PhoneInput({ onChange, phoneNumber, required = false }) {
+type PhoneInputProps = {
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  phoneNumber: string;
+  required: boolean;
+};
+
+export function PhoneInput({ onChange, phoneNumber, required = false }: PhoneInputProps) {
   return (
     <div className="mb-4">
       <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
