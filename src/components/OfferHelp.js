@@ -1,11 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { HeartHandshake, Check, Mail } from 'lucide-react';
 import { helpRequestService } from '@/lib/service';
 import { supabase } from '@/lib/supabase';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
+import { isValidPhone } from '@/helpers/utils';
+
+import { PhoneInput } from '@/components/PhoneInput';
+import { formatPhoneNumber } from '@/helpers/format';
 
 export default function OfferHelp({ town, onClose, isModal }) {
   const [towns, setTowns] = useState([]);
@@ -68,6 +72,10 @@ export default function OfferHelp({ town, onClose, isModal }) {
     }));
   };
 
+  const handlePhoneChange = useCallback((e) => {
+    setFormData((formData) => ({ ...formData, telefono: e.target.value }));
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -82,6 +90,11 @@ export default function OfferHelp({ town, onClose, isModal }) {
       return;
     }
 
+    if (!isValidPhone(formData.telefono)) {
+      alert('El teléfono de contacto no es válido. Si has usado espacios, elimínalos.');
+      return;
+    }
+
     setStatus({ isSubmitting: true, error: null, success: false });
 
     try {
@@ -90,7 +103,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
         name: formData.nombre,
         location: formData.ubicacion,
         description: formData.comentarios,
-        contact_info: formData.telefono,
+        contact_info: formatPhoneNumber(formData.telefono),
         additional_info: {
           email: formData.email,
           experience: formData.experiencia,
@@ -177,18 +190,7 @@ export default function OfferHelp({ town, onClose, isModal }) {
               className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Teléfono <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="tel"
-              value={formData.telefono}
-              onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              required
-            />
-          </div>
+          <PhoneInput phoneNumber={formData.telefono} onChange={handlePhoneChange} required />
         </div>
 
         <div>

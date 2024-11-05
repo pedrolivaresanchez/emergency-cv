@@ -1,10 +1,10 @@
 import React from 'react';
 
-export function PhoneInput({ onChange, phoneNumber }) {
+export function PhoneInput({ onChange, phoneNumber, required = false }) {
   return (
     <div className="mb-4">
       <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-        Número de teléfono
+        Número de teléfono {required ? <span className="text-red-500">*</span> : null}
       </label>
 
       <div className="relative">
