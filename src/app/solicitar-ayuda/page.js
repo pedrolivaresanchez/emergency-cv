@@ -196,9 +196,9 @@ export default function SolicitarAyuda() {
                   ubicacion: address.fullAddress,
                   coordinates: address.coordinates
                     ? {
-                        lat: address.coordinates.lat,
-                        lng: address.coordinates.lon,
-                      }
+                      lat: address.coordinates.lat,
+                      lng: address.coordinates.lon,
+                    }
                     : null,
                 });
               }}
@@ -218,7 +218,7 @@ export default function SolicitarAyuda() {
                   key={tipo.id}
                   className={`flex items-center p-3 rounded cursor-pointer ${
                     formData.tiposAyuda.includes(tipo.id) ? 'bg-red-50 text-red-800' : 'bg-gray-50 hover:bg-gray-100'
-                  }`}
+                    }`}
                 >
                   <input
                     type="checkbox"
@@ -323,14 +323,14 @@ export default function SolicitarAyuda() {
           </div>
           {/* Consentimiento */}
           <div className="flex items-start">
-            <input
-              type="checkbox"
-              name="consentimiento"
-              checked={formData.consentimiento}
-              onChange={handleChange}
-              className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-            />
-            <label className="ml-2 block text-sm text-gray-700">
+            <label className="ml-2 text-sm text-gray-700 flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                name="consentimiento"
+                checked={formData.consentimiento}
+                onChange={handleChange}
+                className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+              />
               Doy mi consentimiento para el tratamiento de los datos proporcionados y confirmo que la información
               proporcionada es verídica.
             </label>
@@ -341,7 +341,7 @@ export default function SolicitarAyuda() {
             disabled={status.isSubmitting}
             className={`w-full ${
               status.isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'
-            } text-white py-3 px-4 rounded-lg font-semibold`}
+              } text-white py-3 px-4 rounded-lg font-semibold`}
           >
             {status.isSubmitting ? 'Enviando solicitud...' : 'Enviar Solicitud de Ayuda'}
           </button>

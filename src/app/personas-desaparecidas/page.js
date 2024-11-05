@@ -301,13 +301,13 @@ export default function PersonaDesaparecida() {
           {/* Consentimiento */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex items-start">
-              <input
-                type="checkbox"
-                checked={formData.consentimiento}
-                onChange={(e) => setFormData({ ...formData, consentimiento: e.target.checked })}
-                className="mt-1 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
-              />
-              <label className="ml-2 block text-sm text-gray-700">
+              <label className="ml-2 text-sm text-gray-700 flex items-start gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.consentimiento}
+                  onChange={(e) => setFormData({ ...formData, consentimiento: e.target.checked })}
+                  className="mt-1 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                />
                 Doy mi consentimiento para el tratamiento de los datos proporcionados y confirmo que la información
                 proporcionada es verídica. Entiendo que proporcionar información falsa puede ser constitutivo de delito.
               </label>
@@ -318,29 +318,30 @@ export default function PersonaDesaparecida() {
           <button
             type="submit"
             disabled={status.isSubmitting}
-            className={`w-full ${
-              status.isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-purple-500 hover:bg-purple-600'
-            } text-white py-3 px-4 rounded-lg font-semibold 
+            className={`w-full ${status.isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-purple-500 hover:bg-purple-600'
+              } text-white py-3 px-4 rounded-lg font-semibold 
               focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2`}
           >
             {status.isSubmitting ? 'Enviando reporte...' : 'Enviar Reporte'}
           </button>
         </form>
-      </div>
+      </div >
 
-      {status.success && (
-        <div className="fixed bottom-4 right-4 bg-green-100 border-l-4 border-green-500 p-4 rounded shadow-lg z-50">
-          <div className="flex items-center">
-            <Check className="h-5 w-5 text-green-500 mr-2" />
-            <div>
-              <p className="text-green-700 font-medium">El reporte ha sido enviado correctamente.</p>
-              <p className="text-green-600 text-sm mt-1">
-                Gracias por proporcionar esta información. Las autoridades han sido notificadas.
-              </p>
+      {
+        status.success && (
+          <div className="fixed bottom-4 right-4 bg-green-100 border-l-4 border-green-500 p-4 rounded shadow-lg z-50">
+            <div className="flex items-center">
+              <Check className="h-5 w-5 text-green-500 mr-2" />
+              <div>
+                <p className="text-green-700 font-medium">El reporte ha sido enviado correctamente.</p>
+                <p className="text-green-600 text-sm mt-1">
+                  Gracias por proporcionar esta información. Las autoridades han sido notificadas.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 }
