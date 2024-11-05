@@ -7,6 +7,7 @@ import { authService } from '@/lib/service';
 import { useModal } from '@/context/EmergencyProvider';
 import { PhoneInput } from '@/components/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/format';
+import { isValidPhone } from '@/helpers/utils';
 
 const PhoneForm = ({ onSubmit }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -14,6 +15,13 @@ const PhoneForm = ({ onSubmit }) => {
   const handleSubmit = useCallback(
     (e) => {
       e.preventDefault();
+
+      /* Form validation */
+      if (!isValidPhone(phoneNumber)) {
+        alert('El teléfono de contacto no es válido.');
+        return;
+      }
+
       const formatedPhoneNumber = formatPhoneNumber(phoneNumber);
       onSubmit(formatedPhoneNumber);
       setPhoneNumber('');
@@ -21,8 +29,8 @@ const PhoneForm = ({ onSubmit }) => {
     [onSubmit, phoneNumber],
   );
 
-  const handleChange = useCallback((e) => {
-    setPhoneNumber(e.target.value);
+  const handleChange = useCallback((phoneNumber) => {
+    setPhoneNumber(phoneNumber);
   }, []);
 
   return (
