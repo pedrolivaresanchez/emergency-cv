@@ -153,13 +153,13 @@ export default function SolicitarAyuda() {
         <div className="flex items-start">
           <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 mr-2" />
           <div>
-            <h2 className="text-red-800 font-bold">PARA LAS PERSONAS MAYORES</h2>
+            <h2 className="text-red-800 font-bold">PARA PERSONAS CON DIFICULTADES TECNICAS</h2>
             <p className="text-red-700 text-sm mt-1">
               Hemos habilitado el número{' '}
               <a className="font-bold text-blue-600 hover:text-blue-800" href="tel:+34626675591">
                 626 675 591
               </a>{' '}
-              para facilitar la petición de ayuda a aquellas personas que encuentren complicado usarla.
+              para facilitar la petición de ayuda a aquellas personas que encuentren complicado usar la página web.
             </p>
           </div>
         </div>
