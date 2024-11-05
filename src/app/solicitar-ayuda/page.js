@@ -1,11 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { AlertTriangle, Check, Mail } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions } from '@/helpers/constants';
 import { isValidPhone } from '@/helpers/utils';
+import { helpRequestService } from '@/lib/service';
+
+import { PhoneInput } from '@/components/PhoneInput';
+import { formatPhoneNumber } from '@/helpers/format';
 
 export default function SolicitarAyuda() {
   const [formData, setFormData] = useState({
@@ -68,7 +72,7 @@ export default function SolicitarAyuda() {
     }
 
     if (!isValidPhone(formData.contacto)) {
-      alert('El teléfono de contacto no es válido');
+      alert('El teléfono de contacto no es válido. Si has usado espacios, elimínalos.');
       return;
     }
 
@@ -85,7 +89,7 @@ export default function SolicitarAyuda() {
         description: formData.descripcion,
         urgency: formData.urgencia,
         number_of_people: parseInt(formData.numeroPersonas) || 1,
-        contact_info: formData.contacto,
+        contact_info: formatPhoneNumber(formData.contacto),
         additional_info: {
           special_situations: formData.situacionEspecial || null,
           consent: true,
@@ -94,7 +98,7 @@ export default function SolicitarAyuda() {
         status: 'active',
       };
 
-      const { data, error } = await supabase.from('help_requests').insert([helpRequestData]).select();
+      const { error } = await helpRequestService.createRequest(helpRequestData);
 
       if (error) {
         throw new Error(error.message);
@@ -134,6 +138,10 @@ export default function SolicitarAyuda() {
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
+
+  const handlePhoneChange = useCallback((e) => {
+    setFormData((formData) => ({ ...formData, contacto: e.target.value }));
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -282,19 +290,7 @@ export default function SolicitarAyuda() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono de contacto</label>
-            <input
-              type="tel"
-              name="contacto"
-              value={formData.contacto}
-              pattern="[0-9]{1,9}"
-              maxLength="9"
-              onChange={handleChange}
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-              placeholder="Teléfono móvil preferiblemente (sin el prefijo +34)"
-            />
-          </div>
+          <PhoneInput phoneNumber={formData.contacto} onChange={handlePhoneChange} />
           {/* Pueblos */}
           <div>
             <div className="flex flex-row justify-between mb-2 items-end">

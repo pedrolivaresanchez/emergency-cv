@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { HeartHandshake, Check, Mail, Thermometer } from 'lucide-react';
-import { helpRequestService } from '@/lib/service';
 import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
 import OfferHelp from '@/components/OfferHelp';
 
