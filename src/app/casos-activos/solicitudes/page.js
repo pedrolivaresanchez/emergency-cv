@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
@@ -83,7 +83,7 @@ export default function Solicitudes() {
         }
         query.neq('status', 'finished');
         // Ejecutar la consulta con paginación
-        const { data, count, error } = await query
+        const { data, error } = await query
           .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1)
           .order('created_at', { ascending: false });
 
@@ -92,7 +92,7 @@ export default function Solicitudes() {
           setData([]);
         } else {
           setData(data || []);
-          setCurrentCount(count);
+          setCurrentCount(data.length);
         }
       } catch (err) {
         console.log('Error general:', err);
