@@ -1,15 +1,18 @@
 'use client';
 
-import { FC, ReactNode, useRef, useState } from 'react';
-import ReactMap, { Popup } from 'react-map-gl/maplibre';
+import { FC, ReactNode, useState } from 'react';
+import ReactMap from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Marker } from 'react-map-gl/maplibre';
 import { MapPin } from 'lucide-react';
+import { useModal } from '@/context/EmergencyProvider';
+// @ts-ignore
+import Modal from '@/components/Modal';
 
 const urgencyToColor = {
-  alta: '#ef4444', //text-red-500
-  media: '#f59e0b', //text-amber-500
-  baja: '#10b981', //text-emerald-500
+  alta: 'text-red-500',
+  media: 'text-amber-500',
+  baja: 'text-emerald-500',
 };
 
 export type PinMapa = {
@@ -31,6 +34,8 @@ const DEFAULT_ZOOM = 12;
 const Map: FC<MapProps> = ({ markers = [] }) => {
   const [selectedMarker, setSelectedMarker] = useState<PinMapa | null>(null);
 
+  const { showModal, toggleModal } = useModal();
+
   console.log(selectedMarker);
   return (
     <ReactMap
@@ -46,27 +51,19 @@ const Map: FC<MapProps> = ({ markers = [] }) => {
         return (
           <Marker
             key={m.id}
-            color={urgencyToColor[m.urgency]}
-            longitude={-0.4}
-            latitude={39.42333}
-            onClick={() => setSelectedMarker(m)}
+            longitude={m.longitude}
+            latitude={m.latitude}
+            onClick={() => {
+              toggleModal(true);
+              setSelectedMarker(m);
+            }}
             anchor="bottom"
           >
-            <MapPin className="h-6 w-6 text-orange-500" />
+            <MapPin className={`h-6 w-6 ${urgencyToColor[m.urgency]}`} />
           </Marker>
         );
       })}
-      {selectedMarker && (
-        <Popup
-          longitude={-0.4}
-          latitude={39.42333}
-          className={'map-popup'}
-          anchor="top"
-          onClose={() => setSelectedMarker(null)}
-        >
-          {selectedMarker.popup}
-        </Popup>
-      )}
+      {selectedMarker && showModal && <Modal>{selectedMarker.popup}</Modal>}
     </ReactMap>
   );
 };
