@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server';
 import { SessionProvider } from '@/context/SessionProvider';
 import { townsService } from '@/lib/service';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'sonner';
 
 export const metadata = {
   title: 'Ajuda Dana - Sistema de Coordinación',
@@ -27,6 +28,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="es">
       <body suppressHydrationWarning={true}>
+        <Toaster />
         <SessionProvider session={session}>
           <QueryClientProvider client={queryClient}>
             <TownsProvider towns={towns}>
