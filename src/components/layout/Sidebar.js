@@ -17,6 +17,10 @@ import {
   Thermometer,
   Truck,
   Inbox,
+  Car,
+  Landmark,
+  Scale,
+  MessageCircleQuestion,
 } from 'lucide-react';
 import UserInfo from '../UserInfo';
 import { useSession } from '../../context/SessionProvider';
@@ -94,6 +98,34 @@ const menuItems = [
     description: 'Para transportistas y logística',
     path: '/puntos-entrega',
     color: 'text-gray-800',
+  },
+  {
+    icon: Scale,
+    title: 'Servicio Notarial',
+    description: 'Servicio notarial gratuito',
+    path: 'https://valencia.notariado.org/portal/-/20241031-servicio-notarial-de-ayuda-gratuito-para-los-afectados-por-la-dana-noticia-p%C3%BAblica-',
+    color: 'text-indigo-600',
+  },
+  {
+    icon: Landmark,
+    title: 'Reclamar a Consorcio',
+    description: 'Seguro de riesgos extraordinarios',
+    path: 'https://www.consorseguros.es/ambitos-de-actividad/seguros-de-riesgos-extraordinarios/solicitud-de-indemnizacion',
+    color: 'text-pink-600',
+  },
+  {
+    icon: MessageCircleQuestion,
+    title: 'Ayuda Psicológica',
+    description: 'Conecta con psicólogos voluntarios',
+    path: 'https://ayudana.org/',
+    color: 'text-teal-600',
+  },
+  {
+    icon: Car,
+    title: 'Compartir Coche',
+    description: 'Viaja u ofrece viajes con otros',
+    path: 'https://anem.guruwalk.com/',
+    color: 'text-amber-600',
   },
 ];
 
