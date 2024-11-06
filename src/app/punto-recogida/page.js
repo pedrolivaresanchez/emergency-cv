@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { MapPin, Phone, Package, House, Contact, Megaphone } from 'lucide-react';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
+import { isValidPhone } from '@/helpers/utils';
+import { PhoneInput } from '@/components/PhoneInput';
 
 export default function PuntosRecogida() {
   const initialFormData = {
@@ -26,6 +28,10 @@ export default function PuntosRecogida() {
   const [success, setSuccess] = useState(false);
 
   const tiposAyuda = ['Alimentos', 'Agua', 'Ropa', 'Mantas', 'Medicamentos', 'Productos de higiene'];
+
+  const handlePhoneChange = useCallback((phoneNumber) => {
+    setFormData((formData) => ({ ...formData, contact_phone: phoneNumber }));
+  }, []);
 
   useEffect(() => {
     fetchCollectionPoints();
@@ -57,6 +63,11 @@ export default function PuntosRecogida() {
 
       if (missingFields.length > 0) {
         throw new Error('Por favor completa todos los campos obligatorios');
+      }
+
+      if (!isValidPhone(formData.contact_phone)) {
+        alert('El teléfono de contacto no es válido.');
+        return;
       }
 
       console.log('FormData before submission:', formData); // Debug log
@@ -266,16 +277,7 @@ export default function PuntosRecogida() {
                     className="w-full p-2 border rounded"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
-                  <input
-                    type="tel"
-                    value={formData.contact_phone}
-                    onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
-                    className="w-full p-2 border rounded"
-                    required
-                  />
-                </div>
+                <PhoneInput phoneNumber={formData.contact_phone} onChange={handlePhoneChange} required />
               </div>
 
               <div>

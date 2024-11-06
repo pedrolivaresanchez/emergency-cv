@@ -19,7 +19,7 @@ export default function AuthPage() {
 
   return (
     <section className="m-16">
-      <Login onSuccessCallback={() => router.push('/')} />
+      <Login onSuccessCallback={() => (window.location.href = '/')} />
     </section>
   );
 }

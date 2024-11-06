@@ -35,7 +35,7 @@ internal sealed class GoogleSheetsService
         };
 
         var rows = new List<IList<object>> { headerRow };
-        rows.AddRange(requests.Select(request => new List<object>
+        rows.AddRange(requests.OrderBy(x => x.Id).Select(request => new List<object>
         {
             request.Id,
             request.Type ?? "",
@@ -64,7 +64,7 @@ internal sealed class GoogleSheetsService
             _spreadsheetId,
             "RAW!A1:O"
         );
-        updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+        updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
 
         await updateRequest.ExecuteAsync();
     }

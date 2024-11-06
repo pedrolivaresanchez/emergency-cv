@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { Mail, Thermometer } from 'lucide-react';
+import { Thermometer } from 'lucide-react';
 import OfferHelp from '@/components/OfferHelp';
 import { useModal } from '@/context/EmergencyProvider';
 import Modal from '@/components/Modal';
@@ -90,22 +90,12 @@ export default function Voluntometro() {
     };
   };
   return (
-    <div className="container mx-auto p-4">
+    <div className="mx-auto p-4">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <h1 className="text-2xl font-bold text-orange-500 flex items-center gap-2">
           <Thermometer className="h-8 w-8" />
           Voluntómetro
         </h1>
-        <button
-          onClick={() => {
-            window.location.href =
-              'mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro';
-          }}
-          className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
-        >
-          <Mail className="h-5 w-5" />
-          Solicitar nuevo pueblo
-        </button>
       </div>
 
       {/* Widget de Estadísticas actualizado */}
@@ -191,8 +181,6 @@ export default function Voluntometro() {
         <Modal>
           <OfferHelp town={town} onClose={closeModal} isModal={true} />
         </Modal>
-        // <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-        // </div>
       )}
     </div>
   );

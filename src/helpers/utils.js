@@ -1,5 +1,9 @@
-export const isValidPhone = (phone) => {
-  return phone.length === 9 && [...phone].every((char) => /\d/.test(char));
+export const isValidPhone = (phoneNumber) => {
+  const phoneNumberWithoutSpaces = phoneNumber.replace(/\D/g, '');
+  return phoneNumberWithoutSpaces.length === 9 && /^\d[ \d]*$/.test(phoneNumberWithoutSpaces);
 };
 
-export const isNumericOrSpaces = (value) => /^\d*\s*$/.test(value);
+export const formatPhoneNumber = (value) => {
+  // Remove white spaces and non-digit characters
+  return value.replace(/\s/g, '').replace(/\D/g, '');
+};

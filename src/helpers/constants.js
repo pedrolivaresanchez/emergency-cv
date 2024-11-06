@@ -1,22 +1,15 @@
 export const tiposAyudaOptions = {
-  limpieza: 'Limpieza/Desescombro',
-  evacuacion: 'Transporte/Evacuación',
+  limpieza: 'Labores de Limpieza',
+  evacuacion: 'Peticion de desplazamiento',
   alojamiento: 'Alojamiento temporal',
-  distribucion: 'Distribución de suministros',
-  rescate: 'Equipo de rescate',
+  distribucion: 'Necesidad de suministros y material',
+  rescate: 'Equipo de rescate (evacuación)',
   medica: 'Asistencia médica',
   psicologico: 'Apoyo psicológico',
   logistico: 'Apoyo logístico',
 };
 
-export const tiposAyudaAcepta = [
-  "Alimentos",
-  "Ropa",
-  "Mantas",
-  "Agua",
-  "Productos de higiene",
-  "Medicamentos"
-]
+export const tiposAyudaAcepta = ['Alimentos', 'Ropa', 'Mantas', 'Agua', 'Productos de higiene', 'Medicamentos'];
 
 export const mapToIdAndLabel = (data) => {
   return Object.keys(data).map((key) => ({

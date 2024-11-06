@@ -1,16 +1,16 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
-import Link from 'next/link';
-import { AlertTriangle, ArrowLeft, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import SolicitudCard from '@/components/SolicitudCard';
+import { useTowns } from '../../../context/TownProvider';
 
 export default function CasoDetalle() {
   const params = useParams();
   const { id } = params;
   const [caso, setCaso] = useState(null);
-  const [towns, setTowns] = useState([]);
+  const towns = useTowns();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     async function fetchCaso() {
@@ -22,16 +22,7 @@ export default function CasoDetalle() {
       }
       setLoading(false);
     }
-    async function fetchTowns() {
-      const { data, error } = await supabase.from('towns').select('id, name').order('id', { ascending: true });
-      if (error) {
-        console.error('Error fetching towns:', error);
-        return;
-      }
-      setTowns(data);
-    }
     fetchCaso();
-    fetchTowns();
   }, [id]);
   if (loading) {
     return (
@@ -69,7 +60,7 @@ export default function CasoDetalle() {
           Volver
         </button>
       </div>
-      <SolicitudCard towns={towns} key={caso.id} caso={caso} />
+      <SolicitudCard key={caso.id} caso={caso} towns={towns} />
     </div>
   );
 }

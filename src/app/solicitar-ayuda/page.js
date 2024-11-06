@@ -9,14 +9,16 @@ import { isValidPhone } from '@/helpers/utils';
 import { helpRequestService } from '@/lib/service';
 
 import { PhoneInput } from '@/components/PhoneInput';
-import { formatPhoneNumber } from '@/helpers/format';
+import { formatPhoneNumber } from '@/helpers/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useSession } from '../../context/SessionProvider';
 
 export default function SolicitarAyuda() {
   const router = useRouter();
+  const session = useSession();
   const [formData, setFormData] = useState({
-    nombre: '',
+    nombre: session?.user?.user_metadata?.full_name || '',
     ubicacion: '',
     coordinates: null,
     tiposAyuda: [],
@@ -24,10 +26,10 @@ export default function SolicitarAyuda() {
     descripcion: '',
     urgencia: 'alta',
     situacionEspecial: '',
-    contacto: '',
+    contacto: session?.user?.user_metadata?.telefono || '',
     consentimiento: false,
     pueblo: '',
-    email: '',
+    email: session?.user?.user_metadata?.email || '',
   });
 
   const [status, setStatus] = useState({
@@ -65,6 +67,7 @@ export default function SolicitarAyuda() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    /* Form validation */
     if (!formData.ubicacion) {
       alert('La ubicación es un campo obligatorio');
       return;
@@ -76,7 +79,7 @@ export default function SolicitarAyuda() {
     }
 
     if (!isValidPhone(formData.contacto)) {
-      alert('El teléfono de contacto no es válido. Si has usado espacios, elimínalos.');
+      alert('El teléfono de contacto no es válido.');
       return;
     }
 
@@ -122,13 +125,12 @@ export default function SolicitarAyuda() {
         contacto: '',
         pueblo: '',
         consentimiento: false,
+        email: '',
       });
 
       setStatus({ isSubmitting: false, error: null, success: true });
-      setTimeout(() => {
-        setStatus((prev) => ({ ...prev, success: false }));
-        router.push('/casos-activos/solicitudes');
-      }, 5000);
+      setStatus((prev) => ({ ...prev, success: false }));
+      router.push('/casos-activos/solicitudes');
     } catch (error) {
       console.log('Error al enviar solicitud:', error.message);
       setStatus({
@@ -147,8 +149,8 @@ export default function SolicitarAyuda() {
     }));
   };
 
-  const handlePhoneChange = useCallback((e) => {
-    setFormData((formData) => ({ ...formData, contacto: e.target.value }));
+  const handlePhoneChange = useCallback((phoneNumber) => {
+    setFormData((formData) => ({ ...formData, contacto: phoneNumber }));
   }, []);
 
   return (
@@ -347,13 +349,6 @@ export default function SolicitarAyuda() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Pueblo <span className="text-red-500">*</span>
               </label>
-              <a
-                href="mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro"
-                className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
-              >
-                <Mail className="h-5 w-5" />
-                Solicitar nuevo pueblo
-              </a>
             </div>
             <select
               name="pueblo"
