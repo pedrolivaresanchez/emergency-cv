@@ -6,7 +6,6 @@ import SolicitudCard from '@/components/SolicitudCard';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Map from '@/components/map/map';
-import ReactDOMServer from 'react-dom/server';
 import PickupPoint from '@/components/PickupPoint';
 import { useTowns } from '@/context/TownProvider';
 
@@ -50,9 +49,7 @@ export default function Mapa() {
         urgency: request.urgency,
         coordinates: [request.longitude ?? 0, request.latitude ?? 0],
         width: '600px',
-        descriptionHTML: ReactDOMServer.renderToString(
-          <SolicitudCard isHref={true} isEdit={false} towns={towns} caso={request} />,
-        ),
+        descriptionHTML: <SolicitudCard isHref={true} isEdit={false} towns={towns} caso={request} />,
       };
     }
 
@@ -61,7 +58,7 @@ export default function Mapa() {
         urgency: point.urgency || 'baja',
         coordinates: [point.longitude ?? 0, point.latitude ?? 0],
         width: '600px',
-        descriptionHTML: ReactDOMServer.renderToString(<PickupPoint point={point} />),
+        descriptionHTML: <PickupPoint point={point} />,
       };
     }
 
