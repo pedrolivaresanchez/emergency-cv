@@ -61,14 +61,14 @@ export default function OfferHelp({ town, onClose, isModal, redirect = '/casos-a
     }));
   };
 
-  const handlePhoneChange = useCallback((e) => {
-    setFormData((formData) => ({ ...formData, telefono: e.target.value }));
+  const handlePhoneChange = useCallback((phoneNumber) => {
+    setFormData((formData) => ({ ...formData, telefono: phoneNumber }));
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación de ubicación
+    // Form validation
     if (!formData.ubicacion) {
       alert('La ubicación es obligatoria');
       return;
@@ -80,7 +80,7 @@ export default function OfferHelp({ town, onClose, isModal, redirect = '/casos-a
     }
 
     if (!isValidPhone(formData.telefono)) {
-      alert('El teléfono de contacto no es válido. Si has usado espacios, elimínalos.');
+      alert('El teléfono de contacto no es válido.');
       return;
     }
 
@@ -315,13 +315,6 @@ export default function OfferHelp({ town, onClose, isModal, redirect = '/casos-a
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Pueblo <span className="text-red-500">*</span>
             </label>
-            <a
-              href="mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro"
-              className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
-            >
-              <Mail className="h-5 w-5" />
-              Solicitar nuevo pueblo
-            </a>
           </div>
           <select
             name="pueblo"
