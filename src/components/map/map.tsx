@@ -54,7 +54,7 @@ const Map: FC<MapProps> = ({ center = [0, 0], zoom = 2, markers = [] }) => {
             className: 'map-popup',
             maxWidth: `${markerData.width}px`,
             anchor: 'left',
-          }).setHTML(markerData.descriptionHTML)
+          }).setHTML(markerData.descriptionHTML),
         )
         .addTo(mapRef.current!);
 
