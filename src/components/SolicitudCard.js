@@ -143,16 +143,20 @@ export default function SolicitudCard({
             )}
           </div>
           <div className="flex flex-col sm:flex-row w-full sm:w-auto justify-end gap-2">
-            {session.user.email !== null && session.user.email === caso.additional_info.email && !isEdit && (
-              <Link
-                href={'/solicitudes/editar/' + caso.id}
-                className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
-                  caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
-                }`}
-              >
-                Editar
-              </Link>
-            )}
+            {session &&
+              session.user &&
+              session.user.email &&
+              session.user.email === caso.additional_info.email &&
+              !isEdit && (
+                <Link
+                  href={'/solicitudes/editar/' + caso.id}
+                  className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
+                    caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
+                  }`}
+                >
+                  Editar
+                </Link>
+              )}
             {isHref && (
               <Link
                 href={button.link + caso.id}
