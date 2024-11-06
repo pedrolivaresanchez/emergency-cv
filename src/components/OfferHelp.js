@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { HeartHandshake, Check, Mail } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { HeartHandshake, Check } from 'lucide-react';
 import { helpRequestService } from '@/lib/service';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
+import AddresMap from '@/components/AddressMap';
 import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
 import { isValidPhone } from '@/helpers/utils';
 
@@ -196,7 +197,7 @@ export default function OfferHelp({
 
       {/* Formulario */}
 
-      <div className="space-y-6 max-h-[65vh] overflow-y-auto p-2">
+      <div className="space-y-6 overflow-y-auto p-2">
         {/* Datos personales */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
@@ -244,26 +245,16 @@ export default function OfferHelp({
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Ubicación exacta <span className="text-red-500">*</span>
           </label>
-          <AddressAutocomplete
-            initialValue={data?.location}
-            onSelect={(address) => {
+
+          <AddresMap
+            onNewAddressCallback={(addressDescriptor) => {
               setFormData({
                 ...formData,
-                ubicacion: address.fullAddress,
-                coordinates: address.coordinates
-                  ? {
-                      lat: address.coordinates.lat,
-                      lng: address.coordinates.lon,
-                    }
-                  : null,
+                ubicacion: addressDescriptor.address,
+                coordinates: addressDescriptor.coordinates ?? null,
               });
             }}
-            placeholder="Calle, número, piso, ciudad..."
-            required
           />
-          <p className="mt-1 text-sm text-gray-500">
-            Incluya todos los detalles posibles para poder localizarle (campo obligatorio)
-          </p>
         </div>
 
         {/* Tipos de ayuda */}

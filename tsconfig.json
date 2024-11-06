@@ -11,7 +11,7 @@
     "strict": true,
     "skipLibCheck": true,
     "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": false,
+    "allowJs": true,
     "checkJs": false,
     "noEmit": true,
     "incremental": true,
