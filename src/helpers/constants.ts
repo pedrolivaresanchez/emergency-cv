@@ -7,6 +7,8 @@ export const tiposAyudaOptions = {
   medica: 'Asistencia médica',
   psicologico: 'Apoyo psicológico',
   logistico: 'Apoyo logístico',
+  reparto: 'Labores de reparto de alimentos a domicilio',
+  donaciones: 'Labores de organización de donaciones',
   otros: 'Ayuda general',
 };
 

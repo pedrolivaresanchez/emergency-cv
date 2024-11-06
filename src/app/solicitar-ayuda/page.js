@@ -22,6 +22,7 @@ export default function SolicitarAyuda() {
     ubicacion: '',
     coordinates: null,
     tiposAyuda: [],
+    otraAyuda: '',
     numeroPersonas: '',
     descripcion: '',
     urgencia: 'alta',
@@ -93,6 +94,7 @@ export default function SolicitarAyuda() {
         latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : null,
         longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : null,
         help_type: formData.tiposAyuda,
+        other_help: formData.otraAyuda,
         description: formData.descripcion,
         urgency: formData.urgencia,
         number_of_people: parseInt(formData.numeroPersonas) || 1,
@@ -118,6 +120,7 @@ export default function SolicitarAyuda() {
         ubicacion: '',
         coordinates: null,
         tiposAyuda: [],
+        otraAyuda: '',
         numeroPersonas: '',
         descripcion: '',
         urgencia: 'alta',
@@ -293,6 +296,20 @@ export default function SolicitarAyuda() {
               ))}
             </div>
           </div>
+
+          {formData.tiposAyuda.includes('otros') && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">¿Qué tipo de ayuda?</label>
+              <textarea
+                name="otraAyuda"
+                value={formData.otraAyuda}
+                onChange={handleChange}
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
+                rows="3"
+                placeholder="Especifica qué tipo de ayuda..."
+              />
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Número de personas</label>
