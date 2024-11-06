@@ -3,16 +3,13 @@
 import { useState, useEffect } from 'react';
 import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
-import SolicitudCard from '@/components/SolicitudCard';
 import Pagination from '@/components/Pagination';
-import OfferHelp from '@/components/OfferHelp';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
-import Modal from '@/components/Modal';
-import { useModal } from '@/context/EmergencyProvider';
 import { useTowns } from '../../context/TownProvider';
 import { useSession } from '../../context/SessionProvider';
 import OfferCard from '../../components/OfferCard';
+import Link from 'next/link';
 
 export default function ListaSolicitudes() {
   const session = useSession();
@@ -28,11 +25,6 @@ export default function ListaSolicitudes() {
   const [currentCount, setCurrentCount] = useState(0);
   const towns = useTowns();
 
-  const { showModal, toggleModal } = useModal();
-
-  const closeModal = () => {
-    toggleModal(false);
-  };
   const itemsPerPage = 10;
   const numPages = (count) => {
     return Math.ceil(count / itemsPerPage) || 0;
@@ -169,18 +161,17 @@ export default function ListaSolicitudes() {
           {data.length === 0 ? (
             <div className="bg-white rounded-lg shadow-lg border border-gray-300 text-center flex justify-center items-center p-10 flex-col gap-5">
               <p className="text-gray-700 text-lg font-medium">
-                No se encontraron ofertas que coincidan con los filtros.
+                {filtroData.urgencia === 'todas' && filtroData.tipoAyuda === 'todas' && filtroData.pueblo === 'todos'
+                  ? 'No se encontraron solicitudes de ayuda correspondientes a tu cuenta.'
+                  : 'No se encontraron solicitudes que coincidan con los filtros.'}
               </p>
-
-              <button
-                onClick={() => {
-                  toggleModal(true);
-                }}
+              <Link
+                href="/ofrecer-ayuda"
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
               >
                 <HeartHandshake className="w-5 h-5" />
-                Ofrecer ayuda a {filtroData.pueblo === 'todos' ? '' : towns[filtroData.pueblo - 1].name}
-              </button>
+                Ofrecer ayuda
+              </Link>
             </div>
           ) : (
             data.map((caso) => (
@@ -198,11 +189,6 @@ export default function ListaSolicitudes() {
           <Pagination currentPage={currentPage} totalPages={numPages(currentCount)} onPageChange={changePage} />
         </div>
       </div>
-      {showModal && (
-        <Modal>
-          <OfferHelp town={towns[filtroData.pueblo - 1]} onClose={closeModal} isModal={true} />
-        </Modal>
-      )}
     </>
   );
 }

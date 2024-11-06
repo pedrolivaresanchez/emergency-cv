@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapPin, Phone, Calendar, User, HeartHandshake, Users, Truck, Search, Package, MapPinIcon } from 'lucide-react';
+import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import Pagination from '@/components/Pagination';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTowns } from '../../../context/TownProvider';
+import OfferCard from '../../../components/OfferCard';
 
 export default function Ofertas() {
   const towns = useTowns();
@@ -139,107 +140,7 @@ export default function Ofertas() {
             </button>
           </div>
         ) : (
-          data.map((caso) => (
-            <div
-              key={caso.id}
-              className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-green-500 overflow-hidden"
-            >
-              <div className="flex justify-between mb-2">
-                <span className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap mr-2 bg-purple-300`}>
-                  Referencia: {caso.id}
-                </span>
-                <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap bg-green-100 text-green-800">
-                  {caso.status === 'active' ? 'Activo' : 'Inactivo'}
-                </span>
-              </div>
-
-              <div className="space-y-2 mb-4">
-                <h3 className="text-lg font-bold text-green-600">
-                  <div className="flex items-start gap-2">
-                    <HeartHandshake className="h-5 w-5 flex-shrink-0 mt-1" />
-                    <div className="break-words">
-                      Ofrece:{' '}
-                      {Array.isArray(caso.help_type)
-                        ? caso.help_type
-                            .map((tipo) => {
-                              return tiposAyudaOptions[tipo] || tipo;
-                            })
-                            .join(', ')
-                        : 'Ayuda general'}
-                    </div>
-                  </div>
-                </h3>
-                {caso.name && (
-                  <div className="flex items-start gap-2">
-                    <User className="h-4 w-4 flex-shrink-0 mt-1" />
-                    <span className="break-words">
-                      <span className="font-semibold">Nombre:</span> {caso.name}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-2 text-sm">
-                {caso.contact_info && (
-                  <div className="flex items-start gap-2">
-                    <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                    <span className="break-words">
-                      <span className="font-semibold">Teléfono:</span>{' '}
-                      {typeof caso.contact_info === 'string' ? caso.contact_info : JSON.parse(caso.contact_info).phone}
-                    </span>
-                  </div>
-                )}
-
-                {caso.resources && (
-                  <>
-                    {(() => {
-                      let resources;
-                      try {
-                        resources = typeof caso.resources === 'string' ? JSON.parse(caso.resources) : caso.resources;
-
-                        return resources.vehicle ? (
-                          <div className="flex items-start gap-2">
-                            <Truck className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                            <span className="break-words">
-                              <span className="font-semibold">Vehículo:</span> {resources.vehicle}
-                            </span>
-                          </div>
-                        ) : null;
-                      } catch (e) {
-                        return null;
-                      }
-                    })()}
-                  </>
-                )}
-
-                {caso.location && (
-                  <div className="flex items-start gap-2">
-                    <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                    <span className="break-words">
-                      <span className="font-semibold">Ubicación:</span> {caso.location}
-                    </span>
-                  </div>
-                )}
-
-                <div className="flex items-start gap-2">
-                  <Calendar className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                  <span className="break-words">
-                    <span className="font-semibold">Fecha:</span>{' '}
-                    {new Date(caso.created_at).toLocaleDateString() +
-                      ' ' +
-                      new Date(caso.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-              </div>
-
-              {caso.description && (
-                <div className="mt-4 bg-gray-50 p-3 rounded">
-                  <span className="font-semibold block mb-1">Comentarios:</span>
-                  <p className="text-gray-700 break-words">{caso.description}</p>
-                </div>
-              )}
-            </div>
-          ))
+          data.map((caso) => <OfferCard caso={caso} isHref={true} key={caso.id} />)
         )}
       </div>
       <div className="flex items-center justify-center">
