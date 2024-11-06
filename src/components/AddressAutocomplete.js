@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { MapPin } from 'lucide-react';
 
 export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar dirección...', initialValue = '' }) {
@@ -9,6 +9,7 @@ export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar di
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const wrapperRef = useRef(null);
+  const debounceRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -20,7 +21,7 @@ export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar di
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const searchAddress = async (searchQuery) => {
+  const searchAddress = useCallback(async (searchQuery) => {
     if (!searchQuery || searchQuery.length < 3) {
       setSuggestions([]);
       return;
@@ -34,12 +35,10 @@ export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar di
       const data = await response.json();
 
       const formattedSuggestions = data.map((item) => {
-        // Create a readable address line
         const addressParts = [];
         if (item.address?.road) addressParts.push(item.address.road);
         if (item.address?.house_number) addressParts.push(item.address.house_number);
 
-        // Create a readable locality line
         const localityParts = [];
         if (item.address?.postcode) localityParts.push(item.address.postcode);
         if (item.address?.city || item.address?.town || item.address?.village) {
@@ -74,13 +73,12 @@ export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar di
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const handleInputChange = (e) => {
     const value = e.target.value;
     setQuery(value);
 
-    // Cuando el usuario escribe manualmente, enviamos solo el texto
     onSelect({
       fullAddress: value,
       coordinates: null,
@@ -93,17 +91,28 @@ export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar di
       },
     });
 
-    // Solo buscar sugerencias si hay más de 3 caracteres
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
     if (value.length >= 3) {
-      const timeoutId = setTimeout(() => {
+      debounceRef.current = setTimeout(() => {
         searchAddress(value);
-      }, 300);
-      return () => clearTimeout(timeoutId);
+        debounceRef.current = null;
+      }, 500);
     } else {
       setSuggestions([]);
       setShowSuggestions(false);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
 
   const handleSelect = (suggestion) => {
     setQuery(suggestion.full_address);
