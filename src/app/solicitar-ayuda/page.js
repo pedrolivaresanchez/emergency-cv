@@ -9,7 +9,7 @@ import { isValidPhone } from '@/helpers/utils';
 import { helpRequestService } from '@/lib/service';
 
 import { PhoneInput } from '@/components/PhoneInput';
-import { formatPhoneNumber } from '@/helpers/format';
+import { formatPhoneNumber } from '@/helpers/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
@@ -123,12 +123,12 @@ export default function SolicitarAyuda() {
         contacto: '',
         pueblo: '',
         consentimiento: false,
-				email: ''
+        email: '',
       });
 
       setStatus({ isSubmitting: false, error: null, success: true });
-			setStatus((prev) => ({ ...prev, success: false }));
-			router.push('/casos-activos/solicitudes');
+      setStatus((prev) => ({ ...prev, success: false }));
+      router.push('/casos-activos/solicitudes');
     } catch (error) {
       console.log('Error al enviar solicitud:', error.message);
       setStatus({
