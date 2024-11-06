@@ -20,6 +20,7 @@ export default function Puntos() {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentCount, setCurrentCount] = useState(0);
+  const [cityOptions, setCityOptions] = useState([]);
 
   const itemsPerPage = 10;
   const numPages = (count) => {
@@ -34,6 +35,7 @@ export default function Puntos() {
 
   const [filtroData, setFiltroData] = useState({
     acepta: searchParams.get('acepta') || 'todos',
+    ciudad: searchParams.get('ciudad') || 'todas',
   });
 
   const changeDataFilter = (type, newFilter) => {
@@ -50,6 +52,34 @@ export default function Puntos() {
   }
 
   useEffect(() => {
+    async function fetchCities() {
+      try {
+        setError(null);
+
+        // Comenzamos la consulta
+        const query = supabase.from('distinct_collection_cities').select('city');
+
+        // Ejecutar la consulta
+        const { data, count, error } = await query;
+        if (error) {
+          console.log('Error fetching ciudades:', error);
+          setCityOptions([]);
+        } else {
+          const trimmedCities = data.map((punto) => punto.city.trim());
+          const cities = [...new Set(trimmedCities)].sort();
+          setCityOptions(cities || []);
+          setCurrentCount(count);
+        }
+      } catch (err) {
+        console.log('Error general:', err);
+        setError('Error de conexión.');
+      }
+    }
+
+    fetchCities();
+  }, []);
+
+  useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
@@ -62,6 +92,11 @@ export default function Puntos() {
         if (filtroData.ayuda !== 'todas') {
           query.contains('accepted_items', [filtroData.ayuda]);
         }
+
+        if (filtroData.ciudad !== 'todas') {
+          query.ilike('city', filtroData.ciudad);
+        }
+
         // Ejecutar la consulta con paginación
         const { data, count, error } = await query
           .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1)
@@ -106,7 +141,8 @@ export default function Puntos() {
       {/* FILTROS  */}
       <div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
         <p className="font-bold text-md">Filtros</p>
-        <div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
+        <div className="flex flex-col sm:flex-row gap-2 items-center w-full justify-end">
+          <h2 className="font-semibold">Se acepta:</h2>
           <select
             value={filtroData.ayuda}
             onChange={(e) => changeDataFilter('ayuda', e.target.value)}
@@ -116,6 +152,21 @@ export default function Puntos() {
             {tiposAyudaAcepta.map((acepta) => (
               <option key={acepta} value={acepta}>
                 {acepta}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2 items-center w-full justify-end">
+          <h2 className="font-semibold">Ciudad:</h2>
+          <select
+            value={filtroData.ciudad}
+            onChange={(e) => changeDataFilter('ciudad', e.target.value)}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+          >
+            <option value="todas">Todas las ciudades</option>
+            {cityOptions.map((city, i) => (
+              <option key={i} value={city}>
+                {city}
               </option>
             ))}
           </select>
@@ -135,7 +186,7 @@ export default function Puntos() {
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
             >
               <HeartHandshake className="w-5 h-5" />
-              Ofrecer ayuda a {filtroData.pueblo === 'todos' ? '' : towns[filtroData.pueblo - 1].name}
+              Crear punto de ayuda en {filtroData.ciudad === 'todos' ? '' : filtroData.ciudad}
             </button>
           </div>
         ) : (
