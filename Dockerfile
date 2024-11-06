@@ -1,25 +1,31 @@
 FROM node:18-alpine
 ARG CACHE_BURST=1
 
-# Add build arguments for Supabase
 ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-# Set environment variables
-ENV NODE_ENV="production" \
+ENV NODE_ENV="development" \
     NEXT_TELEMETRY_DISABLED=1 \
     NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL \
     NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 WORKDIR /app
 
-COPY ./package.json ./yarn.lock ./
+COPY package*.json ./
 
-RUN yarn --frozen-lockfile --production=false
+# Install ALL dependencies
+RUN npm install
 
-COPY ./ ./
+COPY . .
 
-RUN yarn build
+RUN npm run build
+
+# Switch to production after build
+ENV NODE_ENV="production"
+
+# Clean up development dependencies
+RUN npm prune --production
 
 EXPOSE 3000
-CMD ["yarn", "start"]
+
+CMD ["npm", "start"]
