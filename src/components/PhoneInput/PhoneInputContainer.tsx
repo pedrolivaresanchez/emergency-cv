@@ -4,7 +4,6 @@ import React, { useCallback, useState } from 'react';
 
 import { PhoneInputRenderer } from './PhoneInputRenderer';
 import { PhoneInputProps } from './types';
-// @ts-expect-error
 import { isValidPhone } from '@/helpers/utils';
 
 export function PhoneInputContainer({ onChange, phoneNumber, required = false }: PhoneInputProps) {
