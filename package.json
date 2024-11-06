@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "prettier:check": "prettier . --check",
-    "prettier:write": "prettier . --write"
+    "prettier:write": "prettier . --write",
+    "test:e2e": "npx playwright test"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -23,9 +24,11 @@
     "next": "15.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-map-gl": "^7.1.7",
     "sonner": "^1.7.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.48.2",
     "@types/node": "^22.8.7",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

@@ -312,7 +312,7 @@ export default function RequestHelp({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Número de personas</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Número de personas afectadas</label>
             <input
               type="number"
               name="numeroPersonas"

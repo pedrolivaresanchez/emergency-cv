@@ -2,12 +2,13 @@ import { AlertTriangle, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } f
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAdditionalInfo, HelpRequestData } from '@/types/Requests';
+import { HelpRequestAdditionalInfo, HelpRequestData, HelpRequestAssignmentData } from '@/types/Requests';
 import { Town } from '@/types/Town';
 import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
 import SolicitudHelpCount from '@/components/SolicitudHelpCount';
 import { helpRequestService } from '@/lib/service';
 
+import PhoneInfo from '@/components/PhoneInfo.js';
 
 type SolicitudCardProps = {
   caso: HelpRequestData;
@@ -105,9 +106,7 @@ export default function SolicitudCard({
             {caso.contact_info && (
               <div className="flex items-start gap-2">
                 <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                <span className="break-words">
-                  <span className="font-semibold">Contacto:</span> {caso.contact_info}
-                </span>
+                <PhoneInfo caseInfo={caso} />
               </div>
             )}
             {caso.urgency && (

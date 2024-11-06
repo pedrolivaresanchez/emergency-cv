@@ -35,6 +35,7 @@ export default function OfferHelp({
     email: data.additional_info?.email || session?.user?.user_metadata?.email || '',
     ubicacion: data.location || '',
     tiposAyuda: data.help_type || [],
+    otraAyuda: data.other_help || '',
     vehiculo: data.resources?.vehicle || '',
     disponibilidad: data.resources?.availability || [],
     radio: data.resources?.radius || 1,
@@ -118,6 +119,7 @@ export default function OfferHelp({
         latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : null,
         longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : null,
         help_type: formData.tiposAyuda,
+        other_help: formData.otraAyuda,
         town_id: formData.pueblo,
         status: formData.status,
       };
@@ -142,6 +144,7 @@ export default function OfferHelp({
         email: '',
         ubicacion: '',
         tiposAyuda: [],
+        otraAyuda: '',
         vehiculo: '',
         disponibilidad: [],
         radio: 1,
@@ -200,8 +203,11 @@ export default function OfferHelp({
         {/* Datos personales */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="fullName">
+              Nombre completo
+            </label>
             <input
+              id="fullName"
               type="text"
               value={formData.nombre}
               onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
@@ -213,8 +219,11 @@ export default function OfferHelp({
 
         {submitType === 'create' && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="userEmail">
+              Correo electrónico
+            </label>
             <input
+              id="userEmail"
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -241,7 +250,7 @@ export default function OfferHelp({
           </div>
         )}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="address">
             Ubicación exacta <span className="text-red-500">*</span>
           </label>
           <AddressAutocomplete
@@ -286,6 +295,20 @@ export default function OfferHelp({
             ))}
           </div>
         </div>
+
+        {formData.tiposAyuda.includes('otros') && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">¿Qué tipo de ayuda?</label>
+            <textarea
+              name="otraAyuda"
+              value={formData.otraAyuda}
+              onChange={(e) => setFormData({ ...formData, otraAyuda: e.target.value })}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
+              rows="3"
+              placeholder="Especifica qué tipo de ayuda..."
+            />
+          </div>
+        )}
 
         {/* Vehículo */}
         <div>
@@ -362,12 +385,11 @@ export default function OfferHelp({
 
         {/* Pueblos */}
         <div>
-          <div className="flex flex-row justify-between mb-2 items-end">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Pueblo <span className="text-red-500">*</span>
-            </label>
-          </div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="townName">
+            Pueblo <span className="text-red-500">*</span>
+          </label>
           <select
+            id="townName"
             name="pueblo"
             value={formData.pueblo}
             onChange={(e) => setFormData({ ...formData, pueblo: e.target.value })}
