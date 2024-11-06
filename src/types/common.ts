@@ -6,3 +6,4 @@ export type TownType = {
 };
 
 export type SupabaseTown = Database['public']['Tables']['towns']['Row'];
+export type Enums = Database['public']['Enums'];

@@ -7,13 +7,13 @@ import { PhoneInput } from '@/components/PhoneInput';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { TIPOS_DE_AYUDA } from '../constants';
 import { TipoDeAyudaInputRenderer } from '../TipoDeAyudaInputRenderer';
-import { FormData, Status, Town } from '../types';
+import { FormData, HelpCategory, Status, Town } from '../types';
 import { TownSelector } from '../TownSelector';
 
 type FormRendererProps = {
   status: Status;
   formData: FormData;
-  selectedRequestedHelpIDs: number[];
+  selectedHelp: Map<HelpCategory['id'], boolean>;
   handleSubmit: React.FormEventHandler<HTMLFormElement>;
   handlePhoneChange: (phoneNumber: string) => void;
   handleAddressSelection: (address: string) => void;
@@ -43,7 +43,7 @@ export function FormRenderer({
   handleEmailChange,
   handleNumberPeopleChange,
   handleConsentChange,
-  selectedRequestedHelpIDs,
+  selectedHelp,
 }: FormRendererProps) {
   return (
     <>
@@ -106,9 +106,10 @@ export function FormRenderer({
               {TIPOS_DE_AYUDA.map(({ id, label }) => (
                 <TipoDeAyudaInputRenderer
                   key={id}
+                  id={id}
                   handleTipoAyudaChange={handleTipoAyudaChange}
                   label={label}
-                  isSelected={selectedRequestedHelpIDs.includes(id)}
+                  isSelected={selectedHelp.get(id) || false}
                 />
               ))}
             </div>

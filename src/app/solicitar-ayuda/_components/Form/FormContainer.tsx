@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 import { FormRenderer } from './FormRenderer';
 import { FormData, Status } from '../types';
@@ -10,7 +10,25 @@ import { isValidPhone } from '@/helpers/utils';
 import { formatPhoneNumber } from '@/helpers/utils';
 import { helpRequestService } from '@/lib/service';
 import { Database } from '@/types/database';
+import { Enums } from '@/types/common';
 import { useRouter } from 'next/navigation';
+
+import { TIPOS_DE_AYUDA_MAP, TIPOS_DE_AYUDA } from '../constants';
+
+const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_enum'][] =>
+  Array.from(helpTypeMap).reduce(
+    (acc, [id, isSelected]) => {
+      if (isSelected) {
+        const value = TIPOS_DE_AYUDA_MAP.get(id);
+        if (!value) {
+          return acc;
+        }
+        return acc.concat(value.enum);
+      }
+      return acc;
+    },
+    [] as Enums['help_type_enum'][],
+  );
 
 export function FormContainer() {
   const router = useRouter();
@@ -18,7 +36,7 @@ export function FormContainer() {
     nombre: '',
     ubicacion: '',
     coordinates: null,
-    tiposDeAyuda: [],
+    tiposDeAyuda: new Map(TIPOS_DE_AYUDA.map(({ id }) => [id, false])),
     numeroDePersonas: undefined,
     descripcion: '',
     urgencia: 'alta',
@@ -72,7 +90,7 @@ export function FormContainer() {
           location: formData.ubicacion,
           latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : null,
           longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : null,
-          help_type: formData.tiposDeAyuda.map(({ label }) => label),
+          help_type: mapHelpToEnum(formData.tiposDeAyuda),
           description: formData.descripcion,
           urgency: formData.urgencia,
           number_of_people: formData.numeroDePersonas || 1,
@@ -82,7 +100,7 @@ export function FormContainer() {
             consent: true,
             email: formData.email,
           },
-          town_id: formData.pueblo,
+          town_id: parseInt(formData.pueblo),
           status: 'active',
         };
 
@@ -93,7 +111,7 @@ export function FormContainer() {
           nombre: '',
           ubicacion: '',
           coordinates: null,
-          tiposDeAyuda: [],
+          tiposDeAyuda: new Map(),
           numeroDePersonas: undefined,
           descripcion: '',
           urgencia: 'alta',
@@ -107,7 +125,7 @@ export function FormContainer() {
         setStatus({ isSubmitting: false, error: null, success: true });
         setStatus((prev) => ({ ...prev, success: false }));
         router.push('/casos-activos/solicitudes');
-      } catch (error) {
+      } catch (error: any) {
         console.log('Error al enviar solicitud:', error.message);
         setStatus({
           isSubmitting: false,
@@ -164,6 +182,23 @@ export function FormContainer() {
     }));
   }, []);
 
+  const handleHelpTypeChange: React.ChangeEventHandler<HTMLInputElement> = useCallback((event) => {
+    const { id, name, value, checked } = event.target;
+    console.log('id: ', id);
+    console.log('name: ', name);
+    console.log('value: ', value);
+    console.log('checked: ', checked);
+
+    setFormData((formData) => {
+      const prevHelp = formData.tiposDeAyuda;
+      const newHelp = new Map([...prevHelp]);
+      newHelp.set(parseInt(id), checked);
+      return { ...formData, tiposDeAyuda: newHelp };
+    });
+  }, []);
+
+  const selectedHelp = useMemo(() => formData.tiposDeAyuda, [formData]);
+
   return (
     <FormRenderer
       formData={formData}
@@ -175,12 +210,12 @@ export function FormContainer() {
       handleNumberPeopleChange={handleInputElementChange}
       handlePhoneChange={handlePhoneChange}
       handleSituacionEspecialChange={handleTextAreaElementChange}
-      handleTipoAyudaChange={handleInputElementChange}
+      handleTipoAyudaChange={handleHelpTypeChange}
       handleTownChange={handleSelectElementChange}
       handleUrgencyChange={handleSelectElementChange}
       handleSubmit={handleSubmit}
       status={status}
-      selectedRequestedHelpIDs={[]}
+      selectedHelp={selectedHelp}
     />
   );
 }
