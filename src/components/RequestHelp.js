@@ -2,14 +2,13 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { AlertTriangle, Check, Mail } from 'lucide-react';
-import { supabase } from '@/lib/supabase/client';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions } from '@/helpers/constants';
 import { isValidPhone } from '@/helpers/utils';
 import { helpRequestService } from '@/lib/service';
 
 import { PhoneInput } from '@/components/PhoneInput';
-import { formatPhoneNumber } from '@/helpers/format';
+import { formatPhoneNumber } from '@/helpers/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTowns } from '../context/TownProvider';
@@ -37,6 +36,7 @@ export default function RequestHelp({
     consentimiento: data.additional_info?.consent || false,
     pueblo: data.town_id || '',
     email: data.additional_info?.email || '',
+    status: data.status || 'active',
   });
 
   const [status, setStatus] = useState({
@@ -92,7 +92,7 @@ export default function RequestHelp({
           email: formData.email,
         },
         town_id: formData.pueblo,
-        status: 'active',
+        status: formData.status,
       };
       if (submitType === 'create') {
         const { error } = await helpRequestService.createRequest(helpRequestData);
@@ -121,6 +121,7 @@ export default function RequestHelp({
         pueblo: '',
         email: '',
         consentimiento: false,
+        status: 'active',
       });
 
       setStatus({ isSubmitting: false, error: null, success: true });
@@ -242,6 +243,24 @@ export default function RequestHelp({
               <p className="mt-1 text-sm text-gray-500">
                 Se utilizara para que puedas eliminar o editar la información de tu solicitud
               </p>
+            </div>
+          )}
+          {submitType === 'edit' && (
+            <div>
+              <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+                Progreso de tu solicitud
+              </label>
+              <select
+                name="status"
+                id="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
+              >
+                <option value="active">Activa - Aún no recibo ayuda</option>
+                <option value="progress">En progreso - Están viniendo a ayudarme</option>
+                <option value="finished">Terminada - Ya me han ayudado</option>
+              </select>
             </div>
           )}
           <div>

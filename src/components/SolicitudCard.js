@@ -5,10 +5,10 @@ import { useSession } from '../context/SessionProvider';
 
 export default function SolicitudCard({
   caso,
-  towns,
   isHref,
   button = { text: 'Ver solicitud', link: '/solicitud/' },
   isEdit = false,
+  towns,
 }) {
   const session = useSession();
   return (
@@ -37,14 +37,14 @@ export default function SolicitudCard({
             </span>
             <span
               className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap ${
-                caso.status === 'pending'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : caso.status === 'in_progress'
-                    ? 'bg-blue-100 text-blue-800'
+                caso.status === 'finished'
+                  ? 'bg-red-100 text-red-800'
+                  : caso.status === 'progress'
+                    ? 'bg-yellow-100 text-yellow-800'
                     : 'bg-green-100 text-green-800'
               }`}
             >
-              {caso.status === 'pending' ? 'Pendiente' : caso.status === 'in_progress' ? 'En proceso' : 'Activo'}
+              {caso.status === 'finished' ? 'Terminada' : caso.status === 'progress' ? 'En proceso' : 'Activo'}
             </span>
           </div>
         </div>
@@ -55,7 +55,7 @@ export default function SolicitudCard({
               <div className="flex items-start gap-2">
                 <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                 <span className="break-words">
-                  <span className="font-semibold">Pueblo:</span> {towns[caso.town_id - 1]?.name || ''}
+                  <span className="font-semibold">Pueblo:</span> {towns[caso.town_id - 1].name || ''}
                 </span>
               </div>
             )}

@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
+import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
-import SolicitudCard from '@/components/SolicitudCard';
 import Pagination from '@/components/Pagination';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import { useTowns } from '../../context/TownProvider';
 import { useSession } from '../../context/SessionProvider';
+import OfferCard from '../../components/OfferCard';
 import Link from 'next/link';
 
 export default function ListaSolicitudes() {
@@ -63,7 +63,7 @@ export default function ListaSolicitudes() {
         const query = supabase
           .from('help_requests')
           .select('*', { count: 'exact' })
-          .eq('type', 'necesita')
+          .eq('type', 'ofrece')
           .contains('additional_info', { email: session.user.email });
         // Solo agregar filtro si no es "todos"
         if (filtroData.pueblo !== 'todos') {
@@ -165,24 +165,23 @@ export default function ListaSolicitudes() {
                   ? 'No se encontraron solicitudes de ayuda correspondientes a tu cuenta.'
                   : 'No se encontraron solicitudes que coincidan con los filtros.'}
               </p>
-
               <Link
-                href="/solicitar-ayuda"
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center gap-2 whitespace-nowrap"
+                href="/ofrecer-ayuda"
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
               >
-                <Search className="w-5 h-5" />
-                Solicitar ayuda
+                <HeartHandshake className="w-5 h-5" />
+                Ofrecer ayuda
               </Link>
             </div>
           ) : (
             data.map((caso) => (
-              <SolicitudCard
+              <OfferCard
                 isHref={true}
-                towns={towns}
                 key={caso.id}
                 caso={caso}
-                button={{ text: 'Editar', link: '/solicitudes/editar/' }}
+                button={{ text: 'Editar', link: '/ofertas/editar/' }}
                 isEdit={true}
+                towns={towns}
               />
             ))
           )}

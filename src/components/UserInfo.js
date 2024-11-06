@@ -4,11 +4,11 @@ import { authService } from '@/lib/service';
 import { useSession } from '../context/SessionProvider';
 
 export default function UserProfile() {
-  const user = useSession().user;
+  const { user } = useSession();
   const handleLogout = async () => {
     const response = await authService.signOut();
     if (!response.error) {
-      window.location.href = '/'; // Redirige al inicio después de cerrar sesión
+      window.location.href = '/';
     }
   };
 

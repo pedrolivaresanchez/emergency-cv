@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
-import RequestHelp from '@/components/RequestHelp';
-import Unauthorized from '../../../../components/Unauthorized';
+import OfferHelp from '@/components/OfferHelp';
+import Unauthorized from '@/components/Unauthorized';
 
 const getRequest = async (id) => {
   const supabase = await createClient();
@@ -12,7 +12,7 @@ const getRequest = async (id) => {
     .from('help_requests')
     .select('*')
     .eq('id', id)
-    .eq('type', 'necesita')
+    .eq('type', 'ofrece')
     .contains('additional_info', { email: session.user.email })
     .single();
   if (error) {
@@ -28,13 +28,13 @@ export default async function EditarSolicitud({ params }) {
     return <Unauthorized />;
   }
   return (
-    <RequestHelp
+    <OfferHelp
       title="Editar solicitud de ayuda"
       submitType="edit"
       data={request}
       id={id}
-      button={['Editar solicitud', 'Editando solicitud...']}
-      redirect="/solicitudes"
+      button={['Editar oferta', 'Editando oferta...']}
+      redirect="/ofertas"
     />
   );
 }
