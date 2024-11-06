@@ -1,0 +1,40 @@
+name: Deploy webapp
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x ./kubectl
+          sudo mv ./kubectl /usr/local/bin/kubectl
+
+      - name: Configure kubectl
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yml
+          echo "KUBECONFIG=$PWD/kubeconfig.yml" >> $GITHUB_ENV
+
+      - name: Replace variables in Kubernetes manifests
+        run: |
+          sed -i "s|VAR_GITHUB_COMMIT_HASH|${{ github.sha }}|g" ./kubernetes.yml
+          sed -i "s|VAR_GITHUB_TOKEN|${{ secrets.GH_TOKEN }}|g" ./kubernetes.yml
+          sed -i "s|VAR_SUPABASE_URL|${{ secrets.SUPABASE_URL }}|g" ./kubernetes.yml
+          sed -i "s|VAR_SUPABASE_ANON_KEY|${{ secrets.SUPABASE_ANON_KEY }}|g" ./kubernetes.yml
+          sed -i "s|VAR_DATADOG_API_KEY|${{ secrets.DATADOG_API_KEY }}|g" ./kubernetes.yml
+
+      - name: Delete existing job
+        run: |
+          kubectl delete job emergency-cv--webapp--build--job --namespace production || true
+
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f ./kubernetes.yml
