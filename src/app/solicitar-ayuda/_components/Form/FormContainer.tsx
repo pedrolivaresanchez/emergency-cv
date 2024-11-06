@@ -14,7 +14,6 @@ import { Enums } from '@/types/common';
 import { useRouter } from 'next/navigation';
 
 import { TIPOS_DE_AYUDA_MAP, TIPOS_DE_AYUDA } from '../constants';
-// @ts-expect-error
 import { useSession } from '@/context/SessionProvider';
 
 const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_enum'][] =>
@@ -138,7 +137,7 @@ export function FormContainer() {
         });
       }
     },
-    [formData],
+    [formData, router],
   );
 
   const handleInputElementChange: React.ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
