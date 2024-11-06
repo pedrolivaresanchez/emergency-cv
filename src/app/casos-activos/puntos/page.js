@@ -6,8 +6,10 @@ import { supabase } from '@/lib/supabase/client';
 import { tiposAyudaAcepta } from '@/helpers/constants';
 import Pagination from '@/components/Pagination';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTowns } from '../../../context/TownProvider';
 
-export default function Puntos({ towns }) {
+export default function Puntos() {
+  const towns = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
 

@@ -10,24 +10,13 @@ import { isValidPhone } from '@/helpers/utils';
 
 import { PhoneInput } from '@/components/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/format';
+import { useTowns } from '../context/TownProvider';
+import { useRouter } from 'next/navigation';
 
-export default function OfferHelp({ town, onClose, isModal }) {
-  const [towns, setTowns] = useState([]);
+export default function OfferHelp({ town, onClose, isModal, redirect = '/casos-activos/ofertas' }) {
+  const towns = useTowns();
 
-  async function fetchTowns() {
-    const { data, error } = await supabase.from('towns').select('id, name');
-
-    if (error) {
-      console.error('Error fetching towns:', error);
-      return;
-    }
-
-    setTowns(data);
-  }
-
-  useEffect(() => {
-    fetchTowns();
-  }, []);
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -137,10 +126,8 @@ export default function OfferHelp({ town, onClose, isModal }) {
         pueblo: '',
       });
       setStatus({ isSubmitting: false, error: null, success: true });
-      setTimeout(() => {
-        setStatus((prev) => ({ ...prev, success: false }));
-        onClose();
-      }, 5000);
+      setStatus((prev) => ({ ...prev, success: false }));
+      router.push(redirect);
     } catch (error) {
       console.error('Error al registrar oferta de ayuda:', error);
       setStatus({

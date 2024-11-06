@@ -16,6 +16,7 @@ import {
   Home,
   Thermometer,
   Truck,
+  Inbox,
 } from 'lucide-react';
 import UserInfo from '../UserInfo';
 
@@ -76,6 +77,13 @@ const menuItems = [
     description: 'Para transportistas y logística',
     path: '/puntos-entrega',
     color: 'text-gray-800',
+  },
+  {
+    icon: Inbox,
+    title: 'Mis solicitudes',
+    description: 'Edita o elimina tu solicitud',
+    path: '/solicitudes',
+    color: 'text-red-500',
   },
 ];
 

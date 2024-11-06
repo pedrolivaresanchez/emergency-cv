@@ -11,7 +11,7 @@ export async function GET() {
   const registeredPost = await supabase
     .from('help_requests')
     .select('*')
-    .eq('type', 'ofrece')
+    .eq('type', 'necesita')
     .or(`contact_info.ilike.%${email}%,additional_info.cs.${JSON.stringify({ email: email })}`);
   return Response.json({ registeredPost });
 }

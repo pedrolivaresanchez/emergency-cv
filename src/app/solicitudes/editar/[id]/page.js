@@ -13,6 +13,14 @@ const getRequest = async (id) => {
 export default async function EditarSolicitud({ params }) {
   const { id } = await params;
   const request = await getRequest(id);
-  console.log(request);
-  return <RequestHelp title="Editar solicitud de ayuda" />;
+  return (
+    <RequestHelp
+      title="Editar solicitud de ayuda"
+      submitType="edit"
+      data={request}
+      id={id}
+      button={['Editar solicitud', 'Editando solicitud...']}
+      redirect="/solicitudes"
+    />
+  );
 }
