@@ -27,31 +27,80 @@ internal sealed class GoogleSheetsService
 
     public async Task InsertHelpRequests(List<HelpRequest> requests)
     {
+        await InsertNeedsRequestsAsync(requests);
+        await InsertOffersRequestsAsync(requests);
+    }
+
+    private async Task InsertOffersRequestsAsync(List<HelpRequest> requests)
+    {
         var headerRow = new List<object>
         {
-            "ID", "Type", "Name", "Location", "Description",
-            "Urgency", "Number of People", "Status", "Latitude", "Longitude",
-            "ContactInfo", "Help Types", "People Needed", "Town", "Created At"
+            "Created At", "ID", "Status", "Town","Description", "Help Types",  "Number of People",
+            "Name", "Location", "ContactInfo", "People Needed", 
         };
 
         var rows = new List<IList<object>> { headerRow };
-        rows.AddRange(requests.OrderBy(x => x.Id).Select(request => new List<object>
+        rows.AddRange(requests.OrderBy(x => x.Id).Where(x => x.Type == "ofrece").Select(request => new List<object>
         {
+            request.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
             request.Id,
-            request.Type ?? "",
+            //request.Type ?? "",
+            request.Status ?? "",
+            request.Town?.Name ?? "",
+            request.Description ?? "",
+            string.Join(", ", request.HelpType ?? []),
+            request.NumberOfPeople ?? 0,
             request.Name ?? "",
             request.Location ?? "",
-            request.Description ?? "",
-            request.Urgency ?? "",
-            request.NumberOfPeople ?? 0,
-            request.Status ?? "",
-            request.Latitude ?? "",
-            request.Longitud ?? "",
             request.ContactInfo ?? "",
-            string.Join(", ", request.HelpType ?? []),
+            //request.Urgency ?? "",
+            //request.Latitude ?? "",
+            //request.Longitud ?? "",
             request.PeopleNeeded,
+        }));
+
+
+        var valueRange = new ValueRange
+        {
+            Values = rows
+        };
+
+        var updateRequest = _sheetsService.Spreadsheets.Values.Update(
+            valueRange,
+            _spreadsheetId,
+            "OfreceCRMV2!A1:O"
+        );
+        updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+
+        await updateRequest.ExecuteAsync();
+    }
+
+    private async Task InsertNeedsRequestsAsync(List<HelpRequest> requests)
+    {
+        var headerRow = new List<object>
+        {
+            "Created At", "ID", "Status", "Town","Description", "Help Types",  "Number of People",
+            "Name", "Location", "ContactInfo", "People Needed", 
+        };
+
+        var rows = new List<IList<object>> { headerRow };
+        rows.AddRange(requests.OrderBy(x => x.Id).Where(x => x.Type == "necesita").Select(request => new List<object>
+        {
+            request.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
+            request.Id,
+            //request.Type ?? "",
+            request.Status ?? "",
             request.Town?.Name ?? "",
-            request.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
+            request.Description ?? "",
+            string.Join(", ", request.HelpType ?? []),
+            request.NumberOfPeople ?? 0,
+            request.Name ?? "",
+            request.Location ?? "",
+            request.ContactInfo ?? "",
+            //request.Urgency ?? "",
+            //request.Latitude ?? "",
+            //request.Longitud ?? "",
+            request.PeopleNeeded,
         }));
 
         var valueRange = new ValueRange
@@ -62,79 +111,10 @@ internal sealed class GoogleSheetsService
         var updateRequest = _sheetsService.Spreadsheets.Values.Update(
             valueRange,
             _spreadsheetId,
-            "RAW!A1:O"
+            "NecesitaCRMV2!A1:O"
         );
         updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
 
         await updateRequest.ExecuteAsync();
-    }
-
-    public async Task FormatSheet()
-    {
-        var requests = new List<Request>
-        {
-            new Request
-            {
-                RepeatCell = new RepeatCellRequest
-                {
-                    Range = new GridRange
-                    {
-                        SheetId = 0,
-                        StartRowIndex = 0,
-                        EndRowIndex = 1
-                    },
-                    Cell = new CellData
-                    {
-                        UserEnteredFormat = new CellFormat
-                        {
-                            BackgroundColor = new Color { Red = 0.8f, Green = 0.8f, Blue = 0.8f },
-                            TextFormat = new TextFormat
-                            {
-                                Bold = true
-                            }
-                        }
-                    },
-                    Fields = "userEnteredFormat(backgroundColor,textFormat)"
-                }
-            },
-            new Request
-            {
-                AutoResizeDimensions = new AutoResizeDimensionsRequest
-                {
-                    Dimensions = new DimensionRange
-                    {
-                        SheetId = 0,
-                        Dimension = "COLUMNS",
-                        StartIndex = 0,
-                        EndIndex = 15
-                    }
-                }
-            },
-            new Request
-            {
-                UpdateSheetProperties = new UpdateSheetPropertiesRequest
-                {
-                    Properties = new SheetProperties
-                    {
-                        SheetId = 0,
-                        GridProperties = new GridProperties
-                        {
-                            FrozenRowCount = 1
-                        }
-                    },
-                    Fields = "gridProperties.frozenRowCount"
-                }
-            }
-        };
-
-        var batchUpdateRequest = new BatchUpdateSpreadsheetRequest
-        {
-            Requests = requests
-        };
-
-        await _sheetsService.Spreadsheets.BatchUpdate(
-            batchUpdateRequest,
-            _spreadsheetId
-        ).ExecuteAsync();
     }
 }

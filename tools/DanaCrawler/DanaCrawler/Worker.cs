@@ -45,7 +45,7 @@ internal sealed class Worker : BackgroundService
         try
         {
             await sheetsService.InsertHelpRequests(helpRequests);
-            await sheetsService.FormatSheet();
+            //await sheetsService.FormatSheet();
             _logger.LogInformation("Data exported successfully!");
         }
         catch (Exception ex)
