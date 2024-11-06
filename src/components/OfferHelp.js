@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { HeartHandshake, Check, Mail } from 'lucide-react';
 import { helpRequestService } from '@/lib/service';
-import { supabase } from '@/lib/supabase/client';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
 import { isValidPhone } from '@/helpers/utils';
@@ -41,7 +40,7 @@ export default function OfferHelp({
     comentarios: data.description || '',
     aceptaProtocolo: submitType ? true : false,
     pueblo: submitType ? data?.town_id : town ? town.id : '',
-    status: data?.status,
+    status: data?.status || '',
   });
 
   const [status, setStatus] = useState({

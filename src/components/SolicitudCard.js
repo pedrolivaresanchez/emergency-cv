@@ -5,10 +5,10 @@ import { useSession } from '../context/SessionProvider';
 
 export default function SolicitudCard({
   caso,
-  towns,
   isHref,
   button = { text: 'Ver solicitud', link: '/solicitud/' },
   isEdit = false,
+  towns,
 }) {
   const session = useSession();
   return (
@@ -55,7 +55,7 @@ export default function SolicitudCard({
               <div className="flex items-start gap-2">
                 <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                 <span className="break-words">
-                  <span className="font-semibold">Pueblo:</span> {towns[caso.town_id - 1]?.name || ''}
+                  <span className="font-semibold">Pueblo:</span> {towns[caso.town_id - 1].name || ''}
                 </span>
               </div>
             )}
