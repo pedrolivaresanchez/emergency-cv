@@ -2,15 +2,16 @@ import { AlertTriangle, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } f
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
 import { useSession } from '../context/SessionProvider';
+import { useTowns } from '../context/TownProvider';
 
 export default function SolicitudCard({
   caso,
-  towns,
   isHref,
   button = { text: 'Ver solicitud', link: '/solicitud/' },
   isEdit = false,
 }) {
   const session = useSession();
+  const towns = useTowns();
   return (
     <>
       <div
