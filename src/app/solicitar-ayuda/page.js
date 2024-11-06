@@ -53,7 +53,6 @@ export default function SolicitarAyuda() {
 
   useEffect(() => {
     fetchTowns();
-    console.log(JSON.stringify(session));
   }, []);
 
   const handleTipoAyudaChange = (tipo) => {
