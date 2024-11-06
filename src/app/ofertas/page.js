@@ -181,6 +181,7 @@ export default function ListaSolicitudes() {
                 caso={caso}
                 button={{ text: 'Editar', link: '/ofertas/editar/' }}
                 isEdit={true}
+                towns={towns}
               />
             ))
           )}
