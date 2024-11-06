@@ -5,7 +5,7 @@ import { useState, useEffect, PropsWithChildren } from 'react';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
 
-export default function EmergencyLayout({ children }: PropsWithChildren<{}>) {
+export default function EmergencyLayout({ children }: PropsWithChildren) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Por defecto abierto
 
   useEffect(() => {
