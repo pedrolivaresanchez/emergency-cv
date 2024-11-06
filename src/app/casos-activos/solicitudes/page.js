@@ -10,8 +10,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/EmergencyProvider';
+import { useTowns } from '../../../context/TownProvider';
 
-export default function Solicitudes({ towns }) {
+export default function Solicitudes() {
+  const towns = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
 
