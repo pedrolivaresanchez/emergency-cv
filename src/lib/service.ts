@@ -1,5 +1,5 @@
 import { supabase } from './supabase/client';
-import { HelpRequestAssignmentInsert, HelpRequestData } from '@/types/Requests';
+import { HelpRequestAssignmentInsert, HelpRequestData, HelpRequestUpdate } from '@/types/Requests';
 import { createClient } from '@/lib/supabase/server';
 
 export const helpRequestService = {
@@ -9,7 +9,7 @@ export const helpRequestService = {
     if (error) throw error;
     return data[0];
   },
-  async editRequest(requestData: any, id: any) {
+  async editRequest(requestData: HelpRequestUpdate, id: number) {
     const { data, error } = await supabase.from('help_requests').update(requestData).eq('id', id).select();
     if (error) throw error;
     return data;
@@ -199,7 +199,7 @@ export const authService = {
   async getSessionUser() {
     return supabase.auth.getUser();
   },
-  async signUp(email: any, password: any, nombre: any, telefono: any) {
+  async signUp(email: string, password: string, nombre: string, telefono: string) {
     return supabase.auth.signUp({
       email,
       password,
@@ -214,7 +214,7 @@ export const authService = {
   async signOut() {
     return supabase.auth.signOut();
   },
-  async signIn(email: any, password: any) {
+  async signIn(email: string, password: string) {
     return supabase.auth.signInWithPassword({ email, password });
   },
   async updateUser(metadata: any) {
