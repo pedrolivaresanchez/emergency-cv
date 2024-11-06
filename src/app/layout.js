@@ -28,7 +28,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="es">
       <body suppressHydrationWarning={true}>
-        <Toaster />
+        <Toaster position="bottom-left" richColors />
         <SessionProvider session={session}>
           <QueryClientProvider client={queryClient}>
             <TownsProvider towns={towns}>
