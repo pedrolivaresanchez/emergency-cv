@@ -1,16 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { MapPin, Phone, Calendar, User, HeartHandshake, Users, Truck, Search, Package, MapPinIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { tiposAyudaAcepta } from '@/helpers/constants';
 import Pagination from '@/components/Pagination';
 import { useRouter, useSearchParams } from 'next/navigation';
 import PickupPoint from '@/components/PickupPoint';
-import { useTowns } from '@/context/TownProvider';
 
 export default function Puntos() {
-  const towns = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -18,7 +16,7 @@ export default function Puntos() {
   const [error, setError] = useState(null);
 
   const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page')) || 1);
   const [currentCount, setCurrentCount] = useState(0);
   const [cityOptions, setCityOptions] = useState([]);
 
@@ -56,20 +54,17 @@ export default function Puntos() {
       try {
         setError(null);
 
-        // Comenzamos la consulta
-        const query = supabase.from('distinct_collection_cities').select('city');
-
-        // Ejecutar la consulta
-        const { data, count, error } = await query;
+        const { data, count, error } = await supabase.from('distinct_collection_cities').select('city');
         if (error) {
           console.log('Error fetching ciudades:', error);
           setCityOptions([]);
-        } else {
-          const trimmedCities = data.map((punto) => punto.city?.trim());
-          const cities = [...new Set(trimmedCities)].sort();
-          setCityOptions(cities || []);
-          setCurrentCount(count);
+          return;
         }
+
+        const trimmedCities = data.map((punto) => punto.city?.trim());
+        const cities = [...new Set(trimmedCities)].sort();
+        setCityOptions(cities || []);
+        setCurrentCount(count);
       } catch (err) {
         console.log('Error general:', err);
         setError('Error de conexión.');
