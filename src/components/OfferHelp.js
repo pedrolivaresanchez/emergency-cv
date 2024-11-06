@@ -11,6 +11,7 @@ import { PhoneInput } from '@/components/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/format';
 import { useTowns } from '../context/TownProvider';
 import { useRouter } from 'next/navigation';
+import { useSession } from '../context/SessionProvider';
 
 export default function OfferHelp({
   town,
@@ -24,13 +25,14 @@ export default function OfferHelp({
   submitType = 'create',
 }) {
   const towns = useTowns();
+  const session = useSession();
 
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    nombre: data.name || '',
-    telefono: data.contact_info || '',
-    email: data.additional_info?.email || '',
+    nombre: data.name || session.user.user_metadata.full_name || '',
+    telefono: data.contact_info || session.user.user_metadata.telefono || '',
+    email: data.additional_info?.email || session.user.user_metadata.email || '',
     ubicacion: data.location || '',
     tiposAyuda: data.help_type || [],
     vehiculo: data.resources?.vehicle || '',
