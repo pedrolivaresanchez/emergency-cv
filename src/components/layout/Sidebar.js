@@ -19,6 +19,7 @@ import {
   Inbox,
 } from 'lucide-react';
 import UserInfo from '../UserInfo';
+import { useSession } from '../../context/SessionProvider';
 
 const menuItems = [
   {
@@ -35,6 +36,14 @@ const menuItems = [
     path: '/casos-activos',
     color: 'text-orange-600',
     highlight: true,
+  },
+  {
+    icon: Inbox,
+    title: 'Mis solicitudes',
+    description: 'Edita o elimina tu solicitud',
+    path: '/solicitudes',
+    color: 'text-red-500',
+    isAuth: true,
   },
   {
     icon: Thermometer,
@@ -78,19 +87,12 @@ const menuItems = [
     path: '/puntos-entrega',
     color: 'text-gray-800',
   },
-  {
-    icon: Inbox,
-    title: 'Mis solicitudes',
-    description: 'Edita o elimina tu solicitud',
-    path: '/solicitudes',
-    color: 'text-red-500',
-  },
 ];
 
 export default function Sidebar({ isOpen, toggle }) {
   const router = useRouter();
   const pathname = usePathname();
-
+  const session = useSession();
   return (
     <>
       {/* Quitamos el overlay con fondo negro */}
@@ -122,27 +124,22 @@ export default function Sidebar({ isOpen, toggle }) {
         {/* Menu items - Contenedor con scroll */}
         <nav className="p-4 flex-1 overflow-y-auto">
           <div className="space-y-2">
-            {menuItems.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => {
-                  router.push(item.path);
-                  if (window.innerWidth < 768) toggle();
-                }}
-                className={`w-full text-left transition-colors ${
-                  item.isHome
-                    ? 'p-3 rounded-lg flex items-center gap-2 hover:bg-gray-50'
-                    : `p-4 rounded-lg ${pathname === item.path ? 'bg-gray-100 shadow-sm' : 'hover:bg-gray-50'} ${
-                        item.highlight ? 'bg-red-50 border-2 border-red-200 hover:bg-red-100 animate-pulse' : ''
-                      }`
-                }`}
-              >
-                {item.isHome ? (
-                  <>
-                    <item.icon className="h-5 w-5 text-gray-600" />
-                    <span className="font-medium text-gray-800">{item.title}</span>
-                  </>
-                ) : (
+            {menuItems.map((item) =>
+              (session && session.user && session.user.email && item.isAuth) || !item.isAuth ? (
+                <button
+                  key={item.path}
+                  onClick={() => {
+                    router.push(item.path);
+                    if (window.innerWidth < 768) toggle();
+                  }}
+                  className={`w-full text-left transition-colors ${
+                    item.isHome
+                      ? 'p-3 rounded-lg flex items-center gap-2 hover:bg-gray-50'
+                      : `p-4 rounded-lg ${pathname === item.path ? 'bg-gray-100 shadow-sm' : 'hover:bg-gray-50'} ${
+                          item.highlight ? 'bg-red-50 border-2 border-red-200 hover:bg-red-100 animate-pulse' : ''
+                        }`
+                  }`}
+                >
                   <>
                     <div className="flex items-center mb-2">
                       <item.icon className={`h-6 w-6 ${item.color} mr-3 ${item.highlight ? 'animate-bounce' : ''}`} />
@@ -152,9 +149,9 @@ export default function Sidebar({ isOpen, toggle }) {
                       {item.description}
                     </p>
                   </>
-                )}
-              </button>
-            ))}
+                </button>
+              ) : null,
+            )}
           </div>
         </nav>
 
