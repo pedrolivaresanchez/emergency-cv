@@ -4,11 +4,13 @@ import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { ArrowLeft } from 'lucide-react';
 import SolicitudCard from '@/components/SolicitudCard';
+import { useTowns } from '../../../context/TownProvider';
 
 export default function CasoDetalle() {
   const params = useParams();
   const { id } = params;
   const [caso, setCaso] = useState(null);
+  const towns = useTowns();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     async function fetchCaso() {
@@ -58,7 +60,7 @@ export default function CasoDetalle() {
           Volver
         </button>
       </div>
-      <SolicitudCard key={caso.id} caso={caso} />
+      <SolicitudCard key={caso.id} caso={caso} towns={towns} />
     </div>
   );
 }
