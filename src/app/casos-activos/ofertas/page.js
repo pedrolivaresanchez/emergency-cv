@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import Pagination from '@/components/Pagination';
@@ -18,7 +18,7 @@ export default function Ofertas() {
   const [error, setError] = useState(null);
 
   const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
   const [currentCount, setCurrentCount] = useState(0);
 
   const itemsPerPage = 10;
@@ -65,7 +65,7 @@ export default function Ofertas() {
 
         query.neq('status', 'finished');
         // Ejecutar la consulta con paginación
-        const { data, count, error } = await query
+        const { data, error } = await query
           .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1)
           .order('created_at', { ascending: false });
 
@@ -74,7 +74,7 @@ export default function Ofertas() {
           setData([]);
         } else {
           setData(data || []);
-          setCurrentCount(count);
+          setCurrentCount(data.length);
         }
       } catch (err) {
         console.log('Error general:', err);
