@@ -8,7 +8,7 @@ import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/help
 import { isValidPhone } from '@/helpers/utils';
 
 import { PhoneInput } from '@/components/PhoneInput';
-import { formatPhoneNumber } from '@/helpers/format';
+import { formatPhoneNumber } from '@/helpers/utils';
 import { useTowns } from '../context/TownProvider';
 import { useRouter } from 'next/navigation';
 
