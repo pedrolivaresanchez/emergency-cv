@@ -145,7 +145,14 @@ export default function Puntos() {
                   <h3 className="text-lg font-bold text-blue-600 break-words">{punto.name}</h3>
                   <div className="flex items-start gap-2 text-gray-600 mt-1">
                     <MapPin className="h-4 w-4 flex-shrink-0 mt-1" />
-                    <span className="text-sm break-words">{punto.location}</span>
+                    <a
+                      href={`https://maps.google.com/?q=${punto.location}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm break-words text-blue-500 underline"
+                    >
+                      {punto.location}
+                    </a>
                   </div>
                 </div>
                 <div>
