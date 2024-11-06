@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 
 const MODAL_NAME = 'cookie-banner';
 const POLICY_URL = '/politica-privacidad';
-const COOKIE_CONSENT_KEY = 'cookieConsentAccepted';
+const COOKIE_CONSENT_KEY = 'ajudadanaCookieConsentAccepted';
 
 const CookieBanner: FC = () => {
   const { toggleModal } = useModal();
