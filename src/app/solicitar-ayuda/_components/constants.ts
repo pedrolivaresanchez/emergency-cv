@@ -41,6 +41,7 @@ export const TIPOS_DE_AYUDA: HelpCategory[] = [
     label: 'Apoyo logístico',
     enumLabel: 'logistico',
   },
+  /*
   { id: 9, label: 'Maquinaria para movilidad reducida', enumLabel: 'otros' },
   { id: 10, label: 'Maquinaria pesada (grúas, palas, ...)', enumLabel: 'otros' },
   {
@@ -49,6 +50,7 @@ export const TIPOS_DE_AYUDA: HelpCategory[] = [
     enumLabel: 'otros',
   },
   { id: 12, label: 'Equipamiento (botas, palas, guantes, ...)', enumLabel: 'otros' },
+   */
 ];
 
 export const TIPOS_DE_AYUDA_MAP: HelpTypesMap = new Map(
