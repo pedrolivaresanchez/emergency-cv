@@ -64,8 +64,6 @@ export default function PuntosEntrega() {
         throw new Error('Por favor completa todos los campos obligatorios');
       }
 
-      console.log('FormData before submission:', formData); // Debug log
-
       const pointData = {
         name: formData.name,
         location: formData.location,
@@ -81,8 +79,6 @@ export default function PuntosEntrega() {
         longitude: formData.coordinates?.lon ? parseFloat(formData.coordinates.lon) : null,
         status: 'active',
       };
-
-      console.log('PointData for submission:', pointData); // Debug log
 
       const { error: insertError } = await supabase.from('delivery_points').insert([pointData]);
 
@@ -230,7 +226,6 @@ export default function PuntosEntrega() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Dirección exacta *</label>
                 <AddressAutocomplete
                   onSelect={(address) => {
-                    console.log('Address selected:', address); // Debug log
                     setFormData((prev) => ({
                       ...prev,
                       location: address.fullAddress,
