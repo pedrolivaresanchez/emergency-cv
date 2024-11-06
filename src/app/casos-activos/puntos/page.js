@@ -65,7 +65,7 @@ export default function Puntos() {
           console.log('Error fetching ciudades:', error);
           setCityOptions([]);
         } else {
-          const trimmedCities = data.map((punto) => punto.city.trim());
+          const trimmedCities = data.map((punto) => punto.city?.trim());
           const cities = [...new Set(trimmedCities)].sort();
           setCityOptions(cities || []);
           setCurrentCount(count);
