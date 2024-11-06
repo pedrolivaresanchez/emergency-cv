@@ -1,6 +1,9 @@
 import { MapPin } from 'lucide-react';
 
-const PickupPoint = ({ point }) => {
+type PickupPointProps = {
+  point: any;
+};
+const PickupPoint = ({ point }: PickupPointProps) => {
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-blue-500">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-4">
