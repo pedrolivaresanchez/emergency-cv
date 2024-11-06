@@ -13,13 +13,14 @@ ENV NODE_ENV="production" \
 
 WORKDIR /app
 
-COPY ./package.json ./yarn.lock ./
+COPY package*.json ./
 
-RUN yarn --frozen-lockfile --production=false
+RUN npm i
 
 COPY ./ ./
 
-RUN yarn build
+RUN npm run build
 
 EXPOSE 3000
-CMD ["yarn", "start"]
+
+CMD ["npm", "start"]
