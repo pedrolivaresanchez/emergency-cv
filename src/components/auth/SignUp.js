@@ -14,7 +14,7 @@ export default function SignUp({ onBackButtonClicked }) {
     email: '',
     password: '',
     telefono: '',
-    privacyPolicy: ''
+    privacyPolicy: '',
   });
   const [status, setStatus] = useState({
     isSubmitting: false,
@@ -77,28 +77,34 @@ export default function SignUp({ onBackButtonClicked }) {
       setError('Para continuar, debes aceptar la Política de Privacidad.');
       return;
     }
-  
+
     // SEND SIGN-UP REQUEST TO AUTHENTICATION SERVICE
-    const response = await authService.signUp(formData.email, formData.password, formData.nombre, formatedPhoneNumber, formData.privacyPolicy);
+    const response = await authService.signUp(
+      formData.email,
+      formData.password,
+      formData.nombre,
+      formatedPhoneNumber,
+      formData.privacyPolicy,
+    );
 
     if (response.error) {
       // SHOW ERROR IF PASSWORD IS WEAK OR USER ALREDY EXISTS
       if (response.error.code === 'weak_password') {
-        setError('La contraseña debe tener al menos 6 caracteres.')
+        setError('La contraseña debe tener al menos 6 caracteres.');
       } else if (response.error.code === 'user_already_exists') {
-        setError('Ya existe una cuenta con este correo. Inicia sesión o intenta con otro.')
+        setError('Ya existe una cuenta con este correo. Inicia sesión o intenta con otro.');
       } else {
-        setError('Ocurrió un error. Inténtalo de nuevo.')
+        setError('Ocurrió un error. Inténtalo de nuevo.');
       }
       return;
     }
 
     setStatus({ isSubmitting: false, error: null, success: true });
-    
+
     // SIGN IN WITH NEW USER CREATED
     await authService.signIn(formData.email, formData.password);
     // REDIRECT USER TO HOME PAGE
-    window.location.href = '/'
+    window.location.href = '/';
   };
 
   return (
@@ -158,16 +164,22 @@ export default function SignUp({ onBackButtonClicked }) {
 
         {/* Política de privacidad */}
         <div className="grid gap-4">
-          <div className='flex gap-2 items-start lg:items-center'>
-            <input 
+          <div className="flex gap-2 items-start lg:items-center">
+            <input
               type="checkbox"
               value={formData.privacyPolicy}
               onChange={(e) => setFormData({ ...formData, privacyPolicy: e.target.checked })}
-              className='min-w-4 min-h-4 cursor-pointer'
-              id='privacyPolicy'
+              className="min-w-4 min-h-4 cursor-pointer"
+              id="privacyPolicy"
               required
             />
-            <label htmlFor="privacyPolicy" className="text-sm font-medium text-gray-700">He leído y aceptado la <a href='/politica-privacidad/' className='text-blue-400'>política de privacidad</a> y acepto que «ajudadana.es» recoja y guarde los datos enviados a través de este formulario.</label>
+            <label htmlFor="privacyPolicy" className="text-sm font-medium text-gray-700">
+              He leído y aceptado la{' '}
+              <a href="/politica-privacidad/" className="text-blue-400">
+                política de privacidad
+              </a>{' '}
+              y acepto que «ajudadana.es» recoja y guarde los datos enviados a través de este formulario.
+            </label>
           </div>
         </div>
       </div>

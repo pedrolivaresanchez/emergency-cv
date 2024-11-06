@@ -177,7 +177,7 @@ export const authService = {
   async getSessionUser() {
     return supabase.auth.getUser();
   },
-  async signUp(email:any, password:any, nombre:any, telefono:any, privacyPolicy: boolean) {
+  async signUp(email: any, password: any, nombre: any, telefono: any, privacyPolicy: boolean) {
     return supabase.auth.signUp({
       email,
       password,
