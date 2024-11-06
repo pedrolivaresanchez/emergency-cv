@@ -36,6 +36,9 @@ export default function SolicitudCard({
 
   const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
   const email = 'email' in additionalInfo ? additionalInfo.email : undefined;
+
+  const isOwner = session && session.user && session.user.email && session.user.email === email;
+
   return (
     <>
       <div
@@ -167,7 +170,9 @@ export default function SolicitudCard({
             )}
           </div>
           <div className="flex flex-col sm:flex-row w-full sm:w-auto justify-end gap-2">
-            {session && session.user && session.user.email && session.user.email === email && (
+            { caso.status == 'active' && (
+              <>
+            {isOwner && (
               <Link
                 href={'/solicitudes/editar/' + caso.id}
                 className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
@@ -177,18 +182,17 @@ export default function SolicitudCard({
                 Editar
               </Link>
             )}
-             {session && session.user && session.user.email && session.user.email === email && (
+            {isOwner && caso.status == 'active' && (
               <button
               onClick={async () => {
-                console.log('click')
-                await helpRequestService.resolveRequest(caso.id);
+                await helpRequestService.updateRequestStatus(caso.id, 'resolved');
               }}
               className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center bg-green-500`}
               >
                 Resolver
               </button>
             )}
-            {isHref && (
+             {isHref && (
               <Link
                 href={button.link + caso.id}
                 className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
@@ -199,6 +203,19 @@ export default function SolicitudCard({
               </Link>
             )}
             <AsignarSolicitudButton helpRequest={caso} />
+            </>
+            )
+          }
+            {isOwner && caso.status == 'resolved' && (
+              <button
+              onClick={async () => {
+                await helpRequestService.updateRequestStatus(caso.id, 'active');
+              }}
+              className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center bg-green-500`}
+              >
+                Volver a activar
+              </button>
+            )}
           </div>
         </div>
       </div>
