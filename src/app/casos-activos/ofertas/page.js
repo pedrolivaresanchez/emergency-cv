@@ -6,8 +6,10 @@ import { supabase } from '@/lib/supabase/client';
 import Pagination from '@/components/Pagination';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTowns } from '../../../context/TownProvider';
 
-export default function Ofertas({ towns }) {
+export default function Ofertas() {
+  const towns = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
 

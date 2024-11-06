@@ -8,11 +8,13 @@ import { tiposAyudaOptions } from '@/helpers/constants';
 import Map from '@/components/map/map';
 import ReactDOMServer from 'react-dom/server';
 import PickupPoint from '@/components/PickupPoint';
+import { useTowns } from '@/context/TownProvider';
 
 const PAIPORTA_LAT_LNG = [-0.41667, 39.42333];
 const DEFAULT_ZOOM = 12;
 
-export default function Mapa({ towns }) {
+export default function Mapa() {
+  const towns = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -48,9 +50,12 @@ export default function Mapa({ towns }) {
         urgency: request.urgency,
         coordinates: [request.longitude ?? 0, request.latitude ?? 0],
         width: '600px',
-        descriptionHTML: ReactDOMServer.renderToString(<SolicitudCard isHref={true} towns={towns} caso={request} />),
+        descriptionHTML: ReactDOMServer.renderToString(
+          <SolicitudCard isHref={true} isEdit={false} towns={towns} caso={request} />,
+        ),
       };
     }
+
     function transformPickupRequestToMarker(point) {
       return {
         urgency: point.urgency || 'baja',
@@ -59,6 +64,7 @@ export default function Mapa({ towns }) {
         descriptionHTML: ReactDOMServer.renderToString(<PickupPoint point={point} />),
       };
     }
+
     async function fetchData() {
       try {
         setLoading(true);

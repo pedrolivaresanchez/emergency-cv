@@ -1,8 +1,16 @@
 import { AlertTriangle, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
+import { useSession } from '../context/SessionProvider';
 
-export default function SolicitudCard({ caso, towns, isHref }) {
+export default function SolicitudCard({
+  caso,
+  towns,
+  isHref,
+  button = { text: 'Ver solicitud', link: '/solicitud/' },
+  isEdit = false,
+}) {
+  const session = useSession();
   return (
     <>
       <div
@@ -29,14 +37,14 @@ export default function SolicitudCard({ caso, towns, isHref }) {
             </span>
             <span
               className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap ${
-                caso.status === 'pending'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : caso.status === 'in_progress'
-                    ? 'bg-blue-100 text-blue-800'
+                caso.status === 'finished'
+                  ? 'bg-red-100 text-red-800'
+                  : caso.status === 'progress'
+                    ? 'bg-yellow-100 text-yellow-800'
                     : 'bg-green-100 text-green-800'
               }`}
             >
-              {caso.status === 'pending' ? 'Pendiente' : caso.status === 'in_progress' ? 'En proceso' : 'Activo'}
+              {caso.status === 'finished' ? 'Terminada' : caso.status === 'progress' ? 'En proceso' : 'Activo'}
             </span>
           </div>
         </div>
@@ -134,16 +142,32 @@ export default function SolicitudCard({ caso, towns, isHref }) {
               </div>
             )}
           </div>
-          {isHref && (
-            <Link
-              href={`/solicitud/${caso.id}`}
-              className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto  ${
-                caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
-              }`}
-            >
-              Ver solicitud
-            </Link>
-          )}
+          <div className="flex flex-col sm:flex-row w-full sm:w-auto justify-end gap-2">
+            {session &&
+              session.user &&
+              session.user.email &&
+              session.user.email === caso.additional_info.email &&
+              !isEdit && (
+                <Link
+                  href={'/solicitudes/editar/' + caso.id}
+                  className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
+                    caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
+                  }`}
+                >
+                  Editar
+                </Link>
+              )}
+            {isHref && (
+              <Link
+                href={button.link + caso.id}
+                className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
+                  caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
+                }`}
+              >
+                {button.text}
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </>

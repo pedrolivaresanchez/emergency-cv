@@ -2,13 +2,20 @@ import { MapPin } from 'lucide-react';
 
 const PickupPoint = ({ point }) => {
   return (
-    <div key={point.id} className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-blue-500">
+    <div className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-blue-500">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-4">
         <div>
           <h3 className="text-lg font-bold text-blue-600 break-words">{point.name}</h3>
           <div className="flex items-start gap-2 text-gray-600 mt-1">
             <MapPin className="h-4 w-4 flex-shrink-0 mt-1" />
-            <span className="text-sm break-words">{point.location}</span>
+            <a
+              href={`https://maps.google.com/?q=${point.location}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm break-words text-blue-500 underline"
+            >
+              {point.location}
+            </a>
           </div>
         </div>
         <div>
