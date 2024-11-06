@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { FormRenderer } from './FormRenderer';
 import { FormData, Status } from '../types';
-// @ts-expect-error
 import { formatPhoneNumber, isValidPhone } from '@/helpers/utils';
 import { helpRequestService } from '@/lib/service';
 import { Database } from '@/types/database';

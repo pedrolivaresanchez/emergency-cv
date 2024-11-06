@@ -1,10 +1,10 @@
 import { callCenterPhoneTrimmed } from '@/constants/phoneNumber';
 
-const isPhoneEqualToCallCenter = (phoneNumber) => {
+const isPhoneEqualToCallCenter = (phoneNumber: string) => {
   return phoneNumber === callCenterPhoneTrimmed;
 };
 
-export const isValidPhone = (phoneNumber) => {
+export const isValidPhone = (phoneNumber: string) => {
   const phoneNumberWithoutSpaces = phoneNumber.replace(/\D/g, '');
 
   return (
@@ -14,7 +14,7 @@ export const isValidPhone = (phoneNumber) => {
   );
 };
 
-export const formatPhoneNumber = (value) => {
+export const formatPhoneNumber = (value: string) => {
   // Remove white spaces and non-digit characters
   return value.replace(/\s/g, '').replace(/\D/g, '');
 };
