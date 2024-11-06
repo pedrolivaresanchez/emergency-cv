@@ -30,9 +30,9 @@ export default function OfferHelp({
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    nombre: data.name || session.user.user_metadata.full_name || '',
-    telefono: data.contact_info || session.user.user_metadata.telefono || '',
-    email: data.additional_info?.email || session.user.user_metadata.email || '',
+    nombre: data.name || session?.user?.user_metadata?.full_name || '',
+    telefono: data.contact_info || session?.user?.user_metadata?.telefono || '',
+    email: data.additional_info?.email || session?.user?.user_metadata?.email || '',
     ubicacion: data.location || '',
     tiposAyuda: data.help_type || [],
     vehiculo: data.resources?.vehicle || '',
