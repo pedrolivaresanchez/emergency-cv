@@ -11,6 +11,7 @@ INSERT INTO "public"."towns" ("id", "created_at", "name", "people_helping", "hel
   ('10', '2024-11-02 17:52:17.645308+00', 'Chiva', '0', '0'),
   ('11', '2024-11-02 17:52:17.645308+00', 'Gestalgar', '0', '0'),
   ('12', '2024-11-02 17:52:17.645308+00', 'Guadassuar', '0', '0'),
+   ('13', '2024-11-02 17:52:17.645308+00', 'L''Alcúdia', '0', '0'),
   ('14', '2024-11-02 17:52:17.645308+00', 'Manuel', '0', '0'),
   ('15', '2024-11-02 17:52:17.645308+00', 'Massanassa', '0', '0'),
   ('16', '2024-11-02 17:52:17.645308+00', 'Montserrat', '0', '0'),
@@ -31,3 +32,5 @@ INSERT INTO "public"."towns" ("id", "created_at", "name", "people_helping", "hel
    ('31', '2024-11-03 09:21:27.852067+00', 'Godelleta', '0', '0'),
    ('32', '2024-11-05 10:38:38.669406+00', 'Llocnou de la Corona', '0', '0'),
    ('33', '2024-11-05 10:38:52.085488+00', 'Beniparrell', '0', '0');
+
+SELECT setval(pg_get_serial_sequence('towns', 'id'), (SELECT MAX(id) FROM towns) + 1);

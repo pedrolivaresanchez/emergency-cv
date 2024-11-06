@@ -1,31 +1,20 @@
 import { NextRequest } from 'next/server';
-
-/* 
-// Campos que pueden generar problema todavia -- [db: mapsResponse]
-
-// cual de los dos nos quedamos? los unificamos? Podemos deprecar Alcudia y ya
-- 'Alcudia': La Alcudia | L'Alcúdia  
-- 'L'Alcúdia': La Alcudia | L'Alcúdia 
-// Cambiar texto en la base de datos ?? 
-- 'Castelló': Castellón de la Plana | Castelló de la Plana 
-// eliminar de la base de datos?  
-- 'Manuel', ???? 
-
-
-// maps lo detecta como valencia
-- 'La Torre, Valencia': Valencia | València 
-// maps lo detecta como Valencia
-- 'Benimaclet': Valencia | València
-*/
+import { supabase } from '../../../lib/supabase/client';
 
 const mapsTranslationToDbTowns: { [key: string]: string } = {
   Aldaya: 'Aldaia',
   'Ribarroja de Turia': 'Riba-roja de Túria',
   Benetuser: 'Benetusser',
+  Benetússer: 'Benetusser',
+  Benetúser: 'Benetusser',
   Toris: 'Turís',
   Picaña: 'Picanya',
   'La Alcudia': "L'Alcúdia",
   'Lugar Nuevo de la Corona': 'Llocnou de la Corona',
+  'Castellón de la Plana': 'Castelló de la Plana',
+  Alcudia: "L'Alcúdia",
+  Guadasuar: 'Guadassuar',
+  València: 'Valencia',
 };
 
 const GOOGLE_URL = `https://maps.googleapis.com/maps/api/geocode/json?key=${process.env.API_KEY}&latlng=`;
@@ -79,6 +68,7 @@ export async function POST(request: NextRequest) {
   try {
     const response = await fetch(`${GOOGLE_URL}${body.latitude},${body.longitude}`);
     const extractedData = extractAddressAndTown(await response.json());
+
     return Response.json(extractedData);
   } catch (exception) {
     console.error(exception);
