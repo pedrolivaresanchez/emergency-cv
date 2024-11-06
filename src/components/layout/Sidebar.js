@@ -40,9 +40,17 @@ const menuItems = [
   {
     icon: Inbox,
     title: 'Mis solicitudes',
-    description: 'Edita o elimina tu solicitud',
+    description: 'Edita o elimina tus solicitudes',
     path: '/solicitudes',
     color: 'text-red-500',
+    isAuth: true,
+  },
+  {
+    icon: Inbox,
+    title: 'Mis ofertas',
+    description: 'Edita o elimina tus ofertas',
+    path: '/ofertas',
+    color: 'text-green-500',
     isAuth: true,
   },
   {
@@ -112,7 +120,7 @@ export default function Sidebar({ isOpen, toggle }) {
         className={`fixed top-0 left-0 h-full bg-white shadow-xl z-30 
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-          w-64 flex flex-col`}
+          w-72 flex flex-col`}
       >
         {/* Logo or title */}
         <div className="p-4 border-b flex-shrink-0">

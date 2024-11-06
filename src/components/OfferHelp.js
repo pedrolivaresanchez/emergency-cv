@@ -13,24 +13,35 @@ import { formatPhoneNumber } from '@/helpers/format';
 import { useTowns } from '../context/TownProvider';
 import { useRouter } from 'next/navigation';
 
-export default function OfferHelp({ town, onClose, isModal, redirect = '/casos-activos/ofertas' }) {
+export default function OfferHelp({
+  town,
+  onClose,
+  isModal,
+  data = {},
+  title = '',
+  button = ['Registrar oferta de ayuda', 'Enviando oferta...'],
+  id,
+  redirect = '/casos-activos/ofertas',
+  submitType = 'create',
+}) {
   const towns = useTowns();
 
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    nombre: '',
-    telefono: '',
-    email: '',
-    ubicacion: '',
-    tiposAyuda: [],
-    vehiculo: '',
-    disponibilidad: [],
-    radio: 1,
-    experiencia: '',
-    comentarios: '',
-    aceptaProtocolo: false,
-    pueblo: town ? town.id : '',
+    nombre: data.name || '',
+    telefono: data.contact_info || '',
+    email: data.additional_info?.email || '',
+    ubicacion: data.location || '',
+    tiposAyuda: data.help_type || [],
+    vehiculo: data.resources?.vehicle || '',
+    disponibilidad: data.resources?.availability || [],
+    radio: data.resources?.radius || 1,
+    experiencia: data.additional_info?.experience || '',
+    comentarios: data.description || '',
+    aceptaProtocolo: submitType ? true : false,
+    pueblo: submitType ? data?.town_id : town ? town.id : '',
+    status: data?.status,
   });
 
   const [status, setStatus] = useState({
@@ -107,9 +118,22 @@ export default function OfferHelp({ town, onClose, isModal, redirect = '/casos-a
         longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : null,
         help_type: formData.tiposAyuda,
         town_id: formData.pueblo,
+        status: formData.status,
       };
 
-      const result = await helpRequestService.createRequest(helpOfferData);
+      if (submitType === 'create') {
+        const { error } = await helpRequestService.createRequest(helpOfferData);
+        if (error) {
+          throw new Error(error.message);
+        }
+      }
+      if (submitType === 'edit') {
+        console.log('EDITAR');
+        const { error } = await helpRequestService.editRequest(helpOfferData, id);
+        if (error) {
+          throw new Error(error.message);
+        }
+      }
 
       setFormData({
         nombre: '',
@@ -124,6 +148,7 @@ export default function OfferHelp({ town, onClose, isModal, redirect = '/casos-a
         comentarios: '',
         aceptaProtocolo: false,
         pueblo: '',
+        status: 'active',
       });
       setStatus({ isSubmitting: false, error: null, success: true });
       setStatus((prev) => ({ ...prev, success: false }));
@@ -144,19 +169,24 @@ export default function OfferHelp({ town, onClose, isModal, redirect = '/casos-a
       className={`bg-white rounded-lg p-6 w-full relative flex flex-col gap-6 ${town ? 'max-w-2xl' : ''}`}
     >
       {/* Banner informativo */}
-      <div className="bg-green-50 border-green-500 p-4 rounded">
-        <div className="flex items-start">
-          <HeartHandshake className="h-5 w-5 text-green-500 mt-0.5 mr-2" />
-          <div>
-            <h2 className="text-green-800 font-semibold">Me apunto como voluntario {town ? 'en ' + town.name : ''}</h2>
-            <p className="text-green-700 text-sm mt-1">
-              Al registrarte como voluntario, te comprometes a seguir las indicaciones de las autoridades y los
-              protocolos establecidos.
-            </p>
+      {submitType === 'create' ? (
+        <div className="bg-green-50 border-green-500 p-4 rounded">
+          <div className="flex items-start">
+            <HeartHandshake className="h-5 w-5 text-green-500 mt-0.5 mr-2" />
+            <div>
+              <h2 className="text-green-800 font-semibold">
+                Me apunto como voluntario {town ? 'en ' + town.name : ''}
+              </h2>
+              <p className="text-green-700 text-sm mt-1">
+                Al registrarte como voluntario, te comprometes a seguir las indicaciones de las autoridades y los
+                protocolos establecidos.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-
+      ) : (
+        <h1 className="text-2xl font-bold">{title}</h1>
+      )}
       {status.error && (
         <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
           <p className="text-red-700">{status.error}</p>
@@ -180,21 +210,41 @@ export default function OfferHelp({ town, onClose, isModal, redirect = '/casos-a
           <PhoneInput phoneNumber={formData.telefono} onChange={handlePhoneChange} required />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
-          <input
-            type="email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-          />
-        </div>
-
+        {submitType === 'create' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            />
+          </div>
+        )}
+        {submitType === 'edit' && (
+          <div>
+            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+              Progreso de tu solicitud
+            </label>
+            <select
+              name="status"
+              id="status"
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
+            >
+              <option value="active">Activa - Aún no ayudo</option>
+              <option value="progress">En progreso - Estoy en ello</option>
+              <option value="finished">Terminada - Ya he ayudado</option>
+            </select>
+          </div>
+        )}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Ubicación exacta <span className="text-red-500">*</span>
           </label>
           <AddressAutocomplete
+            initialValue={data?.location}
             onSelect={(address) => {
               setFormData({
                 ...formData,
@@ -364,7 +414,7 @@ export default function OfferHelp({ town, onClose, isModal, redirect = '/casos-a
           } text-white py-3 px-4 rounded-lg font-semibold 
               focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2`}
         >
-          {status.isSubmitting ? 'Registrando oferta...' : 'Registrar Oferta de Ayuda'}
+          {status.isSubmitting ? button[1] : button[0]}
         </button>
       </div>
       {status.success && (
