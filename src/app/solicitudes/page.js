@@ -64,7 +64,8 @@ export default function ListaSolicitudes() {
           .from('help_requests')
           .select('*', { count: 'exact' })
           .eq('type', 'necesita')
-          .contains('additional_info', { email: session.user.email });
+          .contains('additional_info', { email: session.user.email })
+          .eq('status', 'active');
         // Solo agregar filtro si no es "todos"
         if (filtroData.pueblo !== 'todos') {
           query.eq('town_id', filtroData.pueblo);
@@ -181,8 +182,6 @@ export default function ListaSolicitudes() {
                 towns={towns}
                 key={caso.id}
                 caso={caso}
-                button={{ text: 'Editar', link: '/solicitudes/editar/' }}
-                isEdit={true}
               />
             ))
           )}

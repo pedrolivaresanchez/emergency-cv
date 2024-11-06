@@ -6,6 +6,8 @@ import { HelpRequestAdditionalInfo, HelpRequestData } from '@/types/Requests';
 import { Town } from '@/types/Town';
 import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
 import SolicitudHelpCount from '@/components/SolicitudHelpCount';
+import { helpRequestService } from '@/lib/service';
+
 
 type SolicitudCardProps = {
   caso: HelpRequestData;
@@ -166,7 +168,7 @@ export default function SolicitudCard({
             )}
           </div>
           <div className="flex flex-col sm:flex-row w-full sm:w-auto justify-end gap-2">
-            {session && session.user && session.user.email && session.user.email === email && !isEdit && (
+            {session && session.user && session.user.email && session.user.email === email && (
               <Link
                 href={'/solicitudes/editar/' + caso.id}
                 className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
@@ -175,6 +177,17 @@ export default function SolicitudCard({
               >
                 Editar
               </Link>
+            )}
+             {session && session.user && session.user.email && session.user.email === email && (
+              <button
+              onClick={async () => {
+                console.log('click')
+                await helpRequestService.resolveRequest(caso.id);
+              }}
+              className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center bg-green-500`}
+              >
+                Resolver
+              </button>
             )}
             {isHref && (
               <Link
