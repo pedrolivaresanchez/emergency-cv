@@ -14,6 +14,8 @@ import { Enums } from '@/types/common';
 import { useRouter } from 'next/navigation';
 
 import { TIPOS_DE_AYUDA_MAP, TIPOS_DE_AYUDA } from '../constants';
+// @ts-expect-error
+import { useSession } from '@/context/SessionProvider';
 
 const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_enum'][] =>
   Array.from(helpTypeMap).reduce(
@@ -32,8 +34,10 @@ const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_
 
 export function FormContainer() {
   const router = useRouter();
+  const session = useSession();
+
   const [formData, setFormData] = useState<FormData>({
-    nombre: '',
+    nombre: session?.user?.user_metadata?.full_name || '',
     ubicacion: '',
     coordinates: null,
     tiposDeAyuda: new Map(TIPOS_DE_AYUDA.map(({ id }) => [id, false])),
@@ -41,10 +45,10 @@ export function FormContainer() {
     descripcion: '',
     urgencia: 'alta',
     situacionEspecial: '',
-    contacto: '',
+    contacto: session?.user?.user_metadata?.telefono || '',
     consentimiento: false,
     pueblo: '',
-    email: '',
+    email: session?.user?.user_metadata?.email || '',
   });
 
   useEffect(() => {
