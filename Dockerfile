@@ -1,30 +1,35 @@
-FROM node:18-alpine
-ARG CACHE_BURST=1
-
-ARG NEXT_PUBLIC_SUPABASE_URL
-ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-ENV NODE_ENV="development" \
-    NEXT_TELEMETRY_DISABLED=1 \
-    NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL \
-    NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+# Build stage
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
-# Install ALL dependencies
-RUN npm install
+RUN npm ci
 
 COPY . .
 
+RUN rm -rf .next
+
 RUN npm run build
 
-# Switch to production after build
-ENV NODE_ENV="production"
+# Production stage
+FROM node:18-alpine AS runner
 
-# Clean up development dependencies
-RUN npm prune --production
+WORKDIR /app
+
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1
+
+COPY --from=builder /app/next.config.mjs ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+USER nextjs
 
 EXPOSE 3000
 
