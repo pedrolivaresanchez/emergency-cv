@@ -8,11 +8,18 @@ const urgencyToColor = {
   baja: '#10b981', //text-emerald-500
 };
 
-const PAIPORTA_LAT_LNG = [-0.41667, 39.42333];
+const PAIPORTA_LAT_LNG: [number, number] = [-0.41667, 39.42333];
 
-export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }) {
-  const mapContainerRef = useRef(null);
-  const mapRef = useRef(null);
+export type LngLat = { lng: number; lat: number };
+
+export type GeoLocationMapProps = {
+  onNewPositionCallback: (lngLat: LngLat) => void;
+  zoom?: number;
+};
+
+export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }: GeoLocationMapProps) {
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
 
   // geolocate control
   const geolocateControl = new maplibregl.GeolocateControl({
@@ -21,11 +28,14 @@ export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }) {
     },
     trackUserLocation: true,
     showAccuracyCircle: true,
-    showUserHeading: true,
   });
 
   useEffect(() => {
     if (!mapRef.current) {
+      if (!mapContainerRef.current) {
+        return;
+      }
+
       mapRef.current = new maplibregl.Map({
         container: mapContainerRef.current,
         style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
@@ -34,20 +44,31 @@ export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }) {
       });
 
       mapRef.current.on('moveend', () => {
+        if (!mapRef.current) {
+          return;
+        }
+
         const center = mapRef.current.getCenter();
         if (typeof onNewPositionCallback === 'function') {
-          onNewPositionCallback([center.lng, center.lat]);
+          onNewPositionCallback(center);
         }
       });
 
       mapRef.current.on('move', () => {
+        if (!mapRef.current) {
+          return;
+        }
+
         const center = mapRef.current.getCenter();
         marker.setLngLat(center);
       });
 
       geolocateControl.on('geolocate', (e) => {
-        const userLocation = [e.coords.longitude, e.coords.latitude];
+        if (!mapRef.current) {
+          return;
+        }
 
+        const userLocation: [number, number] = [e.coords.longitude, e.coords.latitude];
         // Center the map on the user's location
         mapRef.current.flyTo({
           center: userLocation,
@@ -56,7 +77,7 @@ export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }) {
         });
 
         if (typeof onNewPositionCallback === 'function') {
-          onNewPositionCallback(userLocation);
+          onNewPositionCallback({ lng: userLocation[0], lat: userLocation[1] });
         }
       });
 
