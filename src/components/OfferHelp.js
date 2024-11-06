@@ -200,8 +200,11 @@ export default function OfferHelp({
         {/* Datos personales */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="fullName">
+              Nombre completo
+            </label>
             <input
+              id="fullName"
               type="text"
               value={formData.nombre}
               onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
@@ -213,8 +216,11 @@ export default function OfferHelp({
 
         {submitType === 'create' && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="userEmail">
+              Correo electrónico
+            </label>
             <input
+              id="userEmail"
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -241,7 +247,7 @@ export default function OfferHelp({
           </div>
         )}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="address">
             Ubicación exacta <span className="text-red-500">*</span>
           </label>
           <AddressAutocomplete
@@ -362,12 +368,11 @@ export default function OfferHelp({
 
         {/* Pueblos */}
         <div>
-          <div className="flex flex-row justify-between mb-2 items-end">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Pueblo <span className="text-red-500">*</span>
-            </label>
-          </div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="townName">
+            Pueblo <span className="text-red-500">*</span>
+          </label>
           <select
+            id="townName"
             name="pueblo"
             value={formData.pueblo}
             onChange={(e) => setFormData({ ...formData, pueblo: e.target.value })}
