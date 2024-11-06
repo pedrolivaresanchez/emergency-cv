@@ -2,16 +2,9 @@ import { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-const urgencyToColor = {
-  alta: '#ef4444', //text-red-500
-  media: '#f59e0b', //text-amber-500
-  baja: '#10b981', //text-emerald-500
-};
-
 const PAIPORTA_LAT_LNG: [number, number] = [-0.41667, 39.42333];
 
 export type LngLat = { lng: number; lat: number };
-
 export type GeoLocationMapProps = {
   onNewPositionCallback: (lngLat: LngLat) => void;
   zoom?: number;
