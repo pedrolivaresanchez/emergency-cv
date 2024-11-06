@@ -6,11 +6,14 @@ import { TownsProvider } from '@/context/TownProvider';
 import { createClient } from '@/lib/supabase/server';
 import { SessionProvider } from '@/context/SessionProvider';
 import { townsService } from '@/lib/service';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export const metadata = {
   title: 'Ajuda Dana - Sistema de Coordinación',
   description: 'Sistema de coordinación para emergencias en la Comunidad Valenciana',
 };
+
+const queryClient = new QueryClient();
 
 const getSession = async () => {
   const supabase = await createClient();
@@ -25,11 +28,13 @@ export default async function RootLayout({ children }) {
     <html lang="es">
       <body suppressHydrationWarning={true}>
         <SessionProvider session={session}>
-          <TownsProvider towns={towns}>
-            <EmergencyProvider>
-              <EmergencyLayout>{children}</EmergencyLayout>
-            </EmergencyProvider>
-          </TownsProvider>
+          <QueryClientProvider client={queryClient}>
+            <TownsProvider towns={towns}>
+              <EmergencyProvider>
+                <EmergencyLayout>{children}</EmergencyLayout>
+              </EmergencyProvider>
+            </TownsProvider>
+          </QueryClientProvider>
         </SessionProvider>
       </body>
     </html>
