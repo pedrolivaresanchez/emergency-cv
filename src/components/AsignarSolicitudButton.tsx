@@ -1,20 +1,30 @@
 'use client';
 
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAssignment, HelpRequestData } from '@/types/Requests';
+import { HelpRequestAssignmentData, HelpRequestData } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
 import { MouseEvent } from 'react';
+import { Spinner } from '@/components/Spinner';
 import Link from 'next/link';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 type AsignarSolicitudButtonProps = {
   helpRequest: HelpRequestData;
-  userAssignment: HelpRequestAssignment;
 };
 
-export default function AsignarSolicitudButton({ helpRequest, userAssignment }: AsignarSolicitudButtonProps) {
+export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitudButtonProps) {
   const session = useSession();
+
+  const {
+    data: assignments,
+    isLoading,
+    error,
+  } = useQuery<HelpRequestAssignmentData[]>({
+    queryKey: ['help_request_assignments', { id: helpRequest.id }],
+    queryFn: () => helpRequestService.getAssignments(helpRequest.id),
+  });
+
   const queryClient = useQueryClient();
 
   const assignMutation = useMutation({
@@ -58,7 +68,11 @@ export default function AsignarSolicitudButton({ helpRequest, userAssignment }: 
     e.preventDefault();
     unassignMutation.mutate();
   }
-  if (userAssignment == undefined) return <></>;
+
+  if (isLoading) return <Spinner />;
+  if (error || assignments === undefined) return <></>;
+
+  const userAssignment = assignments.find((x) => x.user_id === session.user?.id);
   const userIsAssigned = !!userAssignment;
 
   if (!session || !session.user)
