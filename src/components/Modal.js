@@ -1,6 +1,6 @@
 import { useModal } from '@/context/EmergencyProvider';
 
-const Modal = ({ children, maxWidth = 'max-w-2xl', allowClose = true }) => {
+export const Modal = ({ children, maxWidth = 'max-w-2xl', allowClose = true }) => {
   const { showModal, toggleModal } = useModal();
 
   if (!showModal) return null;
