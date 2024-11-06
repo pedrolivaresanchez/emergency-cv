@@ -117,7 +117,7 @@ spec:
         - name: kaniko
           image: gcr.io/kaniko-project/executor:latest
           args:
-            - '--context=git://VAR_GITHUB_TOKEN@github.com/pedrolivaresanchez/emergency-cv.git'
+            - '--context=git://VAR_GITHUB_TOKEN@github.com/pedrolivaresanchez/emergency-cv.git#refs/heads/feat/code-quality-checks-gh-action'
             - '--dockerfile=Dockerfile'
             - '--destination=idl-apps--container-registry-service:5000/emergency-cv/webapp:VAR_GITHUB_COMMIT_HASH'
             - '--insecure'
