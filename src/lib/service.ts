@@ -171,7 +171,8 @@ export const mapService = {
 export const townsService = {
   async getTowns() {
     const supabase = await getSupabaseClient();
-    const { data, error } = await supabase.from('towns').select('id, name');
+    const { data, error } = await supabase.from('towns').select();
+    if (error) throw error;
     return data;
   },
 };
