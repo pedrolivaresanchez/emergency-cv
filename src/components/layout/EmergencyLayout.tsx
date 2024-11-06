@@ -1,12 +1,11 @@
-// components/layout/EmergencyLayout.js
-
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, PropsWithChildren } from 'react';
+// @ts-ignore
 import Sidebar from './Sidebar';
 import Footer from './Footer';
 
-export default function EmergencyLayout({ children }) {
+export default function EmergencyLayout({ children }: PropsWithChildren<{}>) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Por defecto abierto
 
   useEffect(() => {

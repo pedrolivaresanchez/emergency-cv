@@ -8,6 +8,7 @@ import { SessionProvider } from '@/context/SessionProvider';
 import { townsService } from '@/lib/service';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
+import { PropsWithChildren } from 'react';
 
 export const metadata = {
   title: 'Ajuda Dana - Sistema de Coordinación',
@@ -22,7 +23,7 @@ const getSession = async () => {
   return data;
 };
 
-export default async function RootLayout({ children }) {
+export default async function RootLayout({ children }: PropsWithChildren<{}>) {
   const session = await getSession();
   const towns = await townsService.getTowns();
   return (
