@@ -5,6 +5,7 @@ import { useSession } from '@/context/SessionProvider';
 import { HelpRequestAdditionalInfo, HelpRequestData } from '@/types/Requests';
 import { Town } from '@/types/Town';
 import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
+import SolicitudHelpCount from '@/components/SolicitudHelpCount';
 
 type SolicitudCardProps = {
   caso: HelpRequestData;
@@ -53,6 +54,7 @@ export default function SolicitudCard({
             {caso.name || 'Necesita Ayuda'}
           </h3>
           <div>
+            <SolicitudHelpCount id={caso.id} />
             <span className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap mr-2 bg-purple-300`}>
               Referencia: {caso.id}
             </span>
