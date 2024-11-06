@@ -1,4 +1,4 @@
-import { SupabaseTown } from '@/types/common';
+import { Town as SupabaseTown } from '@/types/Town';
 import { Enums } from '@/types/common';
 
 export type FormData = {
