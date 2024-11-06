@@ -1,19 +1,17 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { FormRenderer } from './FormRenderer';
 import { FormData, Status } from '../types';
 // @ts-expect-error
-import { isValidPhone } from '@/helpers/utils';
-// @ts-expect-error
-import { formatPhoneNumber } from '@/helpers/utils';
+import { formatPhoneNumber, isValidPhone } from '@/helpers/utils';
 import { helpRequestService } from '@/lib/service';
 import { Database } from '@/types/database';
 import { Enums } from '@/types/common';
 import { useRouter } from 'next/navigation';
 
-import { TIPOS_DE_AYUDA_MAP, TIPOS_DE_AYUDA } from '../constants';
+import { TIPOS_DE_AYUDA, TIPOS_DE_AYUDA_MAP } from '../constants';
 import { useSession } from '@/context/SessionProvider';
 
 const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_enum'][] =>
@@ -76,6 +74,11 @@ export function FormContainer() {
 
       if (!formData.consentimiento) {
         alert('Debe aceptar el consentimiento para enviar la solicitud');
+        return;
+      }
+
+      if (!isValidPhone(formData.contacto)) {
+        alert('El teléfono de contacto no es válido.');
         return;
       }
 
