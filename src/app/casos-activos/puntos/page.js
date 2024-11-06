@@ -189,7 +189,7 @@ export default function Puntos({ towns }) {
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
             >
               <HeartHandshake className="w-5 h-5" />
-              Ofrecer ayuda a {filtroData.ciudad === 'todos' ? '' : filtroData.ciudad}
+              Crear punto de ayuda en {filtroData.ciudad === 'todos' ? '' : filtroData.ciudad}
             </button>
           </div>
         ) : (
