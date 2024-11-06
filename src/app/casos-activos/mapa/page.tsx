@@ -6,7 +6,6 @@ import SolicitudCard from '@/components/SolicitudCard';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Map, { PinMapa } from '@/components/map/map';
-// @ts-ignore
 import PickupPoint from '@/components/PickupPoint';
 import { useTowns } from '@/context/TownProvider';
 
@@ -98,7 +97,6 @@ export default function Mapa() {
           const pickupMarkers = pickupData.map(transformPickupRequestToMarker);
           allData.push(...(pickupMarkers || []));
         }
-
         setData(allData);
       } catch (err) {
         console.log('Error general:', err);

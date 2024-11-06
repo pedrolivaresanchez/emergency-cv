@@ -4,10 +4,10 @@ import { FC, ReactNode, useState } from 'react';
 import ReactMap from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Marker } from 'react-map-gl/maplibre';
-import { MapPin } from 'lucide-react';
 import { useModal } from '@/context/EmergencyProvider';
 // @ts-ignore
 import Modal from '@/components/Modal';
+import { MapPinFilled } from '@/components/icons/MapPinFilled';
 
 const urgencyToColor = {
   alta: 'text-red-500',
@@ -59,7 +59,7 @@ const Map: FC<MapProps> = ({ markers = [] }) => {
             }}
             anchor="bottom"
           >
-            <MapPin className={`h-6 w-6 ${urgencyToColor[m.urgency]}`} />
+            <MapPinFilled className={`h-6 w-6 ${urgencyToColor[m.urgency]}`} />
           </Marker>
         );
       })}
