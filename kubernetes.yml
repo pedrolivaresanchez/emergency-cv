@@ -4,7 +4,7 @@ metadata:
   name: emergency-cv--webapp--deployment
   namespace: production
 spec:
-  replicas: 6
+  replicas: 12
   selector:
     matchLabels:
       app: emergency-cv--webapp
@@ -12,12 +12,20 @@ spec:
     metadata:
       labels:
         app: emergency-cv--webapp
+      annotations:
+        ad.datadoghq.com/emergency-cv--webapp.logs: '[{"source": "nextjs", "service": "emergency-cv-webapp", "log_processing_rules": [{"type": "multi_line", "name": "log_start_with_date", "pattern": "\\d{4}-\\d{2}-\\d{2}"}]}]'
     spec:
+      serviceAccountName: datadog-agent
       containers:
         - name: emergency-cv--webapp
           image: "localhost:30500/emergency-cv/webapp:VAR_GITHUB_COMMIT_HASH"
           ports:
             - containerPort: 3000
+          env:
+            - name: NEXT_PUBLIC_SUPABASE_URL
+              value: 'VAR_SUPABASE_URL'
+            - name: NEXT_PUBLIC_SUPABASE_ANON_KEY
+              value: 'VAR_SUPABASE_ANON_KEY'
           livenessProbe:
             httpGet:
               path: /api/health
@@ -30,6 +38,59 @@ spec:
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 5
+        - name: datadog-agent
+          image: gcr.io/datadoghq/agent:latest
+          env:
+            - name: DD_API_KEY
+              value: "VAR_DATADOG_API_KEY"
+            - name: DD_SITE
+              value: "datadoghq.eu"
+            - name: DD_LOGS_ENABLED
+              value: "true"
+            - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
+              value: "true"
+            - name: DD_APM_ENABLED
+              value: "true"
+            - name: DD_APM_NON_LOCAL_TRAFFIC
+              value: "true"
+            - name: DD_KUBELET_TLS_VERIFY
+              value: "false"
+            - name: DD_PROCESS_AGENT_ENABLED
+              value: "true"
+            - name: DD_CONTAINER_EXCLUDE
+              value: "image:gcr.io/datadoghq/agent"
+            - name: DD_CONTAINER_INCLUDE_METRICS
+              value: "name:emergency-cv--webapp"
+            - name: DD_CONTAINER_INCLUDE_LOGS
+              value: "name:emergency-cv--webapp"
+            - name: DD_SYSTEM_PROBE_ENABLED
+              value: "false"
+            - name: DD_KUBERNETES_KUBELET_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          securityContext:
+            privileged: false
+            capabilities:
+              add: [ "SYS_ADMIN" ]
+          ports:
+            - containerPort: 8126
+              name: traceport
+              protocol: TCP
+          volumeMounts:
+            - name: podslogdir
+              mountPath: /var/log/pods
+              readOnly: true
+            - name: containerlogdir
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+      volumes:
+        - name: podslogdir
+          hostPath:
+            path: /var/log/pods
+        - name: containerlogdir
+          hostPath:
+            path: /var/lib/docker/containers
 ---
 apiVersion: v1
 kind: Service
@@ -61,5 +122,53 @@ spec:
             - "--destination=idl-apps--container-registry-service:5000/emergency-cv/webapp:VAR_GITHUB_COMMIT_HASH"
             - "--insecure"
             - "--skip-tls-verify"
+            - "--build-arg=NEXT_PUBLIC_SUPABASE_URL=VAR_SUPABASE_URL"
+            - "--build-arg=NEXT_PUBLIC_SUPABASE_ANON_KEY=VAR_SUPABASE_ANON_KEY"
       restartPolicy: Never
   backoffLimit: 2
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: datadog-agent
+  namespace: production
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: datadog-agent
+rules:
+  - apiGroups: [ "" ]
+    resources:
+      - nodes
+      - nodes/metrics
+      - nodes/proxy
+      - nodes/spec
+      - nodes/stats
+      - pods
+      - services
+      - endpoints
+      - events
+    verbs: [ "get", "list", "watch" ]
+  - apiGroups: [ "" ]
+    resources:
+      - configmaps
+    resourceNames: [ "datadog-leader-election" ]
+    verbs: [ "get", "update" ]
+  - apiGroups: [ "" ]
+    resources:
+      - configmaps
+    verbs: [ "create" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: datadog-agent
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: datadog-agent
+subjects:
+  - kind: ServiceAccount
+    name: datadog-agent
+    namespace: production

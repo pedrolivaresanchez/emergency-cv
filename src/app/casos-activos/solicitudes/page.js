@@ -81,7 +81,7 @@ export default function Solicitudes() {
         if (filtroData.urgencia !== 'todas') {
           query.eq('urgency', filtroData.urgencia);
         }
-
+        query.neq('status', 'finished');
         // Ejecutar la consulta con paginación
         const { data, count, error } = await query
           .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1)
