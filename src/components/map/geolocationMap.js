@@ -69,10 +69,10 @@ export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }) {
 
       mapRef.current.addControl(new maplibregl.NavigationControl(), 'top-right');
       // Add the geolocate control
-      //mapRef.current.addControl(geolocateControl);
+      mapRef.current.addControl(geolocateControl);
 
       // add to js queue so that the control is correctly added, then trigger the location detection
-      setTimeout(() => geolocateControl.trigger());
+      setTimeout(() => geolocateControl.trigger(), 100);
     }
 
     return () => {
