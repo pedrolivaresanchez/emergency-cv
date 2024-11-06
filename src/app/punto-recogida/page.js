@@ -70,8 +70,6 @@ export default function PuntosRecogida() {
         return;
       }
 
-      console.log('FormData before submission:', formData); // Debug log
-
       const pointData = {
         name: formData.name,
         type: 'permanente',
@@ -83,8 +81,6 @@ export default function PuntosRecogida() {
         urgent_needs: formData.urgent_needs || null,
         status: 'active',
       };
-
-      console.log('PointData for submission:', pointData); // Debug log
 
       const { error: insertError } = await supabase.from('collection_points').insert([pointData]);
 
@@ -222,7 +218,6 @@ export default function PuntosRecogida() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Dirección completa *</label>
                 <AddressAutocomplete
                   onSelect={(address) => {
-                    console.log('Address selected:', address); // Debug log
                     setFormData((prev) => ({
                       ...prev,
                       location: address.fullAddress,
