@@ -1,74 +1,71 @@
-import { FC, useEffect, useRef } from 'react';
-import maplibregl from 'maplibre-gl';
+'use client';
+
+import { FC, ReactNode, useState } from 'react';
+import ReactMap from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { Marker } from 'react-map-gl/maplibre';
+import { MapPin } from 'lucide-react';
+import { useModal } from '@/context/EmergencyProvider';
+// @ts-ignore
+import Modal from '@/components/Modal';
 
 const urgencyToColor = {
-  alta: '#ef4444', //text-red-500
-  media: '#f59e0b', //text-amber-500
-  baja: '#10b981', //text-emerald-500
+  alta: 'text-red-500',
+  media: 'text-amber-500',
+  baja: 'text-emerald-500',
+};
+
+export type PinMapa = {
+  id: string;
+  latitude: number;
+  longitude: number;
+  urgency: 'alta' | 'media' | 'baja';
+  popup: ReactNode;
 };
 
 type MapProps = {
-  center?: [number, number];
-  zoom?: number;
-  markers?: {
-    coordinates: [number, number];
-    urgency: 'alta' | 'media' | 'baja';
-    descriptionHTML: string;
-    width: number;
-  }[];
+  markers?: PinMapa[];
 };
 
-const Map: FC<MapProps> = ({ center = [0, 0], zoom = 2, markers = [] }) => {
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
-  const markerRefs = useRef<maplibregl.Marker[]>([]);
+const PAIPORTA_LAT = 39.42333;
+const PAIPORTA_LNG = -0.41667;
+const DEFAULT_ZOOM = 12;
 
-  useEffect(() => {
-    if (!mapRef.current) {
-      mapRef.current = new maplibregl.Map({
-        container: mapContainerRef.current!,
-        style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-        center: center,
-        zoom: zoom,
-      });
-      mapRef.current.addControl(new maplibregl.NavigationControl(), 'top-right');
-    } else {
-      // Update center and zoom when props change
-      mapRef.current.setCenter(center);
-      mapRef.current.setZoom(zoom);
-    }
+const Map: FC<MapProps> = ({ markers = [] }) => {
+  const [selectedMarker, setSelectedMarker] = useState<PinMapa | null>(null);
 
-    // Clear existing markers
-    markerRefs.current.forEach((marker) => marker.remove());
-    markerRefs.current = [];
+  const { showModal, toggleModal } = useModal();
 
-    // Add new markers
-    markers.forEach((markerData) => {
-      const marker = new maplibregl.Marker({
-        color: urgencyToColor[markerData.urgency],
-      })
-        .setLngLat(markerData.coordinates)
-        .setPopup(
-          new maplibregl.Popup({
-            className: 'map-popup',
-            maxWidth: `${markerData.width}px`,
-            anchor: 'left',
-          }).setHTML(markerData.descriptionHTML),
-        )
-        .addTo(mapRef.current!);
-
-      markerRefs.current.push(marker);
-    });
-
-    // Clean up function to remove markers only
-    return () => {
-      markerRefs.current.forEach((marker) => marker.remove());
-      markerRefs.current = [];
-    };
-  }, [center, zoom, markers]);
-
-  return <div ref={mapContainerRef} style={{ width: '100%', height: '75vh' }} />;
+  console.log(selectedMarker);
+  return (
+    <ReactMap
+      initialViewState={{
+        longitude: PAIPORTA_LNG,
+        latitude: PAIPORTA_LAT,
+        zoom: DEFAULT_ZOOM,
+      }}
+      style={{ width: '100%', height: '75vh' }}
+      mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+    >
+      {markers.map((m) => {
+        return (
+          <Marker
+            key={m.id}
+            longitude={m.longitude}
+            latitude={m.latitude}
+            onClick={() => {
+              toggleModal(true);
+              setSelectedMarker(m);
+            }}
+            anchor="bottom"
+          >
+            <MapPin className={`h-6 w-6 ${urgencyToColor[m.urgency]}`} />
+          </Marker>
+        );
+      })}
+      {selectedMarker && showModal && <Modal>{selectedMarker.popup}</Modal>}
+    </ReactMap>
+  );
 };
 
 export default Map;
