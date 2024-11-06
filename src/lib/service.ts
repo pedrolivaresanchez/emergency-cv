@@ -199,7 +199,7 @@ export const authService = {
   async getSessionUser() {
     return supabase.auth.getUser();
   },
-  async signUp(email: string, password: string, nombre: string, telefono: string) {
+  async signUp(email: any, password: any, nombre: any, telefono: any, privacyPolicy: boolean) {
     return supabase.auth.signUp({
       email,
       password,
@@ -207,6 +207,7 @@ export const authService = {
         data: {
           nombre,
           telefono,
+          privacyPolicy,
         },
       },
     });

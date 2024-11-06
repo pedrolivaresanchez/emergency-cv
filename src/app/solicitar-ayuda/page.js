@@ -18,7 +18,7 @@ export default function SolicitarAyuda() {
   const router = useRouter();
   const session = useSession();
   const [formData, setFormData] = useState({
-    nombre: session.user.user_metadata.full_name || '',
+    nombre: session?.user?.user_metadata?.full_name || '',
     ubicacion: '',
     coordinates: null,
     tiposAyuda: [],
@@ -26,10 +26,10 @@ export default function SolicitarAyuda() {
     descripcion: '',
     urgencia: 'alta',
     situacionEspecial: '',
-    contacto: session.user.user_metadata.telefono || '',
+    contacto: session?.user?.user_metadata?.telefono || '',
     consentimiento: false,
     pueblo: '',
-    email: session.user.user_metadata.email || '',
+    email: session?.user?.user_metadata?.email || '',
   });
 
   const [status, setStatus] = useState({
