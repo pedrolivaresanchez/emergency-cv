@@ -18,3 +18,5 @@ export const mapToIdAndLabel = (data: any) => {
     label: data[key],
   }));
 };
+
+export const COOKIE_CONSENT_KEY = 'ajudana_cookie_consent';

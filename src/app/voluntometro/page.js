@@ -7,14 +7,16 @@ import OfferHelp from '@/components/OfferHelp';
 import { useModal } from '@/context/EmergencyProvider';
 import Modal from '@/components/Modal';
 
+const MODAL_NAME = 'voluntometro';
+
 export default function Voluntometro() {
   const [pueblos, setPueblos] = useState([]);
-  const { showModal, toggleModal } = useModal();
+  const { toggleModal } = useModal();
 
   const [town, setTown] = useState(0);
 
   const closeModal = () => {
-    toggleModal(false);
+    toggleModal(MODAL_NAME, false);
   };
 
   useEffect(() => {
@@ -164,7 +166,7 @@ export default function Voluntometro() {
               </div>
               <button
                 onClick={() => {
-                  toggleModal(true);
+                  toggleModal(MODAL_NAME, true);
                   setTown(pueblo);
                 }}
                 className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
@@ -176,12 +178,9 @@ export default function Voluntometro() {
         ))}
       </div>
 
-      {/* Modal with full form */}
-      {showModal && (
-        <Modal>
-          <OfferHelp town={town} onClose={closeModal} isModal={true} />
-        </Modal>
-      )}
+      <Modal id={MODAL_NAME}>
+        <OfferHelp town={town} onClose={closeModal} isModal={true} />
+      </Modal>
     </div>
   );
 }

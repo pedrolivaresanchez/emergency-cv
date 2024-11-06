@@ -10,7 +10,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/EmergencyProvider';
-import { useTowns } from '../../../context/TownProvider';
+import { useTowns } from '@/context/TownProvider';
+
+const MODAL_NAME = 'solicitudes';
 
 export default function Solicitudes() {
   const towns = useTowns();
@@ -23,10 +25,10 @@ export default function Solicitudes() {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
   const [currentCount, setCurrentCount] = useState(0);
-  const { showModal, toggleModal } = useModal();
+  const { toggleModal } = useModal();
 
   const closeModal = () => {
-    toggleModal(false);
+    toggleModal(MODAL_NAME, false);
   };
   const itemsPerPage = 10;
   const numPages = (count) => {
@@ -172,7 +174,7 @@ export default function Solicitudes() {
 
             <button
               onClick={() => {
-                toggleModal(true);
+                toggleModal(MODAL_NAME, true);
               }}
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
             >
@@ -187,11 +189,10 @@ export default function Solicitudes() {
       <div className="flex items-center justify-center">
         <Pagination currentPage={currentPage} totalPages={numPages(currentCount)} onPageChange={changePage} />
       </div>
-      {showModal && (
-        <Modal>
-          <OfferHelp town={towns[filtroData.pueblo - 1]} onClose={closeModal} isModal={true} />
-        </Modal>
-      )}
+
+      <Modal id={MODAL_NAME}>
+        <OfferHelp town={towns[filtroData.pueblo - 1]} onClose={closeModal} isModal={true} />
+      </Modal>
     </>
   );
 }
