@@ -1,9 +1,15 @@
-import { Calendar, HeartHandshake, MapPin, Phone, Truck, User } from 'lucide-react';
+import { Calendar, HeartHandshake, MapPin, MapPinned, Phone, Truck, User } from 'lucide-react';
 import { useSession } from '../context/SessionProvider';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
 
-export default function OfferCard({ caso, isHref, button = { text: 'Ver oferta', link: '/oferta/' }, isEdit = false }) {
+export default function OfferCard({
+  caso,
+  isHref,
+  towns,
+  button = { text: 'Ver oferta', link: '/oferta/' },
+  isEdit = false,
+}) {
   const session = useSession();
   return (
     <div key={caso.id} className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-green-500 overflow-hidden">
@@ -24,7 +30,7 @@ export default function OfferCard({ caso, isHref, button = { text: 'Ver oferta',
         </span>
       </div>
 
-      <div className="space-y-2 mb-4">
+      <div className="space-y-2 mb-1">
         <h3 className="text-lg font-bold text-green-600">
           <div className="flex items-start gap-2">
             <HeartHandshake className="h-5 w-5 flex-shrink-0 mt-1" />
@@ -82,16 +88,24 @@ export default function OfferCard({ caso, isHref, button = { text: 'Ver oferta',
             })()}
           </>
         )}
-
-        {caso.location && (
+        {/* VOLUNTARIOS NO QUIEREN MOSTRAR SU DIRECCION */}
+        {/* {caso.location && (
           <div className="flex items-start gap-2">
             <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
             <span className="break-words">
               <span className="font-semibold">Ubicación:</span> {caso.location}
             </span>
           </div>
-        )}
+        )} */}
 
+        {caso.town_id && (
+          <div className="flex items-start gap-2">
+            <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
+            <span className="break-words">
+              <span className="font-semibold">Pueblo:</span> {towns[caso.town_id - 1].name || ''}
+            </span>
+          </div>
+        )}
         <div className="flex items-start gap-2">
           <Calendar className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
           <span className="break-words">
