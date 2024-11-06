@@ -8,7 +8,7 @@ export const helpRequestService = {
     if (error) throw error;
     return data[0];
   },
-  async editRequest(requestData, id) {
+  async editRequest(requestData: any, id: any) {
     const { data, error } = await supabase.from('help_requests').update(requestData).eq('id', id).select();
     if (error) throw error;
     return data;
