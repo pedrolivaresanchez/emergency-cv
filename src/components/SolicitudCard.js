@@ -143,7 +143,7 @@ export default function SolicitudCard({
             )}
           </div>
           <div className="flex flex-col sm:flex-row w-full sm:w-auto justify-end gap-2">
-            {session != null && session.user.email === caso.additional_info.email && !isEdit && (
+            {session.user.email !== null && session.user.email === caso.additional_info.email && !isEdit && (
               <Link
                 href={'/solicitudes/editar/' + caso.id}
                 className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
