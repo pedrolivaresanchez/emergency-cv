@@ -8,9 +8,9 @@ import { Town } from '@/types/Town';
 type SolicitudCardProps = {
   caso: HelpRequestData,
   towns: Town[],
-  isHref: boolean,
-  button:SolicitudCardButton,
-  isEdit: boolean,
+  isHref?: boolean,
+  button?:SolicitudCardButton,
+  isEdit?: boolean,
 };
 
 type SolicitudCardButton = {
@@ -21,7 +21,7 @@ type SolicitudCardButton = {
 export default function SolicitudCard({
   caso,
   towns,
-  isHref,
+  isHref = true,
   button = { text: 'Ver solicitud', link: '/solicitud/' },
   isEdit = false,
 }:SolicitudCardProps) {
