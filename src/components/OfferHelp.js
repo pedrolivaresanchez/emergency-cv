@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { HeartHandshake, Check } from 'lucide-react';
-import { helpRequestService } from '@/lib/service';
+import { helpRequestService, townService } from '@/lib/service';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import AddresMap from '@/components/AddressMap';
 import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
@@ -100,6 +100,9 @@ export default function OfferHelp({
     setStatus({ isSubmitting: true, error: null, success: false });
 
     try {
+      const townResponse = await townService.createIfNotExists(formData.pueblo);
+      if (townResponse.error) throw error;
+
       const helpOfferData = {
         type: 'ofrece',
         name: formData.nombre,
@@ -241,21 +244,6 @@ export default function OfferHelp({
             </select>
           </div>
         )}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Ubicación exacta <span className="text-red-500">*</span>
-          </label>
-
-          <AddresMap
-            onNewAddressCallback={(addressDescriptor) => {
-              setFormData({
-                ...formData,
-                ubicacion: addressDescriptor.address,
-                coordinates: addressDescriptor.coordinates ?? null,
-              });
-            }}
-          />
-        </div>
 
         {/* Tipos de ayuda */}
         <div>
@@ -351,28 +339,23 @@ export default function OfferHelp({
           />
         </div>
 
-        {/* Pueblos */}
         <div>
-          <div className="flex flex-row justify-between mb-2 items-end">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Pueblo <span className="text-red-500">*</span>
-            </label>
-          </div>
-          <select
-            name="pueblo"
-            value={formData.pueblo}
-            onChange={(e) => setFormData({ ...formData, pueblo: e.target.value })}
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-            required
-          >
-            <option value="">Selecciona un pueblo</option>
-            {towns.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Ubicación exacta <span className="text-red-500">*</span>
+          </label>
+
+          <AddresMap
+            onNewAddressCallback={(addressDescriptor) => {
+              setFormData({
+                ...formData,
+                ubicacion: addressDescriptor.address,
+                pueblo: addressDescriptor.town,
+                coordinates: addressDescriptor.coordinates ?? null,
+              });
+            }}
+          />
         </div>
+
         {/* Aceptación de protocolo */}
         <div className="flex items-start">
           <label className="ml-2 text-sm text-gray-700 flex items-start gap-2 cursor-pointer">

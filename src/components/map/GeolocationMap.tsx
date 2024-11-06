@@ -95,5 +95,5 @@ export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }: Geo
     };
   }, [zoom]);
 
-  return <div ref={mapContainerRef} className="aspect-square w-full" />;
+  return <div ref={mapContainerRef} className="aspect-video w-full" />;
 }
