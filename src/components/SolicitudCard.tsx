@@ -202,7 +202,7 @@ export default function SolicitudCard({
                 {button.text}
               </Link>
             )}
-            {userAssignment && <AsignarSolicitudButton helpRequest={caso} userAssignment={userAssignment} />}
+            <AsignarSolicitudButton helpRequest={caso} />
           </div>
         </div>
       </div>
