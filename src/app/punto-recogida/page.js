@@ -133,12 +133,11 @@ export default function PuntosRecogida() {
                     <span className="text-sm">{point.location}</span>
                   </div>
                 </div>
-                <span
-                  className={`px-4 py-1 rounded-full text-sm font-medium ${
-                    point.type === 'permanente' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                  }`}
-                >
-                  {point.type === 'permanente' ? 'Permanente' : 'Temporal'}
+                <span className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap mr-2 bg-purple-300`}>
+                  Referencia: {point.id}
+                </span>
+                <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-medium whitespace-nowrap">
+                  {point.status === 'active' ? 'Activo' : 'Inactivo'}
                 </span>
               </div>
 
@@ -157,7 +156,7 @@ export default function PuntosRecogida() {
                 )}
                 {point.accepted_items && (
                   <div className="flex items-center gap-2">
-                    <Megaphone className="h-4 w-6 text-gray-500" />
+                    <Megaphone className="h-4 w-4 text-gray-500" />
                     <span className="break-words">
                       <span className="font-semibold">Necesita:</span>{' '}
                       {Array.isArray(point.accepted_items)
