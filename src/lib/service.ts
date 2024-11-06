@@ -1,5 +1,6 @@
 import { supabase } from './supabase/client';
 import { HelpRequestAssignmentData, HelpRequestData } from '@/types/Requests';
+import { createClient } from '@/lib/supabase/server';
 
 export const helpRequestService = {
   async createRequest(requestData:HelpRequestData) {
@@ -155,6 +156,14 @@ export const mapService = {
   },
 };
 
+export const townsService = {
+  async getTowns() {
+    const supabase = await getSupabaseClient();
+    const { data, error } = await supabase.from('towns').select('id, name');
+    return data;
+  }
+}
+
 // Add this function to test the connection
 export const testSupabaseConnection = async () => {
   try {
@@ -198,4 +207,14 @@ export const authService = {
   async updateUser(metadata:any) {
     return supabase.auth.updateUser({ ...metadata });
   },
+};
+
+const getSupabaseClient = async () => {
+  if (typeof window === 'undefined') {
+    // Si estamos en el servidor, usa el cliente del servidor
+    return await createClient();
+  } else {
+    // Si estamos en el cliente, usa el cliente del navegador
+    return supabase;
+  }
 };
