@@ -3,7 +3,7 @@ name: Deploy webapp
 on:
   push:
     branches:
-      - development
+      - main
 
 jobs:
   deploy:
