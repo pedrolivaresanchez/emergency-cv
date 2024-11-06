@@ -1,9 +1,10 @@
 import { supabase } from './supabase/client';
-import { HelpRequestAssignmentInsert, HelpRequestData, HelpRequestUpdate } from '@/types/Requests';
+import { Database } from '@/types/database';
+import { HelpRequestAssignmentInsert, HelpRequestUpdate } from '@/types/Requests';
 import { createClient } from '@/lib/supabase/server';
 
 export const helpRequestService = {
-  async createRequest(requestData: HelpRequestData) {
+  async createRequest(requestData: Database['public']['Tables']['help_requests']['Insert']) {
     const { data, error } = await supabase.from('help_requests').insert([requestData]).select();
 
     if (error) throw error;

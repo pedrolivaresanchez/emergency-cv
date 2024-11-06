@@ -5,13 +5,9 @@ import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
-import Map from '@/components/map/map';
-import ReactDOMServer from 'react-dom/server';
+import Map, { PinMapa } from '@/components/map/map';
 import PickupPoint from '@/components/PickupPoint';
 import { useTowns } from '@/context/TownProvider';
-
-const PAIPORTA_LAT_LNG = [-0.41667, 39.42333];
-const DEFAULT_ZOOM = 12;
 
 export default function Mapa() {
   const towns = useTowns();
@@ -19,11 +15,11 @@ export default function Mapa() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<PinMapa[]>([]);
 
-  const updateFilter = (filter, value) => {
+  const updateFilter = (filter: any, value: any) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set(filter, value);
     router.push(`?${params.toString()}`);
@@ -36,7 +32,7 @@ export default function Mapa() {
     acepta: searchParams.get('acepta') || 'todos',
   });
 
-  const changeDataFilter = (type, newFilter) => {
+  const changeDataFilter = (type: any, newFilter: any) => {
     setFiltroData((prev) => ({
       ...prev,
       [type]: newFilter,
@@ -45,23 +41,23 @@ export default function Mapa() {
   };
 
   useEffect(() => {
-    function transformHelpRequestToMarker(request) {
+    function transformHelpRequestToMarker(request: any): PinMapa {
       return {
         urgency: request.urgency,
-        coordinates: [request.longitude ?? 0, request.latitude ?? 0],
-        width: '600px',
-        descriptionHTML: ReactDOMServer.renderToString(
-          <SolicitudCard isHref={true} isEdit={false} towns={towns} caso={request} />,
-        ),
+        latitude: request.latitude ?? 0,
+        longitude: request.longitude ?? 0,
+        id: request.id,
+        popup: <SolicitudCard isHref={true} isEdit={false} towns={towns} caso={request} />,
       };
     }
 
-    function transformPickupRequestToMarker(point) {
+    function transformPickupRequestToMarker(point: any): PinMapa {
       return {
         urgency: point.urgency || 'baja',
-        coordinates: [point.longitude ?? 0, point.latitude ?? 0],
-        width: '600px',
-        descriptionHTML: ReactDOMServer.renderToString(<PickupPoint point={point} />),
+        latitude: point.latitude ?? 0,
+        longitude: point.longitude ?? 0,
+        id: point.id,
+        popup: <PickupPoint point={point} />,
       };
     }
 
@@ -101,7 +97,6 @@ export default function Mapa() {
           const pickupMarkers = pickupData.map(transformPickupRequestToMarker);
           allData.push(...(pickupMarkers || []));
         }
-
         setData(allData);
       } catch (err) {
         console.log('Error general:', err);
@@ -162,7 +157,7 @@ export default function Mapa() {
       </div>
 
       <div className="grid gap-4">
-        <Map markers={data} center={PAIPORTA_LAT_LNG} zoom={DEFAULT_ZOOM} />
+        <Map markers={data} />
       </div>
     </>
   );

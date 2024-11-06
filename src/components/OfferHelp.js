@@ -204,8 +204,11 @@ export default function OfferHelp({
         {/* Datos personales */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="fullName">
+              Nombre completo
+            </label>
             <input
+              id="fullName"
               type="text"
               value={formData.nombre}
               onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
@@ -217,8 +220,11 @@ export default function OfferHelp({
 
         {submitType === 'create' && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="userEmail">
+              Correo electrónico
+            </label>
             <input
+              id="userEmail"
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
