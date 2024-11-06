@@ -10,8 +10,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/EmergencyProvider';
+import { useTowns } from '../../../context/TownProvider';
 
-export default function Solicitudes({ towns }) {
+export default function Solicitudes() {
+  const towns = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -79,7 +81,7 @@ export default function Solicitudes({ towns }) {
         if (filtroData.urgencia !== 'todas') {
           query.eq('urgency', filtroData.urgencia);
         }
-
+        query.neq('status', 'finished');
         // Ejecutar la consulta con paginación
         const { data, count, error } = await query
           .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1)

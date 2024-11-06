@@ -1,12 +1,11 @@
-// components/layout/EmergencyLayout.js
-
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, PropsWithChildren } from 'react';
+// @ts-ignore
 import Sidebar from './Sidebar';
 import Footer from './Footer';
 
-export default function EmergencyLayout({ children }) {
+export default function EmergencyLayout({ children }: PropsWithChildren) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Por defecto abierto
 
   useEffect(() => {
@@ -25,12 +24,14 @@ export default function EmergencyLayout({ children }) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex">
       <Sidebar isOpen={isSidebarOpen} toggle={() => setIsSidebarOpen(!isSidebarOpen)} />
-      <div className={`transition-margin duration-300 ${isSidebarOpen ? 'md:ml-64' : 'ml-0'}`}>
-        <main className="p-4">{children}</main>
+      <div className={`flex flex-col flex-1 transition-margin duration-300 ${isSidebarOpen ? 'md:ml-72' : 'ml-0'}`}>
+        <main className="p-4 flex flex-1  justify-center">
+          <div className="max-w-7xl w-full">{children}</div>
+        </main>
+        <Footer />
       </div>
-      <Footer />
     </div>
   );
 }

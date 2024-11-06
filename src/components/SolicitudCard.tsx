@@ -1,8 +1,38 @@
 import { AlertTriangle, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
+import { useSession } from '@/context/SessionProvider';
+import { HelpRequestAdditionalInfo, HelpRequestData } from '@/types/Requests';
+import { Town } from '@/types/Town';
+import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
+import SolicitudHelpCount from '@/components/SolicitudHelpCount';
 
-export default function SolicitudCard({ caso, towns, isHref }) {
+type SolicitudCardProps = {
+  caso: HelpRequestData;
+  towns: Town[];
+  isHref?: boolean;
+  button?: SolicitudCardButton;
+  isEdit?: boolean;
+};
+
+type SolicitudCardButton = {
+  text: string;
+  link: string;
+};
+
+export default function SolicitudCard({
+  caso,
+  towns,
+  isHref = true,
+  button = { text: 'Ver solicitud', link: '/solicitud/' },
+  isEdit = false,
+}: SolicitudCardProps) {
+  const session = useSession();
+
+  const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
+
+  const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
+  const email = 'email' in additionalInfo ? additionalInfo.email : undefined;
   return (
     <>
       <div
@@ -24,19 +54,20 @@ export default function SolicitudCard({ caso, towns, isHref }) {
             {caso.name || 'Necesita Ayuda'}
           </h3>
           <div>
+            <SolicitudHelpCount id={caso.id} />
             <span className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap mr-2 bg-purple-300`}>
               Referencia: {caso.id}
             </span>
             <span
               className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap ${
-                caso.status === 'pending'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : caso.status === 'in_progress'
-                    ? 'bg-blue-100 text-blue-800'
+                caso.status === 'finished'
+                  ? 'bg-red-100 text-red-800'
+                  : caso.status === 'progress'
+                    ? 'bg-yellow-100 text-yellow-800'
                     : 'bg-green-100 text-green-800'
               }`}
             >
-              {caso.status === 'pending' ? 'Pendiente' : caso.status === 'in_progress' ? 'En proceso' : 'Activo'}
+              {caso.status === 'finished' ? 'Terminada' : caso.status === 'progress' ? 'En proceso' : 'Activo'}
             </span>
           </div>
         </div>
@@ -61,9 +92,9 @@ export default function SolicitudCard({ caso, towns, isHref }) {
               <Calendar className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
               <span className="break-words">
                 <span className="font-semibold">Fecha:</span>{' '}
-                {new Date(caso.created_at).toLocaleDateString() +
+                {new Date(caso.created_at!).toLocaleDateString() +
                   ' ' +
-                  new Date(caso.created_at).toLocaleTimeString([], {
+                  new Date(caso.created_at!).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}
@@ -119,10 +150,10 @@ export default function SolicitudCard({ caso, towns, isHref }) {
                 </span>
               </div>
             )}
-            {caso.additional_info?.special_situations && (
+            {special_situations && (
               <div className="mt-2 bg-gray-50 p-3 rounded">
                 <span className="font-semibold block mb-1">Situaciones especiales:</span>
-                <p className="text-gray-700 break-words">{caso.additional_info.special_situations}</p>
+                <p className="text-gray-700 break-words">{special_situations}</p>
               </div>
             )}
             {caso.number_of_people && (
@@ -134,16 +165,29 @@ export default function SolicitudCard({ caso, towns, isHref }) {
               </div>
             )}
           </div>
-          {isHref && (
-            <Link
-              href={`/solicitud/${caso.id}`}
-              className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto  ${
-                caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
-              }`}
-            >
-              Ver solicitud
-            </Link>
-          )}
+          <div className="flex flex-col sm:flex-row w-full sm:w-auto justify-end gap-2">
+            {session && session.user && session.user.email && session.user.email === email && !isEdit && (
+              <Link
+                href={'/solicitudes/editar/' + caso.id}
+                className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
+                  caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
+                }`}
+              >
+                Editar
+              </Link>
+            )}
+            {isHref && (
+              <Link
+                href={button.link + caso.id}
+                className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
+                  caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
+                }`}
+              >
+                {button.text}
+              </Link>
+            )}
+            <AsignarSolicitudButton helpRequest={caso} />
+          </div>
         </div>
       </div>
     </>

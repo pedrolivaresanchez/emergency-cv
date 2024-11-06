@@ -5,7 +5,7 @@ import { ArrowBigLeft } from 'lucide-react';
 import { authService } from '@/lib/service';
 
 import { PhoneInput } from '@/components/PhoneInput';
-import { formatPhoneNumber } from '@/helpers/format';
+import { formatPhoneNumber } from '@/helpers/utils';
 import { isValidPhone } from '@/helpers/utils';
 
 export default function SignUp({ onSuccessCallback, onBackButtonClicked }) {

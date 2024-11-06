@@ -7,11 +7,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Map from '@/components/map/map';
 import ReactDOMServer from 'react-dom/server';
+import PickupPoint from '@/components/PickupPoint';
+import { useTowns } from '@/context/TownProvider';
 
 const PAIPORTA_LAT_LNG = [-0.41667, 39.42333];
 const DEFAULT_ZOOM = 12;
 
-export default function Mapa({ towns }) {
+export default function Mapa() {
+  const towns = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -30,6 +33,7 @@ export default function Mapa({ towns }) {
     urgencia: searchParams.get('urgencia') || 'todas',
     tipoAyuda: searchParams.get('tipoAyuda') || 'todas',
     pueblo: searchParams.get('pueblo') || 'todos',
+    acepta: searchParams.get('acepta') || 'todos',
   });
 
   const changeDataFilter = (type, newFilter) => {
@@ -46,9 +50,21 @@ export default function Mapa({ towns }) {
         urgency: request.urgency,
         coordinates: [request.longitude ?? 0, request.latitude ?? 0],
         width: '600px',
-        descriptionHTML: ReactDOMServer.renderToString(<SolicitudCard isHref={true} towns={towns} caso={request} />),
+        descriptionHTML: ReactDOMServer.renderToString(
+          <SolicitudCard isHref={true} isEdit={false} towns={towns} caso={request} />,
+        ),
       };
     }
+
+    function transformPickupRequestToMarker(point) {
+      return {
+        urgency: point.urgency || 'baja',
+        coordinates: [point.longitude ?? 0, point.latitude ?? 0],
+        width: '600px',
+        descriptionHTML: ReactDOMServer.renderToString(<PickupPoint point={point} />),
+      };
+    }
+
     async function fetchData() {
       try {
         setLoading(true);
@@ -56,24 +72,37 @@ export default function Mapa({ towns }) {
 
         // Comenzamos la consulta
         const query = supabase.from('help_requests').select('*').eq('type', 'necesita');
-
         if (filtroData.tipoAyuda !== 'todas') {
           query.contains('help_type', [filtroData.tipoAyuda]);
         }
-
         if (filtroData.urgencia !== 'todas') {
           query.eq('urgency', filtroData.urgencia);
         }
 
         const { data, error } = await query.order('created_at', { ascending: false });
 
+        const pickupQuery = supabase.from('collection_points').select('*', { count: 'exact' });
+        if (filtroData.acepta !== 'todos') {
+          query.contains('accepted_items', [filtroData.acepta]);
+        }
+
+        const { data: pickupData, error: pickupError } = await pickupQuery.order('created_at', { ascending: false });
+
+        let allData = [];
         if (error) {
           console.log('Error fetching solicitudes:', error);
-          setData([]);
         } else {
           const markers = data.map(transformHelpRequestToMarker);
-          setData(markers || []);
+          allData.push(...(markers || []));
         }
+        if (pickupError) {
+          console.log('Error fetching pickup points:', pickupError);
+        } else {
+          const pickupMarkers = pickupData.map(transformPickupRequestToMarker);
+          allData.push(...(pickupMarkers || []));
+        }
+
+        setData(allData);
       } catch (err) {
         console.log('Error general:', err);
         setError('Error de conexión.');
@@ -131,6 +160,7 @@ export default function Mapa({ towns }) {
           </select>
         </div>
       </div>
+
       <div className="grid gap-4">
         <Map markers={data} center={PAIPORTA_LAT_LNG} zoom={DEFAULT_ZOOM} />
       </div>

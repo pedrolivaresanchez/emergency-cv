@@ -6,8 +6,11 @@ import { supabase } from '@/lib/supabase/client';
 import { tiposAyudaAcepta } from '@/helpers/constants';
 import Pagination from '@/components/Pagination';
 import { useRouter, useSearchParams } from 'next/navigation';
+import PickupPoint from '@/components/PickupPoint';
+import { useTowns } from '@/context/TownProvider';
 
-export default function Puntos({ towns }) {
+export default function Puntos() {
+  const towns = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -193,70 +196,7 @@ export default function Puntos({ towns }) {
             </button>
           </div>
         ) : (
-          data.map((punto) => (
-            <div key={punto.id} className="bg-white p-4 rounded-lg shadow-lg border-l-4 border-blue-500">
-              <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-blue-600 break-words">{punto.name}</h3>
-                  <div className="flex items-start gap-2 text-gray-600 mt-1">
-                    <MapPin className="h-4 w-4 flex-shrink-0 mt-1" />
-                    <span className="text-sm break-words">{punto.location}</span>
-                  </div>
-                </div>
-                <div>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap mr-2 bg-purple-300`}>
-                    Referencia: {punto.id}
-                  </span>
-                  <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-medium whitespace-nowrap">
-                    {punto.status === 'active' ? 'Activo' : 'Inactivo'}
-                  </span>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mt-4">
-                <div className="break-words">
-                  <span className="font-semibold">Ciudad:</span> {punto.city}
-                </div>
-                {punto.contact_name && (
-                  <div className="break-words">
-                    <span className="font-semibold">Responsable:</span> {punto.contact_name}
-                  </div>
-                )}
-                {punto.contact_phone && (
-                  <div className="break-words">
-                    <span className="font-semibold">Teléfono:</span> {punto.contact_phone}
-                  </div>
-                )}
-                {punto.accepted_items && (
-                  <div className="col-span-1 sm:col-span-2 break-words">
-                    <span className="font-semibold">Acepta:</span>{' '}
-                    {Array.isArray(punto.accepted_items) ? punto.accepted_items.join(', ') : punto.accepted_items}
-                  </div>
-                )}
-                {punto.urgent_needs && (
-                  <div className="col-span-1 sm:col-span-2">
-                    <span className="font-semibold">Necesidades urgentes:</span>
-                    <p className="text-gray-700 mt-1 break-words">{punto.urgent_needs}</p>
-                  </div>
-                )}
-                {punto.schedule && (
-                  <div className="col-span-1 sm:col-span-2">
-                    <span className="font-semibold">Horario:</span>
-                    <p className="text-gray-700 mt-1 break-words">{punto.schedule}</p>
-                  </div>
-                )}
-                {punto.additional_info && (
-                  <div className="col-span-1 sm:col-span-2 bg-gray-50 p-3 rounded">
-                    <span className="font-semibold">Información adicional:</span>
-                    <p className="text-gray-700 mt-1 break-words">
-                      {typeof punto.additional_info === 'string'
-                        ? punto.additional_info
-                        : JSON.stringify(punto.additional_info)}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))
+          data.map((punto) => <PickupPoint key={`pickup-point-${punto.id}`} point={punto} />)
         )}
       </div>
       <div className="flex items-center justify-center">

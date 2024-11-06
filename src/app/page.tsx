@@ -1,7 +1,6 @@
-'use client';
-
 import { MapPin, Clock, AlertCircle, Heart, Users, Package, Thermometer, Cross, Navigation } from 'lucide-react';
 
+// @ts-expect-error
 import PhoneNumberDialog from '@/components/auth/PhoneNumberDialog';
 
 import Image from 'next/image';
@@ -276,10 +275,17 @@ export default function Home() {
                 <div key={point.area} className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow">
                   <h3 className="font-bold text-gray-800 mb-2">{point.area}</h3>
                   <div className="space-y-1 text-sm text-gray-600">
-                    <p>{point.address}</p>
-                    <p>
-                      {point.postalCode} {point.city}
-                    </p>
+                    <a
+                      href={`https://maps.google.com/?q=${point.address}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 group-hover:underline"
+                    >
+                      <Navigation className="h-4 w-4" />
+                      <span className="line-clamp-2">
+                        {point.address} {point.postalCode} {point.city}
+                      </span>
+                    </a>
                     {point.location && (
                       <p className="text-orange-600 font-medium mt-2">Punto de referencia: {point.location}</p>
                     )}
