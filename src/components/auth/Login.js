@@ -112,9 +112,6 @@ export default function Login({ onSuccessCallback }) {
           onBackButtonClicked={() => {
             setIsSignUp(false);
           }}
-          onSuccessCallback={() => {
-            setIsSignUp(false);
-          }}
         />
       )}
     </>

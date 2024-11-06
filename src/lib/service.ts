@@ -1,5 +1,6 @@
 import { supabase } from './supabase/client';
-import { HelpRequestAssignmentData, HelpRequestData } from '@/types/Requests';
+import { HelpRequestAssignmentInsert, HelpRequestData, HelpRequestUpdate } from '@/types/Requests';
+import { createClient } from '@/lib/supabase/server';
 
 export const helpRequestService = {
   async createRequest(requestData: HelpRequestData) {
@@ -8,7 +9,7 @@ export const helpRequestService = {
     if (error) throw error;
     return data[0];
   },
-  async editRequest(requestData: any, id: any) {
+  async editRequest(requestData: HelpRequestUpdate, id: number) {
     const { data, error } = await supabase.from('help_requests').update(requestData).eq('id', id).select();
     if (error) throw error;
     return data;
@@ -20,11 +21,23 @@ export const helpRequestService = {
     return data;
   },
 
-  async assign(requestData: HelpRequestAssignmentData) {
+  async getAssignments(id: number) {
+    const { data, error } = await supabase.from('help_request_assignments').select('*').eq('help_request_id', id);
+
+    if (error) throw error;
+    return data;
+  },
+
+  async assign(requestData: HelpRequestAssignmentInsert) {
     const { data, error } = await supabase.from('help_request_assignments').insert([requestData]).select();
 
     if (error) throw error;
     return data[0];
+  },
+  async unassign(id: number) {
+    const { error } = await supabase.from('help_request_assignments').delete().eq('id', id);
+
+    if (error) throw error;
   },
 
   async getByType(type: any) {
@@ -155,6 +168,15 @@ export const mapService = {
   },
 };
 
+export const townsService = {
+  async getTowns() {
+    const supabase = await getSupabaseClient();
+    const { data, error } = await supabase.from('towns').select();
+    if (error) throw error;
+    return data;
+  },
+};
+
 // Add this function to test the connection
 export const testSupabaseConnection = async () => {
   try {
@@ -177,7 +199,7 @@ export const authService = {
   async getSessionUser() {
     return supabase.auth.getUser();
   },
-  async signUp(email: any, password: any, nombre: any, telefono: any) {
+  async signUp(email: any, password: any, nombre: any, telefono: any, privacyPolicy: boolean) {
     return supabase.auth.signUp({
       email,
       password,
@@ -185,6 +207,7 @@ export const authService = {
         data: {
           nombre,
           telefono,
+          privacyPolicy,
         },
       },
     });
@@ -192,10 +215,20 @@ export const authService = {
   async signOut() {
     return supabase.auth.signOut();
   },
-  async signIn(email: any, password: any) {
+  async signIn(email: string, password: string) {
     return supabase.auth.signInWithPassword({ email, password });
   },
   async updateUser(metadata: any) {
     return supabase.auth.updateUser({ ...metadata });
   },
+};
+
+const getSupabaseClient = async () => {
+  if (typeof window === 'undefined') {
+    // Si estamos en el servidor, usa el cliente del servidor
+    return await createClient();
+  } else {
+    // Si estamos en el cliente, usa el cliente del navegador
+    return supabase;
+  }
 };
