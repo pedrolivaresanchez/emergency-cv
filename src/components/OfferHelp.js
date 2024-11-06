@@ -31,17 +31,17 @@ export default function OfferHelp({
   const [formData, setFormData] = useState({
     nombre: data.name || '',
     telefono: data.contact_info || '',
-    email: data.additional_info.email || '',
+    email: data.additional_info?.email || '',
     ubicacion: data.location || '',
     tiposAyuda: data.help_type || [],
-    vehiculo: data.resources.vehicle || '',
-    disponibilidad: data.resources.availability || [],
-    radio: data.resources.radius || 1,
-    experiencia: data.additional_info.experience || '',
+    vehiculo: data.resources?.vehicle || '',
+    disponibilidad: data.resources?.availability || [],
+    radio: data.resources?.radius || 1,
+    experiencia: data.additional_info?.experience || '',
     comentarios: data.description || '',
     aceptaProtocolo: submitType ? true : false,
-    pueblo: submitType ? data.town_id : town ? town.id : '',
-    status: data.status,
+    pueblo: submitType ? data?.town_id : town ? town.id : '',
+    status: data?.status,
   });
 
   const [status, setStatus] = useState({
@@ -244,7 +244,7 @@ export default function OfferHelp({
             Ubicación exacta <span className="text-red-500">*</span>
           </label>
           <AddressAutocomplete
-            initialValue={data.location}
+            initialValue={data?.location}
             onSelect={(address) => {
               setFormData({
                 ...formData,
