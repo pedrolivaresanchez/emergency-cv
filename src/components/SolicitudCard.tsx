@@ -4,19 +4,20 @@ import Link from 'next/link';
 import { useSession } from '@/context/SessionProvider';
 import { HelpRequestAdditionalInfo, HelpRequestData } from '@/types/Requests';
 import { Town } from '@/types/Town';
+import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
 
 type SolicitudCardProps = {
-  caso: HelpRequestData,
-  towns: Town[],
-  isHref?: boolean,
-  button?:SolicitudCardButton,
-  isEdit?: boolean,
+  caso: HelpRequestData;
+  towns: Town[];
+  isHref?: boolean;
+  button?: SolicitudCardButton;
+  isEdit?: boolean;
 };
 
 type SolicitudCardButton = {
   text: string;
   link: string;
-}
+};
 
 export default function SolicitudCard({
   caso,
@@ -24,7 +25,7 @@ export default function SolicitudCard({
   isHref = true,
   button = { text: 'Ver solicitud', link: '/solicitud/' },
   isEdit = false,
-}:SolicitudCardProps) {
+}: SolicitudCardProps) {
   const session = useSession();
 
   const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
@@ -163,20 +164,16 @@ export default function SolicitudCard({
             )}
           </div>
           <div className="flex flex-col sm:flex-row w-full sm:w-auto justify-end gap-2">
-            {session &&
-              session.user &&
-              session.user.email &&
-              session.user.email === email &&
-              !isEdit && (
-                <Link
-                  href={'/solicitudes/editar/' + caso.id}
-                  className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
-                    caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
-                  }`}
-                >
-                  Editar
-                </Link>
-              )}
+            {session && session.user && session.user.email && session.user.email === email && !isEdit && (
+              <Link
+                href={'/solicitudes/editar/' + caso.id}
+                className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
+                  caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
+                }`}
+              >
+                Editar
+              </Link>
+            )}
             {isHref && (
               <Link
                 href={button.link + caso.id}
@@ -187,6 +184,7 @@ export default function SolicitudCard({
                 {button.text}
               </Link>
             )}
+            <AsignarSolicitudButton helpRequest={caso} />
           </div>
         </div>
       </div>
