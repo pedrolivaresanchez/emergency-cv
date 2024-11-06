@@ -1,4 +1,4 @@
-import { Calendar, HeartHandshake, MapPin, Phone, User } from 'lucide-react';
+import { Calendar, HeartHandshake, MapPin, Phone, Truck, User } from 'lucide-react';
 import { useSession } from '../context/SessionProvider';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
