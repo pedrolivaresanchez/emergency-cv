@@ -4,12 +4,14 @@ import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { ArrowLeft } from 'lucide-react';
 import OfferCard from '../../../components/OfferCard';
+import { useTowns } from '../../../context/TownProvider';
 
 export default function CasoDetalle() {
   const params = useParams();
   const { id } = params;
   const [caso, setCaso] = useState(null);
   const [loading, setLoading] = useState(true);
+  const towns = useTowns();
   useEffect(() => {
     async function fetchCaso() {
       const { data, error } = await supabase.from('help_requests').select('*').eq('id', id).single();
@@ -58,7 +60,7 @@ export default function CasoDetalle() {
           Volver
         </button>
       </div>
-      <OfferCard key={caso.id} caso={caso} />
+      <OfferCard towns={towns} key={caso.id} caso={caso} />
     </div>
   );
 }
