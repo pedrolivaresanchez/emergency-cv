@@ -13,15 +13,6 @@ export type HelpRequestAdditionalInfo = {
   email?: string;
 };
 
-export type HelpRequestAssignment = {
-  id: number;
-  help_request_id: number;
-  phone_number: string;
-  people_count: number | null;
-  assigned_at: string | null;
-  user_id: string | null;
-};
-
 export type CollectionPointType = 'permanente' | 'temporal';
 export type CollectionPointStatus = 'active' | 'inactive';
 export type CollectionPointData = Database['public']['Tables']['collection_points']['Row'];
