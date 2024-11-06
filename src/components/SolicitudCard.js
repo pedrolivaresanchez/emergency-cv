@@ -2,16 +2,15 @@ import { AlertTriangle, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } f
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
 import { useSession } from '../context/SessionProvider';
-import { useTowns } from '../context/TownProvider';
 
 export default function SolicitudCard({
   caso,
   isHref,
   button = { text: 'Ver solicitud', link: '/solicitud/' },
   isEdit = false,
+  towns,
 }) {
   const session = useSession();
-  const towns = useTowns();
   return (
     <>
       <div
@@ -56,7 +55,7 @@ export default function SolicitudCard({
               <div className="flex items-start gap-2">
                 <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                 <span className="break-words">
-                  <span className="font-semibold">Pueblo:</span> {towns[caso.town_id - 1]?.name || ''}
+                  <span className="font-semibold">Pueblo:</span> {towns[caso.town_id - 1].name || ''}
                 </span>
               </div>
             )}
