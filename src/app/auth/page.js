@@ -18,7 +18,7 @@ export default function AuthPage() {
   });
 
   return (
-    <section className="m-16">
+    <section className="mx-6 lg:m-16">
       <Login onSuccessCallback={() => (window.location.href = '/')} />
     </section>
   );

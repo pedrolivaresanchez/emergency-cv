@@ -28,7 +28,7 @@ export default function EmergencyLayout({ children }) {
     <div className="min-h-screen bg-gray-100 flex">
       <Sidebar isOpen={isSidebarOpen} toggle={() => setIsSidebarOpen(!isSidebarOpen)} />
       <div className={`flex flex-col flex-1 transition-margin duration-300 ${isSidebarOpen ? 'md:ml-72' : 'ml-0'}`}>
-        <main className="p-4 flex flex-1  justify-center">
+        <main className="p-4 flex flex-1 justify-center items-center lg:items-start">
           <div className="max-w-7xl w-full">{children}</div>
         </main>
         <Footer />
