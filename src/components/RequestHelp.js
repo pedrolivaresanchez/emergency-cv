@@ -8,7 +8,7 @@ import { isValidPhone } from '@/helpers/utils';
 import { helpRequestService } from '@/lib/service';
 
 import { PhoneInput } from '@/components/PhoneInput';
-import { formatPhoneNumber } from '@/helpers/format';
+import { formatPhoneNumber } from '@/helpers/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTowns } from '../context/TownProvider';
