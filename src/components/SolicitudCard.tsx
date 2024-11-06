@@ -2,7 +2,9 @@ import { AlertTriangle, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } f
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAdditionalInfo, HelpRequestData } from '@/types/Requests';
+import { helpRequestService } from '@/lib/service';
+import { useQuery } from '@tanstack/react-query';
+import { HelpRequestAdditionalInfo, HelpRequestData, HelpRequestAssignmentData } from '@/types/Requests';
 import { Town } from '@/types/Town';
 import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
 import SolicitudHelpCount from '@/components/SolicitudHelpCount';
@@ -30,6 +32,19 @@ export default function SolicitudCard({
   const session = useSession();
 
   const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
+
+  const {
+    data: assignments,
+    isLoading,
+    error,
+  } = useQuery<HelpRequestAssignmentData[]>({
+    queryKey: ['help_request_assignments', { id: caso.id }],
+    queryFn: () => helpRequestService.getAssignments(caso.id),
+  });
+
+  if (error || isLoading) return <></>;
+
+  const userAssignment = assignments?.find((x) => x.user_id === session.user?.id);
 
   const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
   const email = 'email' in additionalInfo ? additionalInfo.email : undefined;
@@ -104,7 +119,8 @@ export default function SolicitudCard({
               <div className="flex items-start gap-2">
                 <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                 <span className="break-words">
-                  <span className="font-semibold">Contacto:</span> {caso.contact_info}
+                  <span className="font-semibold">Contacto:</span>{' '}
+                  {!!userAssignment ? caso.contact_info : 'Ayuda a esta persona para ver sus datos de contacto'}
                 </span>
               </div>
             )}
@@ -186,7 +202,7 @@ export default function SolicitudCard({
                 {button.text}
               </Link>
             )}
-            <AsignarSolicitudButton helpRequest={caso} />
+            {userAssignment && <AsignarSolicitudButton helpRequest={caso} userAssignment={userAssignment} />}
           </div>
         </div>
       </div>
