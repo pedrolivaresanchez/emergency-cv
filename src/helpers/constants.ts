@@ -7,6 +7,7 @@ export const tiposAyudaOptions = {
   medica: 'Asistencia médica',
   psicologico: 'Apoyo psicológico',
   logistico: 'Apoyo logístico',
+  otros: 'Ayuda general'
 };
 
 export const tiposAyudaAcepta = [
@@ -18,7 +19,7 @@ export const tiposAyudaAcepta = [
   "Medicamentos"
 ]
 
-export const mapToIdAndLabel = (data) => {
+export const mapToIdAndLabel = (data:any) => {
   return Object.keys(data).map((key) => ({
     id: key,
     label: data[key],
