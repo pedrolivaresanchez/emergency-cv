@@ -1,16 +1,38 @@
 import { AlertTriangle, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
-import { useSession } from '../context/SessionProvider';
+import { useSession } from '@/context/SessionProvider';
+import { HelpRequestAdditionalInfo, HelpRequestData } from '@/types/Requests';
+import { Town } from '@/types/Town';
+import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
+import SolicitudHelpCount from '@/components/SolicitudHelpCount';
+
+type SolicitudCardProps = {
+  caso: HelpRequestData;
+  towns: Town[];
+  isHref?: boolean;
+  button?: SolicitudCardButton;
+  isEdit?: boolean;
+};
+
+type SolicitudCardButton = {
+  text: string;
+  link: string;
+};
 
 export default function SolicitudCard({
   caso,
-  isHref,
+  towns,
+  isHref = true,
   button = { text: 'Ver solicitud', link: '/solicitud/' },
   isEdit = false,
-  towns,
-}) {
+}: SolicitudCardProps) {
   const session = useSession();
+
+  const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
+
+  const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
+  const email = 'email' in additionalInfo ? additionalInfo.email : undefined;
   return (
     <>
       <div
@@ -32,6 +54,7 @@ export default function SolicitudCard({
             {caso.name || 'Necesita Ayuda'}
           </h3>
           <div>
+            <SolicitudHelpCount id={caso.id} />
             <span className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap mr-2 bg-purple-300`}>
               Referencia: {caso.id}
             </span>
@@ -55,7 +78,7 @@ export default function SolicitudCard({
               <div className="flex items-start gap-2">
                 <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                 <span className="break-words">
-                  <span className="font-semibold">Pueblo:</span> {towns[caso.town_id - 1].name || ''}
+                  <span className="font-semibold">Pueblo:</span> {towns[caso.town_id - 1]?.name || ''}
                 </span>
               </div>
             )}
@@ -69,9 +92,9 @@ export default function SolicitudCard({
               <Calendar className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
               <span className="break-words">
                 <span className="font-semibold">Fecha:</span>{' '}
-                {new Date(caso.created_at).toLocaleDateString() +
+                {new Date(caso.created_at!).toLocaleDateString() +
                   ' ' +
-                  new Date(caso.created_at).toLocaleTimeString([], {
+                  new Date(caso.created_at!).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}
@@ -127,10 +150,10 @@ export default function SolicitudCard({
                 </span>
               </div>
             )}
-            {caso.additional_info?.special_situations && (
+            {special_situations && (
               <div className="mt-2 bg-gray-50 p-3 rounded">
                 <span className="font-semibold block mb-1">Situaciones especiales:</span>
-                <p className="text-gray-700 break-words">{caso.additional_info.special_situations}</p>
+                <p className="text-gray-700 break-words">{special_situations}</p>
               </div>
             )}
             {caso.number_of_people && (
@@ -143,20 +166,16 @@ export default function SolicitudCard({
             )}
           </div>
           <div className="flex flex-col sm:flex-row w-full sm:w-auto justify-end gap-2">
-            {session &&
-              session.user &&
-              session.user.email &&
-              session.user.email === caso.additional_info.email &&
-              !isEdit && (
-                <Link
-                  href={'/solicitudes/editar/' + caso.id}
-                  className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
-                    caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
-                  }`}
-                >
-                  Editar
-                </Link>
-              )}
+            {session && session.user && session.user.email && session.user.email === email && !isEdit && (
+              <Link
+                href={'/solicitudes/editar/' + caso.id}
+                className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
+                  caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
+                }`}
+              >
+                Editar
+              </Link>
+            )}
             {isHref && (
               <Link
                 href={button.link + caso.id}
@@ -167,6 +186,7 @@ export default function SolicitudCard({
                 {button.text}
               </Link>
             )}
+            <AsignarSolicitudButton helpRequest={caso} />
           </div>
         </div>
       </div>
