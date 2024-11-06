@@ -1,30 +1,46 @@
-FROM node:18-alpine
-ARG CACHE_BURST=1
+# Build stage
+FROM node:18-alpine AS builder
+
+WORKDIR /app
 
 ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-ENV NODE_ENV="development" \
+# Build-time environment variables
+ENV NEXT_TELEMETRY_DISABLED=1 \
+    NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL \
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+COPY package.json package-lock.json ./
+
+RUN npm ci
+
+COPY . .
+
+RUN rm -rf .next
+
+RUN npm run build
+
+# Production stage
+FROM node:18-alpine AS runner
+
+WORKDIR /app
+
+# Run-time environment variables
+ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL \
     NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-WORKDIR /app
+COPY --from=builder /app/next.config.mjs ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
-COPY package*.json ./
-
-# Install ALL dependencies
-RUN npm install
-
-COPY . .
-
-RUN npm run build
-
-# Switch to production after build
-ENV NODE_ENV="production"
-
-# Clean up development dependencies
-RUN npm prune --production
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+USER nextjs
 
 EXPOSE 3000
 

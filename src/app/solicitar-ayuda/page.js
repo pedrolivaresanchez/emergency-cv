@@ -12,11 +12,13 @@ import { PhoneInput } from '@/components/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useSession } from '../../context/SessionProvider';
 
 export default function SolicitarAyuda() {
   const router = useRouter();
+  const session = useSession();
   const [formData, setFormData] = useState({
-    nombre: '',
+    nombre: session.user.user_metadata.full_name || '',
     ubicacion: '',
     coordinates: null,
     tiposAyuda: [],
@@ -24,10 +26,10 @@ export default function SolicitarAyuda() {
     descripcion: '',
     urgencia: 'alta',
     situacionEspecial: '',
-    contacto: '',
+    contacto: session.user.user_metadata.telefono || '',
     consentimiento: false,
     pueblo: '',
-    email: '',
+    email: session.user.user_metadata.email || '',
   });
 
   const [status, setStatus] = useState({

@@ -10,14 +10,7 @@ export const tiposAyudaOptions = {
   otros: 'Ayuda general'
 };
 
-export const tiposAyudaAcepta = [
-  "Alimentos",
-  "Ropa",
-  "Mantas",
-  "Agua",
-  "Productos de higiene",
-  "Medicamentos"
-]
+export const tiposAyudaAcepta = ['Alimentos', 'Ropa', 'Mantas', 'Agua', 'Productos de higiene', 'Medicamentos'];
 
 export const mapToIdAndLabel = (data:any) => {
   return Object.keys(data).map((key) => ({
