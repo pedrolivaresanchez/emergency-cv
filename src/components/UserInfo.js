@@ -8,7 +8,7 @@ export default function UserProfile() {
   const handleLogout = async () => {
     const response = await authService.signOut();
     if (!response.error) {
-			window.location.href = '/';
+      window.location.href = '/';
     }
   };
 
