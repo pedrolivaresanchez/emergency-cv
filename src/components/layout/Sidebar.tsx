@@ -29,9 +29,9 @@ import { helpRequestService } from '@/lib/service';
 
 type SidebarProps = {
   isOpen: boolean;
-  toggle: () => void;
+  toggleAction: () => void;
 };
-export default function Sidebar({ isOpen, toggle }: SidebarProps) {
+export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const session = useSession();
@@ -169,11 +169,11 @@ export default function Sidebar({ isOpen, toggle }: SidebarProps) {
   return (
     <>
       {/* Quitamos el overlay con fondo negro */}
-      {isOpen && <div className="fixed inset-0 z-20 md:hidden" onClick={toggle} />}
+      {isOpen && <div className="fixed inset-0 z-20 md:hidden" onClick={toggleAction} />}
 
       {/* Toggle button for mobile */}
       <button
-        onClick={toggle}
+        onClick={toggleAction}
         className="fixed top-4 left-4 z-30 md:hidden bg-white p-2 rounded-lg shadow-lg hover:bg-gray-100"
         aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
       >
@@ -226,7 +226,7 @@ export default function Sidebar({ isOpen, toggle }: SidebarProps) {
                     key={item.path}
                     onClick={() => {
                       router.push(item.path);
-                      if (window.innerWidth < 768) toggle();
+                      if (window.innerWidth < 768) toggleAction();
                     }}
                     className={`w-full text-left transition-colors ${
                       item.isHome
@@ -259,7 +259,7 @@ export default function Sidebar({ isOpen, toggle }: SidebarProps) {
 
         {/* Toggle button for desktop */}
         <button
-          onClick={toggle}
+          onClick={toggleAction}
           className="hidden md:flex absolute -right-12 top-4 bg-white p-2 rounded-r-lg shadow-md
             hover:bg-gray-50 focus:outline-none group"
           aria-label={isOpen ? 'Contraer menú' : 'Expandir menú'}
