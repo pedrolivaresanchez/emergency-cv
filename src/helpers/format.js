@@ -29,7 +29,9 @@ export const getMarkerColorBySolicitud = (solicitud) => {
   }
 };
 export const getMarkerDescriptionBySolicitudAndTowns = (solicitud, towns) => {
-  return ReactDOMServer.renderToString(<SolicitudCard key={solicitud.id} caso={solicitud} towns={towns} />);
+  return ReactDOMServer.renderToString(
+    <SolicitudCard key={solicitud.id} caso={solicitud} towns={towns} showEdit={false} showLink={true} />,
+  );
 };
 
 export const getMarkerByPuntoDeRecogida = (ptoDeRecogida) => {

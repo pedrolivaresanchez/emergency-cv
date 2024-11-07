@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { ArrowLeft } from 'lucide-react';
 import SolicitudCard from '@/components/SolicitudCard';
-import { useTowns } from '../../../context/TownProvider';
+import { useTowns } from '@/context/TownProvider';
 
 export default function CasoDetalle() {
   const params = useParams();
@@ -60,7 +60,7 @@ export default function CasoDetalle() {
           Volver
         </button>
       </div>
-      <SolicitudCard key={caso.id} caso={caso} towns={towns} />
+      <SolicitudCard key={caso.id} caso={caso} towns={towns} showLink={false} showEdit={true} />
     </div>
   );
 }

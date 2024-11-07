@@ -1,8 +1,8 @@
-import { AlertTriangle, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
+import { AlertTriangle, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAdditionalInfo, HelpRequestData, HelpRequestAssignmentData } from '@/types/Requests';
+import { HelpRequestAdditionalInfo, HelpRequestData } from '@/types/Requests';
 import { Town } from '@/types/Town';
 import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
 import SolicitudHelpCount from '@/components/SolicitudHelpCount';
@@ -11,17 +11,17 @@ import PhoneInfo from '@/components/PhoneInfo.js';
 type SolicitudCardProps = {
   caso: HelpRequestData;
   towns: Town[];
-  isHref?: boolean;
-  isEdit?: boolean;
+  showLink?: boolean;
+  showEdit?: boolean;
 };
 
-export default function SolicitudCard({ caso, towns, isHref = true, isEdit = false }: SolicitudCardProps) {
+export default function SolicitudCard({ caso, towns, showLink = true, showEdit = false }: SolicitudCardProps) {
   const session = useSession();
-
   const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
-
   const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
-  const email = 'email' in additionalInfo ? additionalInfo.email : undefined;
+  const isMyRequest = session.user?.id && session.user.id === caso.user_id;
+  const canEdit = isMyRequest; //TODO: support admin editing
+
   return (
     <div key={caso.id} className="rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5">
       <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center justify-between border-b border-gray-900/10 px-6 py-4">
@@ -160,7 +160,7 @@ export default function SolicitudCard({ caso, towns, isHref = true, isEdit = fal
           </div>
         </div>
         <div className="flex flex-col pt-4 sm:pt-0 sm:flex-row w-full sm:w-auto justify-end gap-2">
-          {session && session.user && session.user.email && session.user.email === email && !isEdit && (
+          {canEdit && showEdit && (
             <Link
               href={'/solicitudes/editar/' + caso.id}
               className={`w-full rounded-xl text-center px-4 py-2 font-semibold text-white sm:w-auto ${
@@ -170,7 +170,7 @@ export default function SolicitudCard({ caso, towns, isHref = true, isEdit = fal
               Editar
             </Link>
           )}
-          {isHref && (
+          {showLink && (
             <Link
               href={'/solicitud/' + caso.id}
               className={`w-full rounded-xl text-center px-4 py-2 font-semibold text-white sm:w-auto bg-gray-700 hover:bg-gray-800 transition-all`}
