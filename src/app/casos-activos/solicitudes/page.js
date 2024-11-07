@@ -185,7 +185,7 @@ export default function Solicitudes() {
             </button>
           </div>
         ) : (
-          data.map((caso) => <SolicitudCard format="small" showLink={true} isHref={true} towns={towns} key={caso.id} caso={caso} />)
+          data.map((caso) => <SolicitudCard format="small" showLink={true} showEdit={true} key={caso.id} caso={caso} />)
         )}
       </div>
       <div className="flex items-center justify-center">
