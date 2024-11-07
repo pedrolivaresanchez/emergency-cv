@@ -46,33 +46,69 @@ Este mensaje indica que se han añadido instrucciones de instalación local en e
 
 ¡Gracias por contribuir! Tu ayuda hace una gran diferencia para el proyecto.
 
-<br/>
-
 ## Desarrollo local - levantar db de desarrollo local
 
 ### Pre requisitos
 
-- [docker](https://docs.docker.com/engine/install/) y [docker compose](https://docs.docker.com/compose/install/)
-- [cli de supabase](https://supabase.com/docs/guides/local-development/cli/getting-started)
+- [Docker](https://docs.docker.com/engine/install/) y [Docker Compose](https://docs.docker.com/compose/install/)
+- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started)
 
-### Instalar self hosted supabase
+Si ya tienes cualquiera de los dos, **actualizalos para evitar errores**.
 
-```
+Si usas docker desktop en Windows, esta es la configuración que deberías tener.
+<img src="https://supabase.com/docs/_next/image?url=%2Fdocs%2Fimg%2Fguides%2Fcli%2Fdocker-win.png&w=3840&q=75&dpl=dpl_EU6MXvnLKJuwyo4VfbBx9GiJt9Qx" style="margin: 10px 0px; width: 55rem;">
+
+### Iniciar supabase en local
+
+Entramos en la carpeta del repositorio
+
+```bash
 cd ${DIRECTORIO_DE_EMERGENCY_CV}
-supabase login
-supabase init
-supabase link --project-ref nmvcsenkfqbdlfdtiqdo
+```
+
+Iniciamos la base de datos (**tener docker encendido**)
+
+```bash
 supabase start
 ```
 
-### Para hacer cambios en el schema
+Si no vemos las tablas ni los datos de ejemplo cargados podemos refrescar la base de datos con:
 
-- Editar como queremos que sea en local (studio de supabase)
-- Ejecutar el comando:
-
-```
-// nombre de la migracion es indicativo, no tiene nigun efecto
-supabase db diff -f ${NOMBRE_DE_LA_MIGRACION}
+```bash
+supabase db reset
 ```
 
-- Esto generara una migracion en el local, hay que añadir esto al PR y github actions lo pondra en produccion.
+### Hacer cambios en el schema
+
+#### Crear migracion automatica
+
+Nos interesa usar esta opción, cuando queremos **editar la base de datos desde el studio web**
+
+Cuando acabemos de realizar los cambios en el studio web, ejecutaremos el siguiente comando para generar la migration.
+
+```bash
+supabase db diff -f nombre_migracion
+```
+
+#### Crear migración manual
+
+Nos interesa usar esta opción, cuando queremos **editar la base de datos con codigo SQL manual**.
+
+Primero, creamos la el archivo migration con
+
+```bash
+supabase migration new nombre_migracion
+```
+
+Se creara un **nuevo fichero** con el nombre que hemos usado **en supabase/migrations**
+
+En ese archivo añadiremos todo el código SQL que necesitemos
+
+Si queremos visualizar nuestros cambios en local, podemos usar
+
+```bash
+supabase db reset
+```
+
+<br>
+La migration que generemos, la añadiremos en el PR.
