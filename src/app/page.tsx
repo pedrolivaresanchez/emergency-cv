@@ -159,10 +159,10 @@ export default function Home() {
       priority: 'high',
     },
     {
-      title: 'Personas Desaparecidas',
-      description: 'Reportar o buscar personas',
+      title: 'Desaparecidos y Extraviados',
+      description: 'Reportar o buscar Personas, animales y vehículos',
       icon: Users,
-      path: 'https://desaparecidosdana.pythonanywhere.com/',
+      path: '/personas-animales-desaparecidos',
       color: 'purple',
       priority: 'high',
     },

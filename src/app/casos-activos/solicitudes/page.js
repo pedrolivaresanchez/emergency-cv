@@ -9,7 +9,7 @@ import OfferHelp from '@/components/OfferHelp';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Modal from '@/components/Modal';
-import { useModal } from '@/context/EmergencyProvider';
+import { useModal } from '@/context/ModalProvider';
 import { useTowns } from '@/context/TownProvider';
 
 const MODAL_NAME = 'solicitudes';

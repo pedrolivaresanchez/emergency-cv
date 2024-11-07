@@ -84,7 +84,8 @@ export function FormRenderer({
               className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
             />
             <p className="mt-1 text-sm text-gray-500">
-              {isUserLoggedIn ? 'Se utilizará para que puedas eliminar o editar la información de tu solicitud'
+              {isUserLoggedIn
+                ? 'Se utilizará para que puedas eliminar o editar la información de tu solicitud'
                 : 'Se utilizará para que puedas actualizar tu solicitud y marcarla como completada. Para realizar cambios, deberás registrarte con el mismo email'}
             </p>
           </div>
