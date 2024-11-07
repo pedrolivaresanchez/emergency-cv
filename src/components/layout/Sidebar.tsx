@@ -39,15 +39,17 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
   const userId = session.user?.id;
 
   const { data: requests } = useQuery<HelpRequestData[]>({
-    queryKey: ['help_requests', { user_id: userId }],
+    queryKey: ['help_requests', { user_id: userId, type: 'necesita' }],
     queryFn: () => helpRequestService.getRequestsByUser(userId),
   });
   const { data: offers } = useQuery<HelpRequestData[]>({
-    queryKey: ['help_requests', { user_id: userId }],
+    queryKey: ['help_requests', { user_id: userId, type: 'ofrece' }],
     queryFn: () => helpRequestService.getOffersByUser(userId),
   });
   const hasRequests = (requests?.length ?? 0) > 0;
   const hasOffers = (offers?.length ?? 0) > 0;
+
+  console.log(offers);
 
   const menuItems = [
     {
