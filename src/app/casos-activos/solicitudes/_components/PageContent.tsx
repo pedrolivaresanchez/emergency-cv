@@ -52,8 +52,8 @@ export function PageContent({ currentCount, data, filters, towns }: PageContentP
     updateFilterAndUrlParams('currentPage', newPage);
   }
 
-  const handleVoluntariosChange: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
-    updateFilterAndUrlParams('soloSinVoluntarios', e.target.checked);
+  const handleVoluntariosChange = useCallback((state: boolean) => {
+    updateFilterAndUrlParams('soloSinVoluntarios', state);
   }, []);
 
   return (
