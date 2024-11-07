@@ -16,6 +16,38 @@ export default function Login({ onSuccessCallback }) {
     error: null,
     success: false,
   });
+  const [isPrivacyAccepted, setPrivacyAccepted] = useState(true);
+
+  /**
+   * Updates privacy policy of user
+   * @param {boolean} value
+   */
+  const updatePrivacyPolicy = async (value) => {
+    const { data: session, error: errorGettingUser } = await authService.getSessionUser();
+
+    if (!session.user || errorGettingUser) {
+      throw new Error('Error a la hora de obtener el usuario');
+    }
+
+    const metadata = session.user.user_metadata;
+    const metadataUpdated = { ...metadata, privacyPolicy: value };
+
+    const { error: updateUserError } = await authService.updateUser({
+      data: metadataUpdated,
+    });
+
+    if (updateUserError) {
+      throw new Error('Error a la hora de actualizar el usuario');
+    }
+  };
+
+  const getUserPrivacyPolicy = async () => {
+    const { data: session, error: errorGettingUser } = await authService.getSessionUser();
+    if (!session.user || errorGettingUser) {
+      throw new Error('Error a la hora de obtener el usuario');
+    }
+    return session.user.user_metadata.privacyPolicy;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,6 +62,21 @@ export default function Login({ onSuccessCallback }) {
     const response = await authService.signIn(formData.email, formData.password);
     if (response.error) {
       setStatus({ isSubmitting: false, error: 'El email o contraseña son inválidos', success: false });
+      return;
+    }
+
+    if (formData.privacyPolicy && !isPrivacyAccepted) {
+      await updatePrivacyPolicy(true);
+      setPrivacyAccepted(true);
+    }
+
+    const privacyPolicy = await getUserPrivacyPolicy();
+
+    if (!privacyPolicy) {
+      setPrivacyAccepted(false);
+      await authService.signOut();
+      setStatus({ isSubmitting: false, error: null, success: false });
+
       return;
     }
 
