@@ -16,8 +16,8 @@ export default function PersonasAnimalesDesaparecidos() {
       {/* Tarjeta grande para información */}
       <div className="bg-white p-8 rounded-b-lg shadow mb-8">
         <p className="text-gray-700 text-lg">
-          En esta página puedes acceder a diferentes herramientas externas para encontrar personas, animales y vehículos desaparecidos. 
-          Selecciona la opción que necesitas para más información y para reportar un caso o buscar ayuda.
+          En esta página puedes acceder a diferentes herramientas externas para encontrar personas, animales y vehículos
+          desaparecidos. Selecciona la opción que necesitas para más información y para reportar un caso o buscar ayuda.
         </p>
       </div>
 

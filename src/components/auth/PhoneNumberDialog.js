@@ -46,7 +46,7 @@ const PhoneForm = ({ onSubmit }) => {
   );
 
   const handleChange = useCallback((phoneNumber) => {
-    setFormData((formData) => ({ ...formData, phoneNumber }))
+    setFormData((formData) => ({ ...formData, phoneNumber }));
   }, []);
 
   return (
@@ -65,10 +65,10 @@ const PhoneForm = ({ onSubmit }) => {
               Tu número de teléfono no será usado con ningún otro propósito ni compartido con terceras personas.
             </p>
           </div>
-          
+
           {/* PHONE NUMBER */}
           <PhoneInput onChange={handleChange} phoneNumber={formData.phoneNumber} />
-          
+
           {/* PRIVACY POLICY */}
           <div className="flex gap-2 items-start lg:items-center">
             <input
