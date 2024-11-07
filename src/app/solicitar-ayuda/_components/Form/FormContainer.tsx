@@ -207,6 +207,7 @@ export function FormContainer() {
   return (
     <FormRenderer
       formData={formData}
+      isUserLoggedIn={Boolean(session?.user)}
       handleConsentChange={handleInputElementChange}
       handleEmailChange={handleInputElementChange}
       handleAddressSelection={handleAddressSelection}
