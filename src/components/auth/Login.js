@@ -48,13 +48,11 @@ export default function Login({ onSuccessCallback }) {
       throw new Error('Error a la hora de obtener el usuario');
     }
     return session.user.user_metadata.privacyPolicy;
-    
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-  
     setStatus({ isSubmitting: true, error: null, success: false });
 
     if (!isPrivacyAccepted) {
@@ -69,14 +67,12 @@ export default function Login({ onSuccessCallback }) {
       return;
     }
 
-    const response = await authService.signIn(formData.email, formData.password); 
-
+    const response = await authService.signIn(formData.email, formData.password);
 
     if (response.error) {
       setStatus({ isSubmitting: false, error: 'El email o contraseña son inválidos', success: false });
       return;
     }
-  
 
     if (formData.privacyPolicy && !isPrivacyAccepted) {
       await updatePrivacyPolicy(true);

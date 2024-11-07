@@ -22,6 +22,34 @@ export const helpRequestService = {
     return data;
   },
 
+  async getRequestsByUser(user_id: string | undefined) {
+    if (user_id === undefined) return [];
+    const { data: assignments, error: assignmentsError } = await supabase
+      .from('help_request_assignments')
+      .select('help_request_id')
+      .eq('user_id', user_id);
+    if (assignmentsError) throw assignmentsError;
+    const helpRequestIds = assignments.map((assignment) => assignment.help_request_id);
+    const { data: requests, error: requestsError } = await supabase
+      .from('help_requests')
+      .select('*')
+      .eq('type', 'necesita')
+      .or(`user_id.eq.${user_id},id.in.(${helpRequestIds.join(',')})`);
+    if (requestsError) throw requestsError;
+    return requests;
+  },
+
+  async getOffersByUser(user_id: string | undefined) {
+    if (user_id === undefined) return [];
+    const { data: requests, error: requestsError } = await supabase
+      .from('help_requests')
+      .select('*')
+      .eq('type', 'ofrece')
+      .eq('user_id', user_id);
+    if (requestsError) throw requestsError;
+    return requests;
+  },
+
   async getAssignments(id: number) {
     const { data, error } = await supabase.from('help_request_assignments').select('*').eq('help_request_id', id);
 

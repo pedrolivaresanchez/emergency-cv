@@ -4,7 +4,7 @@ import { FC, ReactNode, useState } from 'react';
 import ReactMap from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Marker } from 'react-map-gl/maplibre';
-import { useModal } from '@/context/EmergencyProvider';
+import { useModal } from '@/context/ModalProvider';
 import Modal from '@/components/Modal';
 import { MapPinFilled } from '@/components/icons/MapPinFilled';
 

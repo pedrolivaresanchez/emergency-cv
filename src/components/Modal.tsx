@@ -1,4 +1,4 @@
-import { useModal } from '@/context/EmergencyProvider';
+import { useModal } from '@/context/ModalProvider';
 import { MouseEvent, FC, ReactNode } from 'react';
 
 type TailwindMaxWidth =

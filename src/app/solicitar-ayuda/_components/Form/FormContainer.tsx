@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { FormRenderer } from './FormRenderer';
 import { FormData, Status } from '../types';
@@ -32,6 +32,8 @@ export function FormContainer() {
   const router = useRouter();
   const session = useSession();
 
+  const userId = session.user?.id;
+
   const [formData, setFormData] = useState<FormData>({
     nombre: session?.user?.user_metadata?.full_name || session?.user?.user_metadata?.nombre || ''.split(' ')[0],
     ubicacion: '',
@@ -62,7 +64,7 @@ export function FormContainer() {
   });
 
   const handleSubmit = useCallback(
-    async (e: any) => {
+    async (e: FormEvent) => {
       e.preventDefault();
 
       /* Form validation */
@@ -107,6 +109,7 @@ export function FormContainer() {
           },
           town_id: parseInt(formData.pueblo),
           status: 'active',
+          user_id: userId,
         };
 
         await helpRequestService.createRequest(helpRequestData);
@@ -139,7 +142,7 @@ export function FormContainer() {
         });
       }
     },
-    [formData, router],
+    [userId, formData, router],
   );
 
   const handleInputElementChange: React.ChangeEventHandler<HTMLInputElement> = useCallback((e) => {

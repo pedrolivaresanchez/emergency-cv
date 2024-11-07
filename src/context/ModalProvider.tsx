@@ -12,11 +12,11 @@ const EmergencyContext = createContext<EmergencyContextType>({
   toggleModal: () => {},
 });
 
-type EmergencyProviderProps = {
+type ModalProviderProps = {
   children: ReactNode;
 };
 
-export const EmergencyProvider: FC<EmergencyProviderProps> = ({ children }) => {
+export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState<{ [key: string]: boolean }>({});
 
   const toggleModal = (id: string, force?: boolean) => {
