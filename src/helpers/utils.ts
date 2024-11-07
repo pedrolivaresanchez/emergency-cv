@@ -18,3 +18,15 @@ export const formatPhoneNumber = (value: string) => {
   // Remove white spaces and non-digit characters
   return value.replace(/\s/g, '').replace(/\D/g, '');
 };
+
+export const removeUrls = (text: string) => {
+  const urlPattern = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\/[^\s]*)?/g;
+  return text.replace(urlPattern, '');
+};
+
+export const textWithEllipsis = (text: string | null, maxLength: number) => {
+  if (!text) {
+    return text;
+  }
+  return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+};

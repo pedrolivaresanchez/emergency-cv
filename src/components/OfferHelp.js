@@ -7,7 +7,7 @@ import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
 import { isValidPhone } from '@/helpers/utils';
 
-import { PhoneInput } from '@/components/PhoneInput';
+import { PhoneInput } from '@/components/input/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/utils';
 import { useTowns } from '@/context/TownProvider';
 import { useRouter } from 'next/navigation';
