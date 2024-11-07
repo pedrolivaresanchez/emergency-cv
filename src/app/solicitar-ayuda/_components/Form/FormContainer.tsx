@@ -1,17 +1,18 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { FormRenderer } from './FormRenderer';
 import { FormData, Status } from '../types';
 import { formatPhoneNumber, isValidPhone } from '@/helpers/utils';
-import { helpRequestService } from '@/lib/service';
+import { helpRequestService, locationService, townService } from '@/lib/service';
 import { Database } from '@/types/database';
 import { Enums } from '@/types/common';
 import { useRouter } from 'next/navigation';
 
 import { TIPOS_DE_AYUDA, TIPOS_DE_AYUDA_MAP } from '../constants';
 import { useSession } from '@/context/SessionProvider';
+import { LngLat } from '@/components/map/GeolocationMap';
 
 const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_enum'][] =>
   Array.from(helpTypeMap).reduce(
@@ -33,8 +34,7 @@ export function FormContainer() {
   const session = useSession();
 
   const [formData, setFormData] = useState<FormData>({
-    nombre: session?.user?.user_metadata?.full_name.split(" ")[0]|| '',
-    ubicacion: '',
+    nombre: session?.user?.user_metadata?.full_name || '',
     coordinates: null,
     tiposDeAyuda: new Map(TIPOS_DE_AYUDA.map(({ id }) => [id, false])),
     numeroDePersonas: undefined,
@@ -43,17 +43,8 @@ export function FormContainer() {
     situacionEspecial: '',
     contacto: session?.user?.user_metadata?.telefono || '',
     consentimiento: false,
-    pueblo: '',
     email: session?.user?.user_metadata?.email || '',
   });
-
-  useEffect(() => {
-    console.log('Component mounted');
-  }, []);
-
-  useEffect(() => {
-    console.log('formData changed: ', formData);
-  }, [formData]);
 
   const [status, setStatus] = useState<Status>({
     isSubmitting: false,
@@ -66,8 +57,8 @@ export function FormContainer() {
       e.preventDefault();
 
       /* Form validation */
-      if (!formData.ubicacion) {
-        alert('La ubicación es un campo obligatorio');
+      if (!formData.coordinates) {
+        alert('Elige una ubicacion valida');
         return;
       }
 
@@ -89,12 +80,23 @@ export function FormContainer() {
       setStatus({ isSubmitting: true, error: null, success: false });
 
       try {
+        const latitude = String(formData.coordinates.lat);
+        const longitude = String(formData.coordinates.lng);
+
+        const { address, town, error } = await locationService.getFormattedAddress(longitude, latitude);
+        if (!address || !town || error) {
+          throw { message: `Error inesperado con la api de google: ${error}` };
+        }
+
+        const { data: townResponse, error: townError } = await townService.createIfNotExists(town);
+        if (townError) throw townError;
+
         const helpRequestData: Database['public']['Tables']['help_requests']['Insert'] = {
           type: 'necesita',
-          name: formData.nombre.split(" ")[0],
-          location: formData.ubicacion,
-          latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : null,
-          longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : null,
+          name: formData.nombre,
+          location: address,
+          latitude: formData.coordinates ? parseFloat(latitude) : null,
+          longitude: formData.coordinates ? parseFloat(longitude) : null,
           help_type: mapHelpToEnum(formData.tiposDeAyuda),
           description: formData.descripcion,
           urgency: formData.urgencia,
@@ -105,7 +107,7 @@ export function FormContainer() {
             consent: true,
             email: formData.email,
           },
-          town_id: parseInt(formData.pueblo),
+          town_id: townResponse[0].id,
           status: 'active',
         };
 
@@ -114,7 +116,6 @@ export function FormContainer() {
         // Limpiar formulario
         setFormData({
           nombre: '',
-          ubicacion: '',
           coordinates: null,
           tiposDeAyuda: new Map(),
           numeroDePersonas: undefined,
@@ -122,7 +123,6 @@ export function FormContainer() {
           urgencia: 'alta',
           situacionEspecial: '',
           contacto: '',
-          pueblo: '',
           consentimiento: false,
           email: '',
         });
@@ -131,7 +131,7 @@ export function FormContainer() {
         setStatus((prev) => ({ ...prev, success: false }));
         router.push('/casos-activos/solicitudes');
       } catch (error: any) {
-        console.log('Error al enviar solicitud:', error.message);
+        console.error('Error al enviar solicitud:', error.message);
         setStatus({
           isSubmitting: false,
           error: `Error al enviar la solicitud: ${error.message}`,
@@ -166,18 +166,11 @@ export function FormContainer() {
     }));
   }, []);
 
-  const handleAddressSelection = useCallback((address: any) => {
+  const handleCoordinatesChange = useCallback((lngLat: LngLat) => {
     setFormData((formData) => ({
       ...formData,
-      ubicacion: address.fullAddress,
-      coordinates: address.coordinates
-        ? {
-            lat: address.coordinates.lat,
-            lng: address.coordinates.lon,
-          }
-        : null,
+      coordinates: lngLat ?? null,
     }));
-    console.log('address: ', address);
   }, []);
 
   const handlePhoneChange = useCallback((phoneNumber: string) => {
@@ -210,14 +203,13 @@ export function FormContainer() {
       isUserLoggedIn={Boolean(session?.user)}
       handleConsentChange={handleInputElementChange}
       handleEmailChange={handleInputElementChange}
-      handleAddressSelection={handleAddressSelection}
+      handleCoordinatesChange={handleCoordinatesChange}
       handleDescriptionChange={handleTextAreaElementChange}
       handleNameChange={handleInputElementChange}
       handleNumberPeopleChange={handleInputElementChange}
       handlePhoneChange={handlePhoneChange}
       handleSituacionEspecialChange={handleTextAreaElementChange}
       handleTipoAyudaChange={handleHelpTypeChange}
-      handleTownChange={handleSelectElementChange}
       handleUrgencyChange={handleSelectElementChange}
       handleSubmit={handleSubmit}
       status={status}

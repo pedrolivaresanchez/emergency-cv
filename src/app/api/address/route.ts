@@ -14,6 +14,8 @@ const mapsTranslationToDbTowns: { [key: string]: string } = {
   Alcudia: "L'Alcúdia",
   Guadasuar: 'Guadassuar',
   València: 'Valencia',
+  Almusafes: 'Almussafes',
+  Montroi: 'Montroy',
 };
 
 const GOOGLE_URL = `https://maps.googleapis.com/maps/api/geocode/json?key=${process.env.API_KEY}&latlng=`;
@@ -64,8 +66,15 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const response = await fetch(`${GOOGLE_URL}${body.latitude},${body.longitude}`);
-    const extractedData = extractAddressAndTown(await response.json());
+    const response = await fetch(`${GOOGLE_URL}${body.latitude},${body.longitude}`).then((value) => value.json());
+
+    if (response.error_message) {
+      return Response.json({
+        error: response.error_message,
+      });
+    }
+
+    const extractedData = extractAddressAndTown(response);
 
     return Response.json(extractedData);
   } catch (exception) {
