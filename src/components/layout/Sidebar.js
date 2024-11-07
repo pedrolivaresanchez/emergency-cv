@@ -84,6 +84,7 @@ const menuItems = [
     description: 'Reportar personas',
     path: 'https://desaparecidosdana.pythonanywhere.com/',
     color: 'text-purple-600',
+    isHref: true,
   },
   {
     icon: Package,
@@ -105,6 +106,7 @@ const menuItems = [
     description: 'Servicio notarial gratuito',
     path: 'https://valencia.notariado.org/portal/-/20241031-servicio-notarial-de-ayuda-gratuito-para-los-afectados-por-la-dana-noticia-p%C3%BAblica-',
     color: 'text-indigo-600',
+    isHref: true,
   },
   {
     icon: Landmark,
@@ -112,6 +114,7 @@ const menuItems = [
     description: 'Seguro de riesgos extraordinarios',
     path: 'https://www.consorseguros.es/ambitos-de-actividad/seguros-de-riesgos-extraordinarios/solicitud-de-indemnizacion',
     color: 'text-pink-600',
+    isHref: true,
   },
   {
     icon: MessageCircleQuestion,
@@ -119,6 +122,7 @@ const menuItems = [
     description: 'Conecta con psicólogos voluntarios',
     path: 'https://ayudana.org/',
     color: 'text-teal-600',
+    isHref: true,
   },
   {
     icon: Car,
@@ -126,6 +130,7 @@ const menuItems = [
     description: 'Viaja u ofrece viajes con otros',
     path: 'https://anem.guruwalk.com/',
     color: 'text-amber-600',
+    isHref: true,
   },
 ];
 
@@ -166,30 +171,54 @@ export default function Sidebar({ isOpen, toggle }) {
           <div className="space-y-2">
             {menuItems.map((item) =>
               (session && session.user && session.user.email && item.isAuth) || !item.isAuth ? (
-                <button
-                  key={item.path}
-                  onClick={() => {
-                    router.push(item.path);
-                    if (window.innerWidth < 768) toggle();
-                  }}
-                  className={`w-full text-left transition-colors ${
-                    item.isHome
-                      ? 'p-3 rounded-lg flex items-center gap-2 hover:bg-gray-50'
-                      : `p-4 rounded-lg ${pathname === item.path ? 'bg-gray-100 shadow-sm' : 'hover:bg-gray-50'} ${
-                          item.highlight ? 'bg-red-50 border-2 border-red-200 hover:bg-red-100 animate-pulse' : ''
-                        }`
-                  }`}
-                >
-                  <>
-                    <div className="flex items-center mb-2">
-                      <item.icon className={`h-6 w-6 ${item.color} mr-3 ${item.highlight ? 'animate-bounce' : ''}`} />
-                      <span className={`font-semibold ${item.highlight ? 'text-orange-700' : ''}`}>{item.title}</span>
-                    </div>
-                    <p className={`text-sm ml-9 ${item.highlight ? 'text-orange-600' : 'text-gray-600'}`}>
-                      {item.description}
-                    </p>
-                  </>
-                </button>
+                item.isHref ? (
+                  <button
+                    key={item.path}
+                    onClick={() => window.open(item.path, '_blank')}
+                    className={`w-full text-left transition-colors ${
+                      item.isHome
+                        ? 'p-3 rounded-lg flex items-center gap-2 hover:bg-gray-50'
+                        : `p-4 rounded-lg ${pathname === item.path ? 'bg-gray-100 shadow-sm' : 'hover:bg-gray-50'} ${
+                            item.highlight ? 'bg-red-50 border-2 border-red-200 hover:bg-red-100 animate-pulse' : ''
+                          }`
+                    }`}
+                  >
+                    <>
+                      <div className="flex items-center mb-2">
+                        <item.icon className={`h-6 w-6 ${item.color} mr-3 ${item.highlight ? 'animate-bounce' : ''}`} />
+                        <span className={`font-semibold ${item.highlight ? 'text-orange-700' : ''}`}>{item.title}</span>
+                      </div>
+                      <p className={`text-sm ml-9 ${item.highlight ? 'text-orange-600' : 'text-gray-600'}`}>
+                        {item.description}
+                      </p>
+                    </>
+                  </button>
+                ) : (
+                  <button
+                    key={item.path}
+                    onClick={() => {
+                      router.push(item.path);
+                      if (window.innerWidth < 768) toggle();
+                    }}
+                    className={`w-full text-left transition-colors ${
+                      item.isHome
+                        ? 'p-3 rounded-lg flex items-center gap-2 hover:bg-gray-50'
+                        : `p-4 rounded-lg ${pathname === item.path ? 'bg-gray-100 shadow-sm' : 'hover:bg-gray-50'} ${
+                            item.highlight ? 'bg-red-50 border-2 border-red-200 hover:bg-red-100 animate-pulse' : ''
+                          }`
+                    }`}
+                  >
+                    <>
+                      <div className="flex items-center mb-2">
+                        <item.icon className={`h-6 w-6 ${item.color} mr-3 ${item.highlight ? 'animate-bounce' : ''}`} />
+                        <span className={`font-semibold ${item.highlight ? 'text-orange-700' : ''}`}>{item.title}</span>
+                      </div>
+                      <p className={`text-sm ml-9 ${item.highlight ? 'text-orange-600' : 'text-gray-600'}`}>
+                        {item.description}
+                      </p>
+                    </>
+                  </button>
+                )
               ) : null,
             )}
           </div>
