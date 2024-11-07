@@ -27,9 +27,7 @@ export const updateUrlSearchParamsWithFilters = (
   const params = new URLSearchParams(prevSearchParams.toString());
 
   Object.entries(newFilters).forEach(([key, value]) => {
-    if (value) {
-      params.set(key, value.toString());
-    }
+    params.set(key, value.toString());
   });
 
   return params;

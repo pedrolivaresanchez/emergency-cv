@@ -12,7 +12,7 @@ export const Toggle = ({ initiallyChecked, handleChange, label }: ToggleProps) =
 
   useEffect(() => {
     handleChange(isChecked);
-  }, [isChecked]);
+  }, [isChecked, handleChange]);
 
   return (
     <div className="flex items-center space-x-2">
