@@ -2,6 +2,7 @@ import { supabase } from './supabase/client';
 import { Database } from '@/types/database';
 import { HelpRequestAssignmentInsert, HelpRequestUpdate } from '@/types/Requests';
 import { createClient } from '@/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export const helpRequestService = {
   async createRequest(requestData: Database['public']['Tables']['help_requests']['Insert']) {
@@ -190,8 +191,7 @@ export const mapService = {
 };
 
 export const townsService = {
-  async getTowns() {
-    const supabase = await getSupabaseClient();
+  async getTowns(supabase: SupabaseClient<Database>) {
     const { data, error } = await supabase.from('towns').select();
     if (error) throw error;
     return data;

@@ -89,21 +89,6 @@ export default function Login({ onSuccessCallback }) {
       return;
     }
 
-    if (formData.privacyPolicy && !isPrivacyAccepted) {
-      await updatePrivacyPolicy(true);
-      setPrivacyAccepted(true);
-    }
-
-    const privacyPolicy = await getUserPrivacyPolicy();
-
-    if (!privacyPolicy) {
-      setPrivacyAccepted(false);
-      await authService.signOut();
-      setStatus({ isSubmitting: false, error: null, success: false });
-
-      return;
-    }
-
     setStatus({ isSubmitting: false, error: null, success: true });
 
     if (typeof onSuccessCallback === 'function') {
