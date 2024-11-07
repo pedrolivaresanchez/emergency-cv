@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAssignmentData, HelpRequestData } from '@/types/Requests';
+import { HelpRequestAssignmentData, HelpRequestData, HelpRequestAdditionalInfo } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
 import { MouseEvent } from 'react';
 import { Spinner } from '@/components/Spinner';
@@ -77,24 +77,30 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
 
   if (!session || !session.user)
     return (
-      <Link href="/auth" className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center bg-green-500`}>
-        Quiero ayudar
+      <Link
+        href="/auth"
+        className="w-full text-center rounded-xl px-4 py-2 font-semibold text-white sm:w-auto transition-all bg-green-500 hover:bg-green-600"
+      >
+        Iniciar sesion para ayudar
       </Link>
     );
+
+  // Verifica el email dentro de additional_info utilizando un casting y encadenamiento opcional
+  if ((helpRequest.additional_info as HelpRequestAdditionalInfo)?.email === session.user.email) return null;
 
   return (
     <>
       {userIsAssigned ? (
         <button
           onClick={handleCancel}
-          className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center bg-red-500`}
+          className="w-full text-center rounded-xl px-4 py-2 font-semibold text-white sm:w-auto transition-all bg-red-500 hover:bg-red-600"
         >
           Cancelar mi ayuda
         </button>
       ) : (
         <button
           onClick={handleSubmit}
-          className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center bg-green-500`}
+          className="w-full text-center rounded-xl px-4 py-2 font-semibold text-white sm:w-auto transition-all bg-green-500 hover:bg-green-600"
         >
           Quiero ayudar
         </button>

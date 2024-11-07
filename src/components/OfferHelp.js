@@ -42,7 +42,7 @@ export default function OfferHelp({
     experiencia: data.additional_info?.experience || '',
     comentarios: data.description || '',
     aceptaProtocolo: submitType ? true : false,
-    pueblo: submitType ? data?.town_id : town ? town.id : '',
+    pueblo: submitType === 'edit' ? data?.town_id : town ? town.id : '',
     status: data?.status || '',
   });
 

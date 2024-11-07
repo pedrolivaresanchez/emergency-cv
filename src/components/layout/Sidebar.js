@@ -21,6 +21,7 @@ import {
   Landmark,
   Scale,
   MessageCircleQuestion,
+  CarTaxiFront,
 } from 'lucide-react';
 import UserInfo from '../UserInfo';
 import { useSession } from '../../context/SessionProvider';
@@ -125,11 +126,19 @@ const menuItems = [
     isHref: true,
   },
   {
-    icon: Car,
+    icon: CarTaxiFront,
     title: 'Compartir Coche',
     description: 'Viaja u ofrece viajes con otros',
     path: 'https://anem.guruwalk.com/',
     color: 'text-amber-600',
+    isHref: true,
+  },
+  {
+    icon: Car,
+    title: 'Encontrar tu Coche',
+    description: 'Sistema de registro y consulta de vehículos perdidos',
+    path: 'https://tucochedana.es/index.php/',
+    color: 'text-blue-600',
     isHref: true,
   },
 ];
@@ -232,7 +241,7 @@ export default function Sidebar({ isOpen, toggle }) {
         {/* Toggle button for desktop */}
         <button
           onClick={toggle}
-          className="hidden md:flex absolute -right-12 top-4 bg-white p-2 rounded-r-lg shadow-md 
+          className="hidden md:flex absolute -right-12 top-4 bg-white p-2 rounded-r-lg shadow-md
             hover:bg-gray-50 focus:outline-none group"
           aria-label={isOpen ? 'Contraer menú' : 'Expandir menú'}
         >

@@ -132,7 +132,7 @@ export default function Solicitudes() {
           <select
             value={filtroData.tipoAyuda}
             onChange={(e) => changeDataFilter('tipoAyuda', e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+            className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
           >
             <option value="todas">Todas las necesidades</option>
             {Object.entries(tiposAyudaOptions).map(([key, label]) => (
@@ -144,7 +144,7 @@ export default function Solicitudes() {
           <select
             value={filtroData.urgencia}
             onChange={(e) => changeDataFilter('urgencia', e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+            className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
           >
             <option value="todas">Todas las prioridades</option>
             <option value="alta">Alta prioridad</option>
@@ -154,7 +154,7 @@ export default function Solicitudes() {
           <select
             value={filtroData.pueblo}
             onChange={(e) => changeDataFilter('pueblo', e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+            className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
           >
             <option value="todos">Todos los pueblos</option>
             {towns.map((item) => (
@@ -179,7 +179,7 @@ export default function Solicitudes() {
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
             >
               <HeartHandshake className="w-5 h-5" />
-              Ofrecer ayuda a {filtroData.pueblo === 'todos' ? '' : towns[filtroData.pueblo - 1]?.name}
+              Ofrecer ayuda {filtroData.pueblo === 'todos' ? '' : ' a ' + towns[filtroData.pueblo - 1]?.name}
             </button>
           </div>
         ) : (
