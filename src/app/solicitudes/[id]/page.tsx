@@ -1,16 +1,14 @@
 'use client';
-import { useParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import SolicitudCard from '@/components/SolicitudCard';
-import { useTowns } from '@/context/TownProvider';
 import { useQuery } from '@tanstack/react-query';
 import { HelpRequestData } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
+import { useParams } from 'next/navigation';
 
 export default function CasoDetalle() {
-  const params = useParams();
-  const { id } = params;
-  const towns = useTowns();
+  const { id } = useParams<{ id: string }>();
+
   const {
     data: request,
     isLoading,
@@ -56,7 +54,7 @@ export default function CasoDetalle() {
           Volver
         </button>
       </div>
-      <SolicitudCard caso={request} towns={towns} showLink={false} showEdit={true} />
+      <SolicitudCard caso={request} showLink={false} showEdit={true} />
     </div>
   );
 }

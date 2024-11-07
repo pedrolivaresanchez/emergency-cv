@@ -1,7 +1,7 @@
 import SolicitudCard from '@/components/SolicitudCard';
 import ReactDOMServer from 'react-dom/server';
 
-export const getMarkerBySolicitud = (solicitud, towns) => {
+export const getMarkerBySolicitud = (solicitud) => {
   // TODO think if possible getLatLng from a given location
   if (!solicitud.latitude || !solicitud.longitude) {
     return null;
@@ -10,7 +10,7 @@ export const getMarkerBySolicitud = (solicitud, towns) => {
   return {
     id: solicitud.id,
     coordinates: [solicitud.longitude, solicitud.latitude],
-    descriptionHTML: getMarkerDescriptionBySolicitudAndTowns(solicitud, towns),
+    descriptionHTML: getMarkerDescriptionBySolicitudAndTowns(solicitud),
     color: getMarkerColorBySolicitud(solicitud),
     width: '400px',
   };
@@ -28,9 +28,9 @@ export const getMarkerColorBySolicitud = (solicitud) => {
       return '#000000';
   }
 };
-export const getMarkerDescriptionBySolicitudAndTowns = (solicitud, towns) => {
+export const getMarkerDescriptionBySolicitudAndTowns = (solicitud) => {
   return ReactDOMServer.renderToString(
-    <SolicitudCard key={solicitud.id} caso={solicitud} towns={towns} showEdit={false} showLink={true} />,
+    <SolicitudCard key={solicitud.id} caso={solicitud} showEdit={false} showLink={true} />,
   );
 };
 

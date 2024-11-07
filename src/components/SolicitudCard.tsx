@@ -3,20 +3,20 @@ import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
 import { useSession } from '@/context/SessionProvider';
 import { HelpRequestAdditionalInfo, HelpRequestData } from '@/types/Requests';
-import { Town } from '@/types/Town';
 import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
 import SolicitudHelpCount from '@/components/SolicitudHelpCount';
 import PhoneInfo from '@/components/PhoneInfo.js';
+import { useTowns } from '@/context/TownProvider';
 
 type SolicitudCardProps = {
   caso: HelpRequestData;
-  towns: Town[];
   showLink?: boolean;
   showEdit?: boolean;
 };
 
-export default function SolicitudCard({ caso, towns, showLink = true, showEdit = false }: SolicitudCardProps) {
+export default function SolicitudCard({ caso, showLink = true, showEdit = false }: SolicitudCardProps) {
   const session = useSession();
+  const { getTownById } = useTowns();
   const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
   const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
   const isMyRequest = session.user?.id && session.user.id === caso.user_id;
@@ -80,8 +80,7 @@ export default function SolicitudCard({ caso, towns, showLink = true, showEdit =
             <div className="flex items-start gap-2">
               <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
               <span className="break-words">
-                <span className="font-semibold">Pueblo:</span>{' '}
-                {towns.find((town) => town.id === caso.town_id)?.name || ''}
+                <span className="font-semibold">Pueblo:</span> {getTownById(caso.town_id)?.name || ''}
               </span>
             </div>
           )}
