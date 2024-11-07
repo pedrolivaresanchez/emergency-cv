@@ -2,12 +2,13 @@
 import React from 'react';
 import { Check } from 'lucide-react';
 
-import { PhoneInput } from '@/components/PhoneInput';
+import { PhoneInput } from '@/components/input/PhoneInput';
 import AddressAutocomplete from '@/components/AddressAutocomplete.js';
 import { TIPOS_DE_AYUDA } from '../constants';
 import { TipoDeAyudaInputRenderer } from '../TipoDeAyudaInputRenderer';
 import { FormData, HelpCategory, Status } from '../types';
 import { TownSelector } from '../TownSelector';
+import { LimitedTextarea } from '@/components/input/LimitedTextarea';
 
 type FormRendererProps = {
   status: Status;
@@ -132,13 +133,14 @@ export function FormRenderer({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Descripción de la situación</label>
-            <textarea
+            <LimitedTextarea
               name="descripcion"
               value={formData.descripcion}
               onChange={handleDescriptionChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
               rows={3}
               placeholder="Describa su situación actual y el tipo de ayuda que necesita"
+              maxLength={350}
             />
           </div>
 

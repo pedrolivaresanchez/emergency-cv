@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import { ArrowBigLeft } from 'lucide-react';
 import { authService } from '@/lib/service';
 
-import { PhoneInput } from '@/components/PhoneInput';
+import { PhoneInput } from '@/components/input/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/utils';
 import { isValidPhone } from '@/helpers/utils';
 

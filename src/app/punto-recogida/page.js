@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase/client';
 import { MapPin, Phone, Package, House, Contact, Megaphone } from 'lucide-react';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { isValidPhone } from '@/helpers/utils';
-import { PhoneInput } from '@/components/PhoneInput';
+import { PhoneInput } from '@/components/input/PhoneInput';
 
 export default function PuntosRecogida() {
   const initialFormData = {
