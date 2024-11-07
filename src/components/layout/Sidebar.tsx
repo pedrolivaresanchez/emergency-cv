@@ -49,8 +49,6 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
   const hasRequests = (requests?.length ?? 0) > 0;
   const hasOffers = (offers?.length ?? 0) > 0;
 
-  console.log(offers);
-
   const menuItems = [
     {
       icon: Home,
