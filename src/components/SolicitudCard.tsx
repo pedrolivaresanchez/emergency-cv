@@ -163,9 +163,7 @@ export default function SolicitudCard({ caso, towns, showLink = true, showEdit =
           {canEdit && showEdit && (
             <Link
               href={'/solicitudes/editar/' + caso.id}
-              className={`w-full rounded-xl text-center px-4 py-2 font-semibold text-white sm:w-auto ${
-                caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
-              }`}
+              className={`w-full rounded-xl text-center px-4 py-2 font-semibold text-white sm:w-auto bg-red-500`}
             >
               Editar
             </Link>
