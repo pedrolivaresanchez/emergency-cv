@@ -34,7 +34,7 @@ export function FormContainer() {
   const session = useSession();
 
   const [formData, setFormData] = useState<FormData>({
-    nombre: session?.user?.user_metadata?.full_name || '',
+    nombre: session?.user?.user_metadata?.full_name || session?.user?.user_metadata?.nombre || ''.split(' ')[0],
     coordinates: null,
     tiposDeAyuda: new Map(TIPOS_DE_AYUDA.map(({ id }) => [id, false])),
     numeroDePersonas: undefined,
@@ -93,7 +93,7 @@ export function FormContainer() {
 
         const helpRequestData: Database['public']['Tables']['help_requests']['Insert'] = {
           type: 'necesita',
-          name: formData.nombre,
+          name: formData.nombre.split(' ')[0],
           location: address,
           latitude: formData.coordinates ? parseFloat(latitude) : null,
           longitude: formData.coordinates ? parseFloat(longitude) : null,
