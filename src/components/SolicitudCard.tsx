@@ -160,7 +160,7 @@ export default function SolicitudCard({
             </svg>
           </div>
           <div className="flex-auto">
-            <div className="text-lg font-medium">{caso?.name?.split(" ")[0] || 'Necesita Ayuda'}</div>
+            <div className="text-lg font-medium">{caso?.name?.split(' ')[0] || 'Necesita Ayuda'}</div>
             <span className="text-gray-500">
               {new Date(caso.created_at!).toLocaleDateString() +
                 ' ' +
