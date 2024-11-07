@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAssignmentData, HelpRequestData, HelpRequestAdditionalInfo } from '@/types/Requests';
+import { HelpRequestAssignmentData, HelpRequestData } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
 import { MouseEvent } from 'react';
 import { Spinner } from '@/components/Spinner';
