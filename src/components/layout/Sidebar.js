@@ -82,10 +82,9 @@ const menuItems = [
   {
     icon: UserSearch,
     title: 'Desaparecidos',
-    description: 'Reportar personas',
-    path: 'https://desaparecidosdana.pythonanywhere.com/',
+    description: 'Personas, animales ...',
+    path: '/personas-animales-desaparecidos',
     color: 'text-purple-600',
-    isHref: true,
   },
   {
     icon: Package,
@@ -131,14 +130,6 @@ const menuItems = [
     description: 'Viaja u ofrece viajes con otros',
     path: 'https://anem.guruwalk.com/',
     color: 'text-amber-600',
-    isHref: true,
-  },
-  {
-    icon: Car,
-    title: 'Encontrar tu Coche',
-    description: 'Sistema de registro y consulta de vehículos perdidos',
-    path: 'https://tucochedana.es/index.php/',
-    color: 'text-blue-600',
     isHref: true,
   },
 ];
