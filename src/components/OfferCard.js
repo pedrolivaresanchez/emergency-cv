@@ -102,7 +102,7 @@ export default function OfferCard({
           <div className="flex items-start gap-2">
             <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
             <span className="break-words">
-              <span className="font-semibold">Pueblo:</span> {towns[caso.town_id - 1].name || ''}
+              <span className="font-semibold">Pueblo:</span> {towns[caso.town_id - 1]?.name || ''}
             </span>
           </div>
         )}
