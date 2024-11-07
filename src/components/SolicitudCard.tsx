@@ -170,7 +170,7 @@ export default function SolicitudCard({ caso, towns, showLink = true, showEdit =
           )}
           {showLink && (
             <Link
-              href={'/solicitud/' + caso.id}
+              href={'/solicitudes/' + caso.id}
               className={`w-full rounded-xl text-center px-4 py-2 font-semibold text-white sm:w-auto bg-gray-700 hover:bg-gray-800 transition-all`}
             >
               Ver solicitud
