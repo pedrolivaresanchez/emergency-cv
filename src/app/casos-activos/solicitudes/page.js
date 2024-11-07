@@ -177,7 +177,7 @@ export default function Solicitudes() {
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
             >
               <HeartHandshake className="w-5 h-5" />
-              Ofrecer ayuda a {filtroData.pueblo === 'todos' ? '' : towns[filtroData.pueblo - 1].name}
+              Ofrecer ayuda a {filtroData.pueblo === 'todos' ? '' : towns[filtroData.pueblo - 1]?.name}
             </button>
           </div>
         ) : (
