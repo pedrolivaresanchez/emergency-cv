@@ -10,7 +10,7 @@ import { Database } from '@/types/database';
 import { Enums } from '@/types/common';
 import { useRouter } from 'next/navigation';
 
-import { TIPOS_DE_AYUDA, TIPOS_DE_AYUDA_MAP } from '../constants';
+import { TIPOS_DE_AYUDA_MAP, TIPOS_DE_AYUDA } from '@/helpers/constants';
 import { useSession } from '@/context/SessionProvider';
 
 const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_enum'][] =>

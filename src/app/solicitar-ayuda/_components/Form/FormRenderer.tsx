@@ -3,17 +3,18 @@ import React from 'react';
 import { Check } from 'lucide-react';
 
 import { PhoneInput } from '@/components/PhoneInput';
-import AddressAutocomplete from '@/components/AddressAutocomplete.js';
-import { TIPOS_DE_AYUDA } from '../constants';
+import AddressAutocomplete from '@/components/AddressAutocomplete';
+import { TIPOS_DE_AYUDA } from '@/helpers/constants';
 import { TipoDeAyudaInputRenderer } from '../TipoDeAyudaInputRenderer';
-import { FormData, HelpCategory, Status } from '../types';
+import { FormData, Status, Town } from '../types';
 import { TownSelector } from '../TownSelector';
+import { RequestDetails } from '@/types/Requests';
 
 type FormRendererProps = {
   status: Status;
   formData: FormData;
   isUserLoggedIn: boolean;
-  selectedHelp: Map<HelpCategory['id'], boolean>;
+  selectedHelp: Map<RequestDetails['id'], boolean>;
   handleSubmit: React.FormEventHandler<HTMLFormElement>;
   handlePhoneChange: (phoneNumber: string) => void;
   handleAddressSelection: (address: string) => void;

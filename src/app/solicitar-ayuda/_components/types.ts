@@ -1,5 +1,5 @@
+import { RequestDetails } from '@/types/Requests';
 import { Town as SupabaseTown } from '@/types/Town';
-import { Enums } from '@/types/common';
 
 export type FormData = {
   nombre: string;
@@ -13,16 +13,10 @@ export type FormData = {
   consentimiento: boolean;
   ubicacion: string;
   coordinates: any;
-  tiposDeAyuda: Map<HelpCategory['id'], boolean>;
+  tiposDeAyuda: Map<RequestDetails['id'], boolean>;
 };
 
-export type HelpCategory = {
-  id: number;
-  label: string;
-  enumLabel: Enums['help_type_enum'];
-};
-
-export type TipoDeAyudaInputRendererProps = Pick<HelpCategory, 'id' | 'label'> & {
+export type TipoDeAyudaInputRendererProps = Pick<RequestDetails, 'id' | 'label'> & {
   isSelected: boolean;
   handleTipoAyudaChange: React.ChangeEventHandler<HTMLInputElement>;
 };
@@ -42,5 +36,3 @@ export type Status = {
 };
 
 export type Town = Pick<SupabaseTown, 'id' | 'name'>;
-
-export type HelpTypesMap = Map<HelpCategory['id'], { label: HelpCategory['label']; enum: Enums['help_type_enum'] }>;
