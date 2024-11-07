@@ -33,7 +33,7 @@ export function FormContainer() {
   const session = useSession();
 
   const [formData, setFormData] = useState<FormData>({
-    nombre: session?.user?.user_metadata?.full_name || ''.split(' ')[0],
+    nombre: session?.user?.user_metadata?.full_name || session?.user?.user_metadata?.nombre || ''.split(' ')[0],
     ubicacion: '',
     coordinates: null,
     tiposDeAyuda: new Map(TIPOS_DE_AYUDA.map(({ id }) => [id, false])),
