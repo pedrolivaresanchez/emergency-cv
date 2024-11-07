@@ -20,7 +20,7 @@ export default function RequestHelp({
   id,
   redirect = '/casos-activos/solicitudes',
 }) {
-  const towns = useTowns();
+  const { towns } = useTowns();
   const router = useRouter();
   const session = useSession();
   const userId = session.user?.id;

@@ -1,42 +1,29 @@
-import { AlertTriangle, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
+import { AlertTriangle, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAdditionalInfo, HelpRequestData, HelpRequestAssignmentData } from '@/types/Requests';
-import { Town } from '@/types/Town';
+import { HelpRequestAdditionalInfo, HelpRequestData } from '@/types/Requests';
 import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
 import SolicitudHelpCount from '@/components/SolicitudHelpCount';
 import PhoneInfo from '@/components/PhoneInfo.js';
 import { textWithEllipsis } from '@/helpers/utils';
+import { useTowns } from '@/context/TownProvider';
 
 type SolicitudCardProps = {
   caso: HelpRequestData;
-  towns: Town[];
-  isHref?: boolean;
-  button?: SolicitudCardButton;
-  isEdit?: boolean;
+  showLink?: boolean;
+  showEdit?: boolean;
   format?: 'small' | 'large';
 };
 
-type SolicitudCardButton = {
-  text: string;
-  link: string;
-};
-
-export default function SolicitudCard({
-  caso,
-  towns,
-  isHref = true,
-  button = { text: 'Ver solicitud', link: '/solicitud/' },
-  isEdit = false,
-  format = 'large',
-}: SolicitudCardProps) {
+export default function SolicitudCard({ caso, showLink = true, showEdit = false, format = 'large' }: SolicitudCardProps) {
   const session = useSession();
-
+  const { getTownById } = useTowns();
   const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
-
   const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
-  const email = 'email' in additionalInfo ? additionalInfo.email : undefined;
+  const isMyRequest = session.user?.id && session.user.id === caso.user_id;
+  const canEdit = isMyRequest; //TODO: support admin editing
+
   return (
     <div key={caso.id} className="rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5">
       <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center justify-between border-b border-gray-900/10 px-6 py-4">
@@ -95,8 +82,7 @@ export default function SolicitudCard({
             <div className="flex items-start gap-2">
               <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
               <span className="break-words">
-                <span className="font-semibold">Pueblo:</span>{' '}
-                {towns.find((town) => town.id === caso.town_id)?.name || ''}
+                <span className="font-semibold">Pueblo:</span> {getTownById(caso.town_id)?.name || ''}
               </span>
             </div>
           )}
@@ -175,22 +161,20 @@ export default function SolicitudCard({
           </div>
         </div>
         <div className="flex flex-col pt-4 sm:pt-0 sm:flex-row w-full sm:w-auto justify-end gap-2">
-          {session && session.user && session.user.email && session.user.email === email && !isEdit && (
+          {canEdit && showEdit && (
             <Link
               href={'/solicitudes/editar/' + caso.id}
-              className={`w-full rounded-xl text-center px-4 py-2 font-semibold text-white sm:w-auto ${
-                caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
-              }`}
+              className={`w-full rounded-xl text-center px-4 py-2 font-semibold text-white sm:w-auto bg-red-500`}
             >
               Editar
             </Link>
           )}
-          {isHref && (
+          {showLink && (
             <Link
-              href={button.link + caso.id}
+              href={'/solicitudes/' + caso.id}
               className={`w-full rounded-xl text-center px-4 py-2 font-semibold text-white sm:w-auto bg-gray-700 hover:bg-gray-800 transition-all`}
             >
-              {button.text}
+              Ver solicitud
             </Link>
           )}
           <AsignarSolicitudButton helpRequest={caso} />

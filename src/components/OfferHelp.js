@@ -24,7 +24,7 @@ export default function OfferHelp({
   redirect = '/casos-activos/ofertas',
   submitType = 'create',
 }) {
-  const towns = useTowns();
+  const { towns } = useTowns();
   const session = useSession();
 
   const router = useRouter();

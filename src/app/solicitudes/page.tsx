@@ -2,7 +2,6 @@
 
 import { Search } from 'lucide-react';
 import SolicitudCard from '@/components/SolicitudCard';
-import { useTowns } from '@/context/TownProvider';
 import { useSession } from '@/context/SessionProvider';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
@@ -11,7 +10,6 @@ import { helpRequestService } from '@/lib/service';
 
 export default function ListaSolicitudes() {
   const session = useSession();
-  const towns = useTowns();
   const userId = session.user?.id;
 
   const {
@@ -58,16 +56,7 @@ export default function ListaSolicitudes() {
               </Link>
             </div>
           ) : (
-            requests.map((caso) => (
-              <SolicitudCard
-                isHref={true}
-                towns={towns}
-                key={caso.id}
-                caso={caso}
-                button={{ text: 'Editar', link: '/solicitudes/editar/' }}
-                isEdit={true}
-              />
-            ))
+            requests.map((caso) => <SolicitudCard showLink={true} showEdit={true} key={caso.id} caso={caso} />)
           )}
         </div>
       </div>

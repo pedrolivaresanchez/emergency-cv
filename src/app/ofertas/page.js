@@ -6,9 +6,9 @@ import { supabase } from '@/lib/supabase/client';
 import Pagination from '@/components/Pagination';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
-import { useTowns } from '../../context/TownProvider';
-import { useSession } from '../../context/SessionProvider';
-import OfferCard from '../../components/OfferCard';
+import { useTowns } from '@/context/TownProvider';
+import { useSession } from '@/context/SessionProvider';
+import OfferCard from '@/components/OfferCard';
 import Link from 'next/link';
 
 export default function ListaSolicitudes() {
@@ -23,7 +23,7 @@ export default function ListaSolicitudes() {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
   const [currentCount, setCurrentCount] = useState(0);
-  const towns = useTowns();
+  const { towns } = useTowns();
 
   const itemsPerPage = 10;
   const numPages = (count) => {
