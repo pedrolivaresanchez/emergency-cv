@@ -38,7 +38,7 @@ const menuItems = [
     icon: AlertCircle,
     title: 'Casos Activos',
     description: 'Ver todos los casos activos',
-    path: '/casos-activos',
+    path: '/casos-activos/solicitudes',
     color: 'text-orange-600',
     highlight: true,
   },
