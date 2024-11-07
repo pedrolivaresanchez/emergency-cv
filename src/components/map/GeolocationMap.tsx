@@ -18,8 +18,6 @@ export default function GeoLocationMap({
   onPermissionStatusChanged,
   zoom = 13,
 }: GeoLocationMapProps) {
-  const [status, setStatus] = useState<PermissionState | 'unknown'>('unknown');
-
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
 
@@ -82,7 +80,9 @@ export default function GeoLocationMap({
           onPermissionStatusChanged(permissionStatus.state);
         }
 
-        geolocateControl.trigger();
+        if (permissionStatus.state === 'granted') {
+          geolocateControl.trigger();
+        }
       };
     });
 
