@@ -49,14 +49,6 @@ export function FormContainer() {
     email: session?.user?.user_metadata?.email || '',
   });
 
-  useEffect(() => {
-    console.log('Component mounted');
-  }, []);
-
-  useEffect(() => {
-    console.log('formData changed: ', formData);
-  }, [formData]);
-
   const [status, setStatus] = useState<Status>({
     isSubmitting: false,
     error: null,
@@ -180,7 +172,6 @@ export function FormContainer() {
           }
         : null,
     }));
-    console.log('address: ', address);
   }, []);
 
   const handlePhoneChange = useCallback((phoneNumber: string) => {
@@ -191,11 +182,7 @@ export function FormContainer() {
   }, []);
 
   const handleHelpTypeChange: React.ChangeEventHandler<HTMLInputElement> = useCallback((event) => {
-    const { id, name, value, checked } = event.target;
-    console.log('id: ', id);
-    console.log('name: ', name);
-    console.log('value: ', value);
-    console.log('checked: ', checked);
+    const { id, checked } = event.target;
 
     setFormData((formData) => {
       const prevHelp = formData.tiposDeAyuda;
