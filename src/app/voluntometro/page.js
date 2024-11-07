@@ -145,9 +145,12 @@ export default async function Voluntometro() {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {getTopAndBottomPueblos().all.map((pueblo) => (
-          <TownCardInfo key={pueblo.id} pueblo={pueblo} route="/casos-activos/solicitudes/?pueblo=" />
-        ))}
+        {getTopAndBottomPueblos().all.map(
+          (pueblo) =>
+            pueblo.needHelp > 0 && (
+              <TownCardInfo key={pueblo.id} pueblo={pueblo} route="/casos-activos/solicitudes/?pueblo=" />
+            ),
+        )}
       </div>
     </div>
   );
