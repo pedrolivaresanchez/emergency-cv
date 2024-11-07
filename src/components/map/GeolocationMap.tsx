@@ -7,10 +7,11 @@ const PAIPORTA_LAT_LNG: [number, number] = [-0.41667, 39.42333];
 export type LngLat = { lng: number; lat: number };
 export type GeoLocationMapProps = {
   onNewPositionCallback: (lngLat: LngLat) => void;
+  onNewCenterCallback: (lngLat: LngLat) => void;
   zoom?: number;
 };
 
-export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }: GeoLocationMapProps) {
+export default function GeoLocationMap({ onNewPositionCallback, onNewCenterCallback, zoom = 13 }: GeoLocationMapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
 
@@ -22,6 +23,12 @@ export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }: Geo
     trackUserLocation: true,
     showAccuracyCircle: true,
   });
+
+  const visibilityChangeEvent = () => {
+    if (document.visibilityState === 'visible' && geolocateControl) {
+      geolocateControl.trigger();
+    }
+  };
 
   useEffect(() => {
     if (!mapRef.current) {
@@ -36,17 +43,6 @@ export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }: Geo
         zoom: zoom,
       });
 
-      mapRef.current.on('moveend', () => {
-        if (!mapRef.current) {
-          return;
-        }
-
-        const center = mapRef.current.getCenter();
-        if (typeof onNewPositionCallback === 'function') {
-          onNewPositionCallback(center);
-        }
-      });
-
       mapRef.current.on('move', () => {
         if (!mapRef.current) {
           return;
@@ -54,6 +50,10 @@ export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }: Geo
 
         const center = mapRef.current.getCenter();
         marker.setLngLat(center);
+
+        if (typeof onNewCenterCallback === 'function') {
+          onNewCenterCallback(center);
+        }
       });
 
       geolocateControl.on('geolocate', (e) => {
@@ -69,8 +69,14 @@ export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }: Geo
           essential: true,
         });
 
+        const lngLat: LngLat = { lng: userLocation[0], lat: userLocation[1] };
+
         if (typeof onNewPositionCallback === 'function') {
-          onNewPositionCallback({ lng: userLocation[0], lat: userLocation[1] });
+          onNewPositionCallback(lngLat);
+        }
+
+        if (typeof onNewCenterCallback === 'function') {
+          onNewCenterCallback(lngLat);
         }
       });
 
@@ -81,19 +87,21 @@ export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }: Geo
         .setLngLat(mapRef.current.getCenter())
         .addTo(mapRef.current);
 
+      document.addEventListener('visibilitychange', visibilityChangeEvent);
+
       mapRef.current.addControl(new maplibregl.NavigationControl(), 'top-right');
-      // Add the geolocate control
       mapRef.current.addControl(geolocateControl);
 
       // add to js queue so that the control is correctly added, then trigger the location detection
-      setTimeout(() => geolocateControl.trigger(), 100);
+      setTimeout(() => geolocateControl.trigger(), 200);
     }
 
     return () => {
       mapRef.current?.remove();
+      document.removeEventListener('visibilitychange', visibilityChangeEvent);
       mapRef.current = null;
     };
-  }, [zoom, onNewPositionCallback]);
+  }, [zoom]);
 
   return <div ref={mapContainerRef} className="aspect-video w-full" />;
 }

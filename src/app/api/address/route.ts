@@ -14,6 +14,8 @@ const mapsTranslationToDbTowns: { [key: string]: string } = {
   Alcudia: "L'Alcúdia",
   Guadasuar: 'Guadassuar',
   València: 'Valencia',
+  Almusafes: 'Almussafes',
+  Montroi: 'Montroy',
 };
 
 const GOOGLE_URL = `https://maps.googleapis.com/maps/api/geocode/json?key=${process.env.API_KEY}&latlng=`;

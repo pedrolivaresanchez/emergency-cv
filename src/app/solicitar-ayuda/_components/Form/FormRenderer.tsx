@@ -3,11 +3,11 @@ import React from 'react';
 import { Check } from 'lucide-react';
 
 import { PhoneInput } from '@/components/PhoneInput';
-import AddressAutocomplete from '@/components/AddressAutocomplete.js';
 import { TIPOS_DE_AYUDA } from '../constants';
 import { TipoDeAyudaInputRenderer } from '../TipoDeAyudaInputRenderer';
 import { FormData, HelpCategory, Status } from '../types';
-import { TownSelector } from '../TownSelector';
+import AddressMap, { AddressDescriptor } from '../../../../components/AddressMap';
+import { LngLat } from '@/components/map/GeolocationMap';
 
 type FormRendererProps = {
   status: Status;
@@ -16,11 +16,10 @@ type FormRendererProps = {
   selectedHelp: Map<HelpCategory['id'], boolean>;
   handleSubmit: React.FormEventHandler<HTMLFormElement>;
   handlePhoneChange: (phoneNumber: string) => void;
-  handleAddressSelection: (address: string) => void;
+  handleCoordinatesChange: (lngLat: LngLat) => void;
   handleSituacionEspecialChange: React.ChangeEventHandler<HTMLTextAreaElement>;
   handleUrgencyChange: React.ChangeEventHandler<HTMLSelectElement>;
   handleDescriptionChange: React.ChangeEventHandler<HTMLTextAreaElement>;
-  handleTownChange: React.ChangeEventHandler<HTMLSelectElement>;
   handleTipoAyudaChange: React.ChangeEventHandler<HTMLInputElement>;
   handleNameChange: React.ChangeEventHandler<HTMLInputElement>;
   handleEmailChange: React.ChangeEventHandler<HTMLInputElement>;
@@ -34,11 +33,10 @@ export function FormRenderer({
   formData,
   isUserLoggedIn,
   handlePhoneChange,
-  handleAddressSelection,
+  handleCoordinatesChange,
   handleSituacionEspecialChange,
   handleUrgencyChange,
   handleDescriptionChange,
-  handleTownChange,
   handleTipoAyudaChange,
   handleNameChange,
   handleEmailChange,
@@ -84,21 +82,9 @@ export function FormRenderer({
               className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
             />
             <p className="mt-1 text-sm text-gray-500">
-              {isUserLoggedIn ? 'Se utilizará para que puedas eliminar o editar la información de tu solicitud'
+              {isUserLoggedIn
+                ? 'Se utilizará para que puedas eliminar o editar la información de tu solicitud'
                 : 'Se utilizará para que puedas actualizar tu solicitud y marcarla como completada. Para realizar cambios, deberás registrarte con el mismo email'}
-            </p>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ubicación exacta <span className="text-red-500">*</span>
-            </label>
-            <AddressAutocomplete
-              onSelect={handleAddressSelection}
-              placeholder="Calle, número, piso, ciudad..."
-              required
-            />
-            <p className="mt-1 text-sm text-gray-500">
-              Incluya todos los detalles posibles para poder localizarle (campo obligatorio)
             </p>
           </div>
 
@@ -166,8 +152,8 @@ export function FormRenderer({
               placeholder="Personas mayores, niños pequeños, personas con movilidad reducida, necesidades médicas, mascotas..."
             />
           </div>
-          {/* Pueblos */}
-          <TownSelector handleChange={handleTownChange} selectedTown={formData.pueblo} />
+
+          <AddressMap onNewCoordinatesCallback={handleCoordinatesChange} />
 
           {/* Consentimiento */}
           <div className="flex items-start">
