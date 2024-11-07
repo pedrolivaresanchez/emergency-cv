@@ -71,6 +71,7 @@ export default function Login({ onSuccessCallback }) {
 
     const response = await authService.signIn(formData.email, formData.password); 
 
+
     if (response.error) {
       setStatus({ isSubmitting: false, error: 'El email o contraseña son inválidos', success: false });
       return;
@@ -86,7 +87,9 @@ export default function Login({ onSuccessCallback }) {
 
     if (!privacyPolicy) {
       setPrivacyAccepted(false);
+      await authService.signOut();
       setStatus({ isSubmitting: false, error: null, success: false });
+
       return;
     }
 
