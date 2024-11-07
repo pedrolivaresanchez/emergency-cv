@@ -1,6 +1,5 @@
 import { Town as SupabaseTown } from '@/types/Town';
 import { Enums } from '@/types/common';
-import { LngLat } from '@/components/map/GeolocationMap';
 
 export type FormData = {
   nombre: string;
@@ -10,8 +9,10 @@ export type FormData = {
   descripcion: string;
   urgencia: string;
   situacionEspecial: string;
+  pueblo: string;
   consentimiento: boolean;
-  coordinates: LngLat | null;
+  ubicacion: string;
+  coordinates: any;
   tiposDeAyuda: Map<HelpCategory['id'], boolean>;
 };
 

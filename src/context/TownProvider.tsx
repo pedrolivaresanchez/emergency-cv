@@ -2,7 +2,7 @@
 import React, { createContext, ReactNode, useContext } from 'react';
 import { Town } from '@/types/Town';
 
-export const TownsContext = createContext<Town[]>([]);
+const TownsContext = createContext<Town[]>([]);
 
 type TownsProviderProps = {
   children: ReactNode;
