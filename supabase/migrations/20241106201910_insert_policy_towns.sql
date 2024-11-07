@@ -1,4 +1,4 @@
-create policy "Enable insert for authenticated users only"
+create policy "Enable insert public"
 on "public"."towns"
 as permissive
 for insert

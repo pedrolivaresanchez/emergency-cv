@@ -1,5 +1,4 @@
 import { NextRequest } from 'next/server';
-import { supabase } from '../../../lib/supabase/client';
 
 const mapsTranslationToDbTowns: { [key: string]: string } = {
   Aldaya: 'Aldaia',
@@ -56,7 +55,6 @@ function extractAddressAndTown(googleResponse: any) {
   return { address, town };
 }
 
-// we should protect this with only authenticated users!
 export async function POST(request: NextRequest) {
   const body = await request.json();
   if (!body.latitude || !body.longitude) {

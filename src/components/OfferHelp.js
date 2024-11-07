@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { HeartHandshake, Check } from 'lucide-react';
-import { helpRequestService, townService } from '@/lib/service';
+import { useState, useEffect, useCallback } from 'react';
+import { HeartHandshake, Check, Mail } from 'lucide-react';
+import { helpRequestService } from '@/lib/service';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
-import AddresMap from '@/components/AddressMap';
 import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
 import { isValidPhone } from '@/helpers/utils';
 
@@ -101,9 +100,6 @@ export default function OfferHelp({
     setStatus({ isSubmitting: true, error: null, success: false });
 
     try {
-      const townResponse = await townService.createIfNotExists(formData.pueblo);
-      if (townResponse.error) throw error;
-
       const helpOfferData = {
         type: 'ofrece',
         name: formData.nombre,
@@ -203,7 +199,7 @@ export default function OfferHelp({
 
       {/* Formulario */}
 
-      <div className="space-y-6 overflow-y-auto p-2">
+      <div className="space-y-6 max-h-[65vh] overflow-y-auto p-2">
         {/* Datos personales */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
@@ -253,6 +249,31 @@ export default function OfferHelp({
             </select>
           </div>
         )}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="address">
+            Ubicación exacta <span className="text-red-500">*</span>
+          </label>
+          <AddressAutocomplete
+            initialValue={data?.location}
+            onSelect={(address) => {
+              setFormData({
+                ...formData,
+                ubicacion: address.fullAddress,
+                coordinates: address.coordinates
+                  ? {
+                      lat: address.coordinates.lat,
+                      lng: address.coordinates.lon,
+                    }
+                  : null,
+              });
+            }}
+            placeholder="Calle, número, piso, ciudad..."
+            required
+          />
+          <p className="mt-1 text-sm text-gray-500">
+            Incluya todos los detalles posibles para poder localizarle (campo obligatorio)
+          </p>
+        </div>
 
         {/* Tipos de ayuda */}
         <div>
@@ -362,23 +383,27 @@ export default function OfferHelp({
           />
         </div>
 
+        {/* Pueblos */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Ubicación exacta <span className="text-red-500">*</span>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="townName">
+            Pueblo <span className="text-red-500">*</span>
           </label>
-
-          <AddresMap
-            onNewAddressCallback={(addressDescriptor) => {
-              setFormData({
-                ...formData,
-                ubicacion: addressDescriptor.address,
-                pueblo: addressDescriptor.town,
-                coordinates: addressDescriptor.coordinates ?? null,
-              });
-            }}
-          />
+          <select
+            id="townName"
+            name="pueblo"
+            value={formData.pueblo}
+            onChange={(e) => setFormData({ ...formData, pueblo: e.target.value })}
+            className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
+            required
+          >
+            <option value="">Selecciona un pueblo</option>
+            {towns.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name}
+              </option>
+            ))}
+          </select>
         </div>
-
         {/* Aceptación de protocolo */}
         <div className="flex items-start">
           <label className="ml-2 text-sm text-gray-700 flex items-start gap-2 cursor-pointer">
