@@ -65,7 +65,7 @@ export default function Solicitudes() {
         setError(null);
 
         // Comenzamos la consulta
-        const query = supabase.from('help_requests').select('*', { count: 'exact' }).eq('type', 'necesita').eq('status', 'active');
+        const query = supabase.from('help_requests').select('*', { count: 'exact' }).eq('type', 'necesita');
 
         // Solo agregar filtro si no es "todos"
         if (filtroData.tipoAyuda !== 'todas') {

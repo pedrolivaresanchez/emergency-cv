@@ -1,4 +1,5 @@
 import { AlertTriangle, Calendar, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
+import { useState } from 'react';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
 import { useSession } from '@/context/SessionProvider';
@@ -27,10 +28,11 @@ export default function SolicitudCard({
   caso,
   towns,
   isHref = true,
-  button = { text: 'Ver solicitud', link: '/solicitud/' },
-  isEdit = false,
+  button = { text: 'Ver solicitud', link: '/solicitud/' }
 }: SolicitudCardProps) {
   const session = useSession();
+  const [caseStatus, setCaseStatus] = useState(caso.status);
+
 
   const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
 
@@ -66,14 +68,14 @@ export default function SolicitudCard({
             </span>
             <span
               className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap ${
-                caso.status === 'finished'
+                caseStatus === 'finished'
                   ? 'bg-red-100 text-red-800'
-                  : caso.status === 'progress'
+                  : caseStatus === 'progress'
                     ? 'bg-yellow-100 text-yellow-800'
                     : 'bg-green-100 text-green-800'
               }`}
             >
-              {caso.status === 'finished' ? 'Terminada' : caso.status === 'progress' ? 'En proceso' : 'Activo'}
+              {caseStatus === 'finished' ? 'Resuelto' : caseStatus === 'progress' ? 'En proceso' : 'Activo'}
             </span>
           </div>
         </div>
@@ -170,46 +172,48 @@ export default function SolicitudCard({
             )}
           </div>
           <div className="flex flex-col sm:flex-row w-full sm:w-auto justify-end gap-2">
-            { caso.status == 'active' && (
+            { caseStatus != 'finished' && (
               <>
-            {isOwner && (
-              <Link
-                href={'/solicitudes/editar/' + caso.id}
-                className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
-                  caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
-                }`}
-              >
-                Editar
-              </Link>
-            )}
-            {isOwner && caso.status == 'active' && (
-              <button
-              onClick={async () => {
-                await helpRequestService.updateRequestStatus(caso.id, 'resolved');
-              }}
-              className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center bg-green-500`}
-              >
-                Resolver
-              </button>
-            )}
-             {isHref && (
-              <Link
-                href={button.link + caso.id}
-                className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
-                  caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
-                }`}
-              >
-                {button.text}
-              </Link>
-            )}
-            <AsignarSolicitudButton helpRequest={caso} />
+              {isOwner && (
+                <>
+                  <Link
+                    href={'/solicitudes/editar/' + caso.id}
+                    className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
+                      caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
+                    }`}
+                  >
+                    Editar
+                  </Link>
+                  <button
+                  onClick={async () => {
+                    const data = await helpRequestService.updateRequestStatus(caso.id, 'finished');
+                    setCaseStatus(data[0].status)
+                  }}
+                  className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center bg-green-500`}
+                  >
+                    Resolver
+                  </button>
+                </>
+              )}
+              {isHref && (
+                <Link
+                  href={button.link + caso.id}
+                  className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center  ${
+                    caso.urgency === 'alta' ? 'bg-red-500' : caso.urgency === 'media' ? 'bg-yellow-500' : 'bg-green-500'
+                  }`}
+                >
+                  {button.text}
+                </Link>
+              )}
+              <AsignarSolicitudButton helpRequest={caso} />
             </>
             )
           }
-            {isOwner && caso.status == 'resolved' && (
+            {isOwner && caseStatus == 'finished' && (
               <button
               onClick={async () => {
-                await helpRequestService.updateRequestStatus(caso.id, 'active');
+                const data = await helpRequestService.updateRequestStatus(caso.id, 'active');
+                setCaseStatus(data[0].status)
               }}
               className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center bg-green-500`}
               >

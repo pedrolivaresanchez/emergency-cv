@@ -65,10 +65,7 @@ export default function ListaSolicitudes() {
           .select('*', { count: 'exact' })
           .eq('type', 'necesita')
           .contains('additional_info', { email: session.user.email });
-
-          if (!session.user){
-            query.eq('status', 'active');
-          }
+         
         // Solo agregar filtro si no es "todos"
         if (filtroData.pueblo !== 'todos') {
           query.eq('town_id', filtroData.pueblo);

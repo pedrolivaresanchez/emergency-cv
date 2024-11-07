@@ -5,7 +5,7 @@ const getCount = async () => {
     data: solicitaData,
     count: solicitaCount,
     error: solicitaError,
-  } = await supabase.from('help_requests').select('id', { count: 'exact' }).eq('type', 'necesita').eq('status', 'active');
+  } = await supabase.from('help_requests').select('id', { count: 'exact' }).eq('type', 'necesita').neq('status', 'finished');;
 
   const {
     data: ofreceData,
