@@ -60,7 +60,7 @@ export default function CasoDetalle() {
           Volver
         </button>
       </div>
-      <SolicitudCard key={caso.id} caso={caso} towns={towns} />
+      <SolicitudCard key={caso.id} caso={caso} towns={towns} isHref={false}/>
     </div>
   );
 }

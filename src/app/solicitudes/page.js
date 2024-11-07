@@ -178,7 +178,7 @@ export default function ListaSolicitudes() {
           ) : (
             data.map((caso) => (
               <SolicitudCard
-                isHref={true}
+                isHref={false}
                 towns={towns}
                 key={caso.id}
                 caso={caso}
