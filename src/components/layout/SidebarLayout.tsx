@@ -6,7 +6,7 @@ import Sidebar from './Sidebar';
 import Footer from './Footer';
 import CookieBanner from '@/components/CookieBanner/CookieBanner';
 
-export default function EmergencyLayout({ children }: PropsWithChildren) {
+export default function SidebarLayout({ children }: PropsWithChildren) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Por defecto abierto
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function EmergencyLayout({ children }: PropsWithChildren) {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      <Sidebar isOpen={isSidebarOpen} toggle={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <Sidebar isOpen={isSidebarOpen} toggleAction={() => setIsSidebarOpen(!isSidebarOpen)} />
       <div
         className={`flex flex-col flex-1 transition-margin duration-300 w-full ${isSidebarOpen ? 'md:ml-72' : 'ml-0'}`}
       >
