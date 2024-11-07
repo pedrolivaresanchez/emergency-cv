@@ -12,27 +12,41 @@ import { isValidPhone } from '@/helpers/utils';
 const MODAL_NAME = 'phone-number';
 
 const PhoneForm = ({ onSubmit }) => {
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [formData, setFormData] = useState({
+    phoneNumber: '',
+    privacyPolicy: '',
+  });
 
   const handleSubmit = useCallback(
     (e) => {
       e.preventDefault();
 
-      /* Form validation */
-      if (!isValidPhone(phoneNumber)) {
+      /* PHONE VALIDATION */
+      if (!isValidPhone(formData.phoneNumber)) {
         alert('El teléfono de contacto no es válido.');
         return;
       }
 
-      const formatedPhoneNumber = formatPhoneNumber(phoneNumber);
-      onSubmit(formatedPhoneNumber);
-      setPhoneNumber('');
+      /* POLICY PRIVACY VALIDATION */
+      if (!formData.privacyPolicy) {
+        alert('Para continuar, debes aceptar la Política de Privacidad.');
+        return;
+      }
+
+      const formatedPhoneNumber = formatPhoneNumber(formData.phoneNumber);
+
+      onSubmit(formData.phoneNumber, formData.privacyPolicy);
+
+      setFormData({
+        phoneNumber: '',
+        privacyPolicy: '',
+      });
     },
-    [onSubmit, phoneNumber],
+    [onSubmit, formData],
   );
 
   const handleChange = useCallback((phoneNumber) => {
-    setPhoneNumber(phoneNumber);
+    setFormData((formData) => ({ ...formData, phoneNumber }));
   }, []);
 
   return (
@@ -51,9 +65,31 @@ const PhoneForm = ({ onSubmit }) => {
               Tu número de teléfono no será usado con ningún otro propósito ni compartido con terceras personas.
             </p>
           </div>
-          <PhoneInput onChange={handleChange} phoneNumber={phoneNumber} />
 
-          <div className="flex justify-end space-x-2">
+          {/* PHONE NUMBER */}
+          <PhoneInput onChange={handleChange} phoneNumber={formData.phoneNumber} />
+
+          {/* PRIVACY POLICY */}
+          <div className="flex gap-2 items-start lg:items-center">
+            <input
+              type="checkbox"
+              value={formData.privacyPolicy}
+              onChange={(e) => setFormData({ ...formData, privacyPolicy: e.target.checked })}
+              className="min-w-4 min-h-4 cursor-pointer"
+              id="privacyPolicy"
+              required
+            />
+            <label htmlFor="privacyPolicy" className="text-sm font-medium text-gray-700">
+              He leído y aceptado la{' '}
+              <a href="/politica-privacidad/" className="text-blue-400">
+                política de privacidad
+              </a>{' '}
+              y acepto que «ajudadana.es» recoja y guarde los datos enviados a través de este formulario.
+            </label>
+          </div>
+
+          {/* ACCEPT AND SAVE */}
+          <div className="flex justify-end space-x-2 mt-2">
             <button
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -87,7 +123,7 @@ const PhoneNumberDialog = () => {
     fetchNumber();
   }, []);
 
-  const handleSubmit = useCallback(async (phoneNumber) => {
+  const handleSubmit = useCallback(async (phoneNumber, privacyPolicy) => {
     const { data: session, error: errorGettingUser } = await authService.getSessionUser();
 
     if (!session.user || errorGettingUser) {
@@ -95,7 +131,7 @@ const PhoneNumberDialog = () => {
     }
 
     const metadata = session.user.user_metadata;
-    const metadataWithPhone = { ...metadata, telefono: phoneNumber };
+    const metadataWithPhone = { ...metadata, telefono: phoneNumber, privacyPolicy };
 
     const { error: updateUserError } = await authService.updateUser({
       data: metadataWithPhone,
