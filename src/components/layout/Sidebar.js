@@ -24,7 +24,8 @@ import {
   CarTaxiFront,
 } from 'lucide-react';
 import UserInfo from '../UserInfo';
-import { useSession } from '../../context/SessionProvider';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase/client';
 
 const menuItems = [
   {
@@ -146,7 +147,19 @@ const menuItems = [
 export default function Sidebar({ isOpen, toggle }) {
   const router = useRouter();
   const pathname = usePathname();
-  const session = useSession();
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    fetchUser();
+  }, []);
+
   return (
     <>
       {/* Quitamos el overlay con fondo negro */}
@@ -179,7 +192,7 @@ export default function Sidebar({ isOpen, toggle }) {
         <nav className="p-4 flex-1 overflow-y-auto">
           <div className="space-y-2">
             {menuItems.map((item) =>
-              (session && session.user && session.user.email && item.isAuth) || !item.isAuth ? (
+              (user && user.email && item.isAuth) || !item.isAuth ? (
                 item.isHref ? (
                   <button
                     key={item.path}
@@ -235,7 +248,7 @@ export default function Sidebar({ isOpen, toggle }) {
 
         {/* User info and login */}
         <div className="p-4">
-          <UserInfo />
+          <UserInfo user={user} />
         </div>
 
         {/* Toggle button for desktop */}

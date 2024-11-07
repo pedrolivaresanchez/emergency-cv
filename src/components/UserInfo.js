@@ -1,10 +1,8 @@
 import Link from 'next/link';
 import { LogIn } from 'lucide-react';
 import { authService } from '@/lib/service';
-import { useSession } from '../context/SessionProvider';
 
-export default function UserProfile() {
-  const { user } = useSession();
+export default function UserProfile({ user }) {
   const handleLogout = async () => {
     const response = await authService.signOut();
     if (!response.error) {
