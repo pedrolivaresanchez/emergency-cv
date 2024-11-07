@@ -15,7 +15,7 @@ import { useTowns } from '@/context/TownProvider';
 const MODAL_NAME = 'solicitudes';
 
 export default function Solicitudes() {
-  const { getTownById } = useTowns();
+  const { getTownById, towns } = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
 
