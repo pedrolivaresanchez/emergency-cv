@@ -53,6 +53,19 @@ export const helpRequestService = {
   },
 };
 
+export const locationService = {
+  async getFormattedAddress(longitude: string, latitude: string) {
+    return await fetch('/api/address', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        longitude,
+        latitude,
+      }),
+    }).then((res) => res.json());
+  },
+};
+
 export const townService = {
   async getByName(townName: string) {
     return await supabase.from('towns').select('id').eq('name', townName);

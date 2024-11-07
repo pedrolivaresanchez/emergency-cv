@@ -5,13 +5,14 @@ import { AlertTriangle, Check, Mail } from 'lucide-react';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions } from '@/helpers/constants';
 import { formatPhoneNumber, isValidPhone } from '@/helpers/utils';
-import { helpRequestService } from '@/lib/service';
+import { helpRequestService, locationService, townService } from '@/lib/service';
 
 import { PhoneInput } from '@/components/PhoneInput';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTowns } from '../context/TownProvider';
 import { CallCenterLink } from '@/components/CallCenterLink';
+import AddressMap from './AddressMap';
 
 export default function RequestHelp({
   data = {},
@@ -57,8 +58,9 @@ export default function RequestHelp({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.ubicacion) {
-      alert('La ubicación es un campo obligatorio');
+    /* Form validation */
+    if (!formData.coordinates) {
+      alert('Elige una ubicacion valida');
       return;
     }
 
@@ -75,12 +77,25 @@ export default function RequestHelp({
     setStatus({ isSubmitting: true, error: null, success: false });
 
     try {
+      const latitude = String(formData.coordinates.lat);
+      const longitude = String(formData.coordinates.lng);
+
+      debugger;
+
+      const { address, town } = await locationService.getFormattedAddress(longitude, latitude);
+      if (!address || !town) {
+        throw { error: 'Error inesperado con la api de google' };
+      }
+
+      const { data: townResponse, error: townError } = await townService.createIfNotExists(town);
+      if (townError) throw townError;
+
       const helpRequestData = {
         type: 'necesita',
         name: formData.nombre,
-        location: formData.ubicacion,
-        latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : 3,
-        longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : 3,
+        location: address,
+        latitude,
+        longitude,
         help_type: formData.tiposAyuda,
         description: formData.descripcion,
         urgency: formData.urgencia,
@@ -91,7 +106,7 @@ export default function RequestHelp({
           consent: true,
           email: formData.email,
         },
-        town_id: formData.pueblo,
+        town_id: townResponse[0].id,
         status: formData.status,
       };
       if (submitType === 'create') {
@@ -101,7 +116,6 @@ export default function RequestHelp({
         }
       }
       if (submitType === 'edit') {
-        console.log('EDITAR');
         const { error } = await helpRequestService.editRequest(helpRequestData, id);
         if (error) {
           throw new Error(error.message);
@@ -260,31 +274,6 @@ export default function RequestHelp({
               </select>
             </div>
           )}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ubicación exacta <span className="text-red-500">*</span>
-            </label>
-            <AddressAutocomplete
-              initialValue={data.location || ''}
-              onSelect={(address) => {
-                setFormData({
-                  ...formData,
-                  ubicacion: address.fullAddress,
-                  coordinates: address.coordinates
-                    ? {
-                        lat: address.coordinates.lat,
-                        lng: address.coordinates.lon,
-                      }
-                    : null,
-                });
-              }}
-              placeholder="Calle, número, piso, ciudad..."
-              required
-            />
-            <p className="mt-1 text-sm text-gray-500">
-              Incluya todos los detalles posibles para poder localizarle (campo obligatorio)
-            </p>
-          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de ayuda necesaria</label>
@@ -357,35 +346,21 @@ export default function RequestHelp({
               placeholder="Personas mayores, niños pequeños, personas con movilidad reducida, necesidades médicas, mascotas..."
             />
           </div>
-          {/* Pueblos */}
+          {/* Mapa */}
           <div>
-            <div className="flex flex-row justify-between mb-2 items-end">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Pueblo <span className="text-red-500">*</span>
-              </label>
-              <a
-                href="mailto:info@ajudadana.es?subject=Solicitud%20de%20nuevo%20pueblo%20para%20Voluntómetro"
-                className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors whitespace-nowrap"
-              >
-                <Mail className="h-5 w-5" />
-                Solicitar nuevo pueblo
-              </a>
-            </div>
-            <select
-              name="pueblo"
-              value={formData.pueblo}
-              onChange={handleChange}
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-              required
-            >
-              <option value="">Selecciona un pueblo</option>
-              {towns.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Ubicación exacta <span className="text-red-500">*</span>
+            </label>
+            <AddressMap
+              onNewCoordinatesCallback={(lngLat) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  coordinates: lngLat,
+                }));
+              }}
+            />
           </div>
+
           {/* Consentimiento */}
           <div className="flex items-start">
             <label className="ml-2 block text-sm text-gray-700 cursor-pointer">
