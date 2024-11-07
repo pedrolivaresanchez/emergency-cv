@@ -63,7 +63,7 @@ export function PageContent({ currentCount, data, filters, towns }: PageContentP
         <p className="font-bold text-md">Filtros</p>
         <div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
           <Toggle
-            checked={filters.soloSinVoluntarios}
+            initiallyChecked={filters.soloSinVoluntarios}
             handleChange={handleVoluntariosChange}
             label="Sólo ofertas sin voluntarios"
           />

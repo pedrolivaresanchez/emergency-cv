@@ -11,7 +11,7 @@ import { PageContent } from './_components/PageContent';
 
 async function fetchData(
   supabase: SupabaseClient<Database>,
-  { currentPage, pueblo, tipoAyuda, urgencia }: PageFilters,
+  { currentPage, pueblo, tipoAyuda, urgencia, soloSinVoluntarios }: PageFilters,
 ) {
   // Comenzamos la consulta
   const query = supabase.from('help_requests').select('*', { count: 'exact' }).eq('type', 'necesita');
@@ -29,6 +29,11 @@ async function fetchData(
   // Solo agregar filtro si no es "todas"
   if (urgencia !== 'todas') {
     query.eq('urgency', urgencia);
+  }
+
+  // Solo agregar filtro si el checkbox esta activado
+  if (!!soloSinVoluntarios) {
+    query.eq('asignees_count', 0);
   }
 
   query.neq('status', 'finished');
