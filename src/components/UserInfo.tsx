@@ -1,8 +1,15 @@
+'use client';
+
 import Link from 'next/link';
 import { LogIn } from 'lucide-react';
 import { authService } from '@/lib/service';
+import { useSession } from '@/context/SessionProvider';
+import Image from 'next/image';
 
-export default function UserProfile({ user }) {
+export default function UserProfile() {
+  const session = useSession();
+  const user = session.user;
+
   const handleLogout = async () => {
     const response = await authService.signOut();
     if (!response.error) {
@@ -25,7 +32,7 @@ export default function UserProfile({ user }) {
   return (
     <div className="flex items-center gap-4 px-2">
       {user.user_metadata.avatar_url ? (
-        <img className="w-10 h-10 rounded-full" src={user.user_metadata.avatar_url} alt="Rounded avatar" />
+        <Image className="w-10 h-10 rounded-full" src={user.user_metadata.avatar_url} alt="Rounded avatar" />
       ) : (
         <div className="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
           <svg
