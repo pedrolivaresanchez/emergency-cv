@@ -60,7 +60,7 @@ export default function ListaSolicitudes() {
           ) : (
             requests.map((caso) => (
               <SolicitudCard
-                isHref={true}
+                isHref={false}
                 towns={towns}
                 key={caso.id}
                 caso={caso}
