@@ -1,70 +1,93 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { Thermometer } from 'lucide-react';
+import { HeartHandshake, Search, Thermometer } from 'lucide-react';
 import OfferHelp from '@/components/OfferHelp';
-import { useModal } from '@/context/EmergencyProvider';
 import Modal from '@/components/Modal';
+import TownCardInfo from '@/components/TownCardInfo';
 
-export default function Voluntometro() {
-  const [pueblos, setPueblos] = useState([]);
-  const { showModal, toggleModal } = useModal();
+const getCount = async () => {
+  const today = new Date().toISOString().split('T')[0];
+  const {
+    data: solicitaData,
+    count: solicitaCount,
+    error: solicitaError,
+  } = await supabase
+    .from('help_requests')
+    .select('id', { count: 'exact' })
+    .eq('type', 'necesita')
+    .gte('created_at', today)
+    .lte('created_at', `${today}T23:59:59.999Z`);
 
-  const [town, setTown] = useState(0);
+  const {
+    data: ofreceData,
+    count: ofreceCount,
+    error: ofreceError,
+  } = await supabase
+    .from('help_requests')
+    .select('id', { count: 'exact' })
+    .eq('type', 'ofrece')
+    .gte('created_at', today)
+    .lte('created_at', `${today}T23:59:59.999Z`);
 
-  const closeModal = () => {
-    toggleModal(false);
+  if (solicitaError) {
+    throw new Error('Error fetching solicita:', solicitaError);
+  }
+  if (ofreceError) {
+    throw new Error('Error fetching ofrece:', ofreceError);
+  }
+  return {
+    solicitudes: solicitaCount || 0,
+    ofertas: ofreceCount || 0,
   };
+};
 
-  useEffect(() => {
-    fetchVolunteers();
-  }, []);
+const getVolunteers = async () => {
+  const today = new Date().toISOString().split('T')[0];
 
-  async function fetchVolunteers() {
-    const today = new Date().toISOString().split('T')[0];
+  const { data: towns, error: townError } = await supabase.from('towns').select('id, name');
 
-    const { data: towns, error: townError } = await supabase.from('towns').select('id, name');
-
-    if (townError) {
-      console.log('Error fetching towns:', townError);
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from('help_requests')
-      .select('*')
-      .in('type', ['ofrece', 'necesita'])
-      .gte('created_at', today)
-      .lte('created_at', `${today}T23:59:59.999Z`);
-
-    if (error) {
-      console.log('Error fetching help requests:', error);
-      return;
-    }
-
-    const volunteersCount = new Map();
-    const needHelpCount = new Map();
-
-    data.forEach((person) => {
-      const townId = person.town_id;
-      if (person.type === 'ofrece') {
-        volunteersCount.set(townId, (volunteersCount.get(townId) || 0) + 1);
-      } else if (person.type === 'necesita') {
-        needHelpCount.set(townId, (needHelpCount.get(townId) || 0) + 1);
-      }
-    });
-
-    const updatedPueblos = towns.map((town) => ({
-      id: town.id,
-      name: town.name,
-      count: volunteersCount.get(town.id) || 0,
-      needHelp: needHelpCount.get(town.id) || 0,
-    }));
-
-    setPueblos(updatedPueblos);
+  if (townError) {
+    console.log('Error fetching towns:', townError);
+    return;
   }
 
+  const { data, error } = await supabase
+    .from('help_requests')
+    .select('*')
+    .in('type', ['ofrece', 'necesita'])
+    .gte('created_at', today)
+    .lte('created_at', `${today}T23:59:59.999Z`);
+
+  if (error) {
+    console.log('Error fetching help requests:', error);
+    return;
+  }
+
+  const volunteersCount = new Map();
+  const needHelpCount = new Map();
+
+  data.forEach((person) => {
+    const townId = person.town_id;
+    if (person.type === 'ofrece') {
+      volunteersCount.set(townId, (volunteersCount.get(townId) || 0) + 1);
+    } else if (person.type === 'necesita') {
+      needHelpCount.set(townId, (needHelpCount.get(townId) || 0) + 1);
+    }
+  });
+
+  const updatedPueblos = towns.map((town) => ({
+    id: town.id,
+    name: town.name,
+    count: volunteersCount.get(town.id) || 0,
+    needHelp: needHelpCount.get(town.id) || 0,
+  }));
+
+  return updatedPueblos;
+};
+
+export default async function Voluntometro() {
+  const pueblos = await getVolunteers();
+  const count = await getCount();
+  console.log(pueblos.ofertasButton);
   const getFechaHoy = () => {
     const fecha = new Date();
     return fecha.toLocaleDateString('es-ES', {
@@ -87,101 +110,45 @@ export default function Voluntometro() {
     return {
       top: sortedPueblos.slice(0, 2),
       bottom: sortedPueblos.slice(-2).reverse(),
+      all: sortedPueblos.reverse(),
     };
   };
   return (
     <div className="mx-auto p-4">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-        <h1 className="text-2xl font-bold text-orange-500 flex items-center gap-2">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <Thermometer className="h-8 w-8" />
           Voluntómetro
         </h1>
       </div>
 
       {/* Widget de Estadísticas actualizado */}
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-        <h2 className="text-lg font-semibold mb-4 text-orange-500">Resumen de Voluntarios del {getFechaHoy()}</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h3 className="text-green-600 font-medium">Mayor participación hoy</h3>
-            {getTopAndBottomPueblos().top.length > 0 ? (
-              getTopAndBottomPueblos().top.map((pueblo) => (
-                <div
-                  key={pueblo.id}
-                  className="flex flex-col xl:flex-row items-start md:items-center justify-between bg-green-50 p-3 rounded-lg"
-                >
-                  <span className="font-medium">{pueblo.name}</span>
-                  <div className="flex flex-col lg:flex-row items-start md:items-center">
-                    <div>
-                      <span className="text-green-600 font-bold">{pueblo.count}</span>
-                      <span className="text-gray-500 ml-1">voluntarios</span>
-                    </div>
-                    <span className="text-semibold px-2 hidden lg:block">|</span>
-                    <div>
-                      <span className="text-green-600 font-bold">{pueblo.needHelp}</span>
-                      <span className="text-gray-500 ml-1">necesitan ayuda</span>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-gray-500 italic">No hay voluntarios registrados hoy</div>
-            )}
+      <h2 className="text-lg font-semibold mb-4 text-gray-900">Resumen de Voluntarios del {getFechaHoy()}</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <div className="flex flex-row bg-white p-4 rounded-lg gap-4 shadow-lg">
+          <div className="bg-green-100 rounded-lg p-6">
+            <HeartHandshake className="w-16 h-16 text-green-600" />
           </div>
-
-          <div className="space-y-4">
-            <h3 className="text-red-600 font-medium">Necesitan más apoyo</h3>
-            {getTopAndBottomPueblos().bottom.map((pueblo) => (
-              <div
-                key={pueblo.id}
-                className="flex flex-col xl:flex-row items-start md:items-center justify-between bg-red-50 p-3 rounded-lg"
-              >
-                <span className="font-medium">{pueblo.name}</span>
-                <div className="flex flex-col lg:flex-row items-start md:items-center">
-                  <div>
-                    <span className="text-red-600 font-bold">{pueblo.count}</span>
-                    <span className="text-gray-500 ml-1">voluntarios</span>
-                  </div>
-                  <span className="text-semibold px-2 hidden lg:block">|</span>
-                  <div>
-                    <span className="text-red-600 font-bold">{pueblo.needHelp}</span>
-                    <span className="text-gray-500 ml-1">necesitan ayuda</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="flex flex-col justify-center">
+            <h1 className="text-3xl font-bold text-gray-900">{count.ofertas}+</h1>
+            <p className="text-lg font-medium text-gray-600">Nuevos voluntarios hoy</p>
+          </div>
+        </div>
+        <div className="flex flex-row bg-white p-4 rounded-lg gap-4 shadow-lg">
+          <div className="bg-red-100 rounded-lg p-6">
+            <Search className="w-16 h-16 text-red-600" />
+          </div>
+          <div className="flex flex-col justify-center">
+            <h1 className="text-3xl font-bold text-gray-900">{count.solicitudes}+</h1>
+            <p className="text-lg font-medium text-gray-600">Nuevas solicitudes hoy</p>
           </div>
         </div>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {pueblos.map((pueblo) => (
-          <div key={pueblo.name} className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold mb-2">{pueblo.name}</h2>
-            <div className="flex justify-between items-center mb-4">
-              <div className="text-lg">
-                <span className="font-semibold">{pueblo.count}</span> voluntarios
-              </div>
-              <button
-                onClick={() => {
-                  toggleModal(true);
-                  setTown(pueblo);
-                }}
-                className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
-              >
-                Voy
-              </button>
-            </div>
-          </div>
+        {getTopAndBottomPueblos().all.map((pueblo) => (
+          <TownCardInfo key={pueblo.id} pueblo={pueblo} route="/casos-activos/solicitudes/?pueblo=" />
         ))}
       </div>
-
-      {/* Modal with full form */}
-      {showModal && (
-        <Modal>
-          <OfferHelp town={town} onClose={closeModal} isModal={true} />
-        </Modal>
-      )}
     </div>
   );
 }
