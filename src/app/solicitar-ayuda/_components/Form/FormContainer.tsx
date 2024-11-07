@@ -32,8 +32,6 @@ export function FormContainer() {
   const router = useRouter();
   const session = useSession();
 
-  console.log('SESION', session?.user?.user_metadata);
-
   const [formData, setFormData] = useState<FormData>({
     nombre: session?.user?.user_metadata?.nombre?.split(' ')[0] || '',
     ubicacion: '',
