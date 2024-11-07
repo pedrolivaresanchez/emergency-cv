@@ -59,14 +59,7 @@ export default function ListaSolicitudes() {
             </div>
           ) : (
             requests.map((caso) => (
-              <SolicitudCard
-                isHref={true}
-                towns={towns}
-                key={caso.id}
-                caso={caso}
-                button={{ text: 'Editar', link: '/solicitudes/editar/' }}
-                isEdit={true}
-              />
+              <SolicitudCard isHref={true} towns={towns} key={caso.id} caso={caso} isEdit={true} />
             ))
           )}
         </div>

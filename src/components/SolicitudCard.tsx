@@ -12,22 +12,10 @@ type SolicitudCardProps = {
   caso: HelpRequestData;
   towns: Town[];
   isHref?: boolean;
-  button?: SolicitudCardButton;
   isEdit?: boolean;
 };
 
-type SolicitudCardButton = {
-  text: string;
-  link: string;
-};
-
-export default function SolicitudCard({
-  caso,
-  towns,
-  isHref = true,
-  button = { text: 'Ver solicitud', link: '/solicitud/' },
-  isEdit = false,
-}: SolicitudCardProps) {
+export default function SolicitudCard({ caso, towns, isHref = true, isEdit = false }: SolicitudCardProps) {
   const session = useSession();
 
   const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
@@ -184,10 +172,10 @@ export default function SolicitudCard({
           )}
           {isHref && (
             <Link
-              href={button.link + caso.id}
+              href={'/solicitud/' + caso.id}
               className={`w-full rounded-xl text-center px-4 py-2 font-semibold text-white sm:w-auto bg-gray-700 hover:bg-gray-800 transition-all`}
             >
-              {button.text}
+              Ver solicitud
             </Link>
           )}
           <AsignarSolicitudButton helpRequest={caso} />
