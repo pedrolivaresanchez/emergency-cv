@@ -1,13 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { FormRenderer } from './FormRenderer';
 import { FormData, Status } from '../types';
-// @ts-expect-error
-import { isValidPhone } from '@/helpers/utils';
-// @ts-expect-error
-import { formatPhoneNumber } from '@/helpers/utils';
+import { formatPhoneNumber, isValidPhone } from '@/helpers/utils';
 import { helpRequestService } from '@/lib/service';
 import { Database } from '@/types/database';
 import { Enums } from '@/types/common';
@@ -76,6 +73,11 @@ export function FormContainer() {
 
       if (!formData.consentimiento) {
         alert('Debe aceptar el consentimiento para enviar la solicitud');
+        return;
+      }
+
+      if (!isValidPhone(formData.contacto)) {
+        alert('El teléfono de contacto no es válido.');
         return;
       }
 
@@ -205,6 +207,7 @@ export function FormContainer() {
   return (
     <FormRenderer
       formData={formData}
+      isUserLoggedIn={Boolean(session?.user)}
       handleConsentChange={handleInputElementChange}
       handleEmailChange={handleInputElementChange}
       handleAddressSelection={handleAddressSelection}

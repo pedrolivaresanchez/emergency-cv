@@ -3,7 +3,6 @@ import React from 'react';
 import { Check } from 'lucide-react';
 
 import { PhoneInput } from '@/components/PhoneInput';
-// @ts-expect-error
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { TIPOS_DE_AYUDA } from '@/helpers/constants';
 import { TipoDeAyudaInputRenderer } from '../TipoDeAyudaInputRenderer';
@@ -14,6 +13,7 @@ import { RequestDetails } from '@/types/Requests';
 type FormRendererProps = {
   status: Status;
   formData: FormData;
+  isUserLoggedIn: boolean;
   selectedHelp: Map<RequestDetails['id'], boolean>;
   handleSubmit: React.FormEventHandler<HTMLFormElement>;
   handlePhoneChange: (phoneNumber: string) => void;
@@ -33,6 +33,7 @@ export function FormRenderer({
   handleSubmit,
   status,
   formData,
+  isUserLoggedIn,
   handlePhoneChange,
   handleAddressSelection,
   handleSituacionEspecialChange,

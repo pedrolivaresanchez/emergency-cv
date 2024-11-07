@@ -35,13 +35,14 @@ export default function OfferHelp({
     email: data.additional_info?.email || session?.user?.user_metadata?.email || '',
     ubicacion: data.location || '',
     tiposAyuda: data.help_type || [],
+    otraAyuda: data.other_help || '',
     vehiculo: data.resources?.vehicle || '',
     disponibilidad: data.resources?.availability || [],
     radio: data.resources?.radius || 1,
     experiencia: data.additional_info?.experience || '',
     comentarios: data.description || '',
     aceptaProtocolo: submitType ? true : false,
-    pueblo: submitType ? data?.town_id : town ? town.id : '',
+    pueblo: submitType === 'edit' ? data?.town_id : town ? town.id : '',
     status: data?.status || '',
   });
 
@@ -118,6 +119,7 @@ export default function OfferHelp({
         latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : null,
         longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : null,
         help_type: formData.tiposAyuda,
+        other_help: formData.otraAyuda,
         town_id: formData.pueblo,
         status: formData.status,
       };
@@ -142,6 +144,7 @@ export default function OfferHelp({
         email: '',
         ubicacion: '',
         tiposAyuda: [],
+        otraAyuda: '',
         vehiculo: '',
         disponibilidad: [],
         radio: 1,
@@ -292,6 +295,20 @@ export default function OfferHelp({
             ))}
           </div>
         </div>
+
+        {formData.tiposAyuda.includes('otros') && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">¿Qué tipo de ayuda?</label>
+            <textarea
+              name="otraAyuda"
+              value={formData.otraAyuda}
+              onChange={(e) => setFormData({ ...formData, otraAyuda: e.target.value })}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
+              rows="3"
+              placeholder="Especifica qué tipo de ayuda..."
+            />
+          </div>
+        )}
 
         {/* Vehículo */}
         <div>

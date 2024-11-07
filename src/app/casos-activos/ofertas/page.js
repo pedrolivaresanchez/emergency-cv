@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import Pagination from '@/components/Pagination';
@@ -18,7 +18,7 @@ export default function Ofertas() {
   const [error, setError] = useState(null);
 
   const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
   const [currentCount, setCurrentCount] = useState(0);
 
   const itemsPerPage = 10;
@@ -112,7 +112,7 @@ export default function Ofertas() {
           <select
             value={filtroData.ayuda}
             onChange={(e) => changeDataFilter('ayuda', e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+            className="px-4 py-2 rounded-lg w-full sm:w-auto border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
           >
             <option value="todas">Todas las ofertas</option>
             {Object.entries(tiposAyudaOptions).map(([key, value]) => (
@@ -137,7 +137,7 @@ export default function Ofertas() {
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
             >
               <HeartHandshake className="w-5 h-5" />
-              Ofrecer ayuda a {filtroData.pueblo === 'todos' ? '' : towns[filtroData.pueblo - 1].name}
+              Ofrecer ayuda
             </button>
           </div>
         ) : (

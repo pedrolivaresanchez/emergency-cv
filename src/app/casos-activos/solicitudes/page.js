@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
@@ -10,7 +10,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/EmergencyProvider';
-import { useTowns } from '../../../context/TownProvider';
+import { useTowns } from '@/context/TownProvider';
+
+const MODAL_NAME = 'solicitudes';
 
 export default function Solicitudes() {
   const towns = useTowns();
@@ -23,10 +25,10 @@ export default function Solicitudes() {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
   const [currentCount, setCurrentCount] = useState(0);
-  const { showModal, toggleModal } = useModal();
+  const { toggleModal } = useModal();
 
   const closeModal = () => {
-    toggleModal(false);
+    toggleModal(MODAL_NAME, false);
   };
   const itemsPerPage = 10;
   const numPages = (count) => {
@@ -130,7 +132,7 @@ export default function Solicitudes() {
           <select
             value={filtroData.tipoAyuda}
             onChange={(e) => changeDataFilter('tipoAyuda', e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+            className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
           >
             <option value="todas">Todas las necesidades</option>
             {Object.entries(tiposAyudaOptions).map(([key, label]) => (
@@ -142,7 +144,7 @@ export default function Solicitudes() {
           <select
             value={filtroData.urgencia}
             onChange={(e) => changeDataFilter('urgencia', e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+            className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
           >
             <option value="todas">Todas las prioridades</option>
             <option value="alta">Alta prioridad</option>
@@ -152,7 +154,7 @@ export default function Solicitudes() {
           <select
             value={filtroData.pueblo}
             onChange={(e) => changeDataFilter('pueblo', e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+            className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
           >
             <option value="todos">Todos los pueblos</option>
             {towns.map((item) => (
@@ -172,12 +174,15 @@ export default function Solicitudes() {
 
             <button
               onClick={() => {
-                toggleModal(true);
+                toggleModal(MODAL_NAME, true);
               }}
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
             >
               <HeartHandshake className="w-5 h-5" />
-              Ofrecer ayuda a {filtroData.pueblo === 'todos' ? '' : towns[filtroData.pueblo - 1].name}
+              Ofrecer ayuda{' '}
+              {filtroData.pueblo === 'todos'
+                ? ''
+                : ' a ' + towns.find((town) => town.id === Number(filtroData.pueblo))?.name}
             </button>
           </div>
         ) : (
@@ -187,11 +192,14 @@ export default function Solicitudes() {
       <div className="flex items-center justify-center">
         <Pagination currentPage={currentPage} totalPages={numPages(currentCount)} onPageChange={changePage} />
       </div>
-      {showModal && (
-        <Modal>
-          <OfferHelp town={towns[filtroData.pueblo - 1]} onClose={closeModal} isModal={true} />
-        </Modal>
-      )}
+
+      <Modal id={MODAL_NAME}>
+        <OfferHelp
+          town={towns.find((town) => town.id === Number(filtroData.pueblo))?.name}
+          onClose={closeModal}
+          isModal={true}
+        />
+      </Modal>
     </>
   );
 }
