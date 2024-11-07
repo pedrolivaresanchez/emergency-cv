@@ -21,6 +21,17 @@ export const helpRequestService = {
     if (error) throw error;
     return data;
   },
+  async getOne(id: number) {
+    const supabase = await getSupabaseClient();
+    const { data, error } = await supabase
+      .from('help_requests')
+      .select('*')
+      .eq('id', id)
+      .eq('type', 'necesita')
+      .single();
+    if (error) throw error;
+    return data;
+  },
 
   async getRequestsByUser(user_id: string | undefined) {
     if (user_id === undefined) return [];
