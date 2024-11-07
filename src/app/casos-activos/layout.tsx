@@ -1,6 +1,11 @@
-import { supabase } from '@/lib/supabase/client';
+import React from 'react';
+
+import { createClient } from '@/lib/supabase/server';
+// @ts-expect-error
 import TabNavigation from '@/components/TabNavigation';
-const getCount = async () => {
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '@/types/database';
+const getCount = async (supabase: SupabaseClient<Database>) => {
   const {
     data: solicitaData,
     count: solicitaCount,
@@ -37,7 +42,8 @@ const getCount = async () => {
 };
 
 export default async function CasosActivosLayout({ children }) {
-  const count = await getCount();
+  const supabase = await createClient();
+  const count = await getCount(supabase);
   return (
     <>
       <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">

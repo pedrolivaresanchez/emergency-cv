@@ -9,21 +9,23 @@ import { townsService } from '@/lib/service';
 import { Toaster } from 'sonner';
 import { PropsWithChildren } from 'react';
 import { QueryClientProvider } from '@/context/QueryClientProvider';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '@/types/database';
 
 export const metadata = {
   title: 'Ajuda Dana - Sistema de Coordinación',
   description: 'Sistema de coordinación para emergencias en la Comunidad Valenciana',
 };
 
-const getSession = async () => {
-  const supabase = await createClient();
+const getSession = async (supabase: SupabaseClient<Database>) => {
   const { data, error } = await supabase.auth.getUser();
   return data;
 };
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const session = await getSession();
-  const towns = await townsService.getTowns();
+  const supabase = await createClient();
+  const session = await getSession(supabase);
+  const towns = await townsService.getTowns(supabase);
   return (
     <html lang="es">
       <body suppressHydrationWarning={true}>
