@@ -18,6 +18,7 @@ export default function GeoLocationMap({
   onPermissionStatusChanged,
   zoom = 13,
 }: GeoLocationMapProps) {
+  const isGeolocating = useRef(false);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
 
@@ -30,9 +31,19 @@ export default function GeoLocationMap({
     showAccuracyCircle: true,
   });
 
+  const triggerGeoLocate = () => {
+    setTimeout(() => {
+      if (!isGeolocating.current) {
+        if (geolocateControl.trigger()) {
+          isGeolocating.current = true;
+        }
+      }
+    });
+  };
+
   const visibilityChangeEvent = () => {
     if (document.visibilityState === 'visible' && geolocateControl) {
-      geolocateControl.trigger();
+      triggerGeoLocate();
     }
   };
 
@@ -80,9 +91,7 @@ export default function GeoLocationMap({
           onPermissionStatusChanged(permissionStatus.state);
         }
 
-        if (permissionStatus.state === 'granted') {
-          geolocateControl.trigger();
-        }
+        triggerGeoLocate();
       };
     });
 
@@ -123,7 +132,7 @@ export default function GeoLocationMap({
     mapRef.current.addControl(geolocateControl);
 
     // add to js queue so that the control is correctly added, then trigger the location detection
-    setTimeout(() => geolocateControl.trigger(), 200);
+    setTimeout(() => triggerGeoLocate(), 200);
     return cleanup;
   }, [zoom]);
 
