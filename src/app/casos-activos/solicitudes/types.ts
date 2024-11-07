@@ -6,6 +6,7 @@ export type PageFilters = {
   pueblo: 'todos' | string;
   urgencia: 'todas' | HelpUrgency;
   currentPage: number;
+  soloSinVoluntarios: boolean;
 };
 
 export type SearchParams = {
@@ -13,4 +14,5 @@ export type SearchParams = {
   pueblo: 'todos' | string | undefined;
   urgencia: 'todas' | HelpUrgency | undefined;
   currentPage: number | undefined;
+  soloSinVoluntarios: boolean | undefined;
 };

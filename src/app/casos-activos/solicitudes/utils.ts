@@ -36,13 +36,14 @@ export const updateUrlSearchParamsWithFilters = (
 };
 
 export const searchParams2Filters = (searchParams: SearchParams): PageFilters => {
-  const { currentPage, pueblo, tipoAyuda, urgencia } = searchParams;
+  const { currentPage, pueblo, tipoAyuda, urgencia, soloSinVoluntarios } = searchParams;
 
   const filters = {
     currentPage: currentPage || DEFAULT_FITLERS.currentPage,
     pueblo: pueblo || DEFAULT_FITLERS.pueblo,
     tipoAyuda: tipoAyuda || DEFAULT_FITLERS.tipoAyuda,
     urgencia: urgencia || DEFAULT_FITLERS.urgencia,
+    soloSinVoluntarios: !!soloSinVoluntarios,
   };
 
   return filters;

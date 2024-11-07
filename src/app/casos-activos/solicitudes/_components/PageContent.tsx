@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { ChangeEventHandler, useCallback } from 'react';
 import { HeartHandshake } from 'lucide-react';
 
 import SolicitudCard from '@/components/SolicitudCard';
@@ -14,6 +14,7 @@ import { Database } from '@/types/database';
 import { Town } from '@/types/Town';
 import { PageFilters } from '../types';
 import { changeFilters, updateUrlSearchParamsWithFilters } from '../utils';
+import { Toggle } from '@/components/Toggle';
 
 const MODAL_NAME = 'solicitudes';
 
@@ -51,13 +52,24 @@ export function PageContent({ currentCount, data, filters, towns }: PageContentP
     updateFilterAndUrlParams('currentPage', newPage);
   }
 
+  const handleVoluntariosChange: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
+    updateFilterAndUrlParams('soloSinVoluntarios', e.target.checked);
+  }, []);
+
   return (
     <>
       {/* FILTROS  */}
       <div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
         <p className="font-bold text-md">Filtros</p>
         <div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
+          <Toggle
+            checked={filters.soloSinVoluntarios}
+            handleChange={handleVoluntariosChange}
+            label="Sólo ofertas sin voluntarios"
+          />
           <select
+            id="necesidades-selector"
+            data-testid="necesidades-selector"
             value={filters.tipoAyuda}
             onChange={(e) => updateFilterAndUrlParams('tipoAyuda', e.target.value as any)}
             className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
