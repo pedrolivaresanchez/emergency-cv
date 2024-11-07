@@ -32,11 +32,20 @@ export async function updateSession(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const url = request.nextUrl.clone();
 
-  if (!user && !request.nextUrl.pathname.startsWith('/login') && !request.nextUrl.pathname.startsWith('/auth')) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
+  if (
+    !user &&
+    (request.nextUrl.pathname.startsWith('/ofertas') || request.nextUrl.pathname.startsWith('/solicitudes'))
+  ) {
+    // no user, no access to their offers or requests. Redirect to log in
+
+    url.pathname = '/auth';
+    return NextResponse.redirect(url);
+  }
+
+  if (request.nextUrl.pathname === '/casos-activos') {
+    url.pathname = '/casos-activos/solicitudes';
     return NextResponse.redirect(url);
   }
 
