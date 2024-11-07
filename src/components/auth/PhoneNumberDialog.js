@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import Modal from '@/components/Modal';
 import { authService } from '@/lib/service';
-import { useModal } from '@/context/EmergencyProvider';
+import { useModal } from '@/context/ModalProvider';
 import { PhoneInput } from '@/components/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/utils';
 import { isValidPhone } from '@/helpers/utils';

@@ -2,7 +2,7 @@
 
 import { FC, useEffect, useState } from 'react';
 import Modal from '@/components/Modal';
-import { useModal } from '@/context/EmergencyProvider';
+import { useModal } from '@/context/ModalProvider';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
