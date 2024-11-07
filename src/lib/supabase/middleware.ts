@@ -34,7 +34,10 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
   const url = request.nextUrl.clone();
 
-  if ((!user && request.nextUrl.pathname === '/ofertas') || request.nextUrl.pathname === '/solicitudes') {
+  if (
+    !user &&
+    (request.nextUrl.pathname.startsWith('/ofertas') || request.nextUrl.pathname.startsWith('/solicitudes'))
+  ) {
     // no user, no access to their offers or requests. Redirect to log in
 
     url.pathname = '/auth';
