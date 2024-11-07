@@ -6,7 +6,7 @@ import { PhoneInput } from '@/components/PhoneInput';
 import { TIPOS_DE_AYUDA } from '../constants';
 import { TipoDeAyudaInputRenderer } from '../TipoDeAyudaInputRenderer';
 import { FormData, HelpCategory, Status } from '../types';
-import AddressMap, { AddressDescriptor } from '../../../../components/AddressMap';
+import AddressMap from '../../../../components/AddressMap';
 import { LngLat } from '@/components/map/GeolocationMap';
 
 type FormRendererProps = {
@@ -153,7 +153,12 @@ export function FormRenderer({
             />
           </div>
 
-          <AddressMap onNewCoordinatesCallback={handleCoordinatesChange} />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Ubicación exacta <span className="text-red-500">*</span>
+            </label>
+            <AddressMap onNewCoordinatesCallback={handleCoordinatesChange} />
+          </div>
 
           {/* Consentimiento */}
           <div className="flex items-start">

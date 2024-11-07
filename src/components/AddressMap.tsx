@@ -3,20 +3,12 @@
 import GeoLocationMap, { LngLat } from '@/components/map/GeolocationMap';
 import { useEffect, useState } from 'react';
 
-export type AddressDescriptor = { address: string; town: string; coordinates: LngLat };
-export type AddressAndTownCallback = (addressAndTown: AddressDescriptor) => void;
 export type AddressMapProps = {
   onNewCoordinatesCallback: (lngLat: LngLat) => void;
 };
 
 export default function AddressMap({ onNewCoordinatesCallback }: AddressMapProps) {
   const [status, setStatus] = useState<PermissionState | 'unknown'>('unknown');
-
-  useEffect(() => {
-    navigator.permissions.query({ name: 'geolocation' }).then((status) => {
-      setStatus(status.state);
-    });
-  }, []);
 
   return (
     <div className="space-y-2">
@@ -26,7 +18,13 @@ export default function AddressMap({ onNewCoordinatesCallback }: AddressMapProps
           <p className="text-red-700">Debes activar la ubicación para que podamos localizarte</p>
         </div>
       )}
-      <GeoLocationMap onNewPositionCallback={(lngLat) => {}} onNewCenterCallback={onNewCoordinatesCallback} />
+      <GeoLocationMap
+        onPermissionStatusChanged={(permission) => {
+          setStatus(permission);
+        }}
+        onNewPositionCallback={(lngLat) => {}}
+        onNewCenterCallback={onNewCoordinatesCallback}
+      />
     </div>
   );
 }
