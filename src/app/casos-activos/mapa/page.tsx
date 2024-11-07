@@ -45,7 +45,7 @@ export default function Mapa() {
         latitude: request.latitude ?? 0,
         longitude: request.longitude ?? 0,
         id: request.id,
-        popup: <SolicitudCard showLink={true} showEdit={false} caso={request} />,
+        popup: <SolicitudCard format="small" showLink={true} showEdit={false} caso={request} />,
       };
     }
 
