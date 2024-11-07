@@ -6,11 +6,11 @@ import { supabase } from '@/lib/supabase/client';
 import Pagination from '@/components/Pagination';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useTowns } from '../../../context/TownProvider';
-import OfferCard from '../../../components/OfferCard';
+import { useTowns } from '@/context/TownProvider';
+import OfferCard from '@/components/OfferCard';
 
 export default function Ofertas() {
-  const towns = useTowns();
+  const { towns } = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
 

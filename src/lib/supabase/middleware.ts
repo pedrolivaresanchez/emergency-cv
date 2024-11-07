@@ -29,20 +29,7 @@ export async function updateSession(request: NextRequest) {
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
   const url = request.nextUrl.clone();
-
-  if (
-    !user &&
-    (request.nextUrl.pathname.startsWith('/ofertas') || request.nextUrl.pathname.startsWith('/solicitudes'))
-  ) {
-    // no user, no access to their offers or requests. Redirect to log in
-
-    url.pathname = '/auth';
-    return NextResponse.redirect(url);
-  }
 
   if (request.nextUrl.pathname === '/casos-activos') {
     url.pathname = '/casos-activos/solicitudes';

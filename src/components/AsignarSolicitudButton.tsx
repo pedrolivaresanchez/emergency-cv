@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAssignmentData, HelpRequestData, HelpRequestAdditionalInfo } from '@/types/Requests';
+import { HelpRequestAssignmentData, HelpRequestData } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
 import { MouseEvent } from 'react';
 import { Spinner } from '@/components/Spinner';
@@ -18,7 +18,7 @@ type AsignarSolicitudButtonProps = {
 export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitudButtonProps) {
   const { toggleModal } = useModal();
   const session = useSession();
-
+  const userId = session.user?.id;
   const MODAL_NAME = `Solicitud-${helpRequest.id}`;
 
   const {
@@ -43,6 +43,7 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help_request_assignments'] });
+      queryClient.invalidateQueries({ queryKey: ['help_requests', { user_id: userId, type: 'necesita' }] });
     },
     onError: (e) => {
       console.error('Error al asignarte a la petición de ayuda', e);
@@ -58,6 +59,7 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help_request_assignments'] });
+      queryClient.invalidateQueries({ queryKey: ['help_requests', { user_id: userId, type: 'necesita' }] });
     },
     onError: (e) => {
       console.error('Error al asignarte a la petición de ayuda', e);
@@ -96,7 +98,7 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
     );
 
   // Verifica el email dentro de additional_info utilizando un casting y encadenamiento opcional
-  if ((helpRequest.additional_info as HelpRequestAdditionalInfo)?.email === session.user.email) return null;
+  if (helpRequest.user_id === session.user.id) return null;
 
   return (
     <>
