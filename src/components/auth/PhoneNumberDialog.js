@@ -9,6 +9,8 @@ import { PhoneInput } from '@/components/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/utils';
 import { isValidPhone } from '@/helpers/utils';
 
+const MODAL_NAME = 'phone-number';
+
 const PhoneForm = ({ onSubmit }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
 
@@ -79,7 +81,7 @@ const PhoneNumberDialog = () => {
       if (metadata.telefono) {
         return;
       }
-      toggleModal();
+      toggleModal(MODAL_NAME);
     };
 
     fetchNumber();
@@ -103,11 +105,11 @@ const PhoneNumberDialog = () => {
       throw new Error('Error a la hora de actualizar el usuario con un numero de telefono');
     }
 
-    toggleModal();
+    toggleModal(MODAL_NAME);
   }, []);
 
   return (
-    <Modal maxWidth={'max-w-md'} allowClose={false}>
+    <Modal id={MODAL_NAME} maxWidth={'max-w-md'} allowClose={false}>
       <PhoneForm onSubmit={handleSubmit} />
     </Modal>
   );

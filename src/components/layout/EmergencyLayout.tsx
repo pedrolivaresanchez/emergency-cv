@@ -4,6 +4,7 @@ import { useState, useEffect, PropsWithChildren } from 'react';
 // @ts-ignore
 import Sidebar from './Sidebar';
 import Footer from './Footer';
+import CookieBanner from '@/components/CookieBanner/CookieBanner';
 
 export default function EmergencyLayout({ children }: PropsWithChildren) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Por defecto abierto
@@ -33,6 +34,7 @@ export default function EmergencyLayout({ children }: PropsWithChildren) {
           <div className="max-w-7xl w-full">{children}</div>
         </main>
         <Footer />
+        <CookieBanner />
       </div>
     </div>
   );

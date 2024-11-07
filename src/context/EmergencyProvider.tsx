@@ -1,24 +1,32 @@
 'use client';
 
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, { createContext, FC, ReactNode, useContext, useState } from 'react';
 
-const EmergencyContext = createContext<EmergencyCtx>({ showModal: false, toggleModal: () => {} });
-
-type EmergencyCtx = {
-  showModal: boolean;
-  toggleModal: (force: boolean) => void;
+type EmergencyContextType = {
+  isModalOpen: { [key: string]: boolean };
+  toggleModal: (id: string, force?: boolean) => void;
 };
 
-type SessionProviderProps = {
+const EmergencyContext = createContext<EmergencyContextType>({
+  isModalOpen: {},
+  toggleModal: () => {},
+});
+
+type EmergencyProviderProps = {
   children: ReactNode;
 };
 
-export const EmergencyProvider: React.FC<SessionProviderProps> = ({ children }) => {
-  const [showModal, setShowModal] = useState(false);
+export const EmergencyProvider: FC<EmergencyProviderProps> = ({ children }) => {
+  const [isModalOpen, setIsModalOpen] = useState<{ [key: string]: boolean }>({});
 
-  const toggleModal = (force: boolean) => setShowModal((prev) => (force !== undefined ? force : !prev));
+  const toggleModal = (id: string, force?: boolean) => {
+    setIsModalOpen((prev) => ({
+      ...prev,
+      [id]: force !== undefined ? force : !prev[id],
+    }));
+  };
 
-  return <EmergencyContext.Provider value={{ showModal, toggleModal }}>{children}</EmergencyContext.Provider>;
+  return <EmergencyContext.Provider value={{ isModalOpen, toggleModal }}>{children}</EmergencyContext.Provider>;
 };
 
 export const useModal = () => {
