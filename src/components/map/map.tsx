@@ -5,9 +5,10 @@ import ReactMap from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Marker } from 'react-map-gl/maplibre';
 import { useModal } from '@/context/EmergencyProvider';
-// @ts-ignore
 import Modal from '@/components/Modal';
 import { MapPinFilled } from '@/components/icons/MapPinFilled';
+
+const MODAL_NAME = `map-marker`;
 
 const urgencyToColor = {
   alta: 'text-red-500',
@@ -34,7 +35,7 @@ const DEFAULT_ZOOM = 12;
 const Map: FC<MapProps> = ({ markers = [] }) => {
   const [selectedMarker, setSelectedMarker] = useState<PinMapa | null>(null);
 
-  const { showModal, toggleModal } = useModal();
+  const { toggleModal } = useModal();
 
   console.log(selectedMarker);
   return (
@@ -50,11 +51,11 @@ const Map: FC<MapProps> = ({ markers = [] }) => {
       {markers.map((m) => {
         return (
           <Marker
-            key={m.id}
+            key={`marker-${m.id}-${m.latitude}-${m.longitude}-${m.urgency}`}
             longitude={m.longitude}
             latitude={m.latitude}
             onClick={() => {
-              toggleModal(true);
+              toggleModal(MODAL_NAME, true);
               setSelectedMarker(m);
             }}
             anchor="bottom"
@@ -63,7 +64,7 @@ const Map: FC<MapProps> = ({ markers = [] }) => {
           </Marker>
         );
       })}
-      {selectedMarker && showModal && <Modal>{selectedMarker.popup}</Modal>}
+      {selectedMarker && <Modal id={MODAL_NAME}>{selectedMarker.popup}</Modal>}
     </ReactMap>
   );
 };

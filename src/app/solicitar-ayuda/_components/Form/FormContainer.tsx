@@ -1,19 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { FormRenderer } from './FormRenderer';
 import { FormData, Status } from '../types';
-// @ts-expect-error
-import { isValidPhone } from '@/helpers/utils';
-// @ts-expect-error
-import { formatPhoneNumber } from '@/helpers/utils';
+import { formatPhoneNumber, isValidPhone } from '@/helpers/utils';
 import { helpRequestService } from '@/lib/service';
 import { Database } from '@/types/database';
 import { Enums } from '@/types/common';
 import { useRouter } from 'next/navigation';
 
-import { TIPOS_DE_AYUDA_MAP, TIPOS_DE_AYUDA } from '../constants';
+import { TIPOS_DE_AYUDA, TIPOS_DE_AYUDA_MAP } from '../constants';
 import { useSession } from '@/context/SessionProvider';
 
 const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_enum'][] =>
@@ -36,7 +33,7 @@ export function FormContainer() {
   const session = useSession();
 
   const [formData, setFormData] = useState<FormData>({
-    nombre: session?.user?.user_metadata?.full_name || '',
+    nombre: session?.user?.user_metadata?.full_name || session?.user?.user_metadata?.nombre || ''.split(' ')[0],
     ubicacion: '',
     coordinates: null,
     tiposDeAyuda: new Map(TIPOS_DE_AYUDA.map(({ id }) => [id, false])),
@@ -84,12 +81,17 @@ export function FormContainer() {
         return;
       }
 
+      if (!isValidPhone(formData.contacto)) {
+        alert('El teléfono de contacto no es válido.');
+        return;
+      }
+
       setStatus({ isSubmitting: true, error: null, success: false });
 
       try {
         const helpRequestData: Database['public']['Tables']['help_requests']['Insert'] = {
           type: 'necesita',
-          name: formData.nombre,
+          name: formData.nombre.split(' ')[0],
           location: formData.ubicacion,
           latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : null,
           longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : null,
@@ -205,6 +207,7 @@ export function FormContainer() {
   return (
     <FormRenderer
       formData={formData}
+      isUserLoggedIn={Boolean(session?.user)}
       handleConsentChange={handleInputElementChange}
       handleEmailChange={handleInputElementChange}
       handleAddressSelection={handleAddressSelection}

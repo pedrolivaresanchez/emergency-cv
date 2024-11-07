@@ -1,20 +1,25 @@
 'use client';
 
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAssignmentData, HelpRequestData } from '@/types/Requests';
+import { HelpRequestAssignmentData, HelpRequestData, HelpRequestAdditionalInfo } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
 import { MouseEvent } from 'react';
 import { Spinner } from '@/components/Spinner';
 import Link from 'next/link';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import Modal from '@/components/Modal';
+import { useModal } from '@/context/EmergencyProvider';
 
 type AsignarSolicitudButtonProps = {
   helpRequest: HelpRequestData;
 };
 
 export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitudButtonProps) {
+  const { toggleModal } = useModal();
   const session = useSession();
+
+  const MODAL_NAME = `Solicitud-${helpRequest.id}`;
 
   const {
     data: assignments,
@@ -60,9 +65,14 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
     },
   });
 
+  async function handleAcceptanceSubmit(e: MouseEvent) {
+    e.preventDefault();
+    toggleModal(MODAL_NAME, false);
+    assignMutation.mutate();
+  }
   async function handleSubmit(e: MouseEvent) {
     e.preventDefault();
-    assignMutation.mutate();
+    toggleModal(MODAL_NAME, true);
   }
   async function handleCancel(e: MouseEvent) {
     e.preventDefault();
@@ -77,28 +87,54 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
 
   if (!session || !session.user)
     return (
-      <Link href="/auth" className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center bg-green-500`}>
-        Quiero ayudar
+      <Link
+        href="/auth"
+        className="w-full text-center rounded-xl px-4 py-2 font-semibold text-white sm:w-auto transition-all bg-green-500 hover:bg-green-600"
+      >
+        Iniciar sesion para ayudar
       </Link>
     );
+
+  // Verifica el email dentro de additional_info utilizando un casting y encadenamiento opcional
+  if ((helpRequest.additional_info as HelpRequestAdditionalInfo)?.email === session.user.email) return null;
 
   return (
     <>
       {userIsAssigned ? (
         <button
           onClick={handleCancel}
-          className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center bg-red-500`}
+          className="w-full text-center rounded-xl px-4 py-2 font-semibold text-white sm:w-auto transition-all bg-red-500 hover:bg-red-600"
         >
           Cancelar mi ayuda
         </button>
       ) : (
         <button
           onClick={handleSubmit}
-          className={`rounded-lg text-white py-2 px-4 w-full sm:w-auto text-center bg-green-500`}
+          className="w-full text-center rounded-xl px-4 py-2 font-semibold text-white sm:w-auto transition-all bg-green-500 hover:bg-green-600"
         >
           Quiero ayudar
         </button>
       )}
+      <Modal id={MODAL_NAME} allowClose={false}>
+        <div className="bg-yellow-50 p-4 rounded">
+          <h2 className="text-yellow-800 font-semibold mb-4">Quiero ayudar</h2>
+          <p className="text-yellow-800">¿Te comprometes a atender esta solicitud?</p>
+          <div className="mt-4 flex justify-end space-x-4">
+            <button
+              onClick={() => toggleModal(MODAL_NAME, false)}
+              className="flex-1 bg-red-500 text-white py-3 px-4 rounded-lg font-semibold"
+            >
+              Rechazar
+            </button>
+            <button
+              onClick={handleAcceptanceSubmit}
+              className="flex-1 bg-green-500 text-white py-3 px-4 rounded-lg font-semibold"
+            >
+              Aceptar
+            </button>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }

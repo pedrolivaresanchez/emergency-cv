@@ -3,16 +3,16 @@ import React from 'react';
 import { Check } from 'lucide-react';
 
 import { PhoneInput } from '@/components/PhoneInput';
-// @ts-expect-error
-import AddressAutocomplete from '@/components/AddressAutocomplete';
+import AddressAutocomplete from '@/components/AddressAutocomplete.js';
 import { TIPOS_DE_AYUDA } from '../constants';
 import { TipoDeAyudaInputRenderer } from '../TipoDeAyudaInputRenderer';
-import { FormData, HelpCategory, Status, Town } from '../types';
+import { FormData, HelpCategory, Status } from '../types';
 import { TownSelector } from '../TownSelector';
 
 type FormRendererProps = {
   status: Status;
   formData: FormData;
+  isUserLoggedIn: boolean;
   selectedHelp: Map<HelpCategory['id'], boolean>;
   handleSubmit: React.FormEventHandler<HTMLFormElement>;
   handlePhoneChange: (phoneNumber: string) => void;
@@ -32,6 +32,7 @@ export function FormRenderer({
   handleSubmit,
   status,
   formData,
+  isUserLoggedIn,
   handlePhoneChange,
   handleAddressSelection,
   handleSituacionEspecialChange,
@@ -60,7 +61,7 @@ export function FormRenderer({
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
               <input
                 type="text"
                 name="nombre"
@@ -83,7 +84,8 @@ export function FormRenderer({
               className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
             />
             <p className="mt-1 text-sm text-gray-500">
-              Se utilizara para que puedas eliminar o editar la información de tu solicitud
+              {isUserLoggedIn ? 'Se utilizará para que puedas eliminar o editar la información de tu solicitud'
+                : 'Se utilizará para que puedas actualizar tu solicitud y marcarla como completada. Para realizar cambios, deberás registrarte con el mismo email'}
             </p>
           </div>
           <div>

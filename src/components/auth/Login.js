@@ -10,26 +10,86 @@ export default function Login({ onSuccessCallback }) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    privacyPolicy: '',
   });
   const [status, setStatus] = useState({
     isSubmitting: false,
     error: null,
     success: false,
   });
+  const [isPrivacyAccepted, setPrivacyAccepted] = useState(true);
+
+  /**
+   * Updates privacy policy of user
+   * @param {boolean} value
+   */
+  const updatePrivacyPolicy = async (value) => {
+    const { data: session, error: errorGettingUser } = await authService.getSessionUser();
+
+    if (!session.user || errorGettingUser) {
+      throw new Error('Error a la hora de obtener el usuario');
+    }
+
+    const metadata = session.user.user_metadata;
+    const metadataUpdated = { ...metadata, privacyPolicy: value };
+
+    const { error: updateUserError } = await authService.updateUser({
+      data: metadataUpdated,
+    });
+
+    if (updateUserError) {
+      throw new Error('Error a la hora de actualizar el usuario');
+    }
+  };
+
+  const getUserPrivacyPolicy = async () => {
+    const { data: session, error: errorGettingUser } = await authService.getSessionUser();
+    if (!session.user || errorGettingUser) {
+      throw new Error('Error a la hora de obtener el usuario');
+    }
+    return session.user.user_metadata.privacyPolicy;
+    
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+  
     setStatus({ isSubmitting: true, error: null, success: false });
+
+    if (!isPrivacyAccepted) {
+      if (!formData.privacyPolicy) {
+        setError('Para continuar, debes aceptar la Política de Privacidad.');
+        return;
+      }
+    }
 
     if (!formData.email || !formData.password) {
       setStatus({ isSubmitting: false, error: 'Rellena el email y contraseña', success: false });
       return;
     }
 
-    const response = await authService.signIn(formData.email, formData.password);
+    const response = await authService.signIn(formData.email, formData.password); 
+
+
     if (response.error) {
       setStatus({ isSubmitting: false, error: 'El email o contraseña son inválidos', success: false });
+      return;
+    }
+  
+
+    if (formData.privacyPolicy && !isPrivacyAccepted) {
+      await updatePrivacyPolicy(true);
+      setPrivacyAccepted(true);
+    }
+
+    const privacyPolicy = await getUserPrivacyPolicy();
+
+    if (!privacyPolicy) {
+      setPrivacyAccepted(false);
+      await authService.signOut();
+      setStatus({ isSubmitting: false, error: null, success: false });
+
       return;
     }
 
@@ -69,6 +129,28 @@ export default function Login({ onSuccessCallback }) {
                 />
               </div>
             </div>
+            {/* Política de privacidad */}
+            {!isPrivacyAccepted && (
+              <div className="grid gap-4">
+                <div className="flex gap-2 items-start lg:items-center">
+                  <input
+                    type="checkbox"
+                    value={formData.privacyPolicy}
+                    onChange={(e) => setFormData({ ...formData, privacyPolicy: e.target.checked })}
+                    className="min-w-4 min-h-4 cursor-pointer"
+                    id="privacyPolicy"
+                    required
+                  />
+                  <label htmlFor="privacyPolicy" className="text-sm font-medium text-gray-700">
+                    He leído y aceptado la{' '}
+                    <a href="/politica-privacidad/" className="text-blue-400">
+                      política de privacidad
+                    </a>{' '}
+                    y acepto que «ajudadana.es» recoja y guarde los datos enviados a través de este formulario.
+                  </label>
+                </div>
+              </div>
+            )}
             <div className="gap-4 flex">
               <div
                 className="ml-auto text-blue-400 hover:cursor-pointer"

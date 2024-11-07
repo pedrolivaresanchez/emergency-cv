@@ -21,7 +21,11 @@ export default function PhoneInfo({ caseInfo }) {
   return (
     <span className="break-words">
       <span className="font-semibold">Contacto:</span>{' '}
-      {!!userAssignment ? caseInfo.contact_info : 'Ayuda a esta persona para ver sus datos de contacto'}
+      {session && session.user
+        ? !!userAssignment
+          ? caseInfo.contact_info
+          : 'Dale al botón "Quiero ayudar" para ver sus datos de contacto.'
+        : 'Inicia sesion para ver este dato'}
     </span>
   );
 }

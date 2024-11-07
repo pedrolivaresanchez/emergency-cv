@@ -1,9 +1,9 @@
-import { MapPin, Clock, AlertCircle, Heart, Users, Package, Thermometer, Cross, Navigation } from 'lucide-react';
+import { AlertCircle, Clock, Cross, Heart, MapPin, Navigation, Package, Thermometer, Users } from 'lucide-react';
 
-// @ts-expect-error
 import PhoneNumberDialog from '@/components/auth/PhoneNumberDialog';
 
 import Image from 'next/image';
+import { CallCenterLink } from '@/components/CallCenterLink';
 
 export default function Home() {
   const emergencyNumbers = [
@@ -203,11 +203,8 @@ export default function Home() {
                   pedir ayuda.
                 </p>
                 <p className="mb-2">
-                  Hemos habilitado el número{' '}
-                  <a className="font-bold text-blue-600 hover:text-blue-800" href="tel:+34626675591">
-                    626 675 591
-                  </a>{' '}
-                  para facilitar la petición de ayuda a aquellas personas que encuentren complicado usar la página web.{' '}
+                  Hemos habilitado el número <CallCenterLink /> para facilitar la petición de ayuda a aquellas personas
+                  que encuentren complicado usar la página web.{' '}
                 </p>
                 <p className="font-bold">
                   ¡Importante! No saturéis el teléfono si podéis usar la página web, por favor. Si tenéis alguna duda
