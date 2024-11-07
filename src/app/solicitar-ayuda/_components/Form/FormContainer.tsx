@@ -1,17 +1,20 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 
 import { FormRenderer } from './FormRenderer';
 import { FormData, Status } from '../types';
-import { formatPhoneNumber, isValidPhone } from '@/helpers/utils';
-import { helpRequestService } from '@/lib/service';
+import { isValidPhone } from '@/helpers/utils';
+import { formatPhoneNumber } from '@/helpers/utils';
 import { Database } from '@/types/database';
 import { Enums } from '@/types/common';
 import { useRouter } from 'next/navigation';
 
 import { TIPOS_DE_AYUDA, TIPOS_DE_AYUDA_MAP } from '../constants';
 import { useSession } from '@/context/SessionProvider';
+
+export type FormResult = Database['public']['Tables']['help_requests']['Insert'];
+export type OnSaveResponse = { error: string } | boolean;
 
 const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_enum'][] =>
   Array.from(helpTypeMap).reduce(
@@ -28,7 +31,11 @@ const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_
     [] as Enums['help_type_enum'][],
   );
 
-export function FormContainer() {
+export type FormProps = {
+  onSave: (formData: FormResult) => Promise<OnSaveResponse>;
+};
+
+export default function FormContainer({ onSave }: FormProps) {
   const router = useRouter();
   const session = useSession();
 
@@ -46,14 +53,6 @@ export function FormContainer() {
     pueblo: '',
     email: session?.user?.user_metadata?.email || '',
   });
-
-  useEffect(() => {
-    console.log('Component mounted');
-  }, []);
-
-  useEffect(() => {
-    console.log('formData changed: ', formData);
-  }, [formData]);
 
   const [status, setStatus] = useState<Status>({
     isSubmitting: false,
@@ -88,29 +87,28 @@ export function FormContainer() {
 
       setStatus({ isSubmitting: true, error: null, success: false });
 
-      try {
-        const helpRequestData: Database['public']['Tables']['help_requests']['Insert'] = {
-          type: 'necesita',
-          name: formData.nombre,
-          location: formData.ubicacion,
-          latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : null,
-          longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : null,
-          help_type: mapHelpToEnum(formData.tiposDeAyuda),
-          description: formData.descripcion,
-          urgency: formData.urgencia,
-          number_of_people: formData.numeroDePersonas || 1,
-          contact_info: formatPhoneNumber(formData.contacto),
-          additional_info: {
-            special_situations: formData.situacionEspecial || null,
-            consent: true,
-            email: formData.email,
-          },
-          town_id: parseInt(formData.pueblo),
-          status: 'active',
-        };
+      const helpRequestData: Database['public']['Tables']['help_requests']['Insert'] = {
+        type: 'necesita',
+        name: formData.nombre,
+        location: formData.ubicacion,
+        latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : null,
+        longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : null,
+        help_type: mapHelpToEnum(formData.tiposDeAyuda),
+        description: formData.descripcion,
+        urgency: formData.urgencia,
+        number_of_people: formData.numeroDePersonas || 1,
+        contact_info: formatPhoneNumber(formData.contacto),
+        additional_info: {
+          special_situations: formData.situacionEspecial || null,
+          consent: true,
+          email: formData.email,
+        },
+        town_id: parseInt(formData.pueblo),
+        status: 'active',
+      };
 
-        await helpRequestService.createRequest(helpRequestData);
-
+      const saveResponse = await onSave(helpRequestData);
+      if (typeof saveResponse === 'boolean') {
         // Limpiar formulario
         setFormData({
           nombre: '',
@@ -130,11 +128,10 @@ export function FormContainer() {
         setStatus({ isSubmitting: false, error: null, success: true });
         setStatus((prev) => ({ ...prev, success: false }));
         router.push('/casos-activos/solicitudes');
-      } catch (error: any) {
-        console.log('Error al enviar solicitud:', error.message);
+      } else {
         setStatus({
           isSubmitting: false,
-          error: `Error al enviar la solicitud: ${error.message}`,
+          error: `Error al enviar la solicitud: ${saveResponse.error}`,
           success: false,
         });
       }

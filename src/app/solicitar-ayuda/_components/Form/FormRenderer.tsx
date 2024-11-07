@@ -3,11 +3,11 @@ import React from 'react';
 import { Check } from 'lucide-react';
 
 import { PhoneInput } from '@/components/PhoneInput';
-import AddressAutocomplete from '@/components/AddressAutocomplete.js';
+import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { TIPOS_DE_AYUDA } from '../constants';
 import { TipoDeAyudaInputRenderer } from '../TipoDeAyudaInputRenderer';
 import { FormData, HelpCategory, Status } from '../types';
-import { TownSelector } from '../TownSelector';
+import TownSelector from '../TownSelector/TownSelectorDataWrapper';
 
 type FormRendererProps = {
   status: Status;

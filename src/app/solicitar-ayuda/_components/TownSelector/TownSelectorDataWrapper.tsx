@@ -11,7 +11,7 @@ type TownSelectorRendererProps = Pick<
   'handleChange' | 'selectedTown'
 >;
 
-export function TownSelectorDataWrapper({ handleChange, selectedTown }: TownSelectorRendererProps) {
+export default function TownSelectorDataWrapper({ handleChange, selectedTown }: TownSelectorRendererProps) {
   const [towns, setTowns] = useState<Town[]>([]);
 
   useEffect(() => {

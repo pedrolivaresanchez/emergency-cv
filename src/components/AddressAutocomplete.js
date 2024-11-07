@@ -3,7 +3,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { MapPin } from 'lucide-react';
 
-export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar dirección...', initialValue = '' }) {
+export default function AddressAutocomplete({
+  onSelect,
+  placeholder = 'Buscar dirección...',
+  initialValue = '',
+  required = false,
+}) {
   const [query, setQuery] = useState(initialValue);
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -136,6 +141,7 @@ export default function AddressAutocomplete({ onSelect, placeholder = 'Buscar di
           onChange={handleInputChange}
           placeholder={placeholder}
           className="w-full p-2 pr-10 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          required={required}
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
           {isLoading ? (
