@@ -112,7 +112,7 @@ export default function Ofertas() {
           <select
             value={filtroData.ayuda}
             onChange={(e) => changeDataFilter('ayuda', e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+            className="px-4 py-2 rounded-lg w-full sm:w-auto border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
           >
             <option value="todas">Todas las ofertas</option>
             {Object.entries(tiposAyudaOptions).map(([key, value]) => (
