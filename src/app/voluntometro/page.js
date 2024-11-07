@@ -1,7 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
 import { HeartHandshake, Search, Thermometer } from 'lucide-react';
-import OfferHelp from '@/components/OfferHelp';
-import Modal from '@/components/Modal';
 import TownCardInfo from '@/components/TownCardInfo';
 
 const getCount = async () => {
@@ -39,7 +37,6 @@ const getCount = async () => {
     ofertas: ofreceCount || 0,
   };
 };
-
 const getVolunteers = async () => {
   const today = new Date().toISOString().split('T')[0];
 
@@ -87,7 +84,7 @@ const getVolunteers = async () => {
 export default async function Voluntometro() {
   const pueblos = await getVolunteers();
   const count = await getCount();
-  console.log(pueblos.ofertasButton);
+
   const getFechaHoy = () => {
     const fecha = new Date();
     return fecha.toLocaleDateString('es-ES', {
@@ -96,6 +93,7 @@ export default async function Voluntometro() {
       year: 'numeric',
     });
   };
+
   const getTopAndBottomPueblos = () => {
     const sortedPueblos = [...pueblos].sort((a, b) => {
       const volunteersDiffA = a.count - a.needHelp;
