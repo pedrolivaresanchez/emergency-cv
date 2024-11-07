@@ -1,6 +1,6 @@
 import './globals.css';
 import 'leaflet/dist/leaflet.css';
-import EmergencyLayout from '@/components/layout/EmergencyLayout';
+import SidebarLayout from '@/components/layout/SidebarLayout';
 import { ModalProvider } from '@/context/ModalProvider';
 import { TownsProvider } from '@/context/TownProvider';
 import { createClient } from '@/lib/supabase/server';
@@ -32,7 +32,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <QueryClientProvider>
             <TownsProvider towns={towns}>
               <ModalProvider>
-                <EmergencyLayout>{children}</EmergencyLayout>
+                <SidebarLayout>{children}</SidebarLayout>
               </ModalProvider>
             </TownsProvider>
           </QueryClientProvider>

@@ -1,5 +1,3 @@
-// components/Sidebar.js
-
 'use client';
 
 import React from 'react';
@@ -24,129 +22,150 @@ import {
   CarTaxiFront,
 } from 'lucide-react';
 import UserInfo from '../UserInfo';
-import { useSession } from '../../context/SessionProvider';
+import { useSession } from '@/context/SessionProvider';
+import { useQuery } from '@tanstack/react-query';
+import { HelpRequestData } from '@/types/Requests';
+import { helpRequestService } from '@/lib/service';
 
-const menuItems = [
-  {
-    icon: Home,
-    title: 'Inicio',
-    path: '/',
-    color: 'text-gray-600',
-    isHome: true,
-  },
-  {
-    icon: AlertCircle,
-    title: 'Casos Activos',
-    description: 'Ver todos los casos activos',
-    path: '/casos-activos',
-    color: 'text-orange-600',
-    highlight: true,
-  },
-  {
-    icon: Inbox,
-    title: 'Mis solicitudes',
-    description: 'Edita o elimina tus solicitudes',
-    path: '/solicitudes',
-    color: 'text-red-500',
-    isAuth: true,
-  },
-  {
-    icon: Inbox,
-    title: 'Mis ofertas',
-    description: 'Edita o elimina tus ofertas',
-    path: '/ofertas',
-    color: 'text-green-500',
-    isAuth: true,
-  },
-  {
-    icon: Thermometer,
-    title: 'Voluntómetro',
-    description: 'Medidor de voluntarios por localidad',
-    path: '/voluntometro',
-    color: 'text-yellow-500',
-  },
-  {
-    icon: Search,
-    title: 'Solicitar Ayuda',
-    description: 'Si necesitas asistencia',
-    path: '/solicitar-ayuda',
-    color: 'text-red-600',
-  },
-  {
-    icon: HeartHandshake,
-    title: 'Ofrecer Ayuda',
-    description: 'Si puedes ayudar a otros',
-    path: '/ofrecer-ayuda',
-    color: 'text-green-600',
-  },
-  {
-    icon: UserSearch,
-    title: 'Desaparecidos',
-    description: 'Reportar personas',
-    path: 'https://desaparecidosdana.pythonanywhere.com/',
-    color: 'text-purple-600',
-    isHref: true,
-  },
-  {
-    icon: Package,
-    title: 'Punto de Recogida',
-    description: 'Gestionar donaciones',
-    path: '/punto-recogida',
-    color: 'text-blue-600',
-  },
-  {
-    icon: Truck,
-    title: 'Puntos de Entrega',
-    description: 'Para transportistas y logística',
-    path: '/puntos-entrega',
-    color: 'text-gray-800',
-  },
-  {
-    icon: Scale,
-    title: 'Servicio Notarial',
-    description: 'Servicio notarial gratuito',
-    path: 'https://valencia.notariado.org/portal/-/20241031-servicio-notarial-de-ayuda-gratuito-para-los-afectados-por-la-dana-noticia-p%C3%BAblica-',
-    color: 'text-indigo-600',
-    isHref: true,
-  },
-  {
-    icon: Landmark,
-    title: 'Reclamar a Consorcio',
-    description: 'Seguro de riesgos extraordinarios',
-    path: 'https://www.consorseguros.es/ambitos-de-actividad/seguros-de-riesgos-extraordinarios/solicitud-de-indemnizacion',
-    color: 'text-pink-600',
-    isHref: true,
-  },
-  {
-    icon: MessageCircleQuestion,
-    title: 'Ayuda Psicológica',
-    description: 'Conecta con psicólogos voluntarios',
-    path: 'https://ayudana.org/',
-    color: 'text-teal-600',
-    isHref: true,
-  },
-  {
-    icon: CarTaxiFront,
-    title: 'Compartir Coche',
-    description: 'Viaja u ofrece viajes con otros',
-    path: 'https://anem.guruwalk.com/',
-    color: 'text-amber-600',
-    isHref: true,
-  },
-  {
-    icon: Car,
-    title: 'Encontrar tu Coche',
-    description: 'Sistema de registro y consulta de vehículos perdidos',
-    path: 'https://tucochedana.es/index.php/',
-    color: 'text-blue-600',
-    isHref: true,
-  },
-];
-
-export default function Sidebar({ isOpen, toggle }) {
+type SidebarProps = {
+  isOpen: boolean;
+  toggle: () => void;
+};
+export default function Sidebar({ isOpen, toggle }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const session = useSession();
+
+  const userId = session.user?.id;
+
+  const { data: requests } = useQuery<HelpRequestData[]>({
+    queryKey: ['help_requests', { user_id: userId }],
+    queryFn: () => helpRequestService.getRequestsByUser(userId),
+  });
+  const { data: offers } = useQuery<HelpRequestData[]>({
+    queryKey: ['help_requests', { user_id: userId }],
+    queryFn: () => helpRequestService.getOffersByUser(userId),
+  });
+  const hasRequests = (requests?.length ?? 0) > 0;
+  const hasOffers = (offers?.length ?? 0) > 0;
+
+  const menuItems = [
+    {
+      icon: Home,
+      title: 'Inicio',
+      path: '/',
+      color: 'text-gray-600',
+      isHome: true,
+    },
+    {
+      icon: AlertCircle,
+      title: 'Casos Activos',
+      description: 'Ver todos los casos activos',
+      path: '/casos-activos',
+      color: 'text-orange-600',
+      highlight: true,
+    },
+    {
+      icon: Inbox,
+      title: 'Mis solicitudes',
+      description: 'Edita o elimina tus solicitudes',
+      path: '/solicitudes',
+      color: 'text-red-500',
+      hide: !hasRequests,
+    },
+    {
+      icon: Inbox,
+      title: 'Mis ofertas',
+      description: 'Edita o elimina tus ofertas',
+      path: '/ofertas',
+      color: 'text-green-500',
+      hide: !hasOffers,
+    },
+    {
+      icon: Thermometer,
+      title: 'Voluntómetro',
+      description: 'Medidor de voluntarios por localidad',
+      path: '/voluntometro',
+      color: 'text-yellow-500',
+    },
+    {
+      icon: Search,
+      title: 'Solicitar Ayuda',
+      description: 'Si necesitas asistencia',
+      path: '/solicitar-ayuda',
+      color: 'text-red-600',
+    },
+    {
+      icon: HeartHandshake,
+      title: 'Ofrecer Ayuda',
+      description: 'Si puedes ayudar a otros',
+      path: '/ofrecer-ayuda',
+      color: 'text-green-600',
+    },
+    {
+      icon: UserSearch,
+      title: 'Desaparecidos',
+      description: 'Reportar personas',
+      path: 'https://desaparecidosdana.pythonanywhere.com/',
+      color: 'text-purple-600',
+      isHref: true,
+    },
+    {
+      icon: Package,
+      title: 'Punto de Recogida',
+      description: 'Gestionar donaciones',
+      path: '/punto-recogida',
+      color: 'text-blue-600',
+    },
+    {
+      icon: Truck,
+      title: 'Puntos de Entrega',
+      description: 'Para transportistas y logística',
+      path: '/puntos-entrega',
+      color: 'text-gray-800',
+    },
+    {
+      icon: Scale,
+      title: 'Servicio Notarial',
+      description: 'Servicio notarial gratuito',
+      path: 'https://valencia.notariado.org/portal/-/20241031-servicio-notarial-de-ayuda-gratuito-para-los-afectados-por-la-dana-noticia-p%C3%BAblica-',
+      color: 'text-indigo-600',
+      isHref: true,
+    },
+    {
+      icon: Landmark,
+      title: 'Reclamar a Consorcio',
+      description: 'Seguro de riesgos extraordinarios',
+      path: 'https://www.consorseguros.es/ambitos-de-actividad/seguros-de-riesgos-extraordinarios/solicitud-de-indemnizacion',
+      color: 'text-pink-600',
+      isHref: true,
+    },
+    {
+      icon: MessageCircleQuestion,
+      title: 'Ayuda Psicológica',
+      description: 'Conecta con psicólogos voluntarios',
+      path: 'https://ayudana.org/',
+      color: 'text-teal-600',
+      isHref: true,
+    },
+    {
+      icon: CarTaxiFront,
+      title: 'Compartir Coche',
+      description: 'Viaja u ofrece viajes con otros',
+      path: 'https://anem.guruwalk.com/',
+      color: 'text-amber-600',
+      isHref: true,
+    },
+    {
+      icon: Car,
+      title: 'Encontrar tu Coche',
+      description: 'Sistema de registro y consulta de vehículos perdidos',
+      path: 'https://tucochedana.es/index.php/',
+      color: 'text-blue-600',
+      isHref: true,
+    },
+  ];
+
   return (
     <>
       {/* Quitamos el overlay con fondo negro */}
@@ -179,7 +198,7 @@ export default function Sidebar({ isOpen, toggle }) {
         <nav className="p-4 flex-1 overflow-y-auto">
           <div className="space-y-2">
             {menuItems.map((item) =>
-              (session && session.user && session.user.email && item.isAuth) || !item.isAuth ? (
+              !item.hide ? (
                 item.isHref ? (
                   <button
                     key={item.path}

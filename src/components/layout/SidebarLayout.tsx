@@ -6,7 +6,7 @@ import Sidebar from './Sidebar';
 import Footer from './Footer';
 import CookieBanner from '@/components/CookieBanner/CookieBanner';
 
-export default function EmergencyLayout({ children }: PropsWithChildren) {
+export default function SidebarLayout({ children }: PropsWithChildren) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Por defecto abierto
 
   useEffect(() => {
