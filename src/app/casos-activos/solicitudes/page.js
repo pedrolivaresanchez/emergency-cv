@@ -179,7 +179,10 @@ export default function Solicitudes() {
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
             >
               <HeartHandshake className="w-5 h-5" />
-              Ofrecer ayuda {filtroData.pueblo === 'todos' ? '' : ' a ' + towns[filtroData.pueblo - 1]?.name}
+              Ofrecer ayuda{' '}
+              {filtroData.pueblo === 'todos'
+                ? ''
+                : ' a ' + towns.find((town) => town.id === Number(filtroData.pueblo))?.name}
             </button>
           </div>
         ) : (
@@ -191,7 +194,11 @@ export default function Solicitudes() {
       </div>
 
       <Modal id={MODAL_NAME}>
-        <OfferHelp town={towns[filtroData.pueblo - 1]} onClose={closeModal} isModal={true} />
+        <OfferHelp
+          town={towns.find((town) => town.id === Number(filtroData.pueblo))?.name}
+          onClose={closeModal}
+          isModal={true}
+        />
       </Modal>
     </>
   );
