@@ -5,15 +5,16 @@ import { Check } from 'lucide-react';
 import { PhoneInput } from '@/components/PhoneInput';
 // @ts-expect-error
 import AddressAutocomplete from '@/components/AddressAutocomplete';
-import { TIPOS_DE_AYUDA } from '../constants';
+import { TIPOS_DE_AYUDA } from '@/helpers/constants';
 import { TipoDeAyudaInputRenderer } from '../TipoDeAyudaInputRenderer';
-import { FormData, HelpCategory, Status, Town } from '../types';
+import { FormData, Status, Town } from '../types';
 import { TownSelector } from '../TownSelector';
+import { RequestDetails } from '@/types/Requests';
 
 type FormRendererProps = {
   status: Status;
   formData: FormData;
-  selectedHelp: Map<HelpCategory['id'], boolean>;
+  selectedHelp: Map<RequestDetails['id'], boolean>;
   handleSubmit: React.FormEventHandler<HTMLFormElement>;
   handlePhoneChange: (phoneNumber: string) => void;
   handleAddressSelection: (address: string) => void;
