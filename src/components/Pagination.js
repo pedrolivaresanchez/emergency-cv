@@ -50,7 +50,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       >
         Anterior
       </button>
-
       {/* Números de página */}
       {getPageNumbers().map((page, index) => (
         <button
@@ -64,7 +63,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           {page}
         </button>
       ))}
-
       {/* Botón de avance */}
       <button
         className={`px-3 py-1 border rounded-md text-gray-600 hover:bg-gray-100 ${
