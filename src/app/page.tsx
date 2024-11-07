@@ -1,6 +1,5 @@
 import { AlertCircle, Clock, Cross, Heart, MapPin, Navigation, Package, Thermometer, Users } from 'lucide-react';
 
-// @ts-expect-error
 import PhoneNumberDialog from '@/components/auth/PhoneNumberDialog';
 
 import Image from 'next/image';

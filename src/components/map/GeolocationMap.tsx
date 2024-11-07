@@ -93,7 +93,7 @@ export default function GeoLocationMap({ onNewPositionCallback, zoom = 13 }: Geo
       mapRef.current?.remove();
       mapRef.current = null;
     };
-  }, [zoom]);
+  }, [zoom, onNewPositionCallback]);
 
   return <div ref={mapContainerRef} className="aspect-video w-full" />;
 }
