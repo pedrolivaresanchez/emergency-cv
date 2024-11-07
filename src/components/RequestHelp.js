@@ -1,17 +1,17 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { AlertTriangle, Check, Mail } from 'lucide-react';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions } from '@/helpers/constants';
-import { isValidPhone } from '@/helpers/utils';
+import { formatPhoneNumber, isValidPhone } from '@/helpers/utils';
 import { helpRequestService } from '@/lib/service';
 
 import { PhoneInput } from '@/components/PhoneInput';
-import { formatPhoneNumber } from '@/helpers/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTowns } from '../context/TownProvider';
+import { CallCenterLink } from '@/components/CallCenterLink';
 
 export default function RequestHelp({
   data = {},
@@ -174,11 +174,8 @@ export default function RequestHelp({
                 pedir ayuda.
               </p>
               <p className="mb-2">
-                Hemos habilitado el número{' '}
-                <a className="font-bold text-blue-600 hover:text-blue-800" href="tel:+34626675591">
-                  626 675 591
-                </a>{' '}
-                para facilitar la petición de ayuda a aquellas personas que encuentren complicado usar la página web.{' '}
+                Hemos habilitado el número <CallCenterLink /> para facilitar la petición de ayuda a aquellas personas
+                que encuentren complicado usar la página web.{' '}
               </p>
               <p className="font-bold">
                 ¡Importante! No saturéis el teléfono si podéis usar la página web, por favor. Si tenéis alguna duda

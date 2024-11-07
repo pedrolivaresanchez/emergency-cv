@@ -1,6 +1,7 @@
 import { AlertTriangle } from 'lucide-react';
 import Image from 'next/image';
 import { Form } from './_components/Form';
+import { CallCenterLink } from '@/components/CallCenterLink';
 
 export default function SolicitarAyuda() {
   return (
@@ -28,11 +29,8 @@ export default function SolicitarAyuda() {
                 pedir ayuda.
               </p>
               <p className="mb-2">
-                Hemos habilitado el número{' '}
-                <a className="font-bold text-blue-600 hover:text-blue-800" href="tel:+34626675591">
-                  626 675 591
-                </a>{' '}
-                para facilitar la petición de ayuda a aquellas personas que encuentren complicado usar la página web.{' '}
+                Hemos habilitado el número <CallCenterLink /> para facilitar la petición de ayuda a aquellas personas
+                que encuentren complicado usar la página web.{' '}
               </p>
               <p className="font-bold">
                 ¡Importante! No saturéis el teléfono si podéis usar la página web, por favor. Si tenéis alguna duda

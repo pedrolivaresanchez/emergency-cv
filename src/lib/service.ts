@@ -53,6 +53,26 @@ export const helpRequestService = {
   },
 };
 
+export const townService = {
+  async getByName(townName: string) {
+    return await supabase.from('towns').select('id').eq('name', townName);
+  },
+  async create(townName: string) {
+    return await supabase.from('towns').insert({ name: townName }).select('id');
+  },
+  async createIfNotExists(townName: string) {
+    const response = await this.getByName(townName);
+    if (response.error) return response;
+
+    // new town should be created
+    if (response.data.length === 0) {
+      return await townService.create(townName);
+    }
+
+    return response;
+  },
+};
+
 export const missingPersonService = {
   async create(data: any) {
     const { data: result, error } = await supabase.from('missing_persons').insert([data]).select();
