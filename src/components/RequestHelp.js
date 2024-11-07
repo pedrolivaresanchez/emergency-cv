@@ -10,8 +10,9 @@ import { helpRequestService } from '@/lib/service';
 import { PhoneInput } from '@/components/PhoneInput';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useTowns } from '../context/TownProvider';
+import { useTowns } from '@/context/TownProvider';
 import { CallCenterLink } from '@/components/CallCenterLink';
+import { useSession } from '@/context/SessionProvider';
 
 export default function RequestHelp({
   data = {},
@@ -23,6 +24,8 @@ export default function RequestHelp({
 }) {
   const towns = useTowns();
   const router = useRouter();
+  const session = useSession();
+  const userId = session.user?.id;
   const [formData, setFormData] = useState({
     nombre: data.name || '',
     ubicacion: data.location || '',
@@ -93,6 +96,7 @@ export default function RequestHelp({
         },
         town_id: formData.pueblo,
         status: formData.status,
+        user_id: userId,
       };
       if (submitType === 'create') {
         const { error } = await helpRequestService.createRequest(helpRequestData);
