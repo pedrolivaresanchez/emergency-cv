@@ -80,7 +80,7 @@ export default function SolicitudCard({
                 <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                 <span className="break-words">
                   <span className="font-semibold">Pueblo:</span>{' '}
-                  {towns.filter((town) => town.id === caso.town_id)[0]?.name || ''}
+                  {towns.find((town) => town.id === caso.town_id)?.name || ''}
                 </span>
               </div>
             )}
