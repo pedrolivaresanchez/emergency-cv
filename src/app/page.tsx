@@ -261,7 +261,7 @@ export default function Home() {
               <MapPin className="h-6 w-6 text-orange-500" />
               <h2 className="text-xl font-bold text-gray-800">Puntos de Encuentro</h2>
             </div>
-            <div className="bg-orange-50 p-4 rounded-lg mb-6">
+            <div className="bg-orange-500 p-4 rounded-lg mb-6">
               <div className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-orange-500" />
                 <p className="font-medium text-orange-800">Horario de encuentro: 10:00 am todos los días</p>
