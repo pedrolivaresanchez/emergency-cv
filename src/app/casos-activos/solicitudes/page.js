@@ -83,7 +83,7 @@ export default function Solicitudes() {
         }
         query.neq('status', 'finished');
         // Ejecutar la consulta con paginación
-        const { data, error } = await query
+        const { data, count, error } = await query
           .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1)
           .order('created_at', { ascending: false });
 
@@ -92,7 +92,7 @@ export default function Solicitudes() {
           setData([]);
         } else {
           setData(data || []);
-          setCurrentCount(data.length);
+          setCurrentCount(count);
         }
       } catch (err) {
         console.log('Error general:', err);

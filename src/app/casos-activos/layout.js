@@ -13,26 +13,16 @@ const getCount = async () => {
     error: ofreceError,
   } = await supabase.from('help_requests').select('id', { count: 'exact' }).eq('type', 'ofrece');
 
-  const {
-    data: puntosData,
-    count: puntosCount,
-    error: puntosError,
-  } = await supabase.from('collection_points').select('id', { count: 'exact' });
-
   if (solicitaError) {
     throw new Error('Error fetching solicita:', solicitaError);
   }
   if (ofreceError) {
     throw new Error('Error fetching ofrece:', ofreceError);
   }
-  if (puntosError) {
-    throw new Error('Error fetching puntos:', puntosError);
-  }
 
   return {
     solicitudes: solicitaCount || 0,
     ofertas: ofreceCount || 0,
-    puntos: puntosCount || 0,
   };
 };
 
