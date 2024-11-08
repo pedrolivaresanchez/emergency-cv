@@ -1,4 +1,4 @@
-// personas-animales-desaparecidos/page.js
+// personas-animales-desaparecidos/page.tsx
 
 import { Users, PawPrint, Car, UserSearch } from 'lucide-react';
 

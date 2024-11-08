@@ -1,37 +1,31 @@
 'use client';
-import { useEffect, useState } from 'react';
+
 import { useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase/client';
 import { ArrowLeft } from 'lucide-react';
 import OfferCard from '@/components/OfferCard';
-import { useTowns } from '@/context/TownProvider';
+import { useQuery } from '@tanstack/react-query';
+import { HelpRequestData } from '@/types/Requests';
+import { helpRequestService } from '@/lib/service';
 
 export default function CasoDetalle() {
   const params = useParams();
   const { id } = params;
-  const [caso, setCaso] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const { towns } = useTowns();
-  useEffect(() => {
-    async function fetchCaso() {
-      const { data, error } = await supabase.from('help_requests').select('*').eq('id', id).single();
-      if (error) {
-        console.error('Error fetching caso:', error);
-      } else {
-        setCaso(data);
-      }
-      setLoading(false);
-    }
-    fetchCaso();
-  }, [id]);
-  if (loading) {
+  const {
+    data: request,
+    isLoading,
+    error,
+  } = useQuery<HelpRequestData>({
+    queryKey: ['help_requests', { id: id }],
+    queryFn: () => helpRequestService.getOne(Number(id)),
+  });
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
   }
-  if (!caso) {
+  if (error || request === undefined) {
     return (
       <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex justify-start">
@@ -60,7 +54,7 @@ export default function CasoDetalle() {
           Volver
         </button>
       </div>
-      <OfferCard towns={towns} key={caso.id} caso={caso} />
+      <OfferCard caso={request} showLink={false} />
     </div>
   );
 }

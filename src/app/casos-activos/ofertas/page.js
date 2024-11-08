@@ -141,7 +141,7 @@ export default function Ofertas() {
             </button>
           </div>
         ) : (
-          data.map((caso) => <OfferCard caso={caso} towns={towns} isHref={true} key={caso.id} />)
+          data.map((caso) => <OfferCard caso={caso} towns={towns} showLink={true} key={caso.id} />)
         )}
       </div>
       <div className="flex items-center justify-center">

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { FormEvent, useCallback, useEffect, useState } from 'react';
 
 import Modal from '@/components/Modal';
 import { authService } from '@/lib/service';
@@ -11,14 +11,18 @@ import { isValidPhone } from '@/helpers/utils';
 
 const MODAL_NAME = 'phone-number';
 
-const PhoneForm = ({ onSubmit }) => {
+type PhoneFormProps = {
+  onSubmit: (phoneNumber: string, privacyPolicy: string) => void;
+};
+
+const PhoneForm = ({ onSubmit }: PhoneFormProps) => {
   const [formData, setFormData] = useState({
     phoneNumber: '',
     privacyPolicy: '',
   });
 
   const handleSubmit = useCallback(
-    (e) => {
+    (e: FormEvent) => {
       e.preventDefault();
 
       /* PHONE VALIDATION */
@@ -35,7 +39,7 @@ const PhoneForm = ({ onSubmit }) => {
 
       const formatedPhoneNumber = formatPhoneNumber(formData.phoneNumber);
 
-      onSubmit(formData.phoneNumber, formData.privacyPolicy);
+      onSubmit(formatedPhoneNumber, formData.privacyPolicy);
 
       setFormData({
         phoneNumber: '',
@@ -45,7 +49,7 @@ const PhoneForm = ({ onSubmit }) => {
     [onSubmit, formData],
   );
 
-  const handleChange = useCallback((phoneNumber) => {
+  const handleChange = useCallback((phoneNumber: string) => {
     setFormData((formData) => ({ ...formData, phoneNumber }));
   }, []);
 
@@ -74,7 +78,7 @@ const PhoneForm = ({ onSubmit }) => {
             <input
               type="checkbox"
               value={formData.privacyPolicy}
-              onChange={(e) => setFormData({ ...formData, privacyPolicy: e.target.checked })}
+              onChange={(e) => setFormData({ ...formData, privacyPolicy: e.target.checked.toString() })}
               className="min-w-4 min-h-4 cursor-pointer"
               id="privacyPolicy"
               required
@@ -123,7 +127,7 @@ const PhoneNumberDialog = () => {
     fetchNumber();
   }, []);
 
-  const handleSubmit = useCallback(async (phoneNumber, privacyPolicy) => {
+  const handleSubmit = useCallback(async (phoneNumber: string, privacyPolicy: string) => {
     const { data: session, error: errorGettingUser } = await authService.getSessionUser();
 
     if (!session.user || errorGettingUser) {

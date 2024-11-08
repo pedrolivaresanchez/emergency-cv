@@ -1,17 +1,15 @@
-import { Calendar, Heart, HeartHandshake, MapPin, MapPinned, Megaphone, Phone, Truck, User, Users } from 'lucide-react';
-import { useSession } from '../context/SessionProvider';
+import { HeartHandshake, MapPinned, Megaphone, Phone, Truck } from 'lucide-react';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
-import PhoneInfo from './PhoneInfo';
+import { HelpRequestData } from '@/types/Requests';
+import { useTowns } from '@/context/TownProvider';
 
-export default function OfferCard({
-  caso,
-  isHref,
-  towns,
-  button = { text: 'Ver oferta', link: '/oferta/' },
-  isEdit = false,
-}) {
-  const session = useSession();
+type OfferCardProps = {
+  caso: HelpRequestData;
+  showLink?: boolean;
+};
+export default function OfferCard({ caso, showLink = true }: OfferCardProps) {
+  const { towns } = useTowns();
   return (
     <div key={caso.id + 'a'} className="rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5">
       <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center justify-between border-b border-gray-900/10 px-6 py-4">
@@ -68,8 +66,7 @@ export default function OfferCard({
             <div className="flex items-start gap-2">
               <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
               <span className="break-words">
-                <span className="font-semibold">Contacto:</span>{' '}
-                {typeof caso.contact_info === 'string' ? caso.contact_info : JSON.parse(caso.contact_info).phone}
+                <span className="font-semibold">Contacto:</span> {caso.contact_info}
               </span>
             </div>
           )}
@@ -130,19 +127,19 @@ export default function OfferCard({
           <div className="flex-auto">
             <div className="text-lg font-medium">{caso.name || 'Necesita Ayuda'}</div>
             <span className="text-gray-500">
-              {new Date(caso.created_at).toLocaleDateString() +
+              {new Date(caso.created_at!).toLocaleDateString() +
                 ' ' +
-                new Date(caso.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                new Date(caso.created_at!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
           </div>
         </div>
         <div className="flex flex-col pt-4 sm:pt-0 sm:flex-row w-full sm:w-auto justify-end gap-2">
-          {isHref && (
+          {showLink && (
             <Link
-              href={button.link + caso.id}
+              href={'/ofertas/' + caso.id}
               className={`w-full rounded-xl text-center px-4 py-2 font-semibold text-white sm:w-auto bg-gray-700 hover:bg-gray-800 transition-all`}
             >
-              {button.text}
+              Ver oferta
             </Link>
           )}
         </div>

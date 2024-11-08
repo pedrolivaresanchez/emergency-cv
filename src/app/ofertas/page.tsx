@@ -10,6 +10,7 @@ import { useTowns } from '@/context/TownProvider';
 import { useSession } from '@/context/SessionProvider';
 import OfferCard from '@/components/OfferCard';
 import Link from 'next/link';
+import { HelpRequestData } from '@/types/Requests';
 
 export default function ListaSolicitudes() {
   const session = useSession();
@@ -17,20 +18,20 @@ export default function ListaSolicitudes() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
-  const [currentCount, setCurrentCount] = useState(0);
+  const [data, setData] = useState<HelpRequestData[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get('page')) || 1);
+  const [currentCount, setCurrentCount] = useState<number>(0);
   const { towns } = useTowns();
 
   const itemsPerPage = 10;
-  const numPages = (count) => {
+  const numPages = (count: number) => {
     return Math.ceil(count / itemsPerPage) || 0;
   };
 
-  const updateFilter = (filter, value) => {
+  const updateFilter = (filter: 'urgencia' | 'tipoAyuda' | 'pueblo' | 'page', value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set(filter, value);
     router.push(`?${params.toString()}`);
@@ -41,7 +42,7 @@ export default function ListaSolicitudes() {
     pueblo: searchParams.get('pueblo') || 'todos',
   });
 
-  const changeDataFilter = (type, newFilter) => {
+  const changeDataFilter = (type: 'urgencia' | 'tipoAyuda' | 'pueblo', newFilter: string) => {
     setFiltroData((prev) => ({
       ...prev,
       [type]: newFilter,
@@ -49,9 +50,9 @@ export default function ListaSolicitudes() {
     updateFilter(type, newFilter);
   };
 
-  function changePage(newPage) {
+  function changePage(newPage: number) {
     setCurrentPage(newPage);
-    updateFilter('page', newPage);
+    updateFilter('page', newPage.toString());
   }
   useEffect(() => {
     async function fetchData() {
@@ -64,7 +65,7 @@ export default function ListaSolicitudes() {
           .from('help_requests')
           .select('*', { count: 'exact' })
           .eq('type', 'ofrece')
-          .contains('additional_info', { email: session.user.email });
+          .contains('additional_info', { email: session.user?.email });
         // Solo agregar filtro si no es "todos"
         if (filtroData.pueblo !== 'todos') {
           query.eq('town_id', filtroData.pueblo);
@@ -80,7 +81,7 @@ export default function ListaSolicitudes() {
           .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1)
           .order('created_at', { ascending: false });
 
-        if (error) {
+        if (error || count === null) {
           console.log('Error fetching solicitudes:', error);
           setData([]);
         } else {
@@ -174,16 +175,7 @@ export default function ListaSolicitudes() {
               </Link>
             </div>
           ) : (
-            data.map((caso) => (
-              <OfferCard
-                isHref={true}
-                key={caso.id}
-                caso={caso}
-                button={{ text: 'Editar', link: '/ofertas/editar/' }}
-                isEdit={true}
-                towns={towns}
-              />
-            ))
+            data.map((caso) => <OfferCard showLink={true} key={caso.id} caso={caso} />)
           )}
         </div>
         <div className="flex items-center justify-center">
