@@ -23,12 +23,7 @@ export const helpRequestService = {
   },
   async getOne(id: number) {
     const supabase = await getSupabaseClient();
-    const { data, error } = await supabase
-      .from('help_requests')
-      .select('*')
-      .eq('id', id)
-      .eq('type', 'necesita')
-      .single();
+    const { data, error } = await supabase.from('help_requests').select('*').eq('id', id).single();
     if (error) throw error;
     return data;
   },
