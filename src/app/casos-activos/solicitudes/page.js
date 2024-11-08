@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo, Suspense } from 'react';
 import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
@@ -11,8 +11,14 @@ import { tiposAyudaOptions } from '@/helpers/constants';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/ModalProvider';
 import { useTowns } from '@/context/TownProvider';
+import { Toggle } from '@/components/Toggle';
 
 const MODAL_NAME = 'solicitudes';
+
+const itemsPerPage = 10;
+const numPages = (count) => {
+  return Math.ceil(count / itemsPerPage) || 0;
+};
 
 export default function SolicitudesPage() {
   return (
@@ -35,38 +41,46 @@ function Solicitudes() {
   const [currentCount, setCurrentCount] = useState(0);
   const { toggleModal } = useModal();
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     toggleModal(MODAL_NAME, false);
-  };
-  const itemsPerPage = 10;
-  const numPages = (count) => {
-    return Math.ceil(count / itemsPerPage) || 0;
-  };
+  }, [toggleModal]);
 
-  const updateFilter = (filter, value) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set(filter, value);
-    router.push(`?${params.toString()}`);
-  };
+  const updateFilter = useCallback(
+    (filter, value) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(filter, value);
+      router.push(`?${params.toString()}`);
+    },
+    [searchParams, router],
+  );
 
   const [filtroData, setFiltroData] = useState({
     urgencia: searchParams.get('urgencia') || 'todas',
     tipoAyuda: searchParams.get('tipoAyuda') || 'todas',
     pueblo: searchParams.get('pueblo') || 'todos',
+    soloSinVoluntarios: searchParams.get('soloSinVoluntarios') || true,
   });
 
-  const changeDataFilter = (type, newFilter) => {
-    setFiltroData((prev) => ({
-      ...prev,
-      [type]: newFilter,
-    }));
-    updateFilter(type, newFilter);
-  };
+  const changeDataFilter = useCallback(
+    (type, newFilter) => {
+      setFiltroData((prev) => ({
+        ...prev,
+        [type]: newFilter,
+      }));
+      updateFilter(type, newFilter);
+    },
+    [updateFilter, setFiltroData],
+  );
 
-  function changePage(newPage) {
-    setCurrentPage(newPage);
-    updateFilter('page', newPage);
-  }
+  const changePage = useCallback(
+    (newPage) => {
+      setCurrentPage(newPage);
+      updateFilter('page', newPage);
+    },
+    [updateFilter],
+  );
+
+  const handleToggleChange = useCallback((e) => changeDataFilter('soloSinVoluntarios', e.target.checked), []);
 
   useEffect(() => {
     async function fetchData() {
@@ -91,6 +105,12 @@ function Solicitudes() {
         if (filtroData.urgencia !== 'todas') {
           query.eq('urgency', filtroData.urgencia);
         }
+
+        // Solo agregar filtro si es true
+        if (!!filtroData.soloSinVoluntarios) {
+          query.eq('asignees_count', 0);
+        }
+
         query.neq('status', 'finished');
         // Ejecutar la consulta con paginación
         const { data, count, error } = await query
@@ -115,6 +135,8 @@ function Solicitudes() {
     fetchData();
   }, [filtroData, currentPage]);
 
+  const puebloSeleccionado = useMemo(() => getTownById(Number(filtroData.pueblo)), [filtroData, getTownById]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -131,48 +153,57 @@ function Solicitudes() {
     );
   }
 
-  const puebloSeleccionado = getTownById(Number(filtroData.pueblo));
-
   return (
     <>
       {/* FILTROS  */}
       <div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
-        <p className="font-bold text-md">Filtros</p>
-        <div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
-          <select
-            value={filtroData.tipoAyuda}
-            onChange={(e) => changeDataFilter('tipoAyuda', e.target.value)}
-            className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
-          >
-            <option value="todas">Todas las necesidades</option>
-            {Object.entries(tiposAyudaOptions).map(([key, label]) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
-            ))}
-          </select>
-          <select
-            value={filtroData.urgencia}
-            onChange={(e) => changeDataFilter('urgencia', e.target.value)}
-            className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
-          >
-            <option value="todas">Todas las prioridades</option>
-            <option value="alta">Alta prioridad</option>
-            <option value="media">Media prioridad</option>
-            <option value="baja">Baja prioridad</option>
-          </select>
-          <select
-            value={filtroData.pueblo}
-            onChange={(e) => changeDataFilter('pueblo', e.target.value)}
-            className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
-          >
-            <option value="todos">Todos los pueblos</option>
-            {towns.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-col space-y-3 w-full">
+          <div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
+            <div className="flex flex-col justify-center">
+              <p className="font-bold text-md">Filtros</p>
+            </div>
+            <select
+              value={filtroData.tipoAyuda}
+              onChange={(e) => changeDataFilter('tipoAyuda', e.target.value)}
+              className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+            >
+              <option value="todas">Todas las necesidades</option>
+              {Object.entries(tiposAyudaOptions).map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <select
+              value={filtroData.urgencia}
+              onChange={(e) => changeDataFilter('urgencia', e.target.value)}
+              className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+            >
+              <option value="todas">Todas las prioridades</option>
+              <option value="alta">Alta prioridad</option>
+              <option value="media">Media prioridad</option>
+              <option value="baja">Baja prioridad</option>
+            </select>
+            <select
+              value={filtroData.pueblo}
+              onChange={(e) => changeDataFilter('pueblo', e.target.value)}
+              className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+            >
+              <option value="todos">Todos los pueblos</option>
+              {towns.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-row flex-1 justify-end">
+            <Toggle
+              handleChange={handleToggleChange}
+              checked={filtroData.soloSinVoluntarios}
+              label="Sólo ofertas sin voluntarios"
+            />
+          </div>
         </div>
       </div>
       <div className="grid gap-4">
