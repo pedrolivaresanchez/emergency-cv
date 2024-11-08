@@ -36,8 +36,6 @@ const Map: FC<MapProps> = ({ markers = [] }) => {
   const [selectedMarker, setSelectedMarker] = useState<PinMapa | null>(null);
 
   const { toggleModal } = useModal();
-
-  console.log(selectedMarker);
   return (
     <ReactMap
       initialViewState={{

@@ -70,12 +70,12 @@ function Solicitudes() {
         const filter = [];
 
         if (filtroData.tipoAyuda !== 'todas') {
-          filter.push('helptype=' + filtroData.tipoAyuda);
+          filter.push('type=' + filtroData.tipoAyuda);
         }
 
         // Solo agregar filtro si no es "todos"
         if (filtroData.pueblo !== 'todos') {
-          filter.push('town_id=' + filtroData.pueblo);
+          filter.push('town=' + filtroData.pueblo);
         }
 
         // Solo agregar filtro si no es "todas"

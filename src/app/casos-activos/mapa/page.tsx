@@ -1,14 +1,11 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { supabase } from '@/lib/supabase/client';
-import SolicitudCard from '@/components/SolicitudCard';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Map, { PinMapa } from '@/components/map/map';
 import PickupPoint from '@/components/PickupPoint';
-
-export const dynamic = 'force-dynamic';
+import SolicitudCardMap from '@/components/SolicitudCardMap';
 
 export default function MapaPage() {
   return (
@@ -55,7 +52,7 @@ function Mapa() {
         latitude: request.latitude ?? 0,
         longitude: request.longitude ?? 0,
         id: request.id,
-        popup: <SolicitudCard showLink={true} showEdit={false} caso={request} />,
+        popup: <SolicitudCardMap caso={request.id} />,
       };
     }
 
@@ -70,44 +67,34 @@ function Mapa() {
     }
 
     async function fetchData() {
+      const url = process.env.NEXT_PUBLIC_BASE_URL + '/api/mapa/?';
       try {
         setLoading(true);
         setError(null);
+        const filter = [];
 
-        // Comenzamos la consulta
-        const query = supabase.from('help_requests').select('*').eq('type', 'necesita');
         if (filtroData.tipoAyuda !== 'todas') {
-          query.contains('help_type', [filtroData.tipoAyuda]);
+          filter.push('type=' + filtroData.tipoAyuda);
+        }
+        if (filtroData.pueblo !== 'todos') {
+          filter.push('town=' + filtroData.pueblo);
         }
         if (filtroData.urgencia !== 'todas') {
-          query.eq('urgency', filtroData.urgencia);
+          filter.push('urgency=' + filtroData.urgencia);
         }
-
-        query.neq('status', 'finished');
-
-        const { data, error } = await query.order('created_at', { ascending: false });
-
-        const pickupQuery = supabase.from('collection_points').select('*', { count: 'exact' });
-        if (filtroData.acepta !== 'todos') {
-          query.contains('accepted_items', [filtroData.acepta]);
+        if (filtroData.acepta !== 'todas') {
+          filter.push('acepta=' + filtroData.acepta);
         }
-
-        const { data: pickupData, error: pickupError } = await pickupQuery.order('created_at', { ascending: false });
-
-        let allData = [];
-        if (error) {
-          console.log('Error fetching solicitudes:', error);
+        const filterUrl = url + filter.join('&');
+        const response = await fetch(filterUrl);
+        if (!response.ok) {
+          console.log(`Error fetching solicitudes: ${response.status}`);
+          setData([]);
         } else {
+          const { data, count } = await response.json();
           const markers = data.map(transformHelpRequestToMarker);
-          allData.push(...(markers || []));
+          setData(markers || []);
         }
-        if (pickupError) {
-          console.log('Error fetching pickup points:', pickupError);
-        } else {
-          const pickupMarkers = pickupData.map(transformPickupRequestToMarker);
-          allData.push(...(pickupMarkers || []));
-        }
-        setData(allData);
       } catch (err) {
         console.log('Error general:', err);
         setError('Error de conexión.');
