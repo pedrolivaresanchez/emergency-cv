@@ -9,20 +9,20 @@ import PhoneInfo from '@/components/PhoneInfo';
 import DeleteHelpRequest from './DeleteHelpRequest';
 import { useTowns } from '@/context/TownProvider';
 import { useRole } from '@/context/RoleProvider';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ChangeUrgencyHelpRequest from './ChangeUrgencyHelpRequest';
 
-// type SolicitudCardProps = {
-//   caso: HelpRequestData;
-//   showLink?: boolean;
-//   showEdit?: boolean;
-// };
+type SolicitudCardProps = {
+  caso: HelpRequestData;
+  showLink?: boolean;
+  showEdit?: boolean;
+};
 
-export default function SolicitudCard({ caso, showLink = true, showEdit = false }) {
+export default function SolicitudCard({ caso, showLink = true, showEdit = false }: SolicitudCardProps) {
   const session = useSession();
   const role = useRole();
   const { getTownById } = useTowns();
-  const additionalInfo = caso.additional_info;
+  const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
   const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
   const isAdmin = role === 'admin';
   const [deleted, setDeleted] = useState(false);
@@ -187,7 +187,7 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
             {isAdmin && (
               <ChangeUrgencyHelpRequest
                 onUpdate={setUpdateUrgency}
-                currentUrgency={caso.urgency}
+                currentUrgency={caso.urgency!}
                 helpRequestId={caso.id}
               />
             )}
