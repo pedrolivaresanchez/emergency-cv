@@ -3,16 +3,11 @@ import React, { createContext, ReactNode, useContext, useEffect, useState } from
 import { supabase } from '@/lib/supabase/client';
 import { useSession } from './SessionProvider';
 
-type RoleProviderProps = {
-  children: ReactNode;
-};
-type RoleContextType = string | null;
+const RoleContext = createContext < RoleContextType > null;
 
-const RoleContext = createContext<RoleContextType>(null);
-
-export const RoleProvider: React.FC<RoleProviderProps> = ({ children }) => {
+export const RoleProvider = ({ children }) => {
   const session = useSession();
-  const [role, setRole] = useState<string | null>('user');
+  const [role, setRole] = (useState < string) | (null > 'user');
 
   useEffect(() => {
     const fetchRole = async () => {
@@ -26,14 +21,13 @@ export const RoleProvider: React.FC<RoleProviderProps> = ({ children }) => {
             .single();
 
           if (error && error.code !== 'PGRST116') {
-            // Error específico de múltiple/ninguna fila
             console.error('Error fetching role:', error.message);
             setRole(null);
           } else if (data) {
             setRole(data.role);
           } else {
             console.warn('No role found for this user.');
-            setRole('user'); // Asigna un rol predeterminado si no se encuentra en la BD
+            setRole('user');
           }
         } catch (error) {
           console.error('Unexpected error fetching role:', error);

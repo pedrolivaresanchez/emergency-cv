@@ -11,17 +11,17 @@ import { useTowns } from '@/context/TownProvider';
 import { useRole } from '@/context/RoleProvider';
 import { useState } from 'react';
 
-type SolicitudCardProps = {
-  caso: HelpRequestData;
-  showLink?: boolean;
-  showEdit?: boolean;
-};
+// type SolicitudCardProps = {
+//   caso: HelpRequestData;
+//   showLink?: boolean;
+//   showEdit?: boolean;
+// };
 
-export default function SolicitudCard({ caso, showLink = true, showEdit = false }: SolicitudCardProps) {
+export default function SolicitudCard({ caso, showLink = true, showEdit = false }) {
   const session = useSession();
   const role = useRole();
   const { getTownById } = useTowns();
-  const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
+  const additionalInfo = caso.additional_info;
   const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
   const isAdmin = role === 'admin';
   const [deleted, setDeleted] = useState(false);
@@ -155,9 +155,9 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
             <div className="flex-auto">
               <div className="text-lg font-medium">{caso?.name?.split(' ')[0] || 'Necesita Ayuda'}</div>
               <span className="text-gray-500">
-                {new Date(caso.created_at!).toLocaleDateString() +
+                {new Date(caso.created_at || '').toLocaleDateString() +
                   ' ' +
-                  new Date(caso.created_at!).toLocaleTimeString([], {
+                  new Date(caso.created_at || '').toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}
