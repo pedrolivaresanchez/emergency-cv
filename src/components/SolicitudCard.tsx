@@ -13,7 +13,7 @@ import { useState } from 'react';
 import ChangeUrgencyHelpRequest from './ChangeUrgencyHelpRequest';
 
 type SolicitudCardProps = {
-  caso: HelpRequestData;
+  caso: HelpRequestData & { special_situations: string; user_id: string };
   showLink?: boolean;
   showEdit?: boolean;
 };
