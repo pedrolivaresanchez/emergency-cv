@@ -101,9 +101,11 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
 
       {isEdit.current && (
         <div className="flex">
-          <div className="block text-sm font-medium text-gray-400">{initialAddressDescriptor?.address || ''}</div>
+          <div className="block text-sm font-medium text-gray-400 w-max my-auto">
+            {initialAddressDescriptor?.address || ''}
+          </div>
           <button
-            className="ml-auto"
+            className="ml-auto bg-red-500 text-white rounded-lg px-2 py-1"
             onClick={(e) => {
               e.preventDefault();
               onNewAddressDescriptor(addressDescriptor);
@@ -146,6 +148,7 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
         }}
         onNewPositionCallback={onMapNewPosition}
         inputCoordinates={lngLat}
+        zoom={16}
       />
     </div>
   );
