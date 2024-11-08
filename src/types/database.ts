@@ -190,6 +190,7 @@ export type Database = {
           town_id: number | null;
           type: string | null;
           urgency: string | null;
+          user_id: string | null;
         };
         Insert: {
           additional_info?: Json | null;
@@ -212,6 +213,7 @@ export type Database = {
           town_id?: number | null;
           type?: string | null;
           urgency?: string | null;
+          user_id: string | null;
         };
         Update: {
           additional_info?: Json | null;
@@ -234,6 +236,7 @@ export type Database = {
           town_id?: number | null;
           type?: string | null;
           urgency?: string | null;
+          user_id: string | null;
         };
         Relationships: [
           {
@@ -334,12 +337,7 @@ export type Database = {
       };
     };
     Views: {
-      distinct_collection_cities: {
-        Row: {
-          city: string | null;
-        };
-        Relationships: [];
-      };
+      [_ in never]: never;
     };
     Functions: {
       [_ in never]: never;
@@ -354,9 +352,7 @@ export type Database = {
         | 'medica'
         | 'psicologico'
         | 'logistico'
-        | 'otros'
-        | 'reparto'
-        | 'donaciones';
+        | 'otros';
     };
     CompositeTypes: {
       [_ in never]: never;
