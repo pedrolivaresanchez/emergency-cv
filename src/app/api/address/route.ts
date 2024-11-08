@@ -66,7 +66,11 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const response = await fetch(`${GOOGLE_URL}${body.latitude},${body.longitude}`).then((value) => value.json());
+    const response = await fetch(`${GOOGLE_URL}${body.latitude},${body.longitude}`, {
+      headers: {
+        Referer: request.headers.get('Referer') ?? '',
+      },
+    }).then((value) => value.json());
 
     if (response.error_message) {
       return Response.json({
