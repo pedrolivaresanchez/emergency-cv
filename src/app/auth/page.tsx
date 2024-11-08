@@ -1,10 +1,18 @@
 'use client';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import Login from '../../components/auth/Login';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { authService } from '@/lib/service';
 
-export default function AuthPage() {
+export default function AUthPage() {
+  return (
+    <Suspense>
+      <Auth />
+    </Suspense>
+  );
+}
+
+function Auth() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
