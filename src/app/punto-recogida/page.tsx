@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, FormEvent } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { MapPin, Phone, Package, House, Contact, Megaphone } from 'lucide-react';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { isValidPhone } from '@/helpers/utils';
 import { PhoneInput } from '@/components/PhoneInput';
+import { CollectionPointData, CollectionPointInsert } from '@/types/DataPoints';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,16 +23,16 @@ export default function PuntosRecogida() {
     status: 'active',
   };
 
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState<CollectionPointInsert>(initialFormData);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [collectionPoints, setCollectionPoints] = useState([]);
-  const [error, setError] = useState(null);
+  const [collectionPoints, setCollectionPoints] = useState<CollectionPointData[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
   const tiposAyuda = ['Alimentos', 'Agua', 'Ropa', 'Mantas', 'Medicamentos', 'Productos de higiene'];
 
-  const handlePhoneChange = useCallback((phoneNumber) => {
+  const handlePhoneChange = useCallback((phoneNumber: string) => {
     setFormData((formData) => ({ ...formData, contact_phone: phoneNumber }));
   }, []);
 
@@ -54,20 +55,20 @@ export default function PuntosRecogida() {
     }
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const requiredFields = ['name', 'location', 'contact_phone'];
+      const requiredFields = ['name', 'location', 'contact_phone'] as const;
       const missingFields = requiredFields.filter((field) => !formData[field]);
 
       if (missingFields.length > 0) {
         throw new Error('Por favor completa todos los campos obligatorios');
       }
 
-      if (!isValidPhone(formData.contact_phone)) {
+      if (!isValidPhone(formData.contact_phone ?? '')) {
         alert('El teléfono de contacto no es válido.');
         return;
       }
@@ -94,7 +95,7 @@ export default function PuntosRecogida() {
       setFormData(initialFormData);
 
       setTimeout(() => setSuccess(false), 3000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al registrar punto de recogida:', error);
       setError(error.message || 'Error al registrar el punto de recogida');
     } finally {
@@ -210,7 +211,7 @@ export default function PuntosRecogida() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del centro *</label>
                 <input
                   type="text"
-                  value={formData.name}
+                  value={formData.name ?? ''}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full p-2 border rounded"
                   required
@@ -219,7 +220,7 @@ export default function PuntosRecogida() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Dirección completa *</label>
                 <AddressAutocomplete
-                  onSelect={(address) => {
+                  onSelect={(address: any) => {
                     setFormData((prev) => ({
                       ...prev,
                       location: address.fullAddress,
@@ -242,18 +243,18 @@ export default function PuntosRecogida() {
                     <label
                       key={tipo}
                       className={`flex items-center p-3 rounded cursor-pointer ${
-                        formData.accepted_items.includes(tipo)
+                        formData.accepted_items?.includes(tipo)
                           ? 'bg-blue-100 text-blue-800'
                           : 'bg-gray-50 hover:bg-gray-100'
                       }`}
                     >
                       <input
                         type="checkbox"
-                        checked={formData.accepted_items.includes(tipo)}
+                        checked={formData.accepted_items?.includes(tipo)}
                         onChange={(e) => {
                           const newItems = e.target.checked
-                            ? [...formData.accepted_items, tipo]
-                            : formData.accepted_items.filter((item) => item !== tipo);
+                            ? [...(formData.accepted_items ?? []), tipo]
+                            : formData.accepted_items?.filter((item) => item !== tipo);
                           setFormData({ ...formData, accepted_items: newItems });
                         }}
                         className="sr-only"
@@ -268,21 +269,21 @@ export default function PuntosRecogida() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Persona responsable</label>
                   <input
                     type="text"
-                    value={formData.contact_name}
+                    value={formData.contact_name ?? ''}
                     onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
                     className="w-full p-2 border rounded"
                   />
                 </div>
-                <PhoneInput phoneNumber={formData.contact_phone} onChange={handlePhoneChange} required />
+                <PhoneInput phoneNumber={formData.contact_phone ?? ''} onChange={handlePhoneChange} required />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Necesidades urgentes</label>
                 <textarea
-                  value={formData.urgent_needs}
+                  value={formData.urgent_needs ?? ''}
                   onChange={(e) => setFormData({ ...formData, urgent_needs: e.target.value })}
                   className="w-full p-2 border rounded"
-                  rows="3"
+                  rows={3}
                   placeholder="¿Qué se necesita con más urgencia?"
                 />
               </div>

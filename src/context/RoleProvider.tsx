@@ -1,13 +1,13 @@
 'use client';
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import React, { createContext, PropsWithChildren, ReactNode, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { useSession } from './SessionProvider';
 
-const RoleContext = createContext();
+const RoleContext = createContext<string>('user');
 
-export const RoleProvider = ({ children }) => {
+export const RoleProvider = ({ children }: PropsWithChildren) => {
   const session = useSession();
-  const [role, setRole] = useState('user');
+  const [role, setRole] = useState<string | null>('user');
 
   useEffect(() => {
     const fetchRole = async () => {
@@ -39,7 +39,7 @@ export const RoleProvider = ({ children }) => {
     fetchRole();
   }, [session]);
 
-  return <RoleContext.Provider value={role}>{children}</RoleContext.Provider>;
+  return <RoleContext.Provider value={role ?? 'anon'}>{children}</RoleContext.Provider>;
 };
 
 export const useRole = () => useContext(RoleContext);
