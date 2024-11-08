@@ -63,33 +63,37 @@ function Solicitudes() {
 
   useEffect(() => {
     async function fetchData() {
-      const url = process.env.NEXT_PUBLIC_BASE_URL + '/api/solicitudes/?';
       try {
         setLoading(true);
         setError(null);
-        const filter = [];
 
+        // Comenzamos la consulta
+        const query = supabase.from('help_requests').select('*', { count: 'exact' }).eq('type', 'necesita');
+
+        // Solo agregar filtro si no es "todos"
         if (filtroData.tipoAyuda !== 'todas') {
-          filter.push('helptype=' + filtroData.tipoAyuda);
+          query.contains('help_type', [filtroData.tipoAyuda]);
         }
 
         // Solo agregar filtro si no es "todos"
         if (filtroData.pueblo !== 'todos') {
-          filter.push('town_id=' + filtroData.pueblo);
+          query.eq('town_id', filtroData.pueblo);
         }
 
         // Solo agregar filtro si no es "todas"
         if (filtroData.urgencia !== 'todas') {
-          filter.push('urgency=' + filtroData.urgencia);
+          query.eq('urgency', filtroData.urgencia);
         }
-        filter.push('page=' + currentPage);
-        const filterUrl = url + filter.join('&');
-        const response = await fetch(filterUrl);
-        if (!response.ok) {
-          console.log(`Error fetching solicitudes: ${response.status}`);
+        query.neq('status', 'finished');
+        // Ejecutar la consulta con paginación
+        const { data, count, error } = await query
+          .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.log('Error fetching solicitudes:', error);
           setData([]);
         } else {
-          const { data, count } = await response.json();
           setData(data || []);
           setCurrentCount(count ?? 0);
         }
@@ -170,7 +174,7 @@ function Solicitudes() {
             </p>
           </div>
         ) : (
-          data.map((caso) => <SolicitudCard showLink={true} showEdit={true} key={caso.id} caso={caso as any} />)
+          data.map((caso) => <SolicitudCard showLink={true} showEdit={true} key={caso.id} caso={caso} />)
         )}
       </div>
       <div className="flex items-center justify-center">
