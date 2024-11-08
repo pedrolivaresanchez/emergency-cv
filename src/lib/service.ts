@@ -65,48 +65,14 @@ export const helpRequestService = {
 
   async assign(requestData: HelpRequestAssignmentInsert) {
     const { data, error } = await supabase.from('help_request_assignments').insert([requestData]).select();
+
     if (error) throw error;
-
-    const { data: linkedRequestData, error: errorGettingLinkedData } = await supabase
-      .from('help_requests')
-      .select('*')
-      .eq('id', requestData.help_request_id);
-    if (errorGettingLinkedData) throw errorGettingLinkedData;
-    if (!linkedRequestData) throw new Error('No se puede encontrar esta tarea');
-
-    const { error: errorUpdatingAssigneesCount } = await supabase
-      .from('help_requests')
-      .update({ asignees_count: linkedRequestData[0].asignees_count + 1 });
-    if (errorUpdatingAssigneesCount) throw errorUpdatingAssigneesCount;
-
     return data[0];
   },
   async unassign(id: number) {
-    const { data, error: errorFindingRow } = await supabase.from('help_request_assignments').select('*').eq('id', id);
-    if (errorFindingRow || !data) {
-      throw new Error('No se puede encontrar la tarea');
-    }
+    const { error } = await supabase.from('help_request_assignments').delete().eq('id', id);
 
-    const requestId = data[0].help_request_id;
-
-    const { error: errorDeletingAssignment } = await supabase.from('help_request_assignments').delete().eq('id', id);
-    if (errorDeletingAssignment) throw errorDeletingAssignment;
-
-    const { data: linkedRequestData, error: errorGettingLinkedData } = await supabase
-      .from('help_requests')
-      .select('*')
-      .eq('id', requestId);
-
-    if (errorGettingLinkedData) throw errorGettingLinkedData;
-    if (!linkedRequestData) throw new Error('No se puede encontrar esta tarea');
-
-    const { asignees_count } = linkedRequestData[0];
-    const newNumberAssignees = asignees_count <= 0 ? 0 : asignees_count - 1;
-
-    const { error: errorUpdatingAssigneesCount } = await supabase
-      .from('help_requests')
-      .update({ asignees_count: newNumberAssignees });
-    if (errorUpdatingAssigneesCount) throw errorUpdatingAssigneesCount;
+    if (error) throw error;
   },
 
   async getByType(type: any) {
