@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
 export async function GET() {
@@ -16,7 +16,7 @@ export async function GET() {
   return Response.json({ registeredPost });
 }
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
     // Obtener los datos del formulario (multipart/form-data)
     const formData = await request.formData();

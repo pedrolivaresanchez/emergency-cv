@@ -5,7 +5,7 @@ import { useSession } from '@/context/SessionProvider';
 import { HelpRequestAdditionalInfo, HelpRequestData } from '@/types/Requests';
 import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
 import SolicitudHelpCount from '@/components/SolicitudHelpCount';
-import PhoneInfo from '@/components/PhoneInfo.js';
+import PhoneInfo from '@/components/PhoneInfo';
 import { useTowns } from '@/context/TownProvider';
 
 type SolicitudCardProps = {
