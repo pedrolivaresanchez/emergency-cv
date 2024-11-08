@@ -61,7 +61,7 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
       icon: AlertCircle,
       title: 'Casos Activos',
       description: 'Ver todos los casos activos',
-      path: '/casos-activos',
+      path: '/casos-activos/solicitudes',
       color: 'text-orange-600',
       highlight: true,
     },

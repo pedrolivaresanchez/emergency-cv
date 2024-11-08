@@ -8,6 +8,8 @@ import { tiposAyudaOptions } from '@/helpers/constants';
 import Map, { PinMapa } from '@/components/map/map';
 import PickupPoint from '@/components/PickupPoint';
 
+export const dynamic = 'force-dynamic';
+
 export default function MapaPage() {
   return (
     <Suspense>

@@ -132,7 +132,7 @@ export default function Home() {
       title: 'Casos activos',
       description: 'Observa los casos activos',
       icon: AlertCircle,
-      path: '/casos-activos',
+      path: '/casos-activos/solicitudes',
       color: 'orange',
     },
     {

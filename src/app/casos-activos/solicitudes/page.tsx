@@ -1,18 +1,15 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
 import Pagination from '@/components/Pagination';
-import OfferHelp from '@/components/OfferHelp';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
-import Modal from '@/components/Modal';
-import { useModal } from '@/context/ModalProvider';
 import { useTowns } from '@/context/TownProvider';
+import { HelpRequestData } from '@/types/Requests';
 
-const MODAL_NAME = 'solicitudes';
+export const dynamic = 'force-dynamic';
 
 export default function SolicitudesPage() {
   return (
@@ -23,29 +20,25 @@ export default function SolicitudesPage() {
 }
 
 function Solicitudes() {
-  const { getTownById, towns } = useTowns();
+  const { towns } = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
-  const [currentCount, setCurrentCount] = useState(0);
-  const { toggleModal } = useModal();
+  const [data, setData] = useState<HelpRequestData[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get('page')) || 1);
+  const [currentCount, setCurrentCount] = useState<number>(0);
 
-  const closeModal = () => {
-    toggleModal(MODAL_NAME, false);
-  };
   const itemsPerPage = 10;
-  const numPages = (count) => {
+  const numPages = (count: number) => {
     return Math.ceil(count / itemsPerPage) || 0;
   };
 
-  const updateFilter = (filter, value) => {
+  const updateFilter = (filter: 'urgencia' | 'tipoAyuda' | 'pueblo' | 'page', value: string | number) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set(filter, value);
+    params.set(filter, value.toString());
     router.push(`?${params.toString()}`);
   };
 
@@ -55,7 +48,7 @@ function Solicitudes() {
     pueblo: searchParams.get('pueblo') || 'todos',
   });
 
-  const changeDataFilter = (type, newFilter) => {
+  const changeDataFilter = (type: 'urgencia' | 'tipoAyuda' | 'pueblo', newFilter: string) => {
     setFiltroData((prev) => ({
       ...prev,
       [type]: newFilter,
@@ -63,7 +56,7 @@ function Solicitudes() {
     updateFilter(type, newFilter);
   };
 
-  function changePage(newPage) {
+  function changePage(newPage: number) {
     setCurrentPage(newPage);
     updateFilter('page', newPage);
   }
@@ -102,7 +95,7 @@ function Solicitudes() {
           setData([]);
         } else {
           setData(data || []);
-          setCurrentCount(count);
+          setCurrentCount(count ?? 0);
         }
       } catch (err) {
         console.log('Error general:', err);
@@ -130,8 +123,6 @@ function Solicitudes() {
       </div>
     );
   }
-
-  const puebloSeleccionado = getTownById(Number(filtroData.pueblo));
 
   return (
     <>
@@ -181,16 +172,6 @@ function Solicitudes() {
             <p className="text-gray-700 text-lg font-medium">
               No se encontraron solicitudes que coincidan con los filtros.
             </p>
-
-            <button
-              onClick={() => {
-                toggleModal(MODAL_NAME, true);
-              }}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
-            >
-              <HeartHandshake className="w-5 h-5" />
-              Ofrecer ayuda {filtroData.pueblo === 'todos' ? '' : ' a ' + getTownById(Number(filtroData.pueblo))?.name}
-            </button>
           </div>
         ) : (
           data.map((caso) => <SolicitudCard showLink={true} showEdit={true} key={caso.id} caso={caso} />)
@@ -199,10 +180,6 @@ function Solicitudes() {
       <div className="flex items-center justify-center">
         <Pagination currentPage={currentPage} totalPages={numPages(currentCount)} onPageChange={changePage} />
       </div>
-
-      <Modal id={MODAL_NAME}>
-        <OfferHelp town={puebloSeleccionado?.name} onClose={closeModal} isModal={true} />
-      </Modal>
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase/client';
 import TabNavigation from '@/components/TabNavigation';
+import { PropsWithChildren } from 'react';
 const getCount = async () => {
   const {
     data: solicitaData,
@@ -26,7 +27,7 @@ const getCount = async () => {
   };
 };
 
-export default async function CasosActivosLayout({ children }) {
+export default async function CasosActivosLayout({ children }: PropsWithChildren) {
   const count = await getCount();
   return (
     <>

@@ -31,11 +31,6 @@ export async function updateSession(request: NextRequest) {
 
   const url = request.nextUrl.clone();
 
-  if (request.nextUrl.pathname === '/casos-activos') {
-    url.pathname = '/casos-activos/solicitudes';
-    return NextResponse.redirect(url);
-  }
-
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:
