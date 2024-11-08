@@ -1,5 +1,5 @@
 'use client';
-import React, { createContext, PropsWithChildren, ReactNode, useContext, useEffect, useState } from 'react';
+import React, { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { useSession } from './SessionProvider';
 
