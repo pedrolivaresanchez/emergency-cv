@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
@@ -14,7 +14,15 @@ import { useTowns } from '@/context/TownProvider';
 
 const MODAL_NAME = 'solicitudes';
 
-export default function Solicitudes() {
+export default function SolicitudesPage() {
+  return (
+    <Suspense>
+      <Solicitudes />
+    </Suspense>
+  );
+}
+
+function Solicitudes() {
   const { getTownById, towns } = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
