@@ -149,14 +149,6 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
       isHref: true,
     },
     {
-      icon: CarTaxiFront,
-      title: 'Compartir Coche',
-      description: 'Viaja u ofrece viajes con otros',
-      path: 'https://anem.guruwalk.com/',
-      color: 'text-amber-600',
-      isHref: true,
-    },
-    {
       icon: Car,
       title: 'Encontrar tu Coche',
       description: 'Sistema de registro y consulta de vehículos perdidos',
