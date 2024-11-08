@@ -1,4 +1,5 @@
-﻿using Google.Apis.Auth.OAuth2;
+﻿using System.Text.Json;
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
@@ -35,12 +36,14 @@ internal sealed class GoogleSheetsService
     {
         var headerRow = new List<object>
         {
-            "Created At", "ID", "Status", "Town","Description", "Help Types",  "Number of People",
-            "Name", "Location", "ContactInfo", "People Needed", 
+            "Created At", "ID", "Status", "Town","Description", "Help Types", "Availability", "Vehicle",
+            "Number of People", "Name", "Location", "ContactInfo", "People Needed",
         };
 
+        var offerRequests = requests.Where(x => x.Type == "ofrece");
+
         var rows = new List<IList<object>> { headerRow };
-        rows.AddRange(requests.OrderBy(x => x.Id).Where(x => x.Type == "ofrece").Select(request => new List<object>
+        rows.AddRange(offerRequests.OrderBy(x => x.Id).Select(request => new List<object>
         {
             request.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
             request.Id,
@@ -49,6 +52,8 @@ internal sealed class GoogleSheetsService
             request.Town?.Name ?? "",
             request.Description ?? "",
             string.Join(", ", request.HelpType ?? []),
+            string.Join(", ", request.Resources?.Availability ?? []),
+            request.Resources?.Vehicle ?? "NO",
             request.NumberOfPeople ?? 0,
             request.Name ?? "",
             request.Location ?? "",
@@ -80,7 +85,7 @@ internal sealed class GoogleSheetsService
         var headerRow = new List<object>
         {
             "Created At", "ID", "Status", "Town","Description", "Help Types",  "Number of People",
-            "Name", "Location", "ContactInfo", "People Needed", 
+            "Name", "Location", "ContactInfo", "People Needed",
         };
 
         var rows = new List<IList<object>> { headerRow };
