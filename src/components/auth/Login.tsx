@@ -7,6 +7,7 @@ import SocialButton from './SocialButton';
 
 type LoginProps = {
   onSuccessCallback: () => void;
+  redirectUrl?: string;
 };
 
 type Status = {
@@ -21,7 +22,7 @@ type FormData = {
   privacyPolicy: string;
 };
 
-export default function Login({ onSuccessCallback }: LoginProps) {
+export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     email: '',
@@ -198,7 +199,9 @@ export default function Login({ onSuccessCallback }: LoginProps) {
 
           <div className="p-2">
             <p className="text-center text-gray-700 mb-2">O prueba con estas opciones:</p>
-            <SocialButton provider="google">Inicia sesión con Google</SocialButton>
+            <SocialButton redirectUrl={redirectUrl} provider="google">
+              Inicia sesión con Google
+            </SocialButton>
           </div>
         </form>
       )}
@@ -207,6 +210,7 @@ export default function Login({ onSuccessCallback }: LoginProps) {
           onBackButtonClicked={() => {
             setIsSignUp(false);
           }}
+          callback={onSuccessCallback}
         />
       )}
     </>
