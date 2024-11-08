@@ -170,7 +170,7 @@ function Solicitudes() {
             </p>
           </div>
         ) : (
-          data.map((caso) => <SolicitudCard showLink={true} showEdit={true} key={caso.id} caso={caso} />)
+          data.map((caso) => <SolicitudCard showLink={true} showEdit={true} key={caso.id} caso={caso as any} />)
         )}
       </div>
       <div className="flex items-center justify-center">
