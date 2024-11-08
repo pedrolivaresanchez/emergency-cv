@@ -183,7 +183,6 @@ export type Database = {
           longitude: number | null;
           name: string | null;
           number_of_people: number | null;
-          other_help: string | null;
           people_needed: number | null;
           resources: Json | null;
           status: string | null;
@@ -206,7 +205,6 @@ export type Database = {
           longitude?: number | null;
           name?: string | null;
           number_of_people?: number | null;
-          other_help?: string | null;
           people_needed?: number | null;
           resources?: Json | null;
           status?: string | null;
@@ -229,7 +227,6 @@ export type Database = {
           longitude?: number | null;
           name?: string | null;
           number_of_people?: number | null;
-          other_help?: string | null;
           people_needed?: number | null;
           resources?: Json | null;
           status?: string | null;
