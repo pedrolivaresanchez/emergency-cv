@@ -8,7 +8,7 @@ import { useModal } from '@/context/ModalProvider';
 
 type DeleteRequestButtonProps = {
   helpRequestId: number;
-  onDelete: void;
+  onDelete: any;
 };
 
 export default function DeleteHelpRequest({ helpRequestId, onDelete }: DeleteRequestButtonProps) {
