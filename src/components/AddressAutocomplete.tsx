@@ -1,24 +1,60 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MapPin } from 'lucide-react';
+
+type Address = {
+  road: string;
+  house_number: string;
+  postcode: string;
+  city: string;
+  state: string;
+};
+
+type Suggestion = {
+  display_name: string;
+  full_address: string;
+  formatted_address: string;
+  formatted_locality: string;
+  lat: number;
+  lon: number;
+  address: Address;
+};
+
+type Coordinates = {
+  lat: number;
+  lon: number;
+};
+
+export type AddressDetails = {
+  fullAddress: string;
+  coordinates: Coordinates | null;
+  details: Address;
+};
+
+type AddressAutocompleteProps = {
+  onSelect: (details: AddressDetails) => void;
+  placeholder?: string;
+  initialValue?: string;
+  required?: boolean;
+};
 
 export default function AddressAutocomplete({
   onSelect,
   placeholder = 'Buscar dirección...',
   initialValue = '',
   required = false,
-}) {
-  const [query, setQuery] = useState(initialValue);
-  const [suggestions, setSuggestions] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const wrapperRef = useRef(null);
-  const debounceRef = useRef(null);
+}: AddressAutocompleteProps) {
+  const [query, setQuery] = useState<string>(initialValue);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
       }
     }
@@ -26,7 +62,7 @@ export default function AddressAutocomplete({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const searchAddress = useCallback(async (searchQuery) => {
+  const searchAddress = useCallback(async (searchQuery: string) => {
     if (!searchQuery || searchQuery.length < 3) {
       setSuggestions([]);
       return;
@@ -39,12 +75,12 @@ export default function AddressAutocomplete({
       );
       const data = await response.json();
 
-      const formattedSuggestions = data.map((item) => {
-        const addressParts = [];
+      const formattedSuggestions: Suggestion[] = data.map((item: any) => {
+        const addressParts: string[] = [];
         if (item.address?.road) addressParts.push(item.address.road);
         if (item.address?.house_number) addressParts.push(item.address.house_number);
 
-        const localityParts = [];
+        const localityParts: string[] = [];
         if (item.address?.postcode) localityParts.push(item.address.postcode);
         if (item.address?.city || item.address?.town || item.address?.village) {
           localityParts.push(item.address?.city || item.address?.town || item.address?.village);
@@ -80,7 +116,7 @@ export default function AddressAutocomplete({
     }
   }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
 
@@ -119,7 +155,7 @@ export default function AddressAutocomplete({
     };
   }, []);
 
-  const handleSelect = (suggestion) => {
+  const handleSelect = (suggestion: Suggestion) => {
     setQuery(suggestion.full_address);
     setShowSuggestions(false);
     onSelect({
@@ -140,6 +176,7 @@ export default function AddressAutocomplete({
           value={query || ''}
           onChange={handleInputChange}
           placeholder={placeholder}
+          required={required}
           className="w-full p-2 pr-10 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -155,7 +192,6 @@ export default function AddressAutocomplete({
         <div className="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg max-h-60 overflow-auto">
           {suggestions.map((suggestion, index) => (
             <button
-              required={required}
               key={index}
               onClick={() => handleSelect(suggestion)}
               className="w-full text-left px-4 py-2 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
