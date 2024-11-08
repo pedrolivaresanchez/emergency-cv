@@ -5,8 +5,9 @@ import { HelpRequestData } from '@/types/Requests';
 
 type PhoneInfoProps = {
   caseInfo: HelpRequestData;
+  isAdmin: boolean;
 };
-export default function PhoneInfo({ caseInfo }: PhoneInfoProps) {
+export default function PhoneInfo({ caseInfo, isAdmin }: PhoneInfoProps) {
   const session = useSession();
 
   const {
@@ -26,9 +27,11 @@ export default function PhoneInfo({ caseInfo }: PhoneInfoProps) {
     <span className="break-words">
       <span className="font-semibold">Contacto:</span>{' '}
       {session && session.user
-        ? !!userAssignment
+        ? isAdmin
           ? caseInfo.contact_info
-          : 'Dale al botón "Quiero ayudar" para ver sus datos de contacto.'
+          : !!userAssignment
+            ? caseInfo.contact_info
+            : 'Dale al botón "Quiero ayudar" para ver sus datos de contacto.'
         : 'Inicia sesion para ver este dato'}
     </span>
   );

@@ -9,7 +9,8 @@ import PhoneInfo from '@/components/PhoneInfo';
 import DeleteHelpRequest from './DeleteHelpRequest';
 import { useTowns } from '@/context/TownProvider';
 import { useRole } from '@/context/RoleProvider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import ChangeUrgencyHelpRequest from './ChangeUrgencyHelpRequest';
 
 // type SolicitudCardProps = {
 //   caso: HelpRequestData;
@@ -26,6 +27,7 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
   const isAdmin = role === 'admin';
   const [deleted, setDeleted] = useState(false);
   const isMyRequest = session.user?.id && session.user.id === caso.user_id;
+  const [updateUrgency, setUpdateUrgency] = useState(caso.urgency);
 
   return (
     !deleted && (
@@ -35,9 +37,9 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
             <div className="flex flex-row gap-4 items-center">
               <AlertTriangle
                 className={`h-10 w-10 flex-shrink-0 ${
-                  caso.urgency === 'alta'
+                  updateUrgency === 'alta'
                     ? 'text-red-500'
-                    : caso.urgency === 'media'
+                    : updateUrgency === 'media'
                       ? 'text-yellow-600'
                       : 'text-green-600'
                 }`}
@@ -45,14 +47,14 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
               <div className="flex flex-col">
                 <span
                   className={`text-lg font-bold ${
-                    caso.urgency === 'alta'
+                    updateUrgency === 'alta'
                       ? 'text-red-500'
-                      : caso.urgency === 'media'
+                      : updateUrgency === 'media'
                         ? 'text-yellow-600'
                         : 'text-green-600'
                   }`}
                 >
-                  Urgencia: {caso.urgency === 'alta' ? 'Alta' : caso.urgency === 'media' ? 'Media' : 'Baja'}
+                  Urgencia: {updateUrgency === 'alta' ? 'Alta' : updateUrgency === 'media' ? 'Media' : 'Baja'}
                 </span>
                 <span className="text-sm text-gray-600">#{caso.id}</span>
               </div>
@@ -99,7 +101,7 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
             {caso.contact_info && (
               <div className="flex items-start gap-2">
                 <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                <PhoneInfo caseInfo={caso} />
+                <PhoneInfo isAdmin caseInfo={caso} />
               </div>
             )}
             {caso.help_type && (
@@ -182,6 +184,13 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
               </Link>
             )}
             <AsignarSolicitudButton helpRequest={caso} />
+            {isAdmin && (
+              <ChangeUrgencyHelpRequest
+                onUpdate={setUpdateUrgency}
+                currentUrgency={caso.urgency}
+                helpRequestId={caso.id}
+              />
+            )}
             {isAdmin && <DeleteHelpRequest helpRequestId={caso.id} onDelete={() => setDeleted(true)} />}
           </div>
         </div>
