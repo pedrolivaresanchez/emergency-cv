@@ -122,7 +122,7 @@ function ListaSolicitudes() {
       </div>
     );
   }
-  
+
   return (
     <>
       <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6 mt-10">
@@ -170,7 +170,7 @@ function ListaSolicitudes() {
           {data.length === 0 ? (
             <div className="bg-white rounded-lg shadow-lg border border-gray-300 text-center flex justify-center items-center p-10 flex-col gap-5">
               <p className="text-gray-700 text-lg font-medium">
-                {filtroData.urgencia === 'todas' && filtroData.tipoAyuda === 'todas' && filtroData.pueblo === 'todos' && !!session
+                {filtroData.urgencia === 'todas' && filtroData.tipoAyuda === 'todas' && filtroData.pueblo === 'todos'
                   ? 'No se encontraron solicitudes de ayuda correspondientes a tu cuenta.'
                   : 'No se encontraron solicitudes que coincidan con los filtros.'}
               </p>
