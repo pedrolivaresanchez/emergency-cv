@@ -8,16 +8,16 @@ import { useModal } from '@/context/ModalProvider';
 
 type DeleteRequestButtonProps = {
   helpRequestId: number;
+  onDelete: void;
 };
 
-export default function DeleteHelpRequest({ helpRequestId }: DeleteRequestButtonProps) {
+export default function DeleteHelpRequest({ helpRequestId, onDelete }: DeleteRequestButtonProps) {
   const { toggleModal } = useModal();
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState({});
   const [data, setData] = useState({});
 
   const MODAL_NAME = `Eliminar-Solicitud-${helpRequestId}`;
- 
 
   const deleteHelpRequest = async () => {
     const { data, error } = await supabase.from('help_requests').delete().eq('id', helpRequestId).select();
@@ -32,6 +32,7 @@ export default function DeleteHelpRequest({ helpRequestId }: DeleteRequestButton
       return;
     }
     if (data) setData(data);
+    onDelete();
     toggleModal(MODAL_NAME, false);
   }
   async function handleSubmit(e: MouseEvent) {
