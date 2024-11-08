@@ -1,20 +1,18 @@
 import { supabase } from './supabase/client';
-import { Database } from '@/types/database';
-import { HelpRequestAssignmentInsert, HelpRequestUpdate } from '@/types/Requests';
+import { HelpRequestAssignmentInsert, HelpRequestData, HelpRequestInsert, HelpRequestUpdate } from '@/types/Requests';
 import { createClient } from '@/lib/supabase/server';
-import { SupabaseClient } from '@supabase/supabase-js';
 
 export const helpRequestService = {
-  async createRequest(requestData: Database['public']['Tables']['help_requests']['Insert']) {
+  async createRequest(requestData: HelpRequestInsert) {
     const { data, error } = await supabase.from('help_requests').insert([requestData]).select();
 
     if (error) throw error;
-    return data[0];
+    return data[0] as HelpRequestData;
   },
   async editRequest(requestData: HelpRequestUpdate, id: number) {
     const { data, error } = await supabase.from('help_requests').update(requestData).eq('id', id).select();
     if (error) throw error;
-    return data;
+    return data[0] as HelpRequestData;
   },
   async getAll() {
     const { data, error } = await supabase.from('help_requests').select('*').order('created_at', { ascending: false });
@@ -26,7 +24,7 @@ export const helpRequestService = {
     const supabase = await getSupabaseClient();
     const { data, error } = await supabase.from('help_requests').select('*').eq('id', id).single();
     if (error) throw error;
-    return data;
+    return data as HelpRequestData;
   },
 
   async getRequestsByUser(user_id: string | undefined) {
