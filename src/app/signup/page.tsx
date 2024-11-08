@@ -13,7 +13,5 @@ export default function SignUpPage() {
 
 function SignUpComponent() {
   const router = useRouter();
-  const params = useSearchParams();
-  console.log(params);
   return <SignUp onBackButtonClicked={() => router.push('/')} />;
 }
