@@ -1,13 +1,14 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import Pagination from '@/components/Pagination';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useTowns } from '@/context/TownProvider';
 import OfferCard from '@/components/OfferCard';
+import { HelpRequestData } from '@/types/Requests';
+
+export const dynamic = 'force-dynamic';
 
 export default function OfertasPage() {
   return (
@@ -18,26 +19,25 @@ export default function OfertasPage() {
 }
 
 function Ofertas() {
-  const { towns } = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
   const {} = router;
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(Number(searchParams.get('page')) || 1);
-  const [currentCount, setCurrentCount] = useState(0);
+  const [data, setData] = useState<HelpRequestData[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get('page')) || 1);
+  const [currentCount, setCurrentCount] = useState<number>(0);
 
   const itemsPerPage = 10;
-  const numPages = (count) => {
+  const numPages = (count: number) => {
     return Math.ceil(count / itemsPerPage) || 0;
   };
 
-  const updateFilter = (filter, value) => {
+  const updateFilter = (filter: 'ayuda' | 'page', value: string | number) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set(filter, value);
+    params.set(filter, value.toString());
     router.push(`?${params.toString()}`);
   };
 
@@ -45,7 +45,7 @@ function Ofertas() {
     ayuda: searchParams.get('acepta') || 'todas',
   });
 
-  const changeDataFilter = (type, newFilter) => {
+  const changeDataFilter = (type: 'ayuda', newFilter: string) => {
     setFiltroData((prev) => ({
       ...prev,
       [type]: newFilter,
@@ -53,7 +53,7 @@ function Ofertas() {
     updateFilter(type, newFilter);
   };
 
-  function changePage(newPage) {
+  function changePage(newPage: number) {
     setCurrentPage(newPage);
     updateFilter('page', newPage);
   }
@@ -83,7 +83,7 @@ function Ofertas() {
           setData([]);
         } else {
           setData(data || []);
-          setCurrentCount(count);
+          setCurrentCount(count ?? 0);
         }
       } catch (err) {
         console.log('Error general:', err);
@@ -136,21 +136,11 @@ function Ofertas() {
         {data.length === 0 ? (
           <div className="bg-white rounded-lg shadow-lg border border-gray-300 text-center flex justify-center items-center p-10 flex-col gap-5">
             <p className="text-gray-700 text-lg font-medium">
-              No se encontraron solicitudes que coincidan con los filtros.
+              No se encontraron ofertas que coincidan con los filtros.
             </p>
-
-            <button
-              onClick={() => {
-                setShowModal(true);
-              }}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
-            >
-              <HeartHandshake className="w-5 h-5" />
-              Ofrecer ayuda
-            </button>
           </div>
         ) : (
-          data.map((caso) => <OfferCard caso={caso} towns={towns} showLink={true} key={caso.id} />)
+          data.map((caso) => <OfferCard caso={caso} showLink={true} key={caso.id} />)
         )}
       </div>
       <div className="flex items-center justify-center">

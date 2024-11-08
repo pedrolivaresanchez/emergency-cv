@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, FC, ReactNode, useContext, useState } from 'react';
+import React, { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react';
 
 type EmergencyContextType = {
   isModalOpen: { [key: string]: boolean };
@@ -19,12 +19,12 @@ type ModalProviderProps = {
 export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState<{ [key: string]: boolean }>({});
 
-  const toggleModal = (id: string, force?: boolean) => {
+  const toggleModal = useCallback((id: string, force?: boolean) => {
     setIsModalOpen((prev) => ({
       ...prev,
       [id]: force !== undefined ? force : !prev[id],
     }));
-  };
+  }, []);
 
   return <EmergencyContext.Provider value={{ isModalOpen, toggleModal }}>{children}</EmergencyContext.Provider>;
 };

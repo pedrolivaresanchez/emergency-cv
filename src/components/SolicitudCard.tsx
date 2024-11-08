@@ -28,7 +28,6 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
   const [deleted, setDeleted] = useState(false);
   const isMyRequest = session.user?.id && session.user.id === caso.user_id;
   const [updateUrgency, setUpdateUrgency] = useState(caso.urgency);
-
   return (
     !deleted && (
       <div key={caso.id} className="rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5">

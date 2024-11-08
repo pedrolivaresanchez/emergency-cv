@@ -5,7 +5,7 @@ import PhoneNumberDialog from '@/components/auth/PhoneNumberDialog';
 import Image from 'next/image';
 import { CallCenterLink } from '@/components/CallCenterLink';
 
-export default function Home() {
+export default async function Home() {
   const emergencyNumbers = [
     { name: 'Emergencias', number: '112', description: 'Para situaciones de peligro inmediato' },
     { name: 'Policía Local', number: '092', description: 'Asistencia y seguridad local' },
@@ -132,7 +132,7 @@ export default function Home() {
       title: 'Casos activos',
       description: 'Observa los casos activos',
       icon: AlertCircle,
-      path: '/casos-activos',
+      path: '/casos-activos/solicitudes',
       color: 'orange',
     },
     {

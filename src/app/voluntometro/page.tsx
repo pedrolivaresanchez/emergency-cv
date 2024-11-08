@@ -1,89 +1,12 @@
-import { supabase } from '@/lib/supabase/client';
 import { HeartHandshake, Search, Thermometer } from 'lucide-react';
 import TownCardInfo from '@/components/TownCardInfo';
+import { helpRequestService } from '@/lib/service';
 
-const getCount = async () => {
-  const today = new Date().toISOString().split('T')[0];
-  const {
-    data: solicitaData,
-    count: solicitaCount,
-    error: solicitaError,
-  } = await supabase
-    .from('help_requests')
-    .select('id', { count: 'exact' })
-    .eq('type', 'necesita')
-    .gte('created_at', today)
-    .lte('created_at', `${today}T23:59:59.999Z`);
-
-  const {
-    data: ofreceData,
-    count: ofreceCount,
-    error: ofreceError,
-  } = await supabase
-    .from('help_requests')
-    .select('id', { count: 'exact' })
-    .eq('type', 'ofrece')
-    .gte('created_at', today)
-    .lte('created_at', `${today}T23:59:59.999Z`);
-
-  if (solicitaError) {
-    throw new Error('Error fetching solicita:', solicitaError);
-  }
-  if (ofreceError) {
-    throw new Error('Error fetching ofrece:', ofreceError);
-  }
-  return {
-    solicitudes: solicitaCount || 0,
-    ofertas: ofreceCount || 0,
-  };
-};
-const getVolunteers = async () => {
-  const today = new Date().toISOString().split('T')[0];
-
-  const { data: towns, error: townError } = await supabase.from('towns').select('id, name');
-
-  if (townError) {
-    console.log('Error fetching towns:', townError);
-    return;
-  }
-
-  const { data, error } = await supabase
-    .from('help_requests')
-    .select('*')
-    .in('type', ['ofrece', 'necesita'])
-    .gte('created_at', today)
-    .lte('created_at', `${today}T23:59:59.999Z`);
-
-  if (error) {
-    console.log('Error fetching help requests:', error);
-    return;
-  }
-
-  const volunteersCount = new Map();
-  const needHelpCount = new Map();
-
-  data.forEach((person) => {
-    const townId = person.town_id;
-    if (person.type === 'ofrece') {
-      volunteersCount.set(townId, (volunteersCount.get(townId) || 0) + 1);
-    } else if (person.type === 'necesita') {
-      needHelpCount.set(townId, (needHelpCount.get(townId) || 0) + 1);
-    }
-  });
-
-  const updatedPueblos = towns.map((town) => ({
-    id: town.id,
-    name: town.name,
-    count: volunteersCount.get(town.id) || 0,
-    needHelp: needHelpCount.get(town.id) || 0,
-  }));
-
-  return updatedPueblos;
-};
+export const dynamic = 'force-dynamic';
 
 export default async function Voluntometro() {
-  const pueblos = await getVolunteers();
-  const count = await getCount();
+  const pueblos = await helpRequestService.getTodaysCountByTown();
+  const count = await helpRequestService.getTodaysCount();
 
   const getFechaHoy = () => {
     const fecha = new Date();
