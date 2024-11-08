@@ -14,13 +14,13 @@ import { useRouter } from 'next/navigation';
 import { useSession } from '@/context/SessionProvider';
 
 export default function OfferHelp({
-  town,
-  onClose,
-  isModal,
+  town = undefined,
+  onClose = undefined,
+  isModal = false,
   data = {},
   title = '',
   button = ['Registrar oferta de ayuda', 'Enviando oferta...'],
-  id,
+  id = 0,
   redirect = '/casos-activos/ofertas',
   submitType = 'create',
 }) {

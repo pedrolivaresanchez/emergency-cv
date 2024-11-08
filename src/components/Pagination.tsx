@@ -1,6 +1,11 @@
 import React from 'react';
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+type PaginationProps = {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (currentPage: number) => void;
+};
+const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) => {
   const getPageNumbers = () => {
     const pageNumbers = [];
     const rangeSize = 1; // Número de páginas a mostrar alrededor de la actual

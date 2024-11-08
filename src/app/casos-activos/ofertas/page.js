@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import Pagination from '@/components/Pagination';
@@ -9,10 +9,19 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useTowns } from '@/context/TownProvider';
 import OfferCard from '@/components/OfferCard';
 
-export default function Ofertas() {
+export default function OfertasPage() {
+  return (
+    <Suspense>
+      <Ofertas />
+    </Suspense>
+  );
+}
+
+function Ofertas() {
   const { towns } = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const {} = router;
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -141,7 +150,7 @@ export default function Ofertas() {
             </button>
           </div>
         ) : (
-          data.map((caso) => <OfferCard caso={caso} towns={towns} isHref={true} key={caso.id} />)
+          data.map((caso) => <OfferCard caso={caso} towns={towns} showLink={true} key={caso.id} />)
         )}
       </div>
       <div className="flex items-center justify-center">

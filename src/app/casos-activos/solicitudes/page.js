@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback, useMemo, Suspense } from 'react';
 import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
@@ -20,7 +20,15 @@ const numPages = (count) => {
   return Math.ceil(count / itemsPerPage) || 0;
 };
 
-export default function Solicitudes() {
+export default function SolicitudesPage() {
+  return (
+    <Suspense>
+      <Solicitudes />
+    </Suspense>
+  );
+}
+
+function Solicitudes() {
   const { getTownById, towns } = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();

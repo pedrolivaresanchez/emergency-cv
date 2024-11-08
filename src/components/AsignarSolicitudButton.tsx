@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/ModalProvider';
+import { useRouter } from 'next/navigation';
 
 type AsignarSolicitudButtonProps = {
   helpRequest: HelpRequestData;
@@ -20,6 +21,7 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
   const session = useSession();
   const userId = session.user?.id;
   const MODAL_NAME = `Solicitud-${helpRequest.id}`;
+  const router = useRouter();
 
   const {
     data: assignments,
@@ -89,12 +91,12 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
 
   if (!session || !session.user)
     return (
-      <Link
-        href="/auth"
+      <button
+        onClick={() => router.push(`/auth?redirect=${encodeURIComponent('/solicitudes/' + helpRequest.id)}`)}
         className="w-full text-center rounded-xl px-4 py-2 font-semibold text-white sm:w-auto transition-all bg-green-500 hover:bg-green-600"
       >
         Iniciar sesion para ayudar
-      </Link>
+      </button>
     );
 
   // Verifica el email dentro de additional_info utilizando un casting y encadenamiento opcional

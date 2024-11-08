@@ -1,8 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import { PropsWithChildren } from 'react';
 
-export default function Tab({ children, ...props }) {
+type Props = {
+  color: 'red' | 'green' | 'orange';
+  isPath: boolean;
+  href: string;
+};
+
+export default function Tab({ children, ...props }: PropsWithChildren<Props>) {
   return (
     <Link
       href={props.href}

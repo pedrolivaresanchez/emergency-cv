@@ -2,28 +2,41 @@
 
 import SignUp from '@/components/auth/SignUp';
 import { authService } from '@/lib/service';
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import SocialButton from './SocialButton';
 
-export default function Login({ onSuccessCallback }) {
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [formData, setFormData] = useState({
+type LoginProps = {
+  onSuccessCallback: () => void;
+  redirectUrl?: string;
+};
+
+type Status = {
+  isSubmitting: boolean;
+  error: string | null;
+  success: boolean;
+};
+
+type FormData = {
+  email: string;
+  password: string;
+  privacyPolicy: string;
+};
+
+export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
+  const [isSignUp, setIsSignUp] = useState<boolean>(false);
+  const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
     privacyPolicy: '',
   });
-  const [status, setStatus] = useState({
+  const [status, setStatus] = useState<Status>({
     isSubmitting: false,
     error: null,
     success: false,
   });
-  const [isPrivacyAccepted, setPrivacyAccepted] = useState(true);
+  const [isPrivacyAccepted, setPrivacyAccepted] = useState<boolean>(true);
 
-  /**
-   * Updates privacy policy of user
-   * @param {boolean} value
-   */
-  const updatePrivacyPolicy = async (value) => {
+  const updatePrivacyPolicy = async (value: string) => {
     const { data: session, error: errorGettingUser } = await authService.getSessionUser();
 
     if (!session.user || errorGettingUser) {
@@ -47,17 +60,22 @@ export default function Login({ onSuccessCallback }) {
     if (!session.user || errorGettingUser) {
       throw new Error('Error a la hora de obtener el usuario');
     }
-    return session.user.user_metadata.privacyPolicy;
+    return session.user.user_metadata.privacyPolicy as string;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     setStatus({ isSubmitting: true, error: null, success: false });
 
     if (!isPrivacyAccepted) {
       if (!formData.privacyPolicy) {
-        setError('Para continuar, debes aceptar la Política de Privacidad.');
+        setStatus((prev) => {
+          return {
+            ...prev,
+            error: 'Para continuar, debes aceptar la Política de Privacidad.',
+          };
+        });
         return;
       }
     }
@@ -75,7 +93,7 @@ export default function Login({ onSuccessCallback }) {
     }
 
     if (formData.privacyPolicy && !isPrivacyAccepted) {
-      await updatePrivacyPolicy(true);
+      await updatePrivacyPolicy('true');
       setPrivacyAccepted(true);
     }
 
@@ -132,7 +150,7 @@ export default function Login({ onSuccessCallback }) {
                   <input
                     type="checkbox"
                     value={formData.privacyPolicy}
-                    onChange={(e) => setFormData({ ...formData, privacyPolicy: e.target.checked })}
+                    onChange={(e) => setFormData({ ...formData, privacyPolicy: e.target.checked.toString() })}
                     className="min-w-4 min-h-4 cursor-pointer"
                     id="privacyPolicy"
                     required
@@ -181,7 +199,9 @@ export default function Login({ onSuccessCallback }) {
 
           <div className="p-2">
             <p className="text-center text-gray-700 mb-2">O prueba con estas opciones:</p>
-            <SocialButton provider="google">Inicia sesión con Google</SocialButton>
+            <SocialButton redirectUrl={redirectUrl} provider="google">
+              Inicia sesión con Google
+            </SocialButton>
           </div>
         </form>
       )}
@@ -190,6 +210,7 @@ export default function Login({ onSuccessCallback }) {
           onBackButtonClicked={() => {
             setIsSignUp(false);
           }}
+          callback={onSuccessCallback}
         />
       )}
     </>
