@@ -12,3 +12,7 @@ export type HelpRequestAdditionalInfo = {
   special_situations?: string;
   email?: string;
 };
+
+export type CollectionPointType = 'permanente' | 'temporal';
+export type CollectionPointStatus = 'active' | 'inactive';
+export type CollectionPointData = Database['public']['Tables']['collection_points']['Row'];

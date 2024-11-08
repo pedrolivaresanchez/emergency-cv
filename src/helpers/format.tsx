@@ -33,6 +33,6 @@ export const getMarkerColorBySolicitud = (solicitud: HelpRequestData) => {
 };
 export const getMarkerDescriptionBySolicitudAndTowns = (solicitud: HelpRequestData) => {
   return ReactDOMServer.renderToString(
-    <SolicitudCard key={solicitud.id} caso={solicitud} showEdit={false} showLink={true} />,
+    <SolicitudCard key={solicitud.id} caso={solicitud as any} showEdit={false} showLink={true} />,
   );
 };

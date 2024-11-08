@@ -13,7 +13,7 @@ import { useState } from 'react';
 import ChangeUrgencyHelpRequest from './ChangeUrgencyHelpRequest';
 
 type SolicitudCardProps = {
-  caso: HelpRequestData;
+  caso: HelpRequestData & { special_situations: string; user_id: string };
   showLink?: boolean;
   showEdit?: boolean;
 };
@@ -22,8 +22,6 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
   const session = useSession();
   const role = useRole();
   const { getTownById } = useTowns();
-  const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
-  const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
   const isAdmin = role === 'admin';
   const [deleted, setDeleted] = useState(false);
   const isMyRequest = session.user?.id && session.user.id === caso.user_id;
@@ -126,12 +124,12 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
                 </span>
               </div>
             )}
-            {special_situations && (
+            {caso.special_situations && (
               <>
                 <hr />
                 <div className="pt-2">
                   <span className="font-semibold block mb-1">Situaciones especiales:</span>
-                  <p className="text-gray-700 break-words">{special_situations}</p>
+                  <p className="text-gray-700 break-words">{caso.special_situations}</p>
                 </div>
               </>
             )}
