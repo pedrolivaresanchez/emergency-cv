@@ -1,1 +1,0 @@
-alter table "public"."help_requests" add column "asignees_count" smallint not null default '0'::smallint;

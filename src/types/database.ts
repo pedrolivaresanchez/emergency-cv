@@ -171,7 +171,6 @@ export type Database = {
       help_requests: {
         Row: {
           additional_info: Json | null;
-          asignees_count: number;
           contact_info: string | null;
           coordinates: unknown | null;
           created_at: string | null;
@@ -193,7 +192,6 @@ export type Database = {
         };
         Insert: {
           additional_info?: Json | null;
-          asignees_count?: number;
           contact_info?: string | null;
           coordinates?: unknown | null;
           created_at?: string | null;
@@ -215,7 +213,6 @@ export type Database = {
         };
         Update: {
           additional_info?: Json | null;
-          asignees_count?: number;
           contact_info?: string | null;
           coordinates?: unknown | null;
           created_at?: string | null;
