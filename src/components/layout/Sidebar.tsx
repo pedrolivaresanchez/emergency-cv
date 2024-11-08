@@ -254,7 +254,11 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
 
         {/* User info and login */}
         <div className="p-4">
-          <UserInfo toggleAction={toggleAction} />
+          <UserInfo
+            toggleAction={() => {
+              if (window.innerWidth < 768) toggleAction();
+            }}
+          />
         </div>
 
         {/* Toggle button for desktop */}
