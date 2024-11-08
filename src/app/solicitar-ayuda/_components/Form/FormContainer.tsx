@@ -5,14 +5,13 @@ import React, { FormEvent, useCallback, useMemo, useState } from 'react';
 import { FormRenderer } from './FormRenderer';
 import { FormData, Status } from '../types';
 import { formatPhoneNumber, isValidPhone } from '@/helpers/utils';
-import { helpRequestService, locationService, townService } from '@/lib/service';
+import { helpRequestService, townService } from '@/lib/service';
 import { Database } from '@/types/database';
 import { Enums } from '@/types/common';
 import { useRouter } from 'next/navigation';
 
 import { TIPOS_DE_AYUDA, TIPOS_DE_AYUDA_MAP } from '../constants';
 import { useSession } from '@/context/SessionProvider';
-import { LngLat } from '@/components/map/GeolocationMap';
 import { AddressDescriptor } from '../../../../components/AddressMap';
 
 const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_enum'][] =>
@@ -85,7 +84,6 @@ export function FormContainer() {
       setStatus({ isSubmitting: true, error: null, success: false });
 
       try {
-        debugger;
         const latitude = String(formData.coordinates.lat);
         const longitude = String(formData.coordinates.lng);
 
@@ -175,7 +173,7 @@ export function FormContainer() {
       ...formData,
       town: addressDescriptor.town,
       ubicacion: addressDescriptor.address,
-      coordinates: addressDescriptor.coordinates ?? null,
+      coordinates: addressDescriptor.coordinates,
     }));
   }, []);
 

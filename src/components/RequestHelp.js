@@ -29,7 +29,7 @@ export default function RequestHelp({
   const [formData, setFormData] = useState({
     nombre: data.name || '',
     ubicacion: data.location || '',
-    coordinates: { lat: 3, lng: 3 },
+    coordinates: { lat: data.latitude || 3, lng: data.longitude || 3 },
     tiposAyuda: data.help_type || [],
     numeroPersonas: data.number_of_people || '',
     descripcion: data.description || '',
@@ -37,7 +37,8 @@ export default function RequestHelp({
     situacionEspecial: data.additional_info?.special_situations || '',
     contacto: data.contact_info || '',
     consentimiento: data.additional_info?.consent || false,
-    pueblo: data.town_id || '',
+    pueblo: '',
+    town_id: data.town_id || '',
     email: data.additional_info?.email || '',
     status: data.status || 'active',
   });
@@ -81,19 +82,18 @@ export default function RequestHelp({
     try {
       const latitude = String(formData.coordinates.lat);
       const longitude = String(formData.coordinates.lng);
+      let town_id = formData.town_id;
 
-      const { address, town, error } = await locationService.getFormattedAddress(longitude, latitude);
-      if (!address || !town || error) {
-        throw { message: `Error inesperado con la api de google: ${error}` };
+      if (formData.pueblo !== '') {
+        const { data: townResponse, error: townError } = await townService.createIfNotExists(formData.pueblo);
+        if (townError) throw townError;
+        town_id = townResponse[0].id;
       }
-
-      const { data: townResponse, error: townError } = await townService.createIfNotExists(town);
-      if (townError) throw townError;
 
       const helpRequestData = {
         type: 'necesita',
         name: formData.nombre,
-        location: address,
+        location: formData.ubicacion,
         latitude,
         longitude,
         help_type: formData.tiposAyuda,
@@ -106,7 +106,7 @@ export default function RequestHelp({
           consent: true,
           email: formData.email,
         },
-        town_id: townResponse[0].id,
+        town_id,
         status: formData.status,
         user_id: userId,
       };
@@ -150,6 +150,15 @@ export default function RequestHelp({
         success: false,
       });
     }
+  };
+
+  const handleOnNewAddressDescriptor = (addressDescriptor) => {
+    setFormData((prev) => ({
+      ...prev,
+      coordinates: addressDescriptor.coordinates,
+      pueblo: addressDescriptor.town,
+      ubicacion: addressDescriptor.address,
+    }));
   };
 
   const handleChange = (e) => {
@@ -299,15 +308,13 @@ export default function RequestHelp({
           </div>
           {/* Mapa */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ubicación exacta <span className="text-red-500">*</span>
-            </label>
             <AddressMap
-              onNewCoordinatesCallback={(lngLat) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  coordinates: lngLat,
-                }));
+              titulo="Ubicación exacta"
+              onNewAddressDescriptor={handleOnNewAddressDescriptor}
+              initialAddressDescriptor={{
+                address: formData.ubicacion,
+                coordinates: formData.coordinates,
+                town: formData.pueblo,
               }}
             />
           </div>

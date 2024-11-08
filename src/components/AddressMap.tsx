@@ -1,7 +1,7 @@
 'use client';
 
 import GeoLocationMap, { LngLat } from '@/components/map/GeolocationMap';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { locationService } from '../lib/service';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 
@@ -10,7 +10,8 @@ import { OnChangeValue } from 'react-select';
 
 export type AddressMapProps = {
   onNewAddressDescriptor: (onNewAddressDescriptor: AddressDescriptor) => void;
-  onValidationChanged: (isValid: boolean) => void;
+  initialAddressDescriptor?: AddressDescriptor; // when given we assume edit
+  titulo: string;
 };
 export type AddressDescriptor = {
   address: string;
@@ -26,27 +27,13 @@ type PlaceOption = {
   };
 };
 
-export type AutoCompleteResponse = {
-  value: string;
-  coordinates: {
-    lat: string;
-    lon: string;
-  } | null;
-  details: {
-    road: string;
-    house_number: string;
-    postcode: string;
-    city: string;
-    state: string;
-  };
-};
-
 const THROTTLE_MS = 2000;
 const DEBOUNCE_MS = 400;
 
-export default function AddressMap({ onNewAddressDescriptor, onValidationChanged }: AddressMapProps) {
+export default function AddressMap({ onNewAddressDescriptor, initialAddressDescriptor, titulo }: AddressMapProps) {
+  const isEdit = useRef(Boolean(initialAddressDescriptor));
   const [status, setStatus] = useState<PermissionState | 'unknown'>('unknown');
-  const [lngLat, setLngLat] = useState<LngLat | undefined>(undefined);
+  const [lngLat, setLngLat] = useState<LngLat | undefined>(initialAddressDescriptor?.coordinates ?? undefined);
   const [addressDescriptor, setAddressDescriptor] = useState<AddressDescriptor>({
     address: '',
     town: '',
@@ -83,7 +70,7 @@ export default function AddressMap({ onNewAddressDescriptor, onValidationChanged
       throw { message: `Error inesperado con la api de google: ${error}` };
     }
 
-    const newAddressDescriptor = {
+    const newAddressDescriptor: AddressDescriptor = {
       address,
       town,
       coordinates,
@@ -92,10 +79,11 @@ export default function AddressMap({ onNewAddressDescriptor, onValidationChanged
     setAddressDescriptor(newAddressDescriptor);
 
     if (updateLngLat) {
-      setLngLat(newAddressDescriptor.coordinates);
+      setLngLat(coordinates);
     }
-    onValidationChanged(true);
-    onNewAddressDescriptor(newAddressDescriptor);
+    if (!isEdit.current) {
+      onNewAddressDescriptor(newAddressDescriptor);
+    }
   };
 
   const debouncedValue = useDebouncedFunction(onNewCoordinates, DEBOUNCE_MS); // debounce
@@ -107,6 +95,24 @@ export default function AddressMap({ onNewAddressDescriptor, onValidationChanged
 
   return (
     <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-700">
+        {titulo} <span className="text-red-500">*</span>
+      </label>
+
+      {isEdit.current && (
+        <div className="flex">
+          <div className="block text-sm font-medium text-gray-400">{initialAddressDescriptor?.address || ''}</div>
+          <button
+            className="ml-auto"
+            onClick={(e) => {
+              e.preventDefault();
+              onNewAddressDescriptor(addressDescriptor);
+            }}
+          >
+            Editar
+          </button>
+        </div>
+      )}
       {/** Autocompletar */}
       <GooglePlacesAutocomplete
         apiKey={process.env.NEXT_PUBLIC_GOOGLE_KEY}
@@ -114,7 +120,11 @@ export default function AddressMap({ onNewAddressDescriptor, onValidationChanged
           onChange: handleSelect,
           onInputChange: (newValue) => {
             // invalidate - only valid when set in map/autocomplete
-            onValidationChanged(false);
+            setAddressDescriptor({
+              address: '',
+              coordinates: null,
+              town: '',
+            });
           },
           value: {
             label: addressDescriptor.address,

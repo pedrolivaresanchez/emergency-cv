@@ -154,10 +154,7 @@ export function FormRenderer({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ubicación exacta <span className="text-red-500">*</span>
-            </label>
-            <AddressMap onNewAddressDescriptor={handleNewAddressDescriptor} />
+            <AddressMap onNewAddressDescriptor={handleNewAddressDescriptor} titulo="Ubicación exacta" />
           </div>
 
           {/* Consentimiento */}
