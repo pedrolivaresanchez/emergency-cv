@@ -20,7 +20,6 @@ export default function ChangeUrgencyHelpRequest({
   const { toggleModal } = useModal();
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState({});
-  const [data, setData] = useState({});
   const [status, setStatus] = useState<string>(currentUrgency);
 
   const MODAL_NAME = `Actualizar-Solicitud-${helpRequestId}`;
@@ -43,7 +42,6 @@ export default function ChangeUrgencyHelpRequest({
       return;
     }
     if (data) {
-      setData(data);
       onUpdate(status);
     }
     toggleModal(MODAL_NAME, false);
