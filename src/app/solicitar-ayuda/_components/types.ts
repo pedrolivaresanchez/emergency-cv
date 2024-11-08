@@ -13,6 +13,8 @@ export type FormData = {
   consentimiento: boolean;
   coordinates: LngLat | null;
   tiposDeAyuda: Map<HelpCategory['id'], boolean>;
+  ubicacion: string;
+  town: string;
 };
 
 export type HelpCategory = {

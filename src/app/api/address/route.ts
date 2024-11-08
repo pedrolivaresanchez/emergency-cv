@@ -18,7 +18,7 @@ const mapsTranslationToDbTowns: { [key: string]: string } = {
   Montroi: 'Montroy',
 };
 
-const GOOGLE_URL = `https://maps.googleapis.com/maps/api/geocode/json?key=${process.env.API_KEY}&latlng=`;
+const GOOGLE_URL = `https://maps.googleapis.com/maps/api/geocode/json?key=${process.env.GEOCODING_API_KEY}&latlng=`;
 
 export type AddressAndTown = { address: string; town: string };
 

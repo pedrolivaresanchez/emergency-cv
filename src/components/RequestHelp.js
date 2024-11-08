@@ -80,8 +80,6 @@ export default function RequestHelp({
       const latitude = String(formData.coordinates.lat);
       const longitude = String(formData.coordinates.lng);
 
-      debugger;
-
       const { address, town, error } = await locationService.getFormattedAddress(longitude, latitude);
       if (!address || !town || error) {
         throw { message: `Error inesperado con la api de google: ${error}` };

@@ -6,7 +6,7 @@ import { PhoneInput } from '@/components/PhoneInput';
 import { TIPOS_DE_AYUDA } from '../constants';
 import { TipoDeAyudaInputRenderer } from '../TipoDeAyudaInputRenderer';
 import { FormData, HelpCategory, Status } from '../types';
-import AddressMap from '../../../../components/AddressMap';
+import AddressMap, { AddressDescriptor } from '../../../../components/AddressMap';
 import { LngLat } from '@/components/map/GeolocationMap';
 
 type FormRendererProps = {
@@ -16,7 +16,7 @@ type FormRendererProps = {
   selectedHelp: Map<HelpCategory['id'], boolean>;
   handleSubmit: React.FormEventHandler<HTMLFormElement>;
   handlePhoneChange: (phoneNumber: string) => void;
-  handleCoordinatesChange: (lngLat: LngLat) => void;
+  handleNewAddressDescriptor: (addressDescriptor: AddressDescriptor) => void;
   handleSituacionEspecialChange: React.ChangeEventHandler<HTMLTextAreaElement>;
   handleUrgencyChange: React.ChangeEventHandler<HTMLSelectElement>;
   handleDescriptionChange: React.ChangeEventHandler<HTMLTextAreaElement>;
@@ -33,7 +33,7 @@ export function FormRenderer({
   formData,
   isUserLoggedIn,
   handlePhoneChange,
-  handleCoordinatesChange,
+  handleNewAddressDescriptor,
   handleSituacionEspecialChange,
   handleUrgencyChange,
   handleDescriptionChange,
@@ -157,7 +157,7 @@ export function FormRenderer({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Ubicación exacta <span className="text-red-500">*</span>
             </label>
-            <AddressMap onNewCoordinatesCallback={handleCoordinatesChange} />
+            <AddressMap onNewAddressDescriptor={handleNewAddressDescriptor} />
           </div>
 
           {/* Consentimiento */}

@@ -10,12 +10,14 @@ export type GeoLocationMapProps = {
   onNewCenterCallback?: (lngLat: LngLat) => void;
   onPermissionStatusChanged?: (status: PermissionState | 'unknown') => void;
   zoom?: number;
+  inputCoordinates?: LngLat;
 };
 
 export default function GeoLocationMap({
   onNewPositionCallback,
   onNewCenterCallback,
   onPermissionStatusChanged,
+  inputCoordinates,
   zoom = 13,
 }: GeoLocationMapProps) {
   const isGeolocating = useRef(false);
@@ -29,6 +31,11 @@ export default function GeoLocationMap({
     },
     trackUserLocation: true,
     showAccuracyCircle: true,
+  });
+
+  const marker = new maplibregl.Marker({
+    color: '#ef4444', //text-red-500
+    draggable: false,
   });
 
   const triggerGeoLocate = () => {
@@ -81,6 +88,16 @@ export default function GeoLocationMap({
       }
     });
 
+    mapRef.current.on('moveend', () => {
+      if (!mapRef.current) {
+        return;
+      }
+
+      if (typeof onNewPositionCallback === 'function') {
+        onNewPositionCallback(marker.getLngLat());
+      }
+    });
+
     navigator.permissions.query({ name: 'geolocation' }).then((permissionStatus) => {
       if (typeof onPermissionStatusChanged === 'function') {
         onPermissionStatusChanged(permissionStatus.state);
@@ -119,12 +136,7 @@ export default function GeoLocationMap({
       }
     });
 
-    const marker = new maplibregl.Marker({
-      color: '#ef4444', //text-red-500
-      draggable: false,
-    })
-      .setLngLat(mapRef.current.getCenter())
-      .addTo(mapRef.current);
+    marker.setLngLat(mapRef.current.getCenter()).addTo(mapRef.current);
 
     document.addEventListener('visibilitychange', visibilityChangeEvent);
 
@@ -135,6 +147,15 @@ export default function GeoLocationMap({
     setTimeout(() => triggerGeoLocate(), 200);
     return cleanup;
   }, [zoom]);
+
+  useEffect(() => {
+    if (!mapRef.current || !inputCoordinates) {
+      return;
+    }
+
+    const center = mapRef.current.setCenter(inputCoordinates);
+    marker.setLngLat(inputCoordinates);
+  }, [inputCoordinates]);
 
   return <div ref={mapContainerRef} className="aspect-video w-full" />;
 }

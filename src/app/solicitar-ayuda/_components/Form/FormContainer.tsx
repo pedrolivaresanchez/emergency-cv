@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import { TIPOS_DE_AYUDA, TIPOS_DE_AYUDA_MAP } from '../constants';
 import { useSession } from '@/context/SessionProvider';
 import { LngLat } from '@/components/map/GeolocationMap';
+import { AddressDescriptor } from '../../../../components/AddressMap';
 
 const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_enum'][] =>
   Array.from(helpTypeMap).reduce(
@@ -44,6 +45,8 @@ export function FormContainer() {
     contacto: session?.user?.user_metadata?.telefono || '',
     consentimiento: false,
     email: session?.user?.user_metadata?.email || '',
+    ubicacion: '',
+    town: '',
   });
 
   const [status, setStatus] = useState<Status>({
@@ -80,21 +83,17 @@ export function FormContainer() {
       setStatus({ isSubmitting: true, error: null, success: false });
 
       try {
+        debugger;
         const latitude = String(formData.coordinates.lat);
         const longitude = String(formData.coordinates.lng);
 
-        const { address, town, error } = await locationService.getFormattedAddress(longitude, latitude);
-        if (!address || !town || error) {
-          throw { message: `Error inesperado con la api de google: ${error}` };
-        }
-
-        const { data: townResponse, error: townError } = await townService.createIfNotExists(town);
+        const { data: townResponse, error: townError } = await townService.createIfNotExists(formData.town);
         if (townError) throw townError;
 
         const helpRequestData: Database['public']['Tables']['help_requests']['Insert'] = {
           type: 'necesita',
           name: formData.nombre.split(' ')[0],
-          location: address,
+          location: formData.ubicacion,
           latitude: formData.coordinates ? parseFloat(latitude) : null,
           longitude: formData.coordinates ? parseFloat(longitude) : null,
           help_type: mapHelpToEnum(formData.tiposDeAyuda),
@@ -125,6 +124,8 @@ export function FormContainer() {
           contacto: '',
           consentimiento: false,
           email: '',
+          ubicacion: '',
+          town: '',
         });
 
         setStatus({ isSubmitting: false, error: null, success: true });
@@ -166,10 +167,12 @@ export function FormContainer() {
     }));
   }, []);
 
-  const handleCoordinatesChange = useCallback((lngLat: LngLat) => {
+  const handleNewAddressDescriptor = useCallback((addressDescriptor: AddressDescriptor) => {
     setFormData((formData) => ({
       ...formData,
-      coordinates: lngLat ?? null,
+      town: addressDescriptor.town,
+      ubicacion: addressDescriptor.address,
+      coordinates: addressDescriptor.coordinates ?? null,
     }));
   }, []);
 
@@ -203,7 +206,7 @@ export function FormContainer() {
       isUserLoggedIn={Boolean(session?.user)}
       handleConsentChange={handleInputElementChange}
       handleEmailChange={handleInputElementChange}
-      handleCoordinatesChange={handleCoordinatesChange}
+      handleNewAddressDescriptor={handleNewAddressDescriptor}
       handleDescriptionChange={handleTextAreaElementChange}
       handleNameChange={handleInputElementChange}
       handleNumberPeopleChange={handleInputElementChange}
