@@ -11,16 +11,19 @@ export type GeoLocationMapProps = {
   onPermissionStatusChanged?: (status: PermissionState | 'unknown') => void;
   zoom?: number;
   inputCoordinates?: LngLat;
+  triggerOnlyOnce?: boolean;
 };
 
 export default function GeoLocationMap({
   onNewPositionCallback,
   onNewCenterCallback,
   onPermissionStatusChanged,
+  triggerOnlyOnce = false,
   inputCoordinates,
   zoom = 13,
 }: GeoLocationMapProps) {
   const isGeolocating = useRef(false);
+  const geolocationTriggeredTimes = useRef(0);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markerRef = useRef<maplibregl.Marker | null>(null);
@@ -30,7 +33,7 @@ export default function GeoLocationMap({
       positionOptions: {
         enableHighAccuracy: true,
       },
-      trackUserLocation: true,
+      trackUserLocation: false,
       showAccuracyCircle: true,
     });
 
@@ -42,8 +45,13 @@ export default function GeoLocationMap({
     const triggerGeoLocate = () => {
       setTimeout(() => {
         if (!isGeolocating.current) {
+          if (triggerOnlyOnce && geolocationTriggeredTimes.current === 1) {
+            return;
+          }
+
           if (geolocateControl.trigger()) {
             isGeolocating.current = true;
+            geolocationTriggeredTimes.current++;
           }
         }
       });
@@ -126,7 +134,6 @@ export default function GeoLocationMap({
       });
 
       const lngLat: LngLat = { lng: userLocation[0], lat: userLocation[1] };
-
       if (typeof onNewPositionCallback === 'function') {
         onNewPositionCallback(lngLat);
       }

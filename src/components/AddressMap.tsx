@@ -41,6 +41,7 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
   });
 
   const handleSelect = async (newValue: OnChangeValue<PlaceOption, false>) => {
+    console.log(newValue);
     if (newValue && newValue.value) {
       const placeId = newValue.value.place_id;
 
@@ -77,7 +78,6 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
     };
 
     setAddressDescriptor(newAddressDescriptor);
-
     if (updateLngLat) {
       setLngLat(coordinates);
     }
@@ -111,7 +111,7 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
               onNewAddressDescriptor(addressDescriptor);
             }}
           >
-            Editar
+            Guardar
           </button>
         </div>
       )}
@@ -122,7 +122,7 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
           onChange: handleSelect,
           onInputChange: (newValue) => {
             // invalidate - only valid when set in map/autocomplete
-            setAddressDescriptor({
+            onNewAddressDescriptor({
               address: '',
               coordinates: null,
               town: '',
@@ -135,13 +135,7 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
         }}
         debounce={300}
       />
-      {/* <AddressAutocomplete initialValue={addressDescriptor.address} onSelect={onAutocompleteAddress} /> */}
-      {/* Mensaje de error */}
-      {(status === 'denied' || status === 'prompt') && (
-        <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
-          <p className="text-red-700">Debes activar la ubicación para que podamos localizarte</p>
-        </div>
-      )}
+      {/*  Mapa */}
       <GeoLocationMap
         onPermissionStatusChanged={(permission) => {
           setStatus(permission);
@@ -150,6 +144,17 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
         inputCoordinates={lngLat}
         zoom={16}
       />
+      {/* Mensaje de error */}
+      {(status === 'denied' || status === 'prompt') && (
+        <div
+          className="bg-red-100 border-l-4 border-red-500 p-4 rounded"
+          onClick={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <p className="text-red-700">Debes activar la ubicación para que podamos localizarte</p>
+        </div>
+      )}
     </div>
   );
 }
