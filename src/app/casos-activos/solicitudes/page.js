@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
@@ -14,8 +14,16 @@ import { useTowns } from '@/context/TownProvider';
 
 const MODAL_NAME = 'solicitudes';
 
-export default function Solicitudes() {
-  const towns = useTowns();
+export default function SolicitudesPage() {
+  return (
+    <Suspense>
+      <Solicitudes />
+    </Suspense>
+  );
+}
+
+function Solicitudes() {
+  const { getTownById, towns } = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -123,6 +131,8 @@ export default function Solicitudes() {
     );
   }
 
+  const puebloSeleccionado = getTownById(Number(filtroData.pueblo));
+
   return (
     <>
       {/* FILTROS  */}
@@ -179,14 +189,11 @@ export default function Solicitudes() {
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2 whitespace-nowrap"
             >
               <HeartHandshake className="w-5 h-5" />
-              Ofrecer ayuda{' '}
-              {filtroData.pueblo === 'todos'
-                ? ''
-                : ' a ' + towns.find((town) => town.id === Number(filtroData.pueblo))?.name}
+              Ofrecer ayuda {filtroData.pueblo === 'todos' ? '' : ' a ' + getTownById(Number(filtroData.pueblo))?.name}
             </button>
           </div>
         ) : (
-          data.map((caso) => <SolicitudCard isHref={true} towns={towns} key={caso.id} caso={caso} />)
+          data.map((caso) => <SolicitudCard showLink={true} showEdit={true} key={caso.id} caso={caso} />)
         )}
       </div>
       <div className="flex items-center justify-center">
@@ -194,11 +201,7 @@ export default function Solicitudes() {
       </div>
 
       <Modal id={MODAL_NAME}>
-        <OfferHelp
-          town={towns.find((town) => town.id === Number(filtroData.pueblo))?.name}
-          onClose={closeModal}
-          isModal={true}
-        />
+        <OfferHelp town={puebloSeleccionado?.name} onClose={closeModal} isModal={true} />
       </Modal>
     </>
   );

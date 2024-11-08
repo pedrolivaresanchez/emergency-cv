@@ -1,16 +1,20 @@
 'use client';
-import React, { createContext, ReactNode, useContext } from 'react';
+
+import { useQuery } from '@tanstack/react-query';
+import { townService } from '@/lib/service';
 import { Town } from '@/types/Town';
 
-const TownsContext = createContext<Town[]>([]);
+export const useTowns = () => {
+  const {
+    data: towns,
+    isLoading,
+    error,
+  } = useQuery<Town[]>({
+    queryKey: ['towns'],
+    queryFn: () => townService.getTowns(),
+  });
 
-type TownsProviderProps = {
-  children: ReactNode;
-  towns: Town[];
+  const getTownById = (id: number) => towns?.find((t) => t.id === id);
+
+  return { towns: towns ?? [], isLoading, error, getTownById };
 };
-
-export const TownsProvider: React.FC<TownsProviderProps> = ({ children, towns }) => {
-  return <TownsContext.Provider value={towns}>{children}</TownsContext.Provider>;
-};
-
-export const useTowns = () => useContext(TownsContext);

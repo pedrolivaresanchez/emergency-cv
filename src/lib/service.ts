@@ -21,6 +21,12 @@ export const helpRequestService = {
     if (error) throw error;
     return data;
   },
+  async getOne(id: number) {
+    const supabase = await getSupabaseClient();
+    const { data, error } = await supabase.from('help_requests').select('*').eq('id', id).single();
+    if (error) throw error;
+    return data;
+  },
 
   async getRequestsByUser(user_id: string | undefined) {
     if (user_id === undefined) return [];
@@ -87,6 +93,12 @@ export const townService = {
   },
   async create(townName: string) {
     return await supabase.from('towns').insert({ name: townName }).select('id');
+  },
+  async getTowns() {
+    const supabase = await getSupabaseClient();
+    const { data, error } = await supabase.from('towns').select();
+    if (error) throw error;
+    return data;
   },
   async createIfNotExists(townName: string) {
     const response = await this.getByName(townName);
@@ -214,15 +226,6 @@ export const mapService = {
       });
       throw new Error(error.message || 'Error al obtener los datos del mapa');
     }
-  },
-};
-
-export const townsService = {
-  async getTowns() {
-    const supabase = await getSupabaseClient();
-    const { data, error } = await supabase.from('towns').select();
-    if (error) throw error;
-    return data;
   },
 };
 

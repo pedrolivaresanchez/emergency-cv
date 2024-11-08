@@ -254,7 +254,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
           {/* Puntos de Encuentro */}
           <div className="bg-white rounded-lg shadow-lg p-6 h-full">
             <div className="flex items-center gap-3 mb-6 border-b pb-4">
@@ -269,25 +269,26 @@ export default function Home() {
             </div>
             <div className="grid sm:grid-cols-1 xl:grid-cols-2 gap-4">
               {collectionPoints.map((point) => (
-                <div key={point.area} className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow">
+                <a
+                  key={point.area}
+                  href={`https://maps.google.com/?q=${point.address}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow"
+                >
                   <h3 className="font-bold text-gray-800 mb-2">{point.area}</h3>
                   <div className="space-y-1 text-sm text-gray-600">
-                    <a
-                      href={`https://maps.google.com/?q=${point.address}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 group-hover:underline"
-                    >
+                    <div className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 group-hover:underline">
                       <Navigation className="h-4 w-4" />
                       <span className="line-clamp-2">
                         {point.address} {point.postalCode} {point.city}
                       </span>
-                    </a>
+                    </div>
                     {point.location && (
                       <p className="text-orange-600 font-medium mt-2">Punto de referencia: {point.location}</p>
                     )}
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </div>
@@ -300,21 +301,19 @@ export default function Home() {
             </div>
             <div className="grid sm:grid-cols-1 xl:grid-cols-2 gap-4">
               {medicalCenters.map((center) => (
-                <div
+                <a
                   key={center.name}
+                  href={center.location}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="group bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-shadow hover:shadow-md"
                 >
                   <h3 className="font-bold text-gray-800 mb-2">{center.name}</h3>
-                  <a
-                    href={center.location}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 group-hover:underline"
-                  >
+                  <div className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700">
                     <Navigation className="h-4 w-4" />
                     <span className="line-clamp-2">{center.address}</span>
-                  </a>
-                </div>
+                  </div>
+                </a>
               ))}
             </div>
           </div>
