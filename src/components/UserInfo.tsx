@@ -6,7 +6,11 @@ import { authService } from '@/lib/service';
 import { useSession } from '@/context/SessionProvider';
 import Image from 'next/image';
 
-export default function UserProfile() {
+type UserProfileProps = {
+  toggleAction?: () => void;
+};
+
+export default function UserProfile({ toggleAction }: UserProfileProps) {
   const session = useSession();
   const user = session.user;
 
@@ -22,6 +26,7 @@ export default function UserProfile() {
       <Link
         href="/auth"
         className="w-full text-left transition-colors p-3 rounded-lg flex items-center gap-2 hover:bg-gray-50"
+        onClick={toggleAction}
       >
         <LogIn className="h-5 w-5 text-gray-600" />
         Inicia sesión

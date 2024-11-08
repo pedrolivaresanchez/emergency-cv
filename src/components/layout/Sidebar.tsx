@@ -254,7 +254,7 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
 
         {/* User info and login */}
         <div className="p-4">
-          <UserInfo />
+          <UserInfo toggleAction={toggleAction} />
         </div>
 
         {/* Toggle button for desktop */}
