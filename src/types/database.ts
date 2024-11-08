@@ -213,7 +213,7 @@ export type Database = {
           town_id?: number | null;
           type?: string | null;
           urgency?: string | null;
-          user_id: string | null;
+          user_id?: string | null;
         };
         Update: {
           additional_info?: Json | null;
@@ -236,7 +236,7 @@ export type Database = {
           town_id?: number | null;
           type?: string | null;
           urgency?: string | null;
-          user_id: string | null;
+          user_id?: string | null;
         };
         Relationships: [
           {
