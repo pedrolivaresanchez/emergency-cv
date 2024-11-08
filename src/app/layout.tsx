@@ -6,6 +6,7 @@ import { SessionProvider } from '@/context/SessionProvider';
 import { Toaster } from 'sonner';
 import { PropsWithChildren } from 'react';
 import { QueryClientProvider } from '@/context/QueryClientProvider';
+import { RoleProvider } from '@/context/RoleProvider';
 
 export const metadata = {
   title: 'Ajuda Dana - Sistema de Coordinación',
@@ -18,11 +19,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       <body suppressHydrationWarning={true}>
         <Toaster position="bottom-left" richColors />
         <SessionProvider>
-          <QueryClientProvider>
-            <ModalProvider>
-              <SidebarLayout>{children}</SidebarLayout>
-            </ModalProvider>
-          </QueryClientProvider>
+          <RoleProvider>
+            <QueryClientProvider>
+              <ModalProvider>
+                <SidebarLayout>{children}</SidebarLayout>
+              </ModalProvider>
+            </QueryClientProvider>
+          </RoleProvider>
         </SessionProvider>
       </body>
     </html>
