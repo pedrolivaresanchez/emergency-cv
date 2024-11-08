@@ -58,7 +58,7 @@ export default function ListaSolicitudes() {
               </Link>
             </div>
           ) : (
-            requests.map((caso) => <SolicitudCard showLink={true} showEdit={true} key={caso.id} caso={caso as any} />)
+            requests.map((caso) => <SolicitudCard showLink={true} showEdit={true} key={caso.id} caso={caso} />)
           )}
         </div>
       </div>
