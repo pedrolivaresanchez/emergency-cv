@@ -2,6 +2,7 @@ import { supabase } from './supabase/client';
 import { Database } from '@/types/database';
 import { HelpRequestAssignmentInsert, HelpRequestUpdate } from '@/types/Requests';
 import { createClient } from '@/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export const helpRequestService = {
   async createRequest(requestData: Database['public']['Tables']['help_requests']['Insert']) {
@@ -114,6 +115,7 @@ export const helpRequestService = {
     };
   },
   async getTodaysCountByTown() {
+    const supabase = await getSupabaseClient();
     const today = new Date().toISOString().split('T')[0];
 
     const { data: towns, error: townError } = await supabase.from('towns').select('id, name');
