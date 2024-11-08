@@ -105,10 +105,9 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
     {
       icon: UserSearch,
       title: 'Desaparecidos',
-      description: 'Reportar personas',
-      path: 'https://desaparecidosdana.pythonanywhere.com/',
+      description: 'Reportar o buscar',
+      path: '/personas-animales-desaparecidos',
       color: 'text-purple-600',
-      isHref: true,
     },
     {
       icon: Package,
@@ -146,14 +145,6 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
       description: 'Conecta con psicólogos voluntarios',
       path: 'https://ayudana.org/',
       color: 'text-teal-600',
-      isHref: true,
-    },
-    {
-      icon: Car,
-      title: 'Encontrar tu Coche',
-      description: 'Sistema de registro y consulta de vehículos perdidos',
-      path: 'https://tucochedana.es/index.php/',
-      color: 'text-blue-600',
       isHref: true,
     },
   ];
