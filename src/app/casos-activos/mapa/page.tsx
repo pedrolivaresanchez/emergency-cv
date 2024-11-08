@@ -81,6 +81,8 @@ function Mapa() {
           query.eq('urgency', filtroData.urgencia);
         }
 
+        query.neq('status', 'finished');
+
         const { data, error } = await query.order('created_at', { ascending: false });
 
         const pickupQuery = supabase.from('collection_points').select('*', { count: 'exact' });
