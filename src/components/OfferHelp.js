@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { HeartHandshake, Check, Mail } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { HeartHandshake, Check } from 'lucide-react';
 import { helpRequestService } from '@/lib/service';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { mapToIdAndLabel, tiposAyudaOptions as _tiposAyudaOptions } from '@/helpers/constants';
@@ -9,25 +9,27 @@ import { isValidPhone } from '@/helpers/utils';
 
 import { PhoneInput } from '@/components/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/utils';
-import { useTowns } from '../context/TownProvider';
+import { useTowns } from '@/context/TownProvider';
 import { useRouter } from 'next/navigation';
-import { useSession } from '../context/SessionProvider';
+import { useSession } from '@/context/SessionProvider';
 
 export default function OfferHelp({
-  town,
-  onClose,
-  isModal,
+  town = undefined,
+  onClose = undefined,
+  isModal = false,
   data = {},
   title = '',
   button = ['Registrar oferta de ayuda', 'Enviando oferta...'],
-  id,
+  id = 0,
   redirect = '/casos-activos/ofertas',
   submitType = 'create',
 }) {
-  const towns = useTowns();
+  const { towns } = useTowns();
   const session = useSession();
 
   const router = useRouter();
+
+  const userId = session.user?.id;
 
   const [formData, setFormData] = useState({
     nombre: data.name || session?.user?.user_metadata?.full_name || '',
@@ -41,7 +43,7 @@ export default function OfferHelp({
     radio: data.resources?.radius || 1,
     experiencia: data.additional_info?.experience || '',
     comentarios: data.description || '',
-    aceptaProtocolo: submitType ? true : false,
+    aceptaProtocolo: !!submitType,
     pueblo: submitType === 'edit' ? data?.town_id : town ? town.id : '',
     status: data?.status || '',
   });
@@ -110,7 +112,6 @@ export default function OfferHelp({
           email: formData.email,
           experience: formData.experiencia,
         },
-        status: 'active',
         resources: {
           vehicle: formData.vehiculo,
           availability: formData.disponibilidad,
@@ -121,7 +122,8 @@ export default function OfferHelp({
         help_type: formData.tiposAyuda,
         other_help: formData.otraAyuda,
         town_id: formData.pueblo,
-        status: formData.status,
+        status: formData.status || 'active',
+        user_id: userId,
       };
 
       if (submitType === 'create') {

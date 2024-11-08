@@ -1,39 +1,11 @@
-interface DataPoint {
-  type: string;
-  name: string | null;
-  contact_info: string;
-  location: string | null;
-}
+import { Database } from '@/types/database';
 
-export interface CollectionPointData extends DataPoint {
-  contact_name: string;
-  contact_phone: string;
-  city: string;
-}
+export type CollectionPointData = Database['public']['Tables']['collection_points']['Row'];
+export type CollectionPointInsert = Database['public']['Tables']['collection_points']['Insert'];
 
-export interface HelpOfferData extends DataPoint {
-  help_type: string[] | null;
-  description: string | null;
-  resources:
-    | {
-        vehicle: string;
-        availability: string[];
-        radius: number;
-      }
-    | string;
-  status: string;
-  additional_info?: {
-    email: string;
-    experience: string;
-  };
-  latitude?: number | null;
-  longitude?: number | null;
-  town_id?: string;
-}
+export type DeliveryPointData = Database['public']['Tables']['delivery_points']['Row'];
+export type DeliveryPointInsert = Database['public']['Tables']['delivery_points']['Insert'];
 
-export interface MissingPersonData extends DataPoint {
-  help_type: string[] | null;
-  description: string | null;
-  resources: string;
-  status: string;
+export function isCoordinates(coords: unknown): coords is { lat: number; lon: number } {
+  return typeof coords === 'object' && coords !== null && 'lat' in coords && 'lon' in coords;
 }

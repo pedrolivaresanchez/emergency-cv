@@ -1,16 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Map, { PinMapa } from '@/components/map/map';
 import PickupPoint from '@/components/PickupPoint';
-import { useTowns } from '@/context/TownProvider';
 
-export default function Mapa() {
-  const towns = useTowns();
+export const dynamic = 'force-dynamic';
+
+export default function MapaPage() {
+  return (
+    <Suspense>
+      <Mapa />
+    </Suspense>
+  );
+}
+
+function Mapa() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -47,7 +55,7 @@ export default function Mapa() {
         latitude: request.latitude ?? 0,
         longitude: request.longitude ?? 0,
         id: request.id,
-        popup: <SolicitudCard isHref={true} isEdit={false} towns={towns} caso={request} />,
+        popup: <SolicitudCard showLink={true} showEdit={false} caso={request} />,
       };
     }
 
@@ -74,6 +82,8 @@ export default function Mapa() {
         if (filtroData.urgencia !== 'todas') {
           query.eq('urgency', filtroData.urgencia);
         }
+
+        query.neq('status', 'finished');
 
         const { data, error } = await query.order('created_at', { ascending: false });
 
@@ -107,7 +117,7 @@ export default function Mapa() {
     }
 
     fetchData();
-  }, [filtroData, towns]);
+  }, [filtroData]);
 
   if (loading) {
     return (

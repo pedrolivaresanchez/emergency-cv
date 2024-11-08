@@ -182,12 +182,14 @@ export type Database = {
           longitude: number | null;
           name: string | null;
           number_of_people: number | null;
+          other_help: string | null;
           people_needed: number | null;
           resources: Json | null;
           status: string | null;
           town_id: number | null;
           type: string | null;
           urgency: string | null;
+          user_id: string | null;
         };
         Insert: {
           additional_info?: Json | null;
@@ -202,12 +204,14 @@ export type Database = {
           longitude?: number | null;
           name?: string | null;
           number_of_people?: number | null;
+          other_help?: string | null;
           people_needed?: number | null;
           resources?: Json | null;
           status?: string | null;
           town_id?: number | null;
           type?: string | null;
           urgency?: string | null;
+          user_id?: string | null;
         };
         Update: {
           additional_info?: Json | null;
@@ -222,12 +226,14 @@ export type Database = {
           longitude?: number | null;
           name?: string | null;
           number_of_people?: number | null;
+          other_help?: string | null;
           people_needed?: number | null;
           resources?: Json | null;
           status?: string | null;
           town_id?: number | null;
           type?: string | null;
           urgency?: string | null;
+          user_id?: string | null;
         };
         Relationships: [
           {
@@ -326,9 +332,35 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_roles: {
+        Row: {
+          created_at: string;
+          id: number;
+          role: Database['public']['Enums']['roles'] | null;
+          user_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          role?: Database['public']['Enums']['roles'] | null;
+          user_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          role?: Database['public']['Enums']['roles'] | null;
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: {
-      [_ in never]: never;
+      distinct_collection_cities: {
+        Row: {
+          city: string | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       [_ in never]: never;
@@ -343,7 +375,10 @@ export type Database = {
         | 'medica'
         | 'psicologico'
         | 'logistico'
-        | 'otros';
+        | 'otros'
+        | 'reparto'
+        | 'donaciones';
+      roles: 'user' | 'moderator' | 'admin';
     };
     CompositeTypes: {
       [_ in never]: never;
