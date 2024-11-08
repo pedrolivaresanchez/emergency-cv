@@ -1,37 +1,31 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase/client';
 import { ArrowLeft } from 'lucide-react';
 import SolicitudCard from '@/components/SolicitudCard';
-import { useTowns } from '../../../context/TownProvider';
+import { useQuery } from '@tanstack/react-query';
+import { HelpRequestData } from '@/types/Requests';
+import { helpRequestService } from '@/lib/service';
+import { useParams } from 'next/navigation';
 
 export default function CasoDetalle() {
-  const params = useParams();
-  const { id } = params;
-  const [caso, setCaso] = useState(null);
-  const towns = useTowns();
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    async function fetchCaso() {
-      const { data, error } = await supabase.from('help_requests').select('*').eq('id', id).single();
-      if (error) {
-        console.error('Error fetching caso:', error);
-      } else {
-        setCaso(data);
-      }
-      setLoading(false);
-    }
-    fetchCaso();
-  }, [id]);
-  if (loading) {
+  const { id } = useParams<{ id: string }>();
+
+  const {
+    data: request,
+    isLoading,
+    error,
+  } = useQuery<HelpRequestData>({
+    queryKey: ['help_requests', { id: id }],
+    queryFn: () => helpRequestService.getOne(Number(id)),
+  });
+
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
   }
-  if (!caso) {
+  if (error || request === undefined) {
     return (
       <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex justify-start">
@@ -60,7 +54,7 @@ export default function CasoDetalle() {
           Volver
         </button>
       </div>
-      <SolicitudCard key={caso.id} caso={caso} towns={towns} isHref={false}/>
+      <SolicitudCard caso={request} showLink={false} showEdit={true} />
     </div>
   );
 }

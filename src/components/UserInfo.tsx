@@ -6,7 +6,11 @@ import { authService } from '@/lib/service';
 import { useSession } from '@/context/SessionProvider';
 import Image from 'next/image';
 
-export default function UserProfile() {
+type UserProfileProps = {
+  toggleAction?: () => void;
+};
+
+export default function UserProfile({ toggleAction }: UserProfileProps) {
   const session = useSession();
   const user = session.user;
 
@@ -22,6 +26,7 @@ export default function UserProfile() {
       <Link
         href="/auth"
         className="w-full text-left transition-colors p-3 rounded-lg flex items-center gap-2 hover:bg-gray-50"
+        onClick={toggleAction}
       >
         <LogIn className="h-5 w-5 text-gray-600" />
         Inicia sesión
@@ -32,7 +37,13 @@ export default function UserProfile() {
   return (
     <div className="flex items-center gap-4 px-2">
       {user.user_metadata.avatar_url ? (
-        <Image className="w-10 h-10 rounded-full" src={user.user_metadata.avatar_url} alt="Rounded avatar" />
+        <Image
+          className="rounded-full"
+          width={40}
+          height={40}
+          src={user.user_metadata.avatar_url}
+          alt="Rounded avatar"
+        />
       ) : (
         <div className="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
           <svg

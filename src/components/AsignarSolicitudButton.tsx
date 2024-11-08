@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAssignmentData, HelpRequestData, HelpRequestAdditionalInfo } from '@/types/Requests';
+import { HelpRequestAssignmentData, HelpRequestData } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
 import { MouseEvent } from 'react';
 import { Spinner } from '@/components/Spinner';
@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/ModalProvider';
+import { useRouter } from 'next/navigation';
 
 type AsignarSolicitudButtonProps = {
   helpRequest: HelpRequestData;
@@ -18,8 +19,9 @@ type AsignarSolicitudButtonProps = {
 export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitudButtonProps) {
   const { toggleModal } = useModal();
   const session = useSession();
-
+  const userId = session.user?.id;
   const MODAL_NAME = `Solicitud-${helpRequest.id}`;
+  const router = useRouter();
 
   const {
     data: assignments,
@@ -43,6 +45,7 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help_request_assignments'] });
+      queryClient.invalidateQueries({ queryKey: ['help_requests', { user_id: userId, type: 'necesita' }] });
     },
     onError: (e) => {
       console.error('Error al asignarte a la petición de ayuda', e);
@@ -58,6 +61,7 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help_request_assignments'] });
+      queryClient.invalidateQueries({ queryKey: ['help_requests', { user_id: userId, type: 'necesita' }] });
     },
     onError: (e) => {
       console.error('Error al asignarte a la petición de ayuda', e);
@@ -87,16 +91,16 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
 
   if (!session || !session.user)
     return (
-      <Link
-        href="/auth"
+      <button
+        onClick={() => router.push(`/auth?redirect=${encodeURIComponent('/solicitudes/' + helpRequest.id)}`)}
         className="w-full text-center rounded-xl px-4 py-2 font-semibold text-white sm:w-auto transition-all bg-green-500 hover:bg-green-600"
       >
         Iniciar sesion para ayudar
-      </Link>
+      </button>
     );
 
   // Verifica el email dentro de additional_info utilizando un casting y encadenamiento opcional
-  if ((helpRequest.additional_info as HelpRequestAdditionalInfo)?.email === session.user.email) return null;
+  if (helpRequest.user_id === session.user.id) return null;
 
   return (
     <>

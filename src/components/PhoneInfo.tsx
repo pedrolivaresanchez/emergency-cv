@@ -1,8 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { helpRequestService } from '@/lib/service';
 import { useSession } from '@/context/SessionProvider';
+import { HelpRequestData } from '@/types/Requests';
 
-export default function PhoneInfo({ caseInfo }) {
+type PhoneInfoProps = {
+  caseInfo: HelpRequestData;
+};
+export default function PhoneInfo({ caseInfo }: PhoneInfoProps) {
   const session = useSession();
 
   const {

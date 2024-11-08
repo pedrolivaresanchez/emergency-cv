@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { FormEvent, useCallback, useState } from 'react';
 import { ArrowBigLeft } from 'lucide-react';
 import { authService } from '@/lib/service';
 
@@ -8,21 +8,40 @@ import { PhoneInput } from '@/components/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/utils';
 import { isValidPhone } from '@/helpers/utils';
 
-export default function SignUp({ onBackButtonClicked }) {
-  const [formData, setFormData] = useState({
+type FormData = {
+  email: string;
+  password: string;
+  telefono: string;
+  nombre: string;
+  privacyPolicy: string;
+};
+
+type Status = {
+  isSubmitting: boolean;
+  error: string | null;
+  success: boolean;
+};
+
+type SignUpProps = {
+  onBackButtonClicked: () => void;
+  callback?: () => void;
+};
+
+export default function SignUp({ onBackButtonClicked, callback = () => {} }: SignUpProps) {
+  const [formData, setFormData] = useState<FormData>({
     nombre: '',
     email: '',
     password: '',
     telefono: '',
     privacyPolicy: '',
   });
-  const [status, setStatus] = useState({
+  const [status, setStatus] = useState<Status>({
     isSubmitting: false,
     error: null,
     success: false,
   });
 
-  const setError = (mensaje) => {
+  const setError = (mensaje: string) => {
     setStatus({
       isSubmitting: false,
       error: mensaje,
@@ -30,11 +49,11 @@ export default function SignUp({ onBackButtonClicked }) {
     });
   };
 
-  const handlePhoneChange = useCallback((phoneNumber) => {
+  const handlePhoneChange = useCallback((phoneNumber: string) => {
     setFormData((formData) => ({ ...formData, telefono: phoneNumber }));
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     /* Form validation */
@@ -84,7 +103,7 @@ export default function SignUp({ onBackButtonClicked }) {
       formData.password,
       formData.nombre,
       formatedPhoneNumber,
-      formData.privacyPolicy,
+      Boolean(formData.privacyPolicy),
     );
 
     if (response.error) {
@@ -104,7 +123,9 @@ export default function SignUp({ onBackButtonClicked }) {
     // SIGN IN WITH NEW USER CREATED
     await authService.signIn(formData.email, formData.password);
     // REDIRECT USER TO HOME PAGE
-    window.location.href = '/';
+    if (typeof callback === 'function') {
+      callback();
+    }
   };
 
   return (
@@ -168,7 +189,7 @@ export default function SignUp({ onBackButtonClicked }) {
             <input
               type="checkbox"
               value={formData.privacyPolicy}
-              onChange={(e) => setFormData({ ...formData, privacyPolicy: e.target.checked })}
+              onChange={(e) => setFormData({ ...formData, privacyPolicy: e.target.checked.toString() })}
               className="min-w-4 min-h-4 cursor-pointer"
               id="privacyPolicy"
               required
