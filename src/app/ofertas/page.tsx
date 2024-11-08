@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { HeartHandshake } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import Pagination from '@/components/Pagination';
@@ -12,7 +12,15 @@ import OfferCard from '@/components/OfferCard';
 import Link from 'next/link';
 import { HelpRequestData } from '@/types/Requests';
 
-export default function ListaSolicitudes() {
+export default function ListaSolicitudesPage() {
+  return (
+    <Suspense>
+      <ListaSolicitudes />
+    </Suspense>
+  );
+}
+
+function ListaSolicitudes() {
   const session = useSession();
 
   const searchParams = useSearchParams();

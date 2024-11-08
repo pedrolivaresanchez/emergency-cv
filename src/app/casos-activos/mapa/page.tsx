@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -8,7 +8,15 @@ import { tiposAyudaOptions } from '@/helpers/constants';
 import Map, { PinMapa } from '@/components/map/map';
 import PickupPoint from '@/components/PickupPoint';
 
-export default function Mapa() {
+export default function MapaPage() {
+  return (
+    <Suspense>
+      <Mapa />
+    </Suspense>
+  );
+}
+
+function Mapa() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
