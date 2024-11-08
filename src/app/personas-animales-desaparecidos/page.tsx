@@ -1,0 +1,61 @@
+// personas-animales-desaparecidos/page.tsx
+
+import { Users, PawPrint, Car, UserSearch } from 'lucide-react';
+
+export default function PersonasAnimalesDesaparecidos() {
+  return (
+    <div className="mx-auto p-4 max-w-4xl">
+      {/* Encabezado con fondo de color e icono */}
+      <div className="flex items-center justify-between bg-purple-100 p-6 rounded-t-lg shadow">
+        <h1 className="text-2xl font-bold text-purple-800 flex items-center gap-2">
+          <UserSearch className="h-8 w-8 text-purple-500" />
+          Personas, Animales y Vehículos Desaparecidos
+        </h1>
+      </div>
+
+      {/* Tarjeta grande para información */}
+      <div className="bg-white p-8 rounded-b-lg shadow mb-8">
+        <p className="text-gray-700 text-lg">
+          En esta página puedes acceder a diferentes herramientas externas para encontrar personas, animales y vehículos
+          desaparecidos. Selecciona la opción que necesitas para más información y para reportar un caso o buscar ayuda.
+        </p>
+      </div>
+
+      {/* Tres columnas de botones */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Botón para Personas Desaparecidas */}
+        <a
+          href="https://desaparecidosdana.pythonanywhere.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col items-center justify-center bg-white border-l-4 border-blue-500 p-6 rounded-lg shadow hover:shadow-md transition-transform transform hover:-translate-y-1"
+        >
+          <Users className="h-10 w-10 text-blue-500 mb-2" />
+          <h2 className="text-lg font-bold text-blue-600 text-center">Personas Desaparecidas</h2>
+        </a>
+
+        {/* Botón para Animales Desaparecidos */}
+        <a
+          href="https://gorogoro.es/dana"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col items-center justify-center bg-white border-l-4 border-green-500 p-6 rounded-lg shadow hover:shadow-md transition-transform transform hover:-translate-y-1"
+        >
+          <PawPrint className="h-10 w-10 text-green-500 mb-2" />
+          <h2 className="text-lg font-bold text-green-600 text-center">Animales Desaparecidos</h2>
+        </a>
+
+        {/* Botón para Vehículos Extraviados */}
+        <a
+          href="https://tucochedana.es/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col items-center justify-center bg-white border-l-4 border-purple-500 p-6 rounded-lg shadow hover:shadow-md transition-transform transform hover:-translate-y-1"
+        >
+          <Car className="h-10 w-10 text-purple-500 mb-2" />
+          <h2 className="text-lg font-bold text-purple-600 text-center">Vehículos Extraviados</h2>
+        </a>
+      </div>
+    </div>
+  );
+}

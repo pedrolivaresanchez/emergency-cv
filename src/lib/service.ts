@@ -2,6 +2,7 @@ import { supabase } from './supabase/client';
 import { Database } from '@/types/database';
 import { HelpRequestAssignmentInsert, HelpRequestUpdate } from '@/types/Requests';
 import { createClient } from '@/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export const helpRequestService = {
   async createRequest(requestData: Database['public']['Tables']['help_requests']['Insert']) {
@@ -18,6 +19,12 @@ export const helpRequestService = {
   async getAll() {
     const { data, error } = await supabase.from('help_requests').select('*').order('created_at', { ascending: false });
 
+    if (error) throw error;
+    return data;
+  },
+  async getOne(id: number) {
+    const supabase = await getSupabaseClient();
+    const { data, error } = await supabase.from('help_requests').select('*').eq('id', id).single();
     if (error) throw error;
     return data;
   },
@@ -79,6 +86,76 @@ export const helpRequestService = {
     if (error) throw error;
     return data;
   },
+  async getTodaysCount() {
+    const today = new Date().toISOString().split('T')[0];
+    const supabase = await getSupabaseClient();
+    const { count: solicitaCount, error: solicitaError } = await supabase
+      .from('help_requests')
+      .select('id', { count: 'exact' })
+      .eq('type', 'necesita')
+      .gte('created_at', today)
+      .lte('created_at', `${today}T23:59:59.999Z`);
+
+    const { count: ofreceCount, error: ofreceError } = await supabase
+      .from('help_requests')
+      .select('id', { count: 'exact' })
+      .eq('type', 'ofrece')
+      .gte('created_at', today)
+      .lte('created_at', `${today}T23:59:59.999Z`);
+
+    if (solicitaError) {
+      throw new Error('Error fetching solicita:', solicitaError);
+    }
+    if (ofreceError) {
+      throw new Error('Error fetching ofrece:', ofreceError);
+    }
+    return {
+      solicitudes: solicitaCount || 0,
+      ofertas: ofreceCount || 0,
+    };
+  },
+  async getTodaysCountByTown() {
+    const supabase = await getSupabaseClient();
+    const today = new Date().toISOString().split('T')[0];
+
+    const { data: towns, error: townError } = await supabase.from('towns').select('id, name');
+
+    if (townError) {
+      console.log('Error fetching towns:', townError);
+      throw townError;
+    }
+
+    const { data, error } = await supabase
+      .from('help_requests')
+      .select('*')
+      .in('type', ['ofrece', 'necesita'])
+      .gte('created_at', today)
+      .lte('created_at', `${today}T23:59:59.999Z`);
+
+    if (error) {
+      console.log('Error fetching help requests:', error);
+      throw error;
+    }
+
+    const volunteersCount = new Map();
+    const needHelpCount = new Map();
+
+    data.forEach((person) => {
+      const townId = person.town_id;
+      if (person.type === 'ofrece') {
+        volunteersCount.set(townId, (volunteersCount.get(townId) || 0) + 1);
+      } else if (person.type === 'necesita') {
+        needHelpCount.set(townId, (needHelpCount.get(townId) || 0) + 1);
+      }
+    });
+
+    return towns.map((town) => ({
+      id: town.id,
+      name: town.name ?? 'N/A',
+      count: volunteersCount.get(town.id) || 0,
+      needHelp: needHelpCount.get(town.id) || 0,
+    }));
+  },
 };
 
 export const townService = {
@@ -87,6 +164,12 @@ export const townService = {
   },
   async create(townName: string) {
     return await supabase.from('towns').insert({ name: townName }).select('id');
+  },
+  async getTowns() {
+    const supabase = await getSupabaseClient();
+    const { data, error } = await supabase.from('towns').select();
+    if (error) throw error;
+    return data;
   },
   async createIfNotExists(townName: string) {
     const response = await this.getByName(townName);
@@ -214,15 +297,6 @@ export const mapService = {
       });
       throw new Error(error.message || 'Error al obtener los datos del mapa');
     }
-  },
-};
-
-export const townsService = {
-  async getTowns() {
-    const supabase = await getSupabaseClient();
-    const { data, error } = await supabase.from('towns').select();
-    if (error) throw error;
-    return data;
   },
 };
 

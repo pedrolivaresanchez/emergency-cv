@@ -62,7 +62,7 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
       icon: AlertCircle,
       title: 'Casos Activos',
       description: 'Ver todos los casos activos',
-      path: '/casos-activos',
+      path: '/casos-activos/solicitudes',
       color: 'text-orange-600',
       highlight: true,
     },
@@ -106,10 +106,9 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
     {
       icon: UserSearch,
       title: 'Desaparecidos',
-      description: 'Reportar personas',
-      path: 'https://desaparecidosdana.pythonanywhere.com/',
+      description: 'Reportar o buscar',
+      path: '/personas-animales-desaparecidos',
       color: 'text-purple-600',
-      isHref: true,
     },
     {
       icon: Package,
@@ -150,30 +149,14 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
       isHref: true,
     },
     {
-      icon: CarTaxiFront,
-      title: 'Compartir Coche',
-      description: 'Viaja u ofrece viajes con otros',
-      path: 'https://anem.guruwalk.com/',
-      color: 'text-amber-600',
-      isHref: true,
-    },
-    {
-      icon: Car,
-      title: 'Encontrar tu Coche',
-      description: 'Sistema de registro y consulta de vehículos perdidos',
-      path: 'https://tucochedana.es/index.php/',
-      color: 'text-blue-600',
-      isHref: true,
-    },
-    {
       icon: School,
       title: 'Ayudas Estado',
       description: 'Enlace hacia la tramitación de las ayudas del estado',
       path: 'https://www.gva.es/es/inicio/procedimientos?id_proc=101532',
       color: 'text-red-600',
       isHref: true,
-  },
-];
+     },
+  ];
 
   return (
     <>
@@ -263,7 +246,11 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
 
         {/* User info and login */}
         <div className="p-4">
-          <UserInfo />
+          <UserInfo
+            toggleAction={() => {
+              if (window.innerWidth < 768) toggleAction();
+            }}
+          />
         </div>
 
         {/* Toggle button for desktop */}

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 
@@ -63,9 +64,50 @@ internal sealed class HelpRequest : BaseModel
     [Column("contact_info")]
     public string ContactInfo { get; init; }
 
+    [Column("resources")]
+    [Newtonsoft.Json.JsonConverter(typeof(ResourcesJsonConverter))]
+    public Resources? Resources { get; init; }
+
     [Column("created_at")]
     public DateTime CreatedAt { get; init; }
 
     [JsonProperty("towns")]
     public Town Town { get; set; }
+}
+
+internal sealed class Resources
+{
+    [JsonPropertyName("vehicle")]
+    public string? Vehicle { get; set; }
+    [JsonPropertyName("availability")]
+    public List<string> Availability { get; set; } = new();
+    [JsonPropertyName("radius")]
+    public string? Radius { get; set; }
+    [JsonPropertyName("experience")]
+    public string? Experience { get; set; } = string.Empty;
+}
+
+internal sealed class ResourcesJsonConverter : Newtonsoft.Json.JsonConverter<Resources>
+{
+    public override Resources ReadJson(JsonReader reader, Type objectType, Resources existingValue, bool hasExistingValue, JsonSerializer serializer)
+    {
+        if (reader.TokenType == JsonToken.String)
+        {
+            // If we get a string, parse it as JSON
+            string jsonString = (string)reader.Value;
+            return JsonConvert.DeserializeObject<Resources>(jsonString);
+        }
+        else if (reader.TokenType == JsonToken.StartObject)
+        {
+            // If we get a JSON object directly, deserialize it
+            return serializer.Deserialize<Resources>(reader);
+        }
+
+        return null;
+    }
+
+    public override void WriteJson(JsonWriter writer, Resources value, JsonSerializer serializer)
+    {
+        serializer.Serialize(writer, value);
+    }
 }
