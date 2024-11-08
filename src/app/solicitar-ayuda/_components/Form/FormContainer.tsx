@@ -169,8 +169,8 @@ export function FormContainer() {
   }, []);
 
   const handleNewAddressDescriptor = useCallback((addressDescriptor: AddressDescriptor) => {
-    setFormData((formData) => ({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       town: addressDescriptor.town,
       ubicacion: addressDescriptor.address,
       coordinates: addressDescriptor.coordinates,

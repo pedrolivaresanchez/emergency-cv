@@ -41,7 +41,6 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
   });
 
   const handleSelect = async (newValue: OnChangeValue<PlaceOption, false>) => {
-    console.log(newValue);
     if (newValue && newValue.value) {
       const placeId = newValue.value.place_id;
 
@@ -120,14 +119,6 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
         apiKey={process.env.NEXT_PUBLIC_GOOGLE_KEY}
         selectProps={{
           onChange: handleSelect,
-          onInputChange: (newValue) => {
-            // invalidate - only valid when set in map/autocomplete
-            onNewAddressDescriptor({
-              address: '',
-              coordinates: null,
-              town: '',
-            });
-          },
           value: {
             label: addressDescriptor.address,
             value: addressDescriptor.address,
@@ -146,12 +137,7 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
       />
       {/* Mensaje de error */}
       {(status === 'denied' || status === 'prompt') && (
-        <div
-          className="bg-red-100 border-l-4 border-red-500 p-4 rounded"
-          onClick={(e) => {
-            e.preventDefault();
-          }}
-        >
+        <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
           <p className="text-red-700">Debes activar la ubicación para que podamos localizarte</p>
         </div>
       )}
