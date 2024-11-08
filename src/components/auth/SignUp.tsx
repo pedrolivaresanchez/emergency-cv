@@ -24,9 +24,10 @@ type Status = {
 
 type SignUpProps = {
   onBackButtonClicked: () => void;
+  callback?: () => void;
 };
 
-export default function SignUp({ onBackButtonClicked }: SignUpProps) {
+export default function SignUp({ onBackButtonClicked, callback = () => {} }: SignUpProps) {
   const [formData, setFormData] = useState<FormData>({
     nombre: '',
     email: '',
@@ -122,7 +123,9 @@ export default function SignUp({ onBackButtonClicked }: SignUpProps) {
     // SIGN IN WITH NEW USER CREATED
     await authService.signIn(formData.email, formData.password);
     // REDIRECT USER TO HOME PAGE
-    window.location.href = '/';
+    if (typeof callback === 'function') {
+      callback();
+    }
   };
 
   return (
