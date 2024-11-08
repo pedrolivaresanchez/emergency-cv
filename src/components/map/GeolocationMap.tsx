@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
@@ -23,38 +23,38 @@ export default function GeoLocationMap({
   const isGeolocating = useRef(false);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
-
-  // geolocate control
-  const geolocateControl = new maplibregl.GeolocateControl({
-    positionOptions: {
-      enableHighAccuracy: true,
-    },
-    trackUserLocation: true,
-    showAccuracyCircle: true,
-  });
-
-  const marker = new maplibregl.Marker({
-    color: '#ef4444', //text-red-500
-    draggable: false,
-  });
-
-  const triggerGeoLocate = () => {
-    setTimeout(() => {
-      if (!isGeolocating.current) {
-        if (geolocateControl.trigger()) {
-          isGeolocating.current = true;
-        }
-      }
-    });
-  };
-
-  const visibilityChangeEvent = () => {
-    if (document.visibilityState === 'visible' && geolocateControl) {
-      triggerGeoLocate();
-    }
-  };
+  const markerRef = useRef<maplibregl.Marker | null>(null);
 
   useEffect(() => {
+    const geolocateControl = new maplibregl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true,
+      },
+      trackUserLocation: true,
+      showAccuracyCircle: true,
+    });
+
+    markerRef.current = new maplibregl.Marker({
+      color: '#ef4444', //text-red-500
+      draggable: false,
+    });
+
+    const triggerGeoLocate = () => {
+      setTimeout(() => {
+        if (!isGeolocating.current) {
+          if (geolocateControl.trigger()) {
+            isGeolocating.current = true;
+          }
+        }
+      });
+    };
+
+    const visibilityChangeEvent = () => {
+      if (document.visibilityState === 'visible' && geolocateControl) {
+        triggerGeoLocate();
+      }
+    };
+
     const cleanup = () => {
       mapRef.current?.remove();
       document.removeEventListener('visibilitychange', visibilityChangeEvent);
@@ -76,12 +76,12 @@ export default function GeoLocationMap({
     });
 
     mapRef.current.on('move', () => {
-      if (!mapRef.current) {
+      if (!mapRef.current || !markerRef.current) {
         return;
       }
 
       const center = mapRef.current.getCenter();
-      marker.setLngLat(center);
+      markerRef.current.setLngLat(center);
 
       if (typeof onNewCenterCallback === 'function') {
         onNewCenterCallback(center);
@@ -89,12 +89,12 @@ export default function GeoLocationMap({
     });
 
     mapRef.current.on('moveend', () => {
-      if (!mapRef.current) {
+      if (!mapRef.current || !markerRef.current) {
         return;
       }
 
       if (typeof onNewPositionCallback === 'function') {
-        onNewPositionCallback(marker.getLngLat());
+        onNewPositionCallback(markerRef.current.getLngLat());
       }
     });
 
@@ -136,7 +136,7 @@ export default function GeoLocationMap({
       }
     });
 
-    marker.setLngLat(mapRef.current.getCenter()).addTo(mapRef.current);
+    markerRef.current.setLngLat(mapRef.current.getCenter()).addTo(mapRef.current);
 
     document.addEventListener('visibilitychange', visibilityChangeEvent);
 
@@ -149,13 +149,17 @@ export default function GeoLocationMap({
   }, [zoom]);
 
   useEffect(() => {
-    if (!mapRef.current || !inputCoordinates) {
+    if (!mapRef.current || !inputCoordinates || !markerRef.current) {
       return;
     }
 
-    const center = mapRef.current.setCenter(inputCoordinates);
-    marker.setLngLat(inputCoordinates);
+    mapRef.current.setCenter(inputCoordinates);
+    markerRef.current.setLngLat(inputCoordinates);
   }, [inputCoordinates]);
 
-  return <div ref={mapContainerRef} className="aspect-video w-full" />;
+  return (
+    <>
+      <div ref={mapContainerRef} className="aspect-video w-full" />
+    </>
+  );
 }
