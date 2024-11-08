@@ -7,6 +7,7 @@ import { Town } from '@/types/Town';
 import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
 import SolicitudHelpCount from '@/components/SolicitudHelpCount';
 import PhoneInfo from '@/components/PhoneInfo.js';
+import DeleteHelpRequest from './DeleteHelpRequest';
 
 type SolicitudCardProps = {
   caso: HelpRequestData;
@@ -34,6 +35,8 @@ export default function SolicitudCard({
 
   const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
   const email = 'email' in additionalInfo ? additionalInfo.email : undefined;
+  const isAdmin = session?.user?.user_metadata.role === 'admin';
+
   return (
     <div key={caso.id} className="rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5">
       <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center justify-between border-b border-gray-900/10 px-6 py-4">
@@ -191,6 +194,7 @@ export default function SolicitudCard({
             </Link>
           )}
           <AsignarSolicitudButton helpRequest={caso} />
+          {isAdmin && <DeleteHelpRequest helpRequestId={caso.id} />}
         </div>
       </div>
     </div>
