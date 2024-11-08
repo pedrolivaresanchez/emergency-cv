@@ -125,28 +125,31 @@ const PhoneNumberDialog = () => {
     };
 
     fetchNumber();
-  }, []);
+  }, [toggleModal]);
 
-  const handleSubmit = useCallback(async (phoneNumber: string, privacyPolicy: string) => {
-    const { data: session, error: errorGettingUser } = await authService.getSessionUser();
+  const handleSubmit = useCallback(
+    async (phoneNumber: string, privacyPolicy: string) => {
+      const { data: session, error: errorGettingUser } = await authService.getSessionUser();
 
-    if (!session.user || errorGettingUser) {
-      throw new Error('Error a la hora de obtener el usuario');
-    }
+      if (!session.user || errorGettingUser) {
+        throw new Error('Error a la hora de obtener el usuario');
+      }
 
-    const metadata = session.user.user_metadata;
-    const metadataWithPhone = { ...metadata, telefono: phoneNumber, privacyPolicy };
+      const metadata = session.user.user_metadata;
+      const metadataWithPhone = { ...metadata, telefono: phoneNumber, privacyPolicy };
 
-    const { error: updateUserError } = await authService.updateUser({
-      data: metadataWithPhone,
-    });
+      const { error: updateUserError } = await authService.updateUser({
+        data: metadataWithPhone,
+      });
 
-    if (updateUserError) {
-      throw new Error('Error a la hora de actualizar el usuario con un numero de telefono');
-    }
+      if (updateUserError) {
+        throw new Error('Error a la hora de actualizar el usuario con un numero de telefono');
+      }
 
-    toggleModal(MODAL_NAME);
-  }, []);
+      toggleModal(MODAL_NAME);
+    },
+    [toggleModal],
+  );
 
   return (
     <Modal id={MODAL_NAME} maxWidth={'max-w-md'} allowClose={false}>

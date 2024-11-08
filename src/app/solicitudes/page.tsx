@@ -8,6 +8,8 @@ import { useQuery } from '@tanstack/react-query';
 import { HelpRequestData } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
 
+export const dynamic = 'force-dynamic';
+
 export default function ListaSolicitudes() {
   const session = useSession();
   const userId = session.user?.id;

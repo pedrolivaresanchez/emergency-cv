@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { Truck, MapPin, Phone, Mail, Calendar, Package } from 'lucide-react';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
+import { DeliveryPointData, DeliveryPointInsert, isCoordinates } from '@/types/DataPoints';
 
 export default function PuntosEntrega() {
   const initialFormData = {
@@ -21,12 +22,12 @@ export default function PuntosEntrega() {
     status: 'active',
   };
 
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState<DeliveryPointInsert>(initialFormData);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [points, setPoints] = useState([]);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
+  const [points, setPoints] = useState<DeliveryPointData[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean>(false);
 
   const vehicleTypes = ['Camión grande (>3500kg)', 'Camión mediano', 'Furgoneta grande', 'Furgoneta mediana', 'Otro'];
 
@@ -51,13 +52,13 @@ export default function PuntosEntrega() {
     }
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const requiredFields = ['name', 'location', 'contact_phone'];
+      const requiredFields = ['name', 'location', 'contact_phone'] as const;
       const missingFields = requiredFields.filter((field) => !formData[field]);
 
       if (missingFields.length > 0) {
@@ -67,7 +68,7 @@ export default function PuntosEntrega() {
       const pointData = {
         name: formData.name,
         location: formData.location,
-        city: formData.city || null,
+        city: formData.city,
         contact_name: formData.contact_name || null,
         contact_phone: formData.contact_phone,
         contact_email: formData.contact_email || null,
@@ -75,8 +76,8 @@ export default function PuntosEntrega() {
         cargo_type: formData.cargo_type || null,
         schedule: formData.schedule || null,
         additional_info: formData.additional_info || null,
-        latitude: formData.coordinates?.lat ? parseFloat(formData.coordinates.lat) : null,
-        longitude: formData.coordinates?.lon ? parseFloat(formData.coordinates.lon) : null,
+        latitude: isCoordinates(formData.coordinates) ? formData.coordinates.lat : null,
+        longitude: isCoordinates(formData.coordinates) ? formData.coordinates.lon : null,
         status: 'active',
       };
 
@@ -90,7 +91,7 @@ export default function PuntosEntrega() {
       setFormData(initialFormData);
 
       setTimeout(() => setSuccess(false), 3000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al registrar punto de entrega:', error);
       setError(error.message || 'Error al registrar el punto de entrega');
     } finally {
@@ -225,7 +226,7 @@ export default function PuntosEntrega() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Dirección exacta *</label>
                 <AddressAutocomplete
-                  onSelect={(address) => {
+                  onSelect={(address: any) => {
                     setFormData((prev) => ({
                       ...prev,
                       location: address.fullAddress,
@@ -246,7 +247,7 @@ export default function PuntosEntrega() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de vehículos</label>
                   <select
-                    value={formData.vehicle_type}
+                    value={formData.vehicle_type ?? ''}
                     onChange={(e) => setFormData({ ...formData, vehicle_type: e.target.value })}
                     className="w-full p-2 border rounded"
                   >
@@ -261,7 +262,7 @@ export default function PuntosEntrega() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de carga</label>
                   <select
-                    value={formData.cargo_type}
+                    value={formData.cargo_type ?? ''}
                     onChange={(e) => setFormData({ ...formData, cargo_type: e.target.value })}
                     className="w-full p-2 border rounded"
                   >
@@ -279,7 +280,7 @@ export default function PuntosEntrega() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Horario de recepción</label>
                 <input
                   type="text"
-                  value={formData.schedule}
+                  value={formData.schedule ?? ''}
                   onChange={(e) => setFormData({ ...formData, schedule: e.target.value })}
                   className="w-full p-2 border rounded"
                   placeholder="Ej: Lunes a Viernes 9:00-18:00"
@@ -291,7 +292,7 @@ export default function PuntosEntrega() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Persona de contacto</label>
                   <input
                     type="text"
-                    value={formData.contact_name}
+                    value={formData.contact_name ?? ''}
                     onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
                     className="w-full p-2 border rounded"
                   />
@@ -300,7 +301,7 @@ export default function PuntosEntrega() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
                   <input
                     type="tel"
-                    value={formData.contact_phone}
+                    value={formData.contact_phone ?? ''}
                     onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
                     className="w-full p-2 border rounded"
                     required
@@ -310,7 +311,7 @@ export default function PuntosEntrega() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                   <input
                     type="email"
-                    value={formData.contact_email}
+                    value={formData.contact_email ?? ''}
                     onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
                     className="w-full p-2 border rounded"
                   />
@@ -320,10 +321,10 @@ export default function PuntosEntrega() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Información adicional</label>
                 <textarea
-                  value={formData.additional_info}
+                  value={formData.additional_info ?? ''}
                   onChange={(e) => setFormData({ ...formData, additional_info: e.target.value })}
                   className="w-full p-2 border rounded"
-                  rows="3"
+                  rows={3}
                   placeholder="Instrucciones especiales, requisitos, etc."
                 />
               </div>

@@ -7,6 +7,8 @@ import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { isValidPhone } from '@/helpers/utils';
 import { PhoneInput } from '@/components/PhoneInput';
 
+export const dynamic = 'force-dynamic';
+
 export default function PuntosRecogida() {
   const initialFormData = {
     name: '',
