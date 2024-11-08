@@ -3,11 +3,11 @@ import React, { createContext, ReactNode, useContext, useEffect, useState } from
 import { supabase } from '@/lib/supabase/client';
 import { useSession } from './SessionProvider';
 
-const RoleContext = createContext < RoleContextType > null;
+const RoleContext = createContext();
 
 export const RoleProvider = ({ children }) => {
   const session = useSession();
-  const [role, setRole] = (useState < string) | (null > 'user');
+  const [role, setRole] = useState('user');
 
   useEffect(() => {
     const fetchRole = async () => {
