@@ -15,15 +15,7 @@ export default function OfferCard({ caso, showLink = true }: OfferCardProps) {
       <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center justify-between border-b border-gray-900/10 px-6 py-4">
         <div className="flex flex-row justify-between">
           <div className="flex flex-row gap-4 items-center">
-            <HeartHandshake
-              className={`h-10 w-10 flex-shrink-0 ${
-                caso.urgency === 'alta'
-                  ? 'text-red-500'
-                  : caso.urgency === 'media'
-                    ? 'text-yellow-600'
-                    : 'text-green-600'
-              }`}
-            />
+            <HeartHandshake className={`h-10 w-10 flex-shrink-0 text-green-600`} />
             <div className="flex flex-col">
               <span className={`text-lg font-bold text-green-600`}>{caso.name}</span>
               <span className="text-sm text-gray-600">#{caso.id}</span>
