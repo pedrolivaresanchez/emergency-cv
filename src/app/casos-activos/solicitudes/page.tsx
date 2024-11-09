@@ -190,6 +190,7 @@ function Solicitudes() {
               ))}
             </select>
           </div>
+          {/*
           <div className="flex flex-row flex-1 justify-end">
             <Toggle
               handleChange={handleToggleChange}
@@ -197,6 +198,7 @@ function Solicitudes() {
               label="Sólo ofertas sin voluntarios"
             />
           </div>
+          */}
         </div>
       </div>
       <div className="grid gap-4">
