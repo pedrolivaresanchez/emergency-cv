@@ -3,7 +3,7 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { Truck, MapPin, Phone, Mail, Calendar, Package } from 'lucide-react';
-import AddressAutocomplete from '@/components/AddressAutocomplete';
+import AddressAutocomplete, { AddressDetails } from '@/components/AddressAutocomplete';
 import { DeliveryPointData, DeliveryPointInsert, isCoordinates } from '@/types/DataPoints';
 
 export default function PuntosEntrega() {
@@ -226,7 +226,7 @@ export default function PuntosEntrega() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Dirección exacta *</label>
                 <AddressAutocomplete
-                  onSelect={(address: any) => {
+                  onSelect={(address: AddressDetails) => {
                     setFormData((prev) => ({
                       ...prev,
                       location: address.fullAddress,

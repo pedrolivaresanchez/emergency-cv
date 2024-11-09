@@ -31,7 +31,7 @@ export default function ListaSolicitudes() {
     );
   }
 
-  if (error || requests === undefined) {
+  if (error || !requests) {
     return (
       <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
         <p className="text-red-700">{error?.message}</p>

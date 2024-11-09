@@ -11,7 +11,6 @@ type SocialButtonProps = {
 export default function SocialButton({ provider, redirectUrl, children }: SocialButtonProps) {
   const baseUrl =
     process.env.NEXT_PUBLIC_ENV === 'production' ? process.env.NEXT_PUBLIC_BASE_URL! : 'http://127.0.0.1:3000';
-  console.log(baseUrl + redirectUrl);
   const handleLogin = async (provider: Provider) => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,

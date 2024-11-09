@@ -15,11 +15,9 @@ import {
   Thermometer,
   Truck,
   Inbox,
-  Car,
   Landmark,
   Scale,
   MessageCircleQuestion,
-  CarTaxiFront,
 } from 'lucide-react';
 import UserInfo from '../UserInfo';
 import { useSession } from '@/context/SessionProvider';
@@ -251,8 +249,7 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
         {/* Toggle button for desktop */}
         <button
           onClick={toggleAction}
-          className="hidden md:flex absolute -right-12 top-4 bg-white p-2 rounded-r-lg shadow-md
-            hover:bg-gray-50 focus:outline-none group"
+          className="hidden md:flex absolute -right-12 top-4 bg-white p-2 rounded-r-lg shadow-md hover:bg-gray-50 focus:outline-none group"
           aria-label={isOpen ? 'Contraer menú' : 'Expandir menú'}
         >
           <Menu className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
