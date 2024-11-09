@@ -1,12 +1,13 @@
 'use client';
 
 import GeoLocationMap, { LngLat } from '@/components/map/GeolocationMap';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { locationService } from '../lib/service';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 
 import { useDebouncedFunction, useThrottledFunction } from '../helpers/hooks';
 import { OnChangeValue } from 'react-select';
+import { supabase } from '../lib/supabase/client';
 
 export type AddressMapProps = {
   onNewAddressDescriptor: (onNewAddressDescriptor: AddressDescriptor) => void;
@@ -31,6 +32,7 @@ const THROTTLE_MS = 2000;
 const DEBOUNCE_MS = 400;
 
 export default function AddressMap({ onNewAddressDescriptor, initialAddressDescriptor, titulo }: AddressMapProps) {
+  const [sessionToken, setSessionToken] = useState('');
   const isEdit = useRef(Boolean(initialAddressDescriptor));
   const [status, setStatus] = useState<PermissionState | 'unknown'>('unknown');
   const [lngLat, setLngLat] = useState<LngLat | undefined>(initialAddressDescriptor?.coordinates ?? undefined);
@@ -39,6 +41,13 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
     town: '',
     coordinates: null,
   });
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
+      debugger;
+      setSessionToken(session?.access_token || '');
+    });
+  }, []);
 
   const handleSelect = async (newValue: OnChangeValue<PlaceOption, false>) => {
     if (newValue && newValue.value) {
@@ -65,9 +74,10 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
     const { address, town, error } = await locationService.getFormattedAddress(
       String(coordinates.lng),
       String(coordinates.lat),
+      sessionToken,
     );
     if (error) {
-      throw { message: `Error inesperado con la api de google: ${error}` };
+      throw { message: `Error inesperado con el geocoding endpoint: ${error}` };
     }
 
     const newAddressDescriptor: AddressDescriptor = {

@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { supabase } from '../../../lib/supabase/client';
 
 const mapsTranslationToDbTowns: { [key: string]: string } = {
   Aldaya: 'Aldaia',
@@ -21,6 +22,26 @@ const mapsTranslationToDbTowns: { [key: string]: string } = {
 const GOOGLE_URL = `https://maps.googleapis.com/maps/api/geocode/json?key=${process.env.GEOCODING_API_KEY}&latlng=`;
 
 export type AddressAndTown = { address: string; town: string };
+
+async function checkAuthentication(request: NextRequest) {
+  // Extract the Supabase token from the authorization header
+  const authHeader = request.headers.get('authorization') || '';
+  const token = authHeader.split('Bearer ')[1];
+
+  if (!token) {
+    return Response.json({
+      error: 'Unauthorized: No token provided in authorization headers!',
+    });
+  }
+
+  // Validate the token
+  const { error } = await supabase.auth.getUser(token);
+  if (error) {
+    return Response.json({
+      error: "Unauthorized: Couldn't decode the token correctly!",
+    });
+  }
+}
 
 function normalizeData({ address, town }: AddressAndTown): AddressAndTown {
   const normalizedTown = Object.keys(mapsTranslationToDbTowns).includes(town) ? mapsTranslationToDbTowns[town] : town;
@@ -58,6 +79,12 @@ function extractAddressAndTown(googleResponse: any) {
 }
 
 export async function POST(request: NextRequest) {
+  // will return Response object on error
+  const response = await checkAuthentication(request);
+  if (response) {
+    return response;
+  }
+
   const body = await request.json();
   if (!body.latitude || !body.longitude) {
     return Response.json({
@@ -74,7 +101,7 @@ export async function POST(request: NextRequest) {
 
     if (response.error_message) {
       return Response.json({
-        error: response.error_message,
+        error: `Error de google: ${response.error_message}`,
       });
     }
 

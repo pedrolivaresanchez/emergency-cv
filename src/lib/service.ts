@@ -194,10 +194,11 @@ export const helpRequestService = {
 };
 
 export const locationService = {
-  async getFormattedAddress(longitude: string, latitude: string) {
+  // if token is not provided it will get it from session
+  async getFormattedAddress(longitude: string, latitude: string, token: string) {
     return await fetch('/api/address', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', authorization: `Bearer ${token}` },
       body: JSON.stringify({
         longitude,
         latitude,
