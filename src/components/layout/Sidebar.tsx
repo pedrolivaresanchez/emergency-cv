@@ -70,6 +70,7 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
       title: 'Mis solicitudes',
       description: 'Edita o elimina tus solicitudes',
       path: '/solicitudes',
+      isLogged: true,
       color: 'text-red-500',
       hide: !hasRequests,
     },
@@ -78,6 +79,7 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
       title: 'Mis ofertas',
       description: 'Edita o elimina tus ofertas',
       path: '/ofertas',
+      isLogged: true,
       color: 'text-green-500',
       hide: !hasOffers,
     },
@@ -93,6 +95,7 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
       title: 'Solicitar Ayuda',
       description: 'Si necesitas asistencia',
       path: '/solicitar-ayuda',
+      isLogged: true,
       color: 'text-red-600',
     },
     {
@@ -100,6 +103,7 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
       title: 'Ofrecer Ayuda',
       description: 'Si puedes ayudar a otros',
       path: '/ofrecer-ayuda',
+      isLogged: true,
       color: 'text-green-600',
     },
     {
@@ -208,7 +212,7 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
                   <button
                     key={item.path}
                     onClick={() => {
-                      router.push(item.path);
+                      router.push(item?.isLogged && !userId ? '/auth?redirect=' + item.path : item.path);
                       if (window.innerWidth < 768) toggleAction();
                     }}
                     className={`w-full text-left transition-colors ${
