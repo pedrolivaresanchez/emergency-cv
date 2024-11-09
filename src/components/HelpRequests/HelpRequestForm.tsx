@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
+import { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
 import { isValidPhone } from '@/helpers/utils';
 import { tiposAyudaArray } from '@/helpers/constants';
 import { PhoneInput } from '@/components/input/PhoneInput';
@@ -58,6 +58,24 @@ export default function HelpRequestForm({
     status: request?.status || 'active',
     town_id: request?.town_id || 0,
   });
+
+  useEffect(() => {
+    setFormData({
+      nombre: request?.name || user?.user_metadata?.full_name || user?.user_metadata?.nombre || '',
+      telefono: request?.contact_info || user?.user_metadata?.telefono || '',
+      ubicacion: request?.location || '',
+      coordinates: { lat: 0, lng: 0 },
+      tiposAyuda: request?.help_type || [],
+      numeroPersonas: request?.number_of_people || 1,
+      descripcion: request?.description || '',
+      urgencia: request?.urgency === 'alta' ? 'alta' : request?.urgency === 'media' ? 'media' : 'baja',
+      situacionEspecial: request?.additional_info?.special_situations || '',
+      consentimiento: request?.additional_info?.consent || false,
+      pueblo: '',
+      status: request?.status || 'active',
+      town_id: request?.town_id || 0,
+    });
+  }, [user, request]);
 
   const handleTipoAyudaChange = (tipo: HelpRequestHelpType) => {
     setFormData((prev) => ({
