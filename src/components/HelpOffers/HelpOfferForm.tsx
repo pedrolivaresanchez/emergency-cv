@@ -1,16 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
-import { PhoneInput } from '@/components/PhoneInput/PhoneInput';
+import { PhoneInput } from '@/components/input/PhoneInput';
 import { isValidPhone } from '@/helpers/utils';
 import { HelpRequestData, HelpRequestHelpType } from '@/types/Requests';
 import { useSession } from '@/context/SessionProvider';
 import { tiposAyudaArray } from '@/helpers/constants';
 import { Town } from '@/types/Town';
-
-export interface Coordinates {
-  lat: number;
-  lng: number;
-}
 
 export type HelpOfferFormData = {
   aceptaProtocolo: boolean;
@@ -27,7 +22,6 @@ export type HelpOfferFormData = {
   comentarios: string;
   pueblo: number;
   status: string;
-  coordinates?: Coordinates;
 };
 
 export interface HelpOfferProps {
@@ -113,12 +107,6 @@ export default function HelpOfferForm({ town, data, buttonText, submitMutation }
               setFormData({
                 ...formData,
                 ubicacion: address.fullAddress,
-                coordinates: address.coordinates
-                  ? {
-                      lat: address.coordinates.lat,
-                      lng: address.coordinates.lon,
-                    }
-                  : undefined,
               });
             }}
             placeholder="Calle, número, piso, ciudad..."

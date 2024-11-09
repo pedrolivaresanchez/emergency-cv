@@ -93,7 +93,7 @@ function ListaSolicitudes() {
           console.log('Error fetching solicitudes:', error);
           setData([]);
         } else {
-          setData(data || []);
+          setData((data as HelpRequestData[]) || []);
           setCurrentCount(count);
         }
       } catch (err) {

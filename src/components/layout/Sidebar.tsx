@@ -15,11 +15,9 @@ import {
   Thermometer,
   Truck,
   Inbox,
-  Car,
   Landmark,
   Scale,
   MessageCircleQuestion,
-  CarTaxiFront,
 } from 'lucide-react';
 import UserInfo from '../UserInfo';
 import { useSession } from '@/context/SessionProvider';

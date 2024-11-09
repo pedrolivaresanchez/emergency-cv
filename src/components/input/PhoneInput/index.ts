@@ -1,3 +1,3 @@
-import { PhoneInput } from './PhoneInput';
+import { PhoneInput } from './PhoneInputContainer';
 
 export { PhoneInput };

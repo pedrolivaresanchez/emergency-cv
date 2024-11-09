@@ -116,7 +116,7 @@ function Solicitudes() {
           console.log('Error fetching solicitudes:', error);
           setData([]);
         } else {
-          setData(data || []);
+          setData((data as HelpRequestData[]) || []);
           setCurrentCount(count ?? 0);
         }
       } catch (err) {

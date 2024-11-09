@@ -1,11 +1,12 @@
 'use client';
 
 import HelpRequestForm, { HelpRequestFormData } from './HelpRequestForm';
-import { helpRequestService } from '@/lib/service';
+import { helpRequestService, townService } from '@/lib/service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { HelpRequestData, HelpRequestUpdate } from '@/types/Requests';
+import { formatPhoneNumber } from '@/helpers/utils';
 
 type EditHelpRequestProps = {
   request: HelpRequestData;
@@ -17,7 +18,7 @@ function formToDatabaseMap(request: HelpRequestData, formData: HelpRequestFormDa
     resources: null,
     urgency: formData.urgencia,
     number_of_people: formData.numeroPersonas,
-    town_id: formData.pueblo,
+    town_id: formData.town_id,
     id: request.id,
     user_id: request.user_id,
     type: request.type,
@@ -28,7 +29,7 @@ function formToDatabaseMap(request: HelpRequestData, formData: HelpRequestFormDa
     status: formData.status,
     location: formData.ubicacion,
     name: formData.nombre,
-    contact_info: formData.telefono,
+    contact_info: formatPhoneNumber(formData.telefono),
     additional_info: {
       email: request.additional_info.email,
       consent: request.additional_info.consent,
@@ -42,8 +43,15 @@ export default function EditHelpRequest({ request }: EditHelpRequestProps) {
   const router = useRouter();
 
   const mutation = useMutation({
-    mutationFn: (data: HelpRequestFormData) =>
-      helpRequestService.editRequest(formToDatabaseMap(request, data), request.id),
+    mutationFn: async (data: HelpRequestFormData) => {
+      let town_id = data.town_id;
+      if (data.pueblo !== '') {
+        const { data: townResponse, error: townError } = await townService.createIfNotExists(data.pueblo);
+        if (townError) throw townError;
+        town_id = townResponse[0].id;
+      }
+      return helpRequestService.editRequest(formToDatabaseMap(request, { ...data, town_id: town_id }), request.id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help_requests'] });
       router.push(`/solicitudes/${request.id}`);

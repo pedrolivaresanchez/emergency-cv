@@ -41,7 +41,7 @@ export const helpRequestService = {
       .eq('type', 'necesita')
       .or(`user_id.eq.${user_id},id.in.(${helpRequestIds.join(',')})`);
     if (requestsError) throw requestsError;
-    return requests;
+    return requests as HelpRequestData[];
   },
 
   async getOffersByUser(user_id: string | undefined) {
@@ -52,7 +52,7 @@ export const helpRequestService = {
       .eq('type', 'ofrece')
       .eq('user_id', user_id);
     if (requestsError) throw requestsError;
-    return requests;
+    return requests as HelpRequestData[];
   },
 
   async getAssignments(id: number) {

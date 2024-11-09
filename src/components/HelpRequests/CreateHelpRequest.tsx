@@ -1,7 +1,7 @@
 'use client';
 
 import HelpRequestForm, { HelpRequestFormData } from './HelpRequestForm';
-import { helpRequestService } from '@/lib/service';
+import { helpRequestService, townService } from '@/lib/service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -14,7 +14,7 @@ function formToDatabaseMap(userId: string | null, formData: HelpRequestFormData)
     resources: null,
     urgency: formData.urgencia,
     number_of_people: formData.numeroPersonas,
-    town_id: formData.pueblo,
+    town_id: formData.town_id,
     user_id: userId,
     type: 'necesita',
     help_type: formData.tiposAyuda,
@@ -38,8 +38,18 @@ export default function CreateHelpRequest() {
   const session = useSession();
 
   const mutation = useMutation({
-    mutationFn: (data: HelpRequestFormData) =>
-      helpRequestService.createRequest(formToDatabaseMap(session.user?.id ?? null, data)),
+    mutationFn: async (data: HelpRequestFormData) => {
+      let town_id = data.town_id;
+      if (data.pueblo !== '') {
+        const { data: townResponse, error: townError } = await townService.createIfNotExists(data.pueblo);
+        if (townError) throw townError;
+        town_id = townResponse[0].id;
+      }
+
+      return helpRequestService.createRequest(
+        formToDatabaseMap(session.user?.id ?? null, { ...data, town_id: town_id }),
+      );
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help_requests'] });
       router.push('/casos-activos/solicitudes');

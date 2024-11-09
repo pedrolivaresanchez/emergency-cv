@@ -2,10 +2,9 @@
 
 import GeoLocationMap, { LngLat } from '@/components/map/GeolocationMap';
 import { useRef, useState } from 'react';
-import { locationService } from '../lib/service';
+import { locationService } from '@/lib/service';
+import { useDebouncedFunction, useThrottledFunction } from '@/helpers/hooks';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
-
-import { useDebouncedFunction, useThrottledFunction } from '../helpers/hooks';
 import { OnChangeValue } from 'react-select';
 
 export type AddressMapProps = {

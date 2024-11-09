@@ -21,8 +21,6 @@ function formToDatabaseMap(userId: string | null, formData: HelpOfferFormData): 
     type: 'ofrece',
     other_help: formData.otraAyuda,
     help_type: formData.tiposAyuda,
-    latitude: formData.coordinates?.lat,
-    longitude: formData.coordinates?.lng,
     status: formData.status,
     location: formData.ubicacion,
     name: formData.nombre,
