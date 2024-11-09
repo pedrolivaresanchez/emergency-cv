@@ -20,7 +20,12 @@ type SolicitudCardProps = {
   format?: 'small' | 'large';
 };
 
-export default function SolicitudCard({ caso, showLink = true, showEdit = false, format = 'large' }: SolicitudCardProps) {
+export default function SolicitudCard({
+  caso,
+  showLink = true,
+  showEdit = false,
+  format = 'large',
+}: SolicitudCardProps) {
   const session = useSession();
   const role = useRole();
   const { getTownById } = useTowns();
