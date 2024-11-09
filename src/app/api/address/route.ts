@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { supabase } from '../../../lib/supabase/client';
+import { createClient } from '@/lib/supabase/server';
 
 const mapsTranslationToDbTowns: { [key: string]: string } = {
   Aldaya: 'Aldaia',
@@ -23,22 +23,12 @@ const GOOGLE_URL = `https://maps.googleapis.com/maps/api/geocode/json?key=${proc
 
 export type AddressAndTown = { address: string; town: string };
 
-async function checkAuthentication(request: NextRequest) {
-  // Extract the Supabase token from the authorization header
-  const authHeader = request.headers.get('authorization') || '';
-  const token = authHeader.split('Bearer ')[1];
-
-  if (!token) {
+async function checkAuthentication() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data?.user) {
     return Response.json({
-      error: 'Unauthorized: No token provided in authorization headers!',
-    });
-  }
-
-  // Validate the token
-  const { error } = await supabase.auth.getUser(token);
-  if (error) {
-    return Response.json({
-      error: "Unauthorized: Couldn't decode the token correctly!",
+      error: 'Unauthenticated: User must be logged in',
     });
   }
 }
@@ -80,7 +70,7 @@ function extractAddressAndTown(googleResponse: any) {
 
 export async function POST(request: NextRequest) {
   // will return Response object on error
-  const response = await checkAuthentication(request);
+  const response = await checkAuthentication();
   if (response) {
     return response;
   }
