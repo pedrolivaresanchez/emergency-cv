@@ -16,8 +16,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 			'id, created_at, name, location, description, urgency, number_of_people, contact_info, additional_info->special_situations, status, resources, latitude, longitude, coordinates, help_type, people_needed, other_help,town_id',
 			{ count: 'exact' },
 		)
+		.eq('type', 'ofrece')
 		.eq('id', id)
-		.eq('type', 'necesita')
 		.limit(1)
 		.select();
 

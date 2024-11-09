@@ -1,51 +1,88 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServerRoleClient } from '@/lib/supabase/serverrole';
 
 export async function GET(req: NextRequest) {
-  // Acceder a los parámetros de búsqueda
-  const url = new URL(req.url);
-  const searchParams: any = url.searchParams;
+	try {
+		// Acceder a los parámetros de búsqueda
+		const url = new URL(req.url);
+		const searchParams = url.searchParams;
 
-  const help_type = searchParams.get('type') || null;
-  const town_id = searchParams.get('town') || null;
-  const urgency = searchParams.get('urgency') || null;
-  const currentPage = searchParams.get('page') ?? 1;
-  const itemsPerPage = 10;
+		const help_type = searchParams.get('type');
+		const town_id = searchParams.get('town');
+		const urgency = searchParams.get('urgency');
+		const currentPage = parseInt(searchParams.get('page') ?? '1');
+		const itemsPerPage = 10;
 
-  const supabase = await createServerRoleClient();
-  // const { data: dataUser, error: errorUser } = await supabase.auth.getUser();
-  // if (errorUser || !dataUser?.user) {
-  //   return Response.json({ message: 'Not logged.', errorUser });
-  // }
-	const query = supabase
-    .from('help_requests')
-    .select(
-      'id, created_at, name, location, description, urgency, number_of_people, contact_info, additional_info->special_situations, status, resources, latitude, longitude, coordinates, help_type, people_needed, other_help,town_id',
-      { count: 'exact' },
-    )
-    .eq('type', 'necesita');
+		const supabase = await createServerRoleClient();
 
-  if (help_type !== null) {
-    query.contains('help_type', [help_type]);
-  }
+		// Primero verificamos que el cliente se creó correctamente
+		if (!supabase) {
+			console.error('Error creating Supabase client');
+			return NextResponse.json({ error: 'Database connection error' }, { status: 500 });
+		}
 
-  if (town_id !== null) {
-    query.eq('town_id', town_id);
-  }
+		// Iniciamos la query base
+		let query = supabase
+			.from('help_requests')
+			.select(
+				'id, created_at, name, location, description, urgency, number_of_people, contact_info, additional_info->special_situations, status, resources, latitude, longitude, coordinates, help_type, people_needed, other_help, town_id',
+				{ count: 'exact' }
+			);
 
-  if (urgency !== null) {
-    query.eq('urgency', urgency);
-  }
+		// Agregamos los filtros solo si los valores no son null
+		if (help_type) {
+			console.log('Filtering by help_type:', help_type);
+			query = query.contains('help_type', [help_type]);
+		}
 
-  query.neq('status', 'finished');
+		if (town_id) {
+			console.log('Filtering by town_id:', town_id);
+			query = query.eq('town_id', town_id);
+		}
 
-  const { data, count, error } = await query
-    .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1)
-    .order('created_at', { ascending: false });
+		if (urgency) {
+			console.log('Filtering by urgency:', urgency);
+			query = query.eq('urgency', urgency);
+		}
 
-  if (error) {
-    return Response.json({ error });
-  }
-  const countResponse = count ?? 0;
-  return Response.json({ data, count: countResponse });
+		// Aplicamos el filtro de status
+		query = query.neq('status', 'finished');
+
+		// Calculamos el rango
+		const from = (currentPage - 1) * itemsPerPage;
+		const to = from + itemsPerPage - 1;
+
+		console.log(`Fetching range: ${from} to ${to}`);
+
+		// Ejecutamos la query
+		const { data, count, error } = await query
+			.range(from, to)
+			.order('created_at', { ascending: false });
+
+		// Manejamos los errores específicamente
+		if (error) {
+			console.error('Supabase error:', error);
+			return NextResponse.json({ error: error.message }, { status: 500 });
+		}
+
+		// Verificamos si tenemos datos
+		if (!data || data.length === 0) {
+			console.log('No data found with current filters');
+			return NextResponse.json({ data: [], count: 0 });
+		}
+
+		return NextResponse.json({
+			data,
+			count: count ?? 0,
+			page: currentPage,
+			totalPages: Math.ceil((count ?? 0) / itemsPerPage)
+		});
+
+	} catch (error) {
+		console.error('Unexpected error:', error);
+		return NextResponse.json(
+			{ error: 'An unexpected error occurred' },
+			{ status: 500 }
+		);
+	}
 }
