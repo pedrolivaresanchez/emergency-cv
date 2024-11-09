@@ -37,7 +37,6 @@ const Map: FC<MapProps> = ({ markers = [] }) => {
 
   const { toggleModal } = useModal();
 
-  console.log(selectedMarker);
   return (
     <ReactMap
       initialViewState={{

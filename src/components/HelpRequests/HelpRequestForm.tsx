@@ -43,8 +43,6 @@ export default function HelpRequestForm({
 }: HelpRequestProps) {
   const { user } = useSession();
 
-  console.log(request);
-
   const [formData, setFormData] = useState<HelpRequestFormData>({
     nombre: request?.name || user?.user_metadata?.full_name || user?.user_metadata?.nombre || '',
     telefono: request?.contact_info || user?.user_metadata?.telefono || '',
