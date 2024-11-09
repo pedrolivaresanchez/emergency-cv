@@ -26,7 +26,8 @@ export default function OfferHelp({
   sessionProp,
 }) {
   const { towns } = useTowns();
-  const session = sessionProp || useSession();
+  const sessionProvider = useSession();
+  const session = sessionProp || sessionProvider;
 
   const router = useRouter();
 
