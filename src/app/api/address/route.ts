@@ -23,14 +23,14 @@ const GOOGLE_URL = `https://maps.googleapis.com/maps/api/geocode/json?key=${proc
 
 export type AddressAndTown = { address: string; town: string };
 
-async function checkAuthentication() {
+async function checkAuthentication(): Promise<boolean> {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
+
   if (error || !data?.user) {
-    return Response.json({
-      error: 'Unauthenticated: User must be logged in',
-    });
+    return false;
   }
+  return true;
 }
 
 function normalizeData({ address, town }: AddressAndTown): AddressAndTown {
@@ -68,31 +68,22 @@ function extractAddressAndTown(googleResponse: any) {
   return { address, town };
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest, response: any) {
   // will return Response object on error
-  const response = await checkAuthentication();
-  if (response) {
-    return response;
+  if (!(await checkAuthentication())) {
+    return Response.json({ error: 'Unauthenticated: User must be logged in' }, { status: 401 });
   }
 
   const body = await request.json();
   if (!body.latitude || !body.longitude) {
-    return Response.json({
-      error: 'Latitude and longitude are mandatory fields!',
-    });
+    return Response.json({ error: 'Latitude and longitude are mandatory fields!' }, { status: 401 });
   }
 
   try {
-    const response = await fetch(`${GOOGLE_URL}${body.latitude},${body.longitude}`, {
-      headers: {
-        Referer: request.headers.get('Referer') ?? '',
-      },
-    }).then((value) => value.json());
+    const response = await fetch(`${GOOGLE_URL}${body.latitude},${body.longitude}`).then((value) => value.json());
 
     if (response.error_message) {
-      return Response.json({
-        error: `Error de google: ${response.error_message}`,
-      });
+      return Response.json({ error: `Error de google: ${response.error_message}` }, { status: 502 });
     }
 
     const extractedData = extractAddressAndTown(response);
@@ -100,8 +91,6 @@ export async function POST(request: NextRequest) {
     return Response.json(extractedData);
   } catch (exception) {
     console.error(exception);
-    return Response.json({
-      error: 'An error occured calling google - check logs',
-    });
+    return Response.json({ error: 'An error occured calling google - check logs' }, { status: 500 });
   }
 }
