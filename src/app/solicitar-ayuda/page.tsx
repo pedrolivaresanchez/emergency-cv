@@ -1,7 +1,7 @@
 import { AlertTriangle } from 'lucide-react';
 import Image from 'next/image';
-import { Form } from './_components/Form';
 import { CallCenterLink } from '@/components/CallCenterLink';
+import CreateHelpRequest from '@/components/HelpRequests/CreateHelpRequest';
 
 export default function SolicitarAyuda() {
   return (
@@ -55,7 +55,7 @@ export default function SolicitarAyuda() {
           </div>
         </div>
       </div>
-      <Form />
+      <CreateHelpRequest />
     </div>
   );
 }

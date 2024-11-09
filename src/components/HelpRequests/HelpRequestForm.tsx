@@ -1,52 +1,67 @@
 'use client';
 
-import { useCallback, useState } from 'react';
-import { Check, Mail } from 'lucide-react';
+import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
+import { Mail } from 'lucide-react';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
-import { mapToIdAndLabel, tiposAyudaOptions } from '@/helpers/constants';
-import { formatPhoneNumber, isValidPhone } from '@/helpers/utils';
-import { helpRequestService } from '@/lib/service';
+import { tiposAyudaArray } from '@/helpers/constants';
+import { isValidPhone } from '@/helpers/utils';
 
 import { PhoneInput } from '@/components/PhoneInput';
-import { useRouter } from 'next/navigation';
 import { useTowns } from '@/context/TownProvider';
-import { useSession } from '@/context/SessionProvider';
+import { HelpRequestData, HelpRequestHelpType, HelpRequestUrgencyType } from '@/types/Requests';
+import { Coordinates } from '@/components/HelpOffers/HelpOfferForm';
+import { Town } from '@/types/Town';
+import { toast } from 'sonner';
 
-export default function RequestHelp({
-  data = {},
-  title = 'Solicitar Ayuda',
-  button = ['Enviar solicitud de ayuda', 'Enviando solicitud...'],
-  submitType = 'create',
-  id,
-  redirect = '/casos-activos/solicitudes',
-}) {
+export type HelpRequestFormData = {
+  nombre: string;
+  telefono: string;
+  email: string;
+  ubicacion: string;
+  tiposAyuda: HelpRequestHelpType[];
+  pueblo: number;
+  status: string;
+  coordinates?: Coordinates;
+  numeroPersonas: number;
+  descripcion: string;
+  urgencia: HelpRequestUrgencyType;
+  situacionEspecial: string;
+  consentimiento: boolean;
+};
+
+export interface HelpRequestProps {
+  town?: Town;
+  data?: HelpRequestData;
+  buttonText: [string, string];
+  isSubmitting: boolean;
+  submitMutation: (data: HelpRequestFormData) => Promise<any>;
+}
+
+export default function HelpRequestForm({
+  town,
+  data,
+  buttonText = ['Enviar solicitud de ayuda', 'Enviando solicitud...'],
+  isSubmitting,
+  submitMutation,
+}: HelpRequestProps) {
   const { towns } = useTowns();
-  const router = useRouter();
-  const session = useSession();
-  const userId = session.user?.id;
-  const [formData, setFormData] = useState({
-    nombre: data.name || '',
-    ubicacion: data.location || '',
-    coordinates: { lat: 3, lng: 3 },
-    tiposAyuda: data.help_type || [],
-    numeroPersonas: data.number_of_people || '',
-    descripcion: data.description || '',
-    urgencia: data.urgency || 'alta',
-    situacionEspecial: data.additional_info?.special_situations || '',
-    contacto: data.contact_info || '',
-    consentimiento: data.additional_info?.consent || false,
-    pueblo: data.town_id || '',
-    email: data.additional_info?.email || '',
-    status: data.status || 'active',
+  const [formData, setFormData] = useState<HelpRequestFormData>({
+    nombre: data?.name || '',
+    ubicacion: data?.location || '',
+    coordinates: { lat: 0, lng: 0 },
+    tiposAyuda: data?.help_type || [],
+    numeroPersonas: data?.number_of_people || 1,
+    descripcion: data?.description || '',
+    urgencia: data?.urgency === 'alta' ? 'alta' : data?.urgency === 'media' ? 'media' : 'baja',
+    situacionEspecial: data?.additional_info?.special_situations || '',
+    telefono: data?.contact_info || '',
+    consentimiento: data?.additional_info?.consent || false,
+    pueblo: data?.town_id || town?.id || 0,
+    email: data?.additional_info?.email || '',
+    status: data?.status || 'active',
   });
 
-  const [status, setStatus] = useState({
-    isSubmitting: false,
-    error: null,
-    success: false,
-  });
-
-  const handleTipoAyudaChange = (tipo) => {
+  const handleTipoAyudaChange = (tipo: HelpRequestHelpType) => {
     setFormData((prev) => ({
       ...prev,
       tiposAyuda: prev.tiposAyuda.includes(tipo)
@@ -55,114 +70,44 @@ export default function RequestHelp({
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!formData.ubicacion) {
-      alert('La ubicación es un campo obligatorio');
+      toast.error('La ubicación es un campo obligatorio');
       return;
     }
 
     if (!formData.consentimiento) {
-      alert('Debe aceptar el consentimiento para enviar la solicitud');
+      toast.error('Debe aceptar el consentimiento para enviar la solicitud');
       return;
     }
 
-    if (!isValidPhone(formData.contacto)) {
-      alert('El teléfono de contacto no es válido. Si has usado espacios, elimínalos.');
+    if (!isValidPhone(formData.telefono)) {
+      toast.error('El teléfono de contacto no es válido. Si has usado espacios, elimínalos.');
       return;
     }
 
-    setStatus({ isSubmitting: true, error: null, success: false });
-
-    try {
-      const helpRequestData = {
-        type: 'necesita',
-        name: formData.nombre,
-        location: formData.ubicacion,
-        latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : 3,
-        longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : 3,
-        help_type: formData.tiposAyuda,
-        description: formData.descripcion,
-        urgency: formData.urgencia,
-        number_of_people: parseInt(formData.numeroPersonas) || 1,
-        contact_info: formatPhoneNumber(formData.contacto),
-        additional_info: {
-          special_situations: formData.situacionEspecial || null,
-          consent: true,
-          email: formData.email,
-        },
-        town_id: formData.pueblo,
-        status: formData.status,
-        user_id: userId,
-      };
-      if (submitType === 'create') {
-        const { error } = await helpRequestService.createRequest(helpRequestData);
-        if (error) {
-          throw new Error(error.message);
-        }
-      }
-      if (submitType === 'edit') {
-        console.log('EDITAR');
-        const { error } = await helpRequestService.editRequest(helpRequestData, id);
-        if (error) {
-          throw new Error(error.message);
-        }
-      }
-
-      setFormData({
-        nombre: '',
-        ubicacion: '',
-        coordinates: { lat: null, lng: null },
-        tiposAyuda: [],
-        numeroPersonas: '',
-        descripcion: '',
-        urgencia: 'alta',
-        situacionEspecial: '',
-        contacto: '',
-        pueblo: '',
-        email: '',
-        consentimiento: false,
-        status: 'active',
-      });
-
-      setStatus({ isSubmitting: false, error: null, success: true });
-      setStatus((prev) => ({ ...prev, success: false }));
-      router.push(redirect);
-    } catch (error) {
-      console.log('Error al enviar solicitud:', error.message);
-      setStatus({
-        isSubmitting: false,
-        error: `Error al enviar la solicitud: ${error.message}`,
-        success: false,
-      });
-    }
+    await submitMutation(formData);
   };
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    const checked = 'checked' in e.target ? e.target.checked : false;
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value || '',
     }));
   };
 
-  const handlePhoneChange = useCallback((e) => {
-    setFormData((formData) => ({ ...formData, contacto: e.target.value }));
+  const handlePhoneChange = useCallback((newPhone: string) => {
+    setFormData((formData) => ({ ...formData, contacto: newPhone }));
   }, []);
 
   return (
     <div className="space-y-6">
-      {status.error && (
-        <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
-          <p className="text-red-700">{status.error}</p>
-        </div>
-      )}
-
       {/* Formulario principal */}
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <h1 className="text-2xl font-bold mb-6">{title}</h1>
-
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid md:grid-cols-2 gap-4">
             <div>
@@ -175,9 +120,9 @@ export default function RequestHelp({
                 className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
               />
             </div>
-            <PhoneInput phoneNumber={formData.contacto} onChange={handlePhoneChange} required />
+            <PhoneInput phoneNumber={formData.telefono} onChange={handlePhoneChange} required />
           </div>
-          {submitType === 'create' && (
+          {!data && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Correo electrónico <span className="text-red-500">*</span>
@@ -194,7 +139,7 @@ export default function RequestHelp({
               </p>
             </div>
           )}
-          {submitType === 'edit' && (
+          {!!data && (
             <div>
               <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
                 Progreso de tu solicitud
@@ -217,17 +162,17 @@ export default function RequestHelp({
               Ubicación exacta <span className="text-red-500">*</span>
             </label>
             <AddressAutocomplete
-              initialValue={data.location || ''}
+              initialValue={data?.location || ''}
               onSelect={(address) => {
                 setFormData({
                   ...formData,
                   ubicacion: address.fullAddress,
                   coordinates: address.coordinates
                     ? {
-                        lat: address.coordinates.lat,
-                        lng: address.coordinates.lon,
+                        lat: Number(address.coordinates.lat),
+                        lng: Number(address.coordinates.lon),
                       }
-                    : null,
+                    : undefined,
                 });
               }}
               placeholder="Calle, número, piso, ciudad..."
@@ -241,7 +186,7 @@ export default function RequestHelp({
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de ayuda necesaria</label>
             <div className="grid md:grid-cols-2 gap-2">
-              {mapToIdAndLabel(tiposAyudaOptions).map((tipo) => (
+              {tiposAyudaArray.map((tipo) => (
                 <label
                   key={tipo.id}
                   className={`flex items-center p-3 rounded cursor-pointer ${
@@ -279,7 +224,7 @@ export default function RequestHelp({
               value={formData.descripcion}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-              rows="3"
+              rows={3}
               placeholder="Describa su situación actual y el tipo de ayuda que necesita"
             />
           </div>
@@ -305,7 +250,7 @@ export default function RequestHelp({
               value={formData.situacionEspecial}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
-              rows="2"
+              rows={2}
               placeholder="Personas mayores, niños pequeños, personas con movilidad reducida, necesidades médicas, mascotas..."
             />
           </div>
@@ -355,29 +300,15 @@ export default function RequestHelp({
 
           <button
             type="submit"
-            disabled={status.isSubmitting}
+            disabled={isSubmitting}
             className={`w-full ${
-              status.isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'
+              isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'
             } text-white py-3 px-4 rounded-lg font-semibold`}
           >
-            {status.isSubmitting ? button[1] : button[0]}
+            {isSubmitting ? buttonText[1] : buttonText[0]}
           </button>
         </form>
       </div>
-
-      {status.success && (
-        <div className="fixed bottom-4 right-4 bg-green-100 border-l-4 border-green-500 p-4 rounded shadow-lg z-50">
-          <div className="flex items-center">
-            <Check className="h-5 w-5 text-green-500 mr-2" />
-            <div>
-              <p className="text-green-700 font-medium">Su solicitud de ayuda ha sido registrada correctamente.</p>
-              <p className="text-green-600 text-sm mt-1">
-                Se está coordinando la ayuda. En caso de empeorar la situación, contacte al 112.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

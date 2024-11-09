@@ -12,5 +12,5 @@ export default async function EditarSolicitud({ params }: { params: Promise<{ id
   }
   const numberId = Number(id);
   const request = await helpRequestService.getOne(numberId);
-  return <EditHelpOffer request={request} id={numberId} />;
+  return <EditHelpOffer request={request} />;
 }
