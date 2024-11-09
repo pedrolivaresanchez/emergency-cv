@@ -7,7 +7,7 @@ import { mapToIdAndLabel, tiposAyudaOptions } from '@/helpers/constants';
 import { formatPhoneNumber, isValidPhone } from '@/helpers/utils';
 import { helpRequestService, locationService, townService } from '@/lib/service';
 
-import { PhoneInput } from '@/components/PhoneInput';
+import { PhoneInput } from '@/components/input/PhoneInput';
 import { useRouter } from 'next/navigation';
 import { CallCenterLink } from '@/components/CallCenterLink';
 import AddressMap from './AddressMap';

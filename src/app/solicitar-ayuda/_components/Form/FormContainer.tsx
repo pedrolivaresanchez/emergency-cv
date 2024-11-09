@@ -4,8 +4,8 @@ import React, { FormEvent, useCallback, useMemo, useState } from 'react';
 
 import { FormRenderer } from './FormRenderer';
 import { FormData, Status } from '../types';
-import { formatPhoneNumber, isValidPhone } from '@/helpers/utils';
 import { helpRequestService, townService } from '@/lib/service';
+import { formatPhoneNumber, isValidPhone, removeUrls } from '@/helpers/utils';
 import { Database } from '@/types/database';
 import { Enums } from '@/types/common';
 import { useRouter } from 'next/navigation';
@@ -96,7 +96,7 @@ export function FormContainer({ session }: any) {
           latitude: formData.coordinates ? parseFloat(latitude) : null,
           longitude: formData.coordinates ? parseFloat(longitude) : null,
           help_type: mapHelpToEnum(formData.tiposDeAyuda),
-          description: formData.descripcion,
+          description: removeUrls(formData.descripcion),
           urgency: formData.urgencia,
           number_of_people: formData.numeroDePersonas || 1,
           contact_info: formatPhoneNumber(formData.contacto),

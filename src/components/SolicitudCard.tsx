@@ -7,6 +7,7 @@ import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
 import SolicitudHelpCount from '@/components/SolicitudHelpCount';
 import PhoneInfo from '@/components/PhoneInfo';
 import DeleteHelpRequest from './DeleteHelpRequest';
+import { textWithEllipsis } from '@/helpers/utils';
 import { useTowns } from '@/context/TownProvider';
 import { useRole } from '@/context/RoleProvider';
 import { useState } from 'react';
@@ -16,9 +17,15 @@ type SolicitudCardProps = {
   caso: HelpRequestData;
   showLink?: boolean;
   showEdit?: boolean;
+  format?: 'small' | 'large';
 };
 
-export default function SolicitudCard({ caso, showLink = true, showEdit = false }: SolicitudCardProps) {
+export default function SolicitudCard({
+  caso,
+  showLink = true,
+  showEdit = false,
+  format = 'large',
+}: SolicitudCardProps) {
   const session = useSession();
   const role = useRole();
   const { getTownById } = useTowns();
@@ -78,7 +85,7 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
         </div>
         <div className="px-6 py-4">
           <p className="text-gray-700 first-letter:capitalize" style={{ wordBreak: 'break-word' }}>
-            {caso.description}
+            {format === 'small' ? textWithEllipsis(caso.description, 250) : caso.description}
           </p>
         </div>
         <div className="flex flex-col sm:flex-row justify-between items-start md:items-end gap-4 px-6 pb-4">
