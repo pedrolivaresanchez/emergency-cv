@@ -22,6 +22,7 @@ export default function ListaSolicitudesPage() {
 
 function ListaSolicitudes() {
   const session = useSession();
+  const userId = session.user?.id;
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -73,7 +74,7 @@ function ListaSolicitudes() {
           .from('help_requests')
           .select('*', { count: 'exact' })
           .eq('type', 'ofrece')
-          .contains('additional_info', { email: session.user?.email });
+          .eq('user_id', userId ?? '');
         // Solo agregar filtro si no es "todos"
         if (filtroData.pueblo !== 'todos') {
           query.eq('town_id', filtroData.pueblo);
@@ -105,7 +106,7 @@ function ListaSolicitudes() {
     }
 
     fetchData();
-  }, [filtroData, currentPage]);
+  }, [userId, filtroData, currentPage]);
 
   if (loading) {
     return (

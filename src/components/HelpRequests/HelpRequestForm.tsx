@@ -5,7 +5,6 @@ import { isValidPhone } from '@/helpers/utils';
 import { tiposAyudaArray } from '@/helpers/constants';
 import { PhoneInput } from '@/components/input/PhoneInput';
 import { HelpRequestData, HelpRequestHelpType, HelpRequestUrgencyType } from '@/types/Requests';
-import { Town } from '@/types/Town';
 import { toast } from 'sonner';
 import { LimitedTextarea } from '@/components/input/LimitedTextarea';
 import { useSession } from '@/context/SessionProvider';
@@ -43,7 +42,6 @@ export default function HelpRequestForm({
   submitMutation,
 }: HelpRequestProps) {
   const { user } = useSession();
-  const userId = user?.id;
   const [formData, setFormData] = useState<HelpRequestFormData>({
     nombre: data?.name || '',
     ubicacion: data?.location || '',

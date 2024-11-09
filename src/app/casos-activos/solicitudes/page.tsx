@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState, useCallback, useMemo, ChangeEventHandler } from 'react';
+import { Suspense, useEffect, useState, useCallback, ChangeEventHandler } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
 import Pagination from '@/components/Pagination';
@@ -74,7 +74,7 @@ function Solicitudes() {
 
   const handleToggleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     (e) => changeDataFilter('soloSinAsignar', `${e.target.checked}`),
-    [],
+    [changeDataFilter],
   );
 
   useEffect(() => {
