@@ -7,54 +7,54 @@ import { helpRequestService } from '@/lib/service';
 import { useParams } from 'next/navigation';
 
 export default function CasoDetalle() {
-  const { id } = useParams<{ id: string }>();
+	const { id } = useParams<{ id: string }>();
 
-  const {
-    data: request,
-    isLoading,
-    error,
-  } = useQuery<HelpRequestData>({
-    queryKey: ['help_requests', { id: id }],
-    queryFn: () => helpRequestService.getOne(Number(id)),
-  });
+	const {
+		data: request,
+		isLoading,
+		error,
+	} = useQuery<HelpRequestData>({
+		queryKey: ['help_requests', { id: id }],
+		queryFn: () => helpRequestService.getOne(Number(id)),
+	});
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-  if (error || request === undefined) {
-    return (
-      <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex justify-start">
-          <button
-            className="flex flex-row items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-            onClick={() => history.back()}
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver
-          </button>
-        </div>
-        <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
-          <p className="text-red-700">No se encontró la solicitud.</p>
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
-      <div className="flex justify-start">
-        <button
-          className="flex flex-row items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-          onClick={() => history.back()}
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Volver
-        </button>
-      </div>
-      <SolicitudCard caso={request} showLink={false} showEdit={true} />
-    </div>
-  );
+	if (isLoading) {
+		return (
+			<div className="flex justify-center items-center min-h-screen">
+				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+			</div>
+		);
+	}
+	if (error || request === undefined) {
+		return (
+			<div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
+				<div className="flex justify-start">
+					<button
+						className="flex flex-row items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+						onClick={() => history.back()}
+					>
+						<ArrowLeft className="w-4 h-4 mr-2" />
+						Volver
+					</button>
+				</div>
+				<div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
+					<p className="text-red-700">No se encontró la solicitud.</p>
+				</div>
+			</div>
+		);
+	}
+	return (
+		<div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
+			<div className="flex justify-start">
+				<button
+					className="flex flex-row items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+					onClick={() => history.back()}
+				>
+					<ArrowLeft className="w-4 h-4 mr-2" />
+					Volver
+				</button>
+			</div>
+			<SolicitudCard caso={request as any} showLink={false} showEdit={true} />
+		</div>
+	);
 }
