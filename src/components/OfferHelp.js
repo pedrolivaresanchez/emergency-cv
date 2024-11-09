@@ -23,16 +23,19 @@ export default function OfferHelp({
   id = 0,
   redirect = '/casos-activos/ofertas',
   submitType = 'create',
+  sessionProp,
 }) {
   const { towns } = useTowns();
-  const session = useSession();
+  const session = sessionProp || useSession();
 
   const router = useRouter();
 
   const userId = session.user?.id;
 
+  const isLoggedIn = Boolean(session?.user);
+
   const [formData, setFormData] = useState({
-    nombre: data.name || session?.user?.user_metadata?.full_name || '',
+    nombre: data.name || session?.user?.user_metadata?.full_name || session?.user?.user_metadata?.nombre || '',
     telefono: data.contact_info || session?.user?.user_metadata?.telefono || '',
     email: data.additional_info?.email || session?.user?.user_metadata?.email || '',
     ubicacion: data.location || '',
@@ -201,7 +204,7 @@ export default function OfferHelp({
 
       {/* Formulario */}
 
-      <div className="space-y-6 max-h-[65vh] overflow-y-auto p-2">
+      <div className="space-y-6 overflow-y-auto p-2">
         {/* Datos personales */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
@@ -218,21 +221,25 @@ export default function OfferHelp({
           </div>
           <PhoneInput phoneNumber={formData.telefono} onChange={handlePhoneChange} required />
         </div>
-
-        {submitType === 'create' && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="userEmail">
-              Correo electrónico
-            </label>
-            <input
-              id="userEmail"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            />
-          </div>
-        )}
+        {/*
+          MANTENIDO EN CASO DE RE UTILIZAR EN EL FUTURO
+          ACTUALMENTE NO APARECERA DE NINGUNA FORMA
+        */}
+        {submitType === 'create' ||
+          (isLoggedIn && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="userEmail">
+                Correo electrónico
+              </label>
+              <input
+                id="userEmail"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              />
+            </div>
+          ))}
         {submitType === 'edit' && (
           <div>
             <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">

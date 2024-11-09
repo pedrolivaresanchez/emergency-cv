@@ -72,23 +72,29 @@ export function FormRenderer({
             </div>
             <PhoneInput phoneNumber={formData.contacto} onChange={handlePhoneChange} required />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Correo electrónico <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleEmailChange}
-              className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            />
-            <p className="mt-1 text-sm text-gray-500">
-              {isUserLoggedIn
-                ? 'Se utilizará para que puedas eliminar o editar la información de tu solicitud'
-                : 'Se utilizará para que puedas actualizar tu solicitud y marcarla como completada. Para realizar cambios, deberás registrarte con el mismo email'}
-            </p>
-          </div>
+          {/*
+          MANTENIDO EN CASO DE RE UTILIZAR EN EL FUTURO
+          ACTUALMENTE NO APARECERA DE NINGUNA FORMA
+          */}
+          {!isUserLoggedIn && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Correo electrónico <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleEmailChange}
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              />
+              <p className="mt-1 text-sm text-gray-500">
+                {isUserLoggedIn
+                  ? 'Se utilizará para que puedas eliminar o editar la información de tu solicitud'
+                  : 'Se utilizará para que puedas actualizar tu solicitud y marcarla como completada. Para realizar cambios, deberás registrarte con el mismo email'}
+              </p>
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Ubicación exacta <span className="text-red-500">*</span>

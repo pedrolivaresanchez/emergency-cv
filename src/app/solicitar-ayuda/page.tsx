@@ -1,9 +1,19 @@
-import { AlertTriangle } from 'lucide-react';
+'use client';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Form } from './_components/Form';
 import { CallCenterLink } from '@/components/CallCenterLink';
+import { AlertTriangle } from 'lucide-react';
+import { supabase } from '@/lib/supabase/client';
+import { Form } from './_components/Form';
 
 export default function SolicitarAyuda() {
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
+      setSession(session);
+    });
+  }, []);
   return (
     <div className="space-y-6">
       {/* Banner de emergencia */}
@@ -55,7 +65,13 @@ export default function SolicitarAyuda() {
           </div>
         </div>
       </div>
-      <Form />
+      {session ? (
+        <Form session={session} />
+      ) : (
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        </div>
+      )}
     </div>
   );
 }

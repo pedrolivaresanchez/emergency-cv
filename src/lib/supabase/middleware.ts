@@ -36,6 +36,19 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (
+    !user &&
+    request.nextUrl.pathname.startsWith('/solicitudes/editar') ||
+    !user &&
+    request.nextUrl.pathname.startsWith('/ofertas/editar')
+  ) {
+    url.pathname = '/auth'
+    return NextResponse.redirect(url)
+  }
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:
