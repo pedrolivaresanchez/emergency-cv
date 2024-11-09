@@ -31,7 +31,6 @@ const THROTTLE_MS = 2000;
 const DEBOUNCE_MS = 400;
 
 export default function AddressMap({ onNewAddressDescriptor, initialAddressDescriptor, titulo }: AddressMapProps) {
-  const [sessionToken, setSessionToken] = useState('');
   const isEdit = useRef(initialAddressDescriptor?.address !== '');
   const [status, setStatus] = useState<PermissionState | 'unknown'>('unknown');
   const [lngLat, setLngLat] = useState<LngLat | undefined>(initialAddressDescriptor?.coordinates ?? undefined);
@@ -40,13 +39,6 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
     town: '',
     coordinates: null,
   });
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }: any) => {
-      debugger;
-      setSessionToken(session?.access_token || '');
-    });
-  }, []);
 
   const handleSelect = async (newValue: OnChangeValue<PlaceOption, false>) => {
     if (newValue && newValue.value) {
@@ -73,7 +65,6 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
     const { address, town, error } = await locationService.getFormattedAddress(
       String(coordinates.lng),
       String(coordinates.lat),
-      sessionToken,
     );
     if (error) {
       throw { message: `Error inesperado con el geocoding endpoint: ${error}` };
