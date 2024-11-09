@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Google.Apis.Auth.OAuth2;
+﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
@@ -34,10 +33,18 @@ internal sealed class GoogleSheetsService
 
     private async Task InsertOffersRequestsAsync(List<HelpRequest> requests)
     {
+        var sheetName = "OfreceCRMV2";
+        var clearRequest = _sheetsService.Spreadsheets.Values.Clear(
+            new ClearValuesRequest(),
+            _spreadsheetId,
+            $"{sheetName}!A1:ZZ"
+        );
+        await clearRequest.ExecuteAsync();
+
         var headerRow = new List<object>
         {
-            "Created At", "ID", "Status", "Town","Description", "Help Types", "Availability", "Vehicle",
-            "Number of People", "Name", "Location", "ContactInfo", "People Needed",
+            "Created At", "ID", "Status", "Town","Description", "Help Types", "L", "M", "X", "J", "V", "S", "D",
+            "Vehicle", "Number of People", "Name", "Location", "ContactInfo", "People Needed",
         };
 
         var offerRequests = requests.Where(x => x.Type == "ofrece");
@@ -52,7 +59,13 @@ internal sealed class GoogleSheetsService
             request.Town?.Name ?? "",
             request.Description ?? "",
             string.Join(", ", request.HelpType ?? []),
-            string.Join(", ", request.Resources?.Availability ?? []),
+            request.Resources != null ? request.Resources.Availability.Contains("Lunes") ? "X" : "" : "",
+            request.Resources != null ? request.Resources.Availability.Contains("Martes") ? "X" : "" : "",
+            request.Resources != null ? request.Resources.Availability.Contains("Miércoles") ? "X" : "" : "",
+            request.Resources != null ? request.Resources.Availability.Contains("Jueves") ? "X" : "" : "",
+            request.Resources != null ? request.Resources.Availability.Contains("Viernes") ? "X" : "" : "",
+            request.Resources != null ? request.Resources.Availability.Contains("Sábado") ? "X" : "" : "",
+            request.Resources != null ? request.Resources.Availability.Contains("Domingo") ? "X" : "" : "",
             request.Resources?.Vehicle ?? "NO",
             request.NumberOfPeople ?? 0,
             request.Name ?? "",
@@ -73,7 +86,7 @@ internal sealed class GoogleSheetsService
         var updateRequest = _sheetsService.Spreadsheets.Values.Update(
             valueRange,
             _spreadsheetId,
-            "OfreceCRMV2!A1:O"
+            $"{sheetName}!A1:S"
         );
         updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
 
@@ -82,6 +95,14 @@ internal sealed class GoogleSheetsService
 
     private async Task InsertNeedsRequestsAsync(List<HelpRequest> requests)
     {
+        string sheetName = "NecesitaCRMV2";
+        var clearRequest = _sheetsService.Spreadsheets.Values.Clear(
+            new ClearValuesRequest(),
+            _spreadsheetId,
+            $"{sheetName}!A2:ZZ"
+        );
+        await clearRequest.ExecuteAsync();
+
         var headerRow = new List<object>
         {
             "Created At", "ID", "Status", "Town","Description", "Help Types",  "Number of People",
@@ -116,7 +137,7 @@ internal sealed class GoogleSheetsService
         var updateRequest = _sheetsService.Spreadsheets.Values.Update(
             valueRange,
             _spreadsheetId,
-            "NecesitaCRMV2!A1:O"
+            $"{sheetName}!A1:K"
         );
         updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
 

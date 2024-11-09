@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase/client';
 import { MapPin, Phone, Package, House, Contact, Megaphone } from 'lucide-react';
 import AddressAutocomplete, { AddressDetails } from '@/components/AddressAutocomplete';
 import { isValidPhone } from '@/helpers/utils';
-import { PhoneInput } from '@/components/PhoneInput';
+import { PhoneInput } from '@/components/input/PhoneInput';
 import { CollectionPointData, CollectionPointInsert } from '@/types/DataPoints';
 
 export const dynamic = 'force-dynamic';

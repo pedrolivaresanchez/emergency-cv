@@ -15,7 +15,6 @@ export default function DeleteHelpRequest({ helpRequestId, onDelete }: DeleteReq
   const { toggleModal } = useModal();
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState({});
-  const [data, setData] = useState({});
 
   const MODAL_NAME = `Eliminar-Solicitud-${helpRequestId}`;
 
@@ -31,8 +30,9 @@ export default function DeleteHelpRequest({ helpRequestId, onDelete }: DeleteReq
       setError(error);
       return;
     }
-    if (data) setData(data);
-    onDelete();
+    if (data) {
+      onDelete();
+    }
     toggleModal(MODAL_NAME, false);
   }
   async function handleSubmit(e: MouseEvent) {

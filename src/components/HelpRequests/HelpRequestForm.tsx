@@ -5,13 +5,14 @@ import { Mail } from 'lucide-react';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
 import { tiposAyudaArray } from '@/helpers/constants';
 import { isValidPhone } from '@/helpers/utils';
-
-import { PhoneInput } from '@/components/PhoneInput';
+import { PhoneInput } from '@/components/input/PhoneInput';
 import { useTowns } from '@/context/TownProvider';
 import { HelpRequestData, HelpRequestHelpType, HelpRequestUrgencyType } from '@/types/Requests';
 import { Coordinates } from '@/components/HelpOffers/HelpOfferForm';
 import { Town } from '@/types/Town';
 import { toast } from 'sonner';
+import { LimitedTextarea } from '@/components/input/LimitedTextarea';
+import { useSession } from '@/context/SessionProvider';
 
 export type HelpRequestFormData = {
   nombre: string;
@@ -45,6 +46,8 @@ export default function HelpRequestForm({
   submitMutation,
 }: HelpRequestProps) {
   const { towns } = useTowns();
+  const { user } = useSession();
+
   const [formData, setFormData] = useState<HelpRequestFormData>({
     nombre: data?.name || '',
     ubicacion: data?.location || '',
@@ -122,7 +125,7 @@ export default function HelpRequestForm({
             </div>
             <PhoneInput phoneNumber={formData.telefono} onChange={handlePhoneChange} required />
           </div>
-          {!data && (
+          {!data && !user && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Correo electrónico <span className="text-red-500">*</span>
@@ -219,13 +222,14 @@ export default function HelpRequestForm({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Descripción de la situación</label>
-            <textarea
+            <LimitedTextarea
               name="descripcion"
               value={formData.descripcion}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500"
               rows={3}
               placeholder="Describa su situación actual y el tipo de ayuda que necesita"
+              maxLength={350}
             />
           </div>
 

@@ -7,17 +7,25 @@ import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
 import SolicitudHelpCount from '@/components/SolicitudHelpCount';
 import PhoneInfo from '@/components/PhoneInfo';
 import DeleteHelpRequest from './DeleteHelpRequest';
+import { textWithEllipsis } from '@/helpers/utils';
 import { useTowns } from '@/context/TownProvider';
 import { useRole } from '@/context/RoleProvider';
 import { useState } from 'react';
+import ChangeUrgencyHelpRequest from './ChangeUrgencyHelpRequest';
 
 type SolicitudCardProps = {
   caso: HelpRequestData;
   showLink?: boolean;
   showEdit?: boolean;
+  format?: 'small' | 'large';
 };
 
-export default function SolicitudCard({ caso, showLink = true, showEdit = false }: SolicitudCardProps) {
+export default function SolicitudCard({
+  caso,
+  showLink = true,
+  showEdit = false,
+  format = 'large',
+}: SolicitudCardProps) {
   const session = useSession();
   const role = useRole();
   const { getTownById } = useTowns();
@@ -26,7 +34,7 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
   const isAdmin = role === 'admin';
   const [deleted, setDeleted] = useState(false);
   const isMyRequest = session.user?.id && session.user.id === caso.user_id;
-
+  const [updateUrgency, setUpdateUrgency] = useState(caso.urgency);
   return (
     !deleted && (
       <div key={caso.id} className="rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5">
@@ -35,9 +43,9 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
             <div className="flex flex-row gap-4 items-center">
               <AlertTriangle
                 className={`h-10 w-10 flex-shrink-0 ${
-                  caso.urgency === 'alta'
+                  updateUrgency === 'alta'
                     ? 'text-red-500'
-                    : caso.urgency === 'media'
+                    : updateUrgency === 'media'
                       ? 'text-yellow-600'
                       : 'text-green-600'
                 }`}
@@ -45,14 +53,14 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
               <div className="flex flex-col">
                 <span
                   className={`text-lg font-bold ${
-                    caso.urgency === 'alta'
+                    updateUrgency === 'alta'
                       ? 'text-red-500'
-                      : caso.urgency === 'media'
+                      : updateUrgency === 'media'
                         ? 'text-yellow-600'
                         : 'text-green-600'
                   }`}
                 >
-                  Urgencia: {caso.urgency === 'alta' ? 'Alta' : caso.urgency === 'media' ? 'Media' : 'Baja'}
+                  Urgencia: {updateUrgency === 'alta' ? 'Alta' : updateUrgency === 'media' ? 'Media' : 'Baja'}
                 </span>
                 <span className="text-sm text-gray-600">#{caso.id}</span>
               </div>
@@ -77,7 +85,7 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
         </div>
         <div className="px-6 py-4">
           <p className="text-gray-700 first-letter:capitalize" style={{ wordBreak: 'break-word' }}>
-            {caso.description}
+            {format === 'small' ? textWithEllipsis(caso.description, 250) : caso.description}
           </p>
         </div>
         <div className="flex flex-col sm:flex-row justify-between items-start md:items-end gap-4 px-6 pb-4">
@@ -99,7 +107,7 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
             {caso.contact_info && (
               <div className="flex items-start gap-2">
                 <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                <PhoneInfo caseInfo={caso} />
+                <PhoneInfo isAdmin caseInfo={caso} />
               </div>
             )}
             {caso.help_type && (
@@ -182,6 +190,13 @@ export default function SolicitudCard({ caso, showLink = true, showEdit = false 
               </Link>
             )}
             <AsignarSolicitudButton helpRequest={caso} />
+            {isAdmin && (
+              <ChangeUrgencyHelpRequest
+                onUpdate={setUpdateUrgency}
+                currentUrgency={caso.urgency!}
+                helpRequestId={caso.id}
+              />
+            )}
             {isAdmin && <DeleteHelpRequest helpRequestId={caso.id} onDelete={() => setDeleted(true)} />}
           </div>
         </div>

@@ -30,8 +30,8 @@ function formToDatabaseMap(request: HelpRequestData, formData: HelpRequestFormDa
     name: formData.nombre,
     contact_info: formData.telefono,
     additional_info: {
-      email: formData.email,
-      consent: formData.consentimiento,
+      email: request.additional_info.email,
+      consent: request.additional_info.consent,
       special_situations: formData.situacionEspecial,
     },
   };
@@ -42,7 +42,8 @@ export default function EditHelpRequest({ request }: EditHelpRequestProps) {
   const router = useRouter();
 
   const mutation = useMutation({
-    mutationFn: (data: HelpRequestFormData) => helpRequestService.createRequest(formToDatabaseMap(request, data)),
+    mutationFn: (data: HelpRequestFormData) =>
+      helpRequestService.editRequest(formToDatabaseMap(request, data), request.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help_requests'] });
       router.push(`/solicitudes/${request.id}`);
