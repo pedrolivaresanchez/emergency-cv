@@ -3,11 +3,11 @@ import React from 'react';
 import { Check } from 'lucide-react';
 
 import { PhoneInput } from '@/components/PhoneInput';
-import AddressAutocomplete from '@/components/AddressAutocomplete.js';
 import { TIPOS_DE_AYUDA } from '../constants';
 import { TipoDeAyudaInputRenderer } from '../TipoDeAyudaInputRenderer';
 import { FormData, HelpCategory, Status } from '../types';
-import { TownSelector } from '../TownSelector';
+import AddressMap, { AddressDescriptor } from '../../../../components/AddressMap';
+import { LngLat } from '@/components/map/GeolocationMap';
 
 type FormRendererProps = {
   status: Status;
@@ -16,11 +16,10 @@ type FormRendererProps = {
   selectedHelp: Map<HelpCategory['id'], boolean>;
   handleSubmit: React.FormEventHandler<HTMLFormElement>;
   handlePhoneChange: (phoneNumber: string) => void;
-  handleAddressSelection: (address: string) => void;
+  handleNewAddressDescriptor: (addressDescriptor: AddressDescriptor) => void;
   handleSituacionEspecialChange: React.ChangeEventHandler<HTMLTextAreaElement>;
   handleUrgencyChange: React.ChangeEventHandler<HTMLSelectElement>;
   handleDescriptionChange: React.ChangeEventHandler<HTMLTextAreaElement>;
-  handleTownChange: React.ChangeEventHandler<HTMLSelectElement>;
   handleTipoAyudaChange: React.ChangeEventHandler<HTMLInputElement>;
   handleNameChange: React.ChangeEventHandler<HTMLInputElement>;
   handleEmailChange: React.ChangeEventHandler<HTMLInputElement>;
@@ -34,11 +33,10 @@ export function FormRenderer({
   formData,
   isUserLoggedIn,
   handlePhoneChange,
-  handleAddressSelection,
+  handleNewAddressDescriptor,
   handleSituacionEspecialChange,
   handleUrgencyChange,
   handleDescriptionChange,
-  handleTownChange,
   handleTipoAyudaChange,
   handleNameChange,
   handleEmailChange,
@@ -173,8 +171,10 @@ export function FormRenderer({
               placeholder="Personas mayores, niños pequeños, personas con movilidad reducida, necesidades médicas, mascotas..."
             />
           </div>
-          {/* Pueblos */}
-          <TownSelector handleChange={handleTownChange} selectedTown={formData.pueblo} />
+
+          <div>
+            <AddressMap onNewAddressDescriptor={handleNewAddressDescriptor} titulo="Ubicación exacta" />
+          </div>
 
           {/* Consentimiento */}
           <div className="flex items-start">

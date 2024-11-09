@@ -11,3 +11,7 @@ body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
 }
+
+.maplibregl-ctrl-top-right div:nth-child(2) {
+  display: none;
+}
