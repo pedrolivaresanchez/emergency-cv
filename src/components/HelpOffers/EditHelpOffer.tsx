@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { HelpRequestData, HelpRequestUpdate } from '@/types/Requests';
+import { HeartHandshake } from 'lucide-react';
 
 type EditHelpOfferProps = {
   request: HelpRequestData;
@@ -42,7 +43,8 @@ export default function EditHelpOffer({ request }: EditHelpOfferProps) {
   const router = useRouter();
 
   const mutation = useMutation({
-    mutationFn: (data: HelpOfferFormData) => helpRequestService.createRequest(formToDatabaseMap(request, data)),
+    mutationFn: (data: HelpOfferFormData) =>
+      helpRequestService.editRequest(formToDatabaseMap(request, data), request.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help_requests'] });
       router.push(`/ofertas/${request.id}`);
@@ -53,10 +55,13 @@ export default function EditHelpOffer({ request }: EditHelpOfferProps) {
     },
   });
   return (
-    <HelpOfferForm
-      data={request}
-      submitMutation={mutation.mutateAsync}
-      buttonText={['Guardar cambios', 'Guardando...']}
-    />
+    <div className="space-y-6 bg-white rounded-lg shadow-lg p-6">
+      <h1 className="text-2xl font-bold mb-6">Editar oferta de ayuda</h1>
+      <HelpOfferForm
+        data={request}
+        submitMutation={mutation.mutateAsync}
+        buttonText={['Guardar cambios', 'Guardando...']}
+      />
+    </div>
   );
 }

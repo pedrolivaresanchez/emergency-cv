@@ -140,7 +140,7 @@ function Ofertas() {
             </p>
           </div>
         ) : (
-          data.map((caso) => <OfferCard caso={caso} showLink={true} key={caso.id} />)
+          data.map((caso) => <OfferCard caso={caso} showLink={true} showEdit={true} key={caso.id} />)
         )}
       </div>
       <div className="flex items-center justify-center">

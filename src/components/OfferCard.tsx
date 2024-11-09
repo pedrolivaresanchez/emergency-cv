@@ -3,13 +3,17 @@ import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
 import { HelpRequestData } from '@/types/Requests';
 import { useTowns } from '@/context/TownProvider';
+import { useSession } from '@/context/SessionProvider';
 
 type OfferCardProps = {
   caso: HelpRequestData;
   showLink?: boolean;
+  showEdit?: boolean;
 };
-export default function OfferCard({ caso, showLink = true }: OfferCardProps) {
+export default function OfferCard({ caso, showLink = true, showEdit = false }: OfferCardProps) {
   const { towns } = useTowns();
+  const session = useSession();
+  const isMyOffer = session.user?.id && session.user.id === caso.user_id;
   return (
     <div key={caso.id + 'a'} className="rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5">
       <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center justify-between border-b border-gray-900/10 px-6 py-4">
@@ -126,6 +130,14 @@ export default function OfferCard({ caso, showLink = true }: OfferCardProps) {
           </div>
         </div>
         <div className="flex flex-col pt-4 sm:pt-0 sm:flex-row w-full sm:w-auto justify-end gap-2">
+          {isMyOffer && showEdit && (
+            <Link
+              href={'/ofertas/editar/' + caso.id}
+              className={`w-full rounded-xl text-center px-4 py-2 font-semibold text-white sm:w-auto bg-red-500`}
+            >
+              Editar
+            </Link>
+          )}
           {showLink && (
             <Link
               href={'/ofertas/' + caso.id}

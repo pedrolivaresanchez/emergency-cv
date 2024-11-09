@@ -1,5 +1,4 @@
-import React, { useState, useCallback } from 'react';
-import AddressAutocomplete from '@/components/AddressAutocomplete';
+import React, { useState, useCallback, useEffect } from 'react';
 import { PhoneInput } from '@/components/input/PhoneInput';
 import { isValidPhone } from '@/helpers/utils';
 import { HelpRequestData, HelpRequestHelpType } from '@/types/Requests';
@@ -7,6 +6,8 @@ import { useSession } from '@/context/SessionProvider';
 import { tiposAyudaArray } from '@/helpers/constants';
 import { Town } from '@/types/Town';
 import Unauthorized from '@/components/Unauthorized';
+import { useTowns } from '@/context/TownProvider';
+import { toast } from 'sonner';
 
 export type HelpOfferFormData = {
   aceptaProtocolo: boolean;
@@ -31,8 +32,9 @@ export interface HelpOfferProps {
   submitMutation: (data: HelpOfferFormData) => Promise<any>;
 }
 
-export default function HelpOfferForm({ town, data, buttonText, submitMutation }: HelpOfferProps) {
+export default function HelpOfferForm({ data, buttonText, submitMutation }: HelpOfferProps) {
   const { user } = useSession();
+  const { towns } = useTowns();
 
   const [formData, setFormData] = useState<HelpOfferFormData>({
     nombre: data?.name || user?.user_metadata?.full_name || user?.user_metadata?.nombre || '',
@@ -50,6 +52,24 @@ export default function HelpOfferForm({ town, data, buttonText, submitMutation }
     status: data?.status || '',
   });
 
+  useEffect(() => {
+    setFormData({
+      nombre: data?.name || user?.user_metadata?.full_name || user?.user_metadata?.nombre || '',
+      telefono: data?.contact_info || user?.user_metadata?.telefono || '',
+      ubicacion: data?.location || '',
+      tiposAyuda: data?.help_type || [],
+      otraAyuda: data?.other_help || '',
+      vehiculo: data?.resources?.vehicle || '',
+      disponibilidad: data?.resources?.availability || [],
+      radio: data?.resources?.radius || 1,
+      experiencia: data?.additional_info?.experience || '',
+      comentarios: data?.description || '',
+      aceptaProtocolo: !!data,
+      pueblo: data?.town_id || 0,
+      status: data?.status || '',
+    });
+  }, [user, data]);
+
   const handleTipoAyudaChange = (tipo: HelpRequestHelpType) => {
     setFormData((prev) => ({
       ...prev,
@@ -66,15 +86,15 @@ export default function HelpOfferForm({ town, data, buttonText, submitMutation }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.ubicacion) {
-      alert('La ubicación es obligatoria');
+      toast.warning('La ubicación es obligatoria');
       return;
     }
     if (!formData.aceptaProtocolo) {
-      alert('Debes aceptar el protocolo de actuación');
+      toast.warning('Debes aceptar el protocolo de actuación');
       return;
     }
     if (!isValidPhone(formData.telefono)) {
-      alert('El teléfono de contacto no es válido.');
+      toast.warning('El teléfono de contacto no es válido.');
       return;
     }
     await submitMutation(formData);
@@ -101,16 +121,15 @@ export default function HelpOfferForm({ town, data, buttonText, submitMutation }
 
         {/* Ubicación exacta */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Ubicación exacta *</label>
-          <AddressAutocomplete
-            initialValue={data?.location ?? ''}
-            onSelect={(address) => {
-              setFormData({
-                ...formData,
-                ubicacion: address.fullAddress,
-              });
-            }}
-            placeholder="Calle, número, piso, ciudad..."
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            ¿De dónde eres? <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={formData.ubicacion}
+            onChange={(e) => setFormData({ ...formData, ubicacion: e.target.value })}
+            placeholder="Ciudad o pueblo"
+            className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 focus:border-green-500"
             required
           />
         </div>
@@ -210,7 +229,9 @@ export default function HelpOfferForm({ town, data, buttonText, submitMutation }
 
         {/* Pueblo */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Pueblo *</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Pueblo al que vas a ayudar <span className="text-red-500">*</span>
+          </label>
           <select
             value={formData.pueblo?.toString()}
             onChange={(e) => setFormData({ ...formData, pueblo: Number(e.target.value) })}
@@ -218,11 +239,11 @@ export default function HelpOfferForm({ town, data, buttonText, submitMutation }
             required
           >
             <option value="">Selecciona un pueblo</option>
-            {town && (
-              <option key={town.id} value={town.id}>
-                {town.name}
+            {towns.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name}
               </option>
-            )}
+            ))}
           </select>
         </div>
 
@@ -241,7 +262,7 @@ export default function HelpOfferForm({ town, data, buttonText, submitMutation }
       </div>
 
       {/* Botones de acción */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-4 mt-6">
         <button
           type="submit"
           className="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg font-semibold"
