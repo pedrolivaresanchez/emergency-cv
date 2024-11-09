@@ -29,9 +29,8 @@ const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_
     [] as Enums['help_type_enum'][],
   );
 
-export function FormContainer() {
+export function FormContainer({ session }: any) {
   const router = useRouter();
-  const session = useSession();
 
   const userId = session.user?.id;
 
