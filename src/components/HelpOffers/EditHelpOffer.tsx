@@ -31,7 +31,7 @@ function formToDatabaseMap(request: HelpRequestData, formData: HelpOfferFormData
     name: formData.nombre,
     contact_info: formData.telefono,
     additional_info: {
-      email: formData.email,
+      email: request.additional_info.email,
       experience: formData.experiencia,
     },
   };
@@ -54,10 +54,7 @@ export default function EditHelpOffer({ request }: EditHelpOfferProps) {
   });
   return (
     <HelpOfferForm
-      data={{
-        ...request,
-        coordinates: { lat: (request.latitude ?? 0)?.toString(), lng: (request.longitude ?? 0)?.toString() },
-      }}
+      data={request}
       submitMutation={mutation.mutateAsync}
       buttonText={['Guardar cambios', 'Guardando...']}
     />

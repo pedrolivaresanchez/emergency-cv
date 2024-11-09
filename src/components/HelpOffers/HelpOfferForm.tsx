@@ -6,12 +6,12 @@ import { HelpRequestData, HelpRequestHelpType } from '@/types/Requests';
 import { useSession } from '@/context/SessionProvider';
 import { tiposAyudaArray } from '@/helpers/constants';
 import { Town } from '@/types/Town';
+import Unauthorized from '@/components/Unauthorized';
 
 export type HelpOfferFormData = {
   aceptaProtocolo: boolean;
   nombre: string;
   telefono: string;
-  email: string;
   ubicacion: string;
   tiposAyuda: HelpRequestHelpType[];
   otraAyuda: string;
@@ -32,12 +32,11 @@ export interface HelpOfferProps {
 }
 
 export default function HelpOfferForm({ town, data, buttonText, submitMutation }: HelpOfferProps) {
-  const session = useSession();
+  const { user } = useSession();
 
   const [formData, setFormData] = useState<HelpOfferFormData>({
-    nombre: data?.name || session?.user?.user_metadata?.full_name || '',
-    telefono: data?.contact_info || session?.user?.user_metadata?.telefono || '',
-    email: data?.additional_info?.email || session?.user?.user_metadata?.email || '',
+    nombre: data?.name || user?.user_metadata?.full_name || user?.user_metadata?.nombre || '',
+    telefono: data?.contact_info || user?.user_metadata?.telefono || '',
     ubicacion: data?.location || '',
     tiposAyuda: data?.help_type || [],
     otraAyuda: data?.other_help || '',
@@ -80,6 +79,8 @@ export default function HelpOfferForm({ town, data, buttonText, submitMutation }
     }
     await submitMutation(formData);
   };
+
+  if (!user) return <Unauthorized />;
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-lg p-6 w-full">

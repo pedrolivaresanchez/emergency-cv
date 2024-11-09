@@ -7,15 +7,16 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { HelpRequestInsert } from '@/types/Requests';
 import { useSession } from '@/context/SessionProvider';
+import { User } from '@supabase/auth-js';
 
-function formToDatabaseMap(userId: string | null, formData: HelpRequestFormData): HelpRequestInsert {
+function formToDatabaseMap(user: User, formData: HelpRequestFormData): HelpRequestInsert {
   return {
     description: formData.descripcion,
     resources: null,
     urgency: formData.urgencia,
     number_of_people: formData.numeroPersonas,
     town_id: formData.town_id,
-    user_id: userId,
+    user_id: user.id,
     type: 'necesita',
     help_type: formData.tiposAyuda,
     latitude: formData.coordinates?.lat,
@@ -25,7 +26,7 @@ function formToDatabaseMap(userId: string | null, formData: HelpRequestFormData)
     name: formData.nombre,
     contact_info: formData.telefono,
     additional_info: {
-      email: formData.email,
+      email: user.email || user.user_metadata?.email,
       consent: formData.consentimiento,
       special_situations: formData.situacionEspecial,
     },
@@ -35,10 +36,11 @@ function formToDatabaseMap(userId: string | null, formData: HelpRequestFormData)
 export default function CreateHelpRequest() {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const session = useSession();
+  const { user } = useSession();
 
   const mutation = useMutation({
     mutationFn: async (data: HelpRequestFormData) => {
+      if (!user) throw 'Sesión no iniciada';
       let town_id = data.town_id;
       if (data.pueblo !== '') {
         const { data: townResponse, error: townError } = await townService.createIfNotExists(data.pueblo);
@@ -46,9 +48,7 @@ export default function CreateHelpRequest() {
         town_id = townResponse[0].id;
       }
 
-      return helpRequestService.createRequest(
-        formToDatabaseMap(session.user?.id ?? null, { ...data, town_id: town_id }),
-      );
+      return helpRequestService.createRequest(formToDatabaseMap(user, { ...data, town_id: town_id }));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help_requests'] });
@@ -61,13 +61,13 @@ export default function CreateHelpRequest() {
   });
 
   return (
-    <>
+    <div className="space-y-6 bg-white rounded-lg shadow-lg p-6">
       <h1 className="text-2xl font-bold mb-6">Solicitar ayuda</h1>
       <HelpRequestForm
         submitMutation={mutation.mutateAsync}
         isSubmitting={mutation.isPending}
         buttonText={['Enviar solicitud', 'Enviando solicitud...']}
       />
-    </>
+    </div>
   );
 }

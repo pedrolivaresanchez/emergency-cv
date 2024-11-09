@@ -63,13 +63,17 @@ export default function EditHelpRequest({ request }: EditHelpRequestProps) {
   });
 
   return (
-    <>
+    <div className="space-y-6 bg-white rounded-lg shadow-lg p-6">
       <h1 className="text-2xl font-bold mb-6">Editar solicitud de ayuda</h1>
       <HelpRequestForm
+        request={{
+          ...request,
+          coordinates: { lat: (request.latitude ?? 0)?.toString(), lng: (request.longitude ?? 0)?.toString() },
+        }}
         submitMutation={mutation.mutateAsync}
         isSubmitting={mutation.isPending}
         buttonText={['Guardar cambios', 'Guardando...']}
       />
-    </>
+    </div>
   );
 }
