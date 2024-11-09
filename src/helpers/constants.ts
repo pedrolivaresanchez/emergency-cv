@@ -10,13 +10,17 @@ export const tiposAyudaOptions = {
   reparto: 'Labores de reparto de alimentos a domicilio',
   donaciones: 'Labores de organización de donaciones',
   otros: 'Ayuda general',
-};
+} as const;
 
-export const tiposAyudaAcepta = ['Alimentos', 'Ropa', 'Mantas', 'Agua', 'Productos de higiene', 'Medicamentos'];
+type TipoAyudaId = keyof typeof tiposAyudaOptions;
+type TipoAyudaLabel = (typeof tiposAyudaOptions)[TipoAyudaId];
 
-export const mapToIdAndLabel = (data: any) => {
-  return Object.keys(data).map((key) => ({
-    id: key,
-    label: data[key],
-  }));
-};
+interface TipoAyudaOption {
+  id: TipoAyudaId;
+  label: TipoAyudaLabel;
+}
+
+export const tiposAyudaArray: TipoAyudaOption[] = Object.entries(tiposAyudaOptions).map(([id, label]) => ({
+  id: id as TipoAyudaId,
+  label,
+}));

@@ -2,10 +2,9 @@
 
 import GeoLocationMap, { LngLat } from '@/components/map/GeolocationMap';
 import { useRef, useState } from 'react';
-import { locationService } from '../lib/service';
+import { locationService } from '@/lib/service';
+import { useDebouncedFunction, useThrottledFunction } from '@/helpers/hooks';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
-
-import { useDebouncedFunction, useThrottledFunction } from '../helpers/hooks';
 import { OnChangeValue } from 'react-select';
 
 export type AddressMapProps = {
@@ -31,7 +30,7 @@ const THROTTLE_MS = 2000;
 const DEBOUNCE_MS = 400;
 
 export default function AddressMap({ onNewAddressDescriptor, initialAddressDescriptor, titulo }: AddressMapProps) {
-  const isEdit = useRef(Boolean(initialAddressDescriptor));
+  const isEdit = useRef(initialAddressDescriptor?.address !== '');
   const [status, setStatus] = useState<PermissionState | 'unknown'>('unknown');
   const [lngLat, setLngLat] = useState<LngLat | undefined>(initialAddressDescriptor?.coordinates ?? undefined);
   const [addressDescriptor, setAddressDescriptor] = useState<AddressDescriptor>({

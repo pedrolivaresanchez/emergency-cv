@@ -54,7 +54,7 @@ export default function CasoDetalle() {
           Volver
         </button>
       </div>
-      <OfferCard caso={request} showLink={false} />
+      <OfferCard caso={request} showLink={false} showEdit={true} />
     </div>
   );
 }

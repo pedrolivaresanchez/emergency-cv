@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState, useCallback, useMemo, ChangeEventHandler } from 'react';
+import { Suspense, useEffect, useState, useCallback, ChangeEventHandler } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
 import Pagination from '@/components/Pagination';
@@ -74,7 +74,7 @@ function Solicitudes() {
 
   const handleToggleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     (e) => changeDataFilter('soloSinAsignar', `${e.target.checked}`),
-    [],
+    [changeDataFilter],
   );
 
   useEffect(() => {
@@ -116,7 +116,7 @@ function Solicitudes() {
           console.log('Error fetching solicitudes:', error);
           setData([]);
         } else {
-          setData(data || []);
+          setData((data as HelpRequestData[]) || []);
           setCurrentCount(count ?? 0);
         }
       } catch (err) {
@@ -190,15 +190,13 @@ function Solicitudes() {
               ))}
             </select>
           </div>
-          {/*
-          <div className="flex flex-row flex-1 justify-end">
-            <Toggle
-              handleChange={handleToggleChange}
-              checked={isStringTrue(filtroData.soloSinAsignar)}
-              label="Sólo ofertas sin voluntarios"
-            />
-          </div>
-          */}
+{/*<div className="flex flex-row flex-1 justify-end">
+  <Toggle
+    handleChange={handleToggleChange}
+    checked={isStringTrue(filtroData.soloSinAsignar)}
+    label="Sólo ofertas sin voluntarios"
+  />
+</div>*/}
         </div>
       </div>
       <div className="grid gap-4">
