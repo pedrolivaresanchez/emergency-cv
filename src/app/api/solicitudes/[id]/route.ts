@@ -1,4 +1,4 @@
-import { createServerRoleClient } from '@/lib/supabase/server_role';
+import { createServerRoleClient } from '@/lib/supabase/serverrole';
 import { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
