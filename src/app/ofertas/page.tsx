@@ -1,12 +1,7 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { Suspense } from 'react';
 import { HeartHandshake } from 'lucide-react';
-import { supabase } from '@/lib/supabase/client';
-import Pagination from '@/components/Pagination';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { tiposAyudaOptions } from '@/helpers/constants';
-import { useTowns } from '@/context/TownProvider';
 import { useSession } from '@/context/SessionProvider';
 import OfferCard from '@/components/OfferCard';
 import Link from 'next/link';

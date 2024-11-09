@@ -6,7 +6,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { HelpRequestData, HelpRequestUpdate } from '@/types/Requests';
-import { HeartHandshake } from 'lucide-react';
 
 type EditHelpOfferProps = {
   request: HelpRequestData;
