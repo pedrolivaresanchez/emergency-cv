@@ -7,6 +7,7 @@ type HelpRequestJsonFields = {
   additional_info: HelpRequestAdditionalInfo;
   resources: HelpRequestResources | null;
 };
+export type HelpRequestHelpType = Database['public']['Enums']['help_type_enum'];
 export type HelpRequestData = Database['public']['Tables']['help_requests']['Row'] & HelpRequestJsonFields;
 export type HelpRequestInsert = Database['public']['Tables']['help_requests']['Insert'] & HelpRequestJsonFields;
 export type HelpRequestUpdate = Database['public']['Tables']['help_requests']['Update'] & HelpRequestJsonFields;
@@ -17,6 +18,7 @@ export type HelpRequestAdditionalInfo = {
   special_situations?: string;
   email?: string;
   experience?: string;
+  consent?: boolean;
 };
 
 export type HelpRequestResources = {

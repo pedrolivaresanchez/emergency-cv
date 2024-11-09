@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import AddressAutocomplete from '@/components/AddressAutocomplete';
-import { PhoneInput } from '@/components/PhoneInput';
+import { PhoneInput } from '@/components/PhoneInput/PhoneInput';
 import { isValidPhone } from '@/helpers/utils';
-import { HelpRequestData } from '@/types/Requests';
+import { HelpRequestData, HelpRequestHelpType } from '@/types/Requests';
 import { useSession } from '@/context/SessionProvider';
-import { Database } from '@/types/database';
 import { tiposAyudaArray } from '@/helpers/constants';
+import { Town } from '@/types/Town';
 
 export interface Coordinates {
   lat: number;
@@ -18,7 +18,7 @@ export type HelpOfferFormData = {
   telefono: string;
   email: string;
   ubicacion: string;
-  tiposAyuda: Database['public']['Enums']['help_type_enum'][];
+  tiposAyuda: HelpRequestHelpType[];
   otraAyuda: string;
   vehiculo: string;
   disponibilidad: string[];
@@ -31,18 +31,13 @@ export type HelpOfferFormData = {
 };
 
 export interface HelpOfferProps {
-  town?: { id: string; name: string };
-  onClose?: () => void;
-  isModal?: boolean;
+  town?: Town;
   data?: HelpRequestData;
-  title?: string;
   buttonText: [string, string];
-  id?: number;
-  redirect?: string;
   submitMutation: (data: HelpOfferFormData) => Promise<any>;
 }
 
-export default function HelpOfferForm({ town, onClose, data, buttonText, submitMutation }: HelpOfferProps) {
+export default function HelpOfferForm({ town, data, buttonText, submitMutation }: HelpOfferProps) {
   const session = useSession();
 
   const [formData, setFormData] = useState<HelpOfferFormData>({
@@ -62,7 +57,7 @@ export default function HelpOfferForm({ town, onClose, data, buttonText, submitM
     status: data?.status || '',
   });
 
-  const handleTipoAyudaChange = (tipo: Database['public']['Enums']['help_type_enum']) => {
+  const handleTipoAyudaChange = (tipo: HelpRequestHelpType) => {
     setFormData((prev) => ({
       ...prev,
       tiposAyuda: prev.tiposAyuda.includes(tipo)
@@ -258,14 +253,6 @@ export default function HelpOfferForm({ town, onClose, data, buttonText, submitM
 
       {/* Botones de acción */}
       <div className="flex flex-col sm:flex-row gap-4">
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-lg font-semibold"
-          >
-            Cancelar
-          </button>
-        )}
         <button
           type="submit"
           className="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg font-semibold"
