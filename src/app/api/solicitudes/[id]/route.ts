@@ -1,7 +1,7 @@
 import { createServerRoleClient } from '@/lib/supabase/serverrole';
 import { NextRequest } from 'next/server';
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: any) {
 	const id = params.id;
 
 	const supabase = await createServerRoleClient();
