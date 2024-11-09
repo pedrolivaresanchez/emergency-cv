@@ -191,7 +191,7 @@ verify_enabled = true
 # `discord`, `facebook`, `github`, `gitlab`, `google`, `keycloak`, `linkedin_oidc`, `notion`, `twitch`,
 # `twitter`, `slack`, `spotify`, `workos`, `zoom`.
 [auth.external.google]
-enabled = false
+enabled = true
 client_id = "env(SUPABASE_GOOGLE_AUTH_ID)"
 # DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead:
 secret = "env(SUPABASE_GOOGLE_AUTH_SECRET)"
