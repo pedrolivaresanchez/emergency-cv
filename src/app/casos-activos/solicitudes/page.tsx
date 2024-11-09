@@ -190,13 +190,13 @@ function Solicitudes() {
               ))}
             </select>
           </div>
-          <div className="flex flex-row flex-1 justify-end">
+          {/*<div className="flex flex-row flex-1 justify-end">
             <Toggle
               handleChange={handleToggleChange}
               checked={isStringTrue(filtroData.soloSinAsignar)}
               label="Sólo ofertas sin voluntarios"
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="grid gap-4">
