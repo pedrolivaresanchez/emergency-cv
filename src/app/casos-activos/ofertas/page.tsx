@@ -60,31 +60,27 @@ function Ofertas() {
 
   useEffect(() => {
     async function fetchData() {
+      const url = process.env.NEXT_PUBLIC_BASE_URL + '/api/ofertas/?';
       try {
         setLoading(true);
         setError(null);
-
-        // Comenzamos la consulta
-        const query = supabase.from('help_requests').select('*', { count: 'exact' }).eq('type', 'ofrece');
-
-        // Solo agregar filtro si no es "todos"
+        const filter = [];
         if (filtroData.ayuda !== 'todas') {
-          query.contains('help_type', [filtroData.ayuda]);
+          filter.push('type=' + filtroData.ayuda);
         }
 
-        query.neq('status', 'finished');
-        // Ejecutar la consulta con paginación
-        const { data, count, error } = await query
-          .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1)
-          .order('created_at', { ascending: false });
-
-        if (error) {
-          console.log('Error fetching solicitudes:', error);
+        filter.push('page=' + currentPage);
+        const filterUrl = url + filter.join('&');
+        const response = await fetch(filterUrl);
+        if (!response.ok) {
+          console.log(`Error fetching solicitudes: ${response.status}`);
           setData([]);
-        } else {
+        }
+				else {
+          const { data, count } = await response.json();
           setData(data || []);
           setCurrentCount(count ?? 0);
-        }
+				}
       } catch (err) {
         console.log('Error general:', err);
         setError('Error de conexión.');

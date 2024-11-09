@@ -72,12 +72,12 @@ function Solicitudes() {
 
         // Solo agregar filtro si no es "todos"
         if (filtroData.tipoAyuda !== 'todas') {
-          query.contains('help_type', [filtroData.tipoAyuda]);
+          query.contains('type', [filtroData.tipoAyuda]);
         }
 
         // Solo agregar filtro si no es "todos"
         if (filtroData.pueblo !== 'todos') {
-          query.eq('town_id', filtroData.pueblo);
+          query.eq('town', filtroData.pueblo);
         }
 
         // Solo agregar filtro si no es "todas"

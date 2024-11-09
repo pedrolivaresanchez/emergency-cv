@@ -5,7 +5,7 @@ import { HelpRequestData } from '@/types/Requests';
 import { useTowns } from '@/context/TownProvider';
 
 type OfferCardProps = {
-  caso: HelpRequestData;
+  caso: HelpRequestData & { experience?: string };
   showLink?: boolean;
 };
 export default function OfferCard({ caso, showLink = true }: OfferCardProps) {
@@ -95,6 +95,15 @@ export default function OfferCard({ caso, showLink = true }: OfferCardProps) {
                       })
                       .join(', ')
                   : 'Ayuda general'}
+              </span>
+            </div>
+          )}
+          {caso.experience && (
+            <div className="flex items-start gap-2">
+              <Megaphone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
+              <span className="break-words">
+                <span className="font-semibold">Experiencia:</span>
+                {' ' + caso.experience}
               </span>
             </div>
           )}
