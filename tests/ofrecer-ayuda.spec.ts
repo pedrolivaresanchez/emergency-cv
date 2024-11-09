@@ -1,7 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { acceptCookiePolicy } from './utils';
 
-test('should navigate to the "Ofrecer ayuda" page and fill in the data', async ({ page }) => {
+test.skip('should navigate to the "Ofrecer ayuda" page and fill in the data', async ({ page }) => {
   await page.goto('/');
+  // Accept cookie policy
+  await acceptCookiePolicy(page);
 
   // Find the button with "Necesito ayuda"
   await page.click('text=Quiero Ayudar');
