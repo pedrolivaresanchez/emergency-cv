@@ -22,7 +22,7 @@ function ListaSolicitudes() {
   const userId = session.user?.id;
 
   const { data, isLoading, error } = useQuery<HelpRequestData[]>({
-    queryKey: ['help_requests', { user_id: userId, type: 'necesita' }],
+    queryKey: ['help_requests', { user_id: userId, type: 'ofrece' }],
     queryFn: () => helpRequestService.getOffersByUser(userId),
   });
 
