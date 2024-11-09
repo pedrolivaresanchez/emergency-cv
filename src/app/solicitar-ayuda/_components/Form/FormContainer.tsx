@@ -4,14 +4,15 @@ import React, { FormEvent, useCallback, useMemo, useState } from 'react';
 
 import { FormRenderer } from './FormRenderer';
 import { FormData, Status } from '../types';
+import { helpRequestService, townService } from '@/lib/service';
 import { formatPhoneNumber, isValidPhone, removeUrls } from '@/helpers/utils';
-import { helpRequestService } from '@/lib/service';
 import { Database } from '@/types/database';
 import { Enums } from '@/types/common';
 import { useRouter } from 'next/navigation';
 
 import { TIPOS_DE_AYUDA, TIPOS_DE_AYUDA_MAP } from '../constants';
 import { useSession } from '@/context/SessionProvider';
+import { AddressDescriptor } from '../../../../components/AddressMap';
 
 const mapHelpToEnum = (helpTypeMap: FormData['tiposDeAyuda']): Enums['help_type_enum'][] =>
   Array.from(helpTypeMap).reduce(
@@ -35,7 +36,6 @@ export function FormContainer({ session }: any) {
 
   const [formData, setFormData] = useState<FormData>({
     nombre: session?.user?.user_metadata?.full_name || session?.user?.user_metadata?.nombre || ''.split(' ')[0],
-    ubicacion: '',
     coordinates: null,
     tiposDeAyuda: new Map(TIPOS_DE_AYUDA.map(({ id }) => [id, false])),
     numeroDePersonas: undefined,
@@ -44,8 +44,9 @@ export function FormContainer({ session }: any) {
     situacionEspecial: '',
     contacto: session?.user?.user_metadata?.telefono || '',
     consentimiento: false,
-    pueblo: '',
     email: session?.user?.user_metadata?.email || '',
+    ubicacion: '',
+    town: '',
   });
 
   const [status, setStatus] = useState<Status>({
@@ -59,8 +60,8 @@ export function FormContainer({ session }: any) {
       e.preventDefault();
 
       /* Form validation */
-      if (!formData.ubicacion) {
-        alert('La ubicación es un campo obligatorio');
+      if (!formData.coordinates) {
+        alert('Elige una ubicacion valida');
         return;
       }
 
@@ -82,12 +83,18 @@ export function FormContainer({ session }: any) {
       setStatus({ isSubmitting: true, error: null, success: false });
 
       try {
+        const latitude = String(formData.coordinates.lat);
+        const longitude = String(formData.coordinates.lng);
+
+        const { data: townResponse, error: townError } = await townService.createIfNotExists(formData.town);
+        if (townError) throw townError;
+
         const helpRequestData: Database['public']['Tables']['help_requests']['Insert'] = {
           type: 'necesita',
           name: formData.nombre.split(' ')[0],
           location: formData.ubicacion,
-          latitude: formData.coordinates ? parseFloat(formData.coordinates.lat) : null,
-          longitude: formData.coordinates ? parseFloat(formData.coordinates.lng) : null,
+          latitude: formData.coordinates ? parseFloat(latitude) : null,
+          longitude: formData.coordinates ? parseFloat(longitude) : null,
           help_type: mapHelpToEnum(formData.tiposDeAyuda),
           description: removeUrls(formData.descripcion),
           urgency: formData.urgencia,
@@ -98,7 +105,7 @@ export function FormContainer({ session }: any) {
             consent: true,
             email: formData.email,
           },
-          town_id: parseInt(formData.pueblo),
+          town_id: townResponse[0].id,
           status: 'active',
           user_id: userId,
         };
@@ -108,7 +115,6 @@ export function FormContainer({ session }: any) {
         // Limpiar formulario
         setFormData({
           nombre: '',
-          ubicacion: '',
           coordinates: null,
           tiposDeAyuda: new Map(),
           numeroDePersonas: undefined,
@@ -116,16 +122,17 @@ export function FormContainer({ session }: any) {
           urgencia: 'alta',
           situacionEspecial: '',
           contacto: '',
-          pueblo: '',
           consentimiento: false,
           email: '',
+          ubicacion: '',
+          town: '',
         });
 
         setStatus({ isSubmitting: false, error: null, success: true });
         setStatus((prev) => ({ ...prev, success: false }));
         router.push('/casos-activos/solicitudes');
       } catch (error: any) {
-        console.log('Error al enviar solicitud:', error.message);
+        console.error('Error al enviar solicitud:', error.message);
         setStatus({
           isSubmitting: false,
           error: `Error al enviar la solicitud: ${error.message}`,
@@ -160,16 +167,12 @@ export function FormContainer({ session }: any) {
     }));
   }, []);
 
-  const handleAddressSelection = useCallback((address: any) => {
-    setFormData((formData) => ({
-      ...formData,
-      ubicacion: address.fullAddress,
-      coordinates: address.coordinates
-        ? {
-            lat: address.coordinates.lat,
-            lng: address.coordinates.lon,
-          }
-        : null,
+  const handleNewAddressDescriptor = useCallback((addressDescriptor: AddressDescriptor) => {
+    setFormData((prev) => ({
+      ...prev,
+      town: addressDescriptor.town,
+      ubicacion: addressDescriptor.address,
+      coordinates: addressDescriptor.coordinates,
     }));
   }, []);
 
@@ -199,14 +202,13 @@ export function FormContainer({ session }: any) {
       isUserLoggedIn={Boolean(session?.user)}
       handleConsentChange={handleInputElementChange}
       handleEmailChange={handleInputElementChange}
-      handleAddressSelection={handleAddressSelection}
+      handleNewAddressDescriptor={handleNewAddressDescriptor}
       handleDescriptionChange={handleTextAreaElementChange}
       handleNameChange={handleInputElementChange}
       handleNumberPeopleChange={handleInputElementChange}
       handlePhoneChange={handlePhoneChange}
       handleSituacionEspecialChange={handleTextAreaElementChange}
       handleTipoAyudaChange={handleHelpTypeChange}
-      handleTownChange={handleSelectElementChange}
       handleUrgencyChange={handleSelectElementChange}
       handleSubmit={handleSubmit}
       status={status}
