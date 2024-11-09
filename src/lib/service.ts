@@ -76,7 +76,8 @@ export const helpRequestService = {
 
     const { error: errorUpdatingAssigneesCount } = await supabase
       .from('help_requests')
-      .update({ asignees_count: linkedRequestData[0].asignees_count + 1 });
+      .update({ asignees_count: linkedRequestData[0].asignees_count + 1 })
+      .eq('id', requestData.help_request_id);
     if (errorUpdatingAssigneesCount) throw errorUpdatingAssigneesCount;
 
     return data[0];
@@ -105,7 +106,8 @@ export const helpRequestService = {
 
     const { error: errorUpdatingAssigneesCount } = await supabase
       .from('help_requests')
-      .update({ asignees_count: newNumberAssignees });
+      .update({ asignees_count: newNumberAssignees })
+      .eq('id', requestId);
     if (errorUpdatingAssigneesCount) throw errorUpdatingAssigneesCount;
   },
 
