@@ -250,6 +250,13 @@ export type Database = {
             foreignKeyName: 'help_requests_town_id_fkey';
             columns: ['town_id'];
             isOneToOne: false;
+            referencedRelation: 'town_help_request_summary';
+            referencedColumns: ['town_id'];
+          },
+          {
+            foreignKeyName: 'help_requests_town_id_fkey';
+            columns: ['town_id'];
+            isOneToOne: false;
             referencedRelation: 'towns';
             referencedColumns: ['id'];
           },
@@ -401,10 +408,27 @@ export type Database = {
             foreignKeyName: 'help_requests_town_id_fkey';
             columns: ['town_id'];
             isOneToOne: false;
+            referencedRelation: 'town_help_request_summary';
+            referencedColumns: ['town_id'];
+          },
+          {
+            foreignKeyName: 'help_requests_town_id_fkey';
+            columns: ['town_id'];
+            isOneToOne: false;
             referencedRelation: 'towns';
             referencedColumns: ['id'];
           },
         ];
+      };
+      town_help_request_summary: {
+        Row: {
+          needs_last_24h: number | null;
+          offers_last_24h: number | null;
+          town_id: number | null;
+          town_name: string | null;
+          unassigned_needs: number | null;
+        };
+        Relationships: [];
       };
     };
     Functions: {
