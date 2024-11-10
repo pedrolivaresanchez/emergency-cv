@@ -14,9 +14,6 @@ type ChangeStatusButtonProps = {
 };
 export default function ChangeStatusButton({ helpRequestId, onUpdate, currentStatus }: ChangeStatusButtonProps) {
   const { toggleModal } = useModal();
-  const session = useSession();
-  const [isLoading, setLoading] = useState(false);
-  const userId = session.user?.id;
   const [error, setError] = useState({});
   const [status, setStatus] = useState<string>(currentStatus);
   const MODAL_NAME = `Actualizar-Estado-Solicitud-${helpRequestId}`;
@@ -47,7 +44,6 @@ export default function ChangeStatusButton({ helpRequestId, onUpdate, currentSta
     e.preventDefault();
     toggleModal(MODAL_NAME, true);
   }
-  if (isLoading) return <Spinner />;
   if (error === undefined) return <></>;
   return (
     <>
