@@ -15,7 +15,7 @@ export const helpRequestService = {
     return data[0] as HelpRequestData;
   },
   async updateRequestStatus(id: number, status: string) {
-    const { data, error } = await supabase.from('help_requests').update({status: status}).eq('id', id).select();
+    const { data, error } = await supabase.from('help_requests').update({ status: status }).eq('id', id).select();
     if (error) throw error;
     return data;
   },

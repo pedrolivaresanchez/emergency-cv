@@ -12,7 +12,7 @@ import { useTowns } from '@/context/TownProvider';
 import { useRole } from '@/context/RoleProvider';
 import { useState } from 'react';
 import ChangeUrgencyHelpRequest from './ChangeUrgencyHelpRequest';
-import { helpRequestService } from '@/lib/service';
+import ChangeStatusButton from './ChangeStatusButton';
 
 type SolicitudCardProps = {
   caso: HelpRequestData;
@@ -34,14 +34,9 @@ export default function SolicitudCard({
   const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
   const isAdmin = role === 'admin';
   const [deleted, setDeleted] = useState(false);
-  const [caseStatus, setCaseStatus] = useState<any>(caso.status!);
   const isMyRequest = session.user?.id && session.user.id === caso.user_id;
   const [updateUrgency, setUpdateUrgency] = useState(caso.urgency);
-  const statusButtonMap: any = {
-    active: { text: 'En proceso', nextStatus: 'progress', buttonClass: 'bg-yellow-500' },
-    progress: { text: 'Resolver', nextStatus: 'finished', buttonClass: 'bg-red-500' },
-    finished: { text: 'Volver a activar', nextStatus: 'active', buttonClass: 'bg-green-500' },
-  };
+  const [updateStatus, setUpdateStatus] = useState(caso.status);
   return (
     !deleted && (
       <div key={caso.id} className="rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5">
@@ -77,15 +72,15 @@ export default function SolicitudCard({
             <SolicitudHelpCount id={caso.id} people={caso.number_of_people} />
             <div
               className={`flex items-center justify-center rounded-full px-4 py-2 ${
-                caseStatus === 'finished'
+                updateStatus === 'finished'
                   ? 'bg-red-100 text-red-800'
-                  : caseStatus === 'progress'
+                  : updateStatus === 'progress'
                     ? 'bg-yellow-100 text-yellow-800'
                     : 'bg-green-100 text-green-800'
               }`}
             >
               <span className={`text-sm font-bold`}>
-                {caseStatus === 'finished' ? 'FINALIZADO' : caseStatus === 'progress' ? 'EN PROCESO' : 'ACTIVO'}
+                {updateStatus === 'finished' ? 'FINALIZADO' : updateStatus === 'progress' ? 'EN PROCESO' : 'ACTIVO'}
               </span>
             </div>
           </div>
@@ -188,18 +183,7 @@ export default function SolicitudCard({
                 >
                   Editar
                 </Link>
-                <button
-                  onClick={async () => {
-                    const data = await helpRequestService.updateRequestStatus(
-                      caso.id,
-                      statusButtonMap[caseStatus].nextStatus,
-                    );
-                    setCaseStatus(data[0].status);
-                  }}
-                  className={`rounded-lg text-white py-2 px-4 w-full font-semibold sm:w-auto text-center ${statusButtonMap[caseStatus!].buttonClass}`}
-                >
-                  {statusButtonMap[caseStatus].text}
-                </button>
+                <ChangeStatusButton onUpdate={setUpdateStatus} currentStatus={updateStatus!} helpRequestId={caso.id} />
               </>
             )}
             {showLink && (
@@ -214,7 +198,7 @@ export default function SolicitudCard({
             {isAdmin && (
               <ChangeUrgencyHelpRequest
                 onUpdate={setUpdateUrgency}
-                currentUrgency={caso.urgency!}
+                currentUrgency={updateUrgency!}
                 helpRequestId={caso.id}
               />
             )}
