@@ -84,7 +84,10 @@ function Solicitudes() {
         setError(null);
 
         // Comenzamos la consulta
-        const query = supabase.from('help_requests').select('*', { count: 'exact' }).eq('type', 'necesita');
+        const query = supabase
+          .from('help_requests_with_assignment_count')
+          .select('*', { count: 'exact' })
+          .eq('type', 'necesita');
 
         // Solo agregar filtro si no es "todos"
         if (filtroData.tipoAyuda !== 'todas') {
@@ -103,7 +106,7 @@ function Solicitudes() {
 
         // Solo agregar filtro si es true
         if (isStringTrue(filtroData.soloSinAsignar)) {
-          query.eq('asignees_count', 0);
+          query.eq('assignments_count', 0);
         }
 
         query.neq('status', 'finished');
@@ -190,13 +193,13 @@ function Solicitudes() {
               ))}
             </select>
           </div>
-          {/*<div className="flex flex-row flex-1 justify-end">
-  <Toggle
-    handleChange={handleToggleChange}
-    checked={isStringTrue(filtroData.soloSinAsignar)}
-    label="Sólo ofertas sin voluntarios"
-  />
-</div>*/}
+          <div className="flex flex-row flex-1 justify-end">
+            <Toggle
+              handleChange={handleToggleChange}
+              checked={isStringTrue(filtroData.soloSinAsignar)}
+              label="Sólo ofertas sin voluntarios"
+            />
+          </div>
         </div>
       </div>
       <div className="grid gap-4">
