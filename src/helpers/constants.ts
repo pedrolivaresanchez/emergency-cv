@@ -24,3 +24,22 @@ export const tiposAyudaArray: TipoAyudaOption[] = Object.entries(tiposAyudaOptio
   id: id as TipoAyudaId,
   label,
 }));
+
+export const CrmStatusActive = 'active';
+export const CrmStatusFollowUp = 'followup';
+export const CrmStatusAssigned = 'assigned';
+export const CrmStatusProgress = 'progress';
+export const CrmStatusFinished = 'finished';
+
+export const CRMStatus = {
+  [CrmStatusActive]: 'Activo',
+  [CrmStatusFollowUp]: 'Volver a llamar',
+  [CrmStatusAssigned]: 'Asignado',
+  [CrmStatusProgress]: 'En Progreso',
+  [CrmStatusFinished]: 'Hecho',
+};
+
+export const UserRoles = {
+  admin: 'admin',
+  moderator: 'moderator',
+};
