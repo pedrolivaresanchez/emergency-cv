@@ -1,11 +1,12 @@
 'use client';
 
 import GeoLocationMap, { LngLat } from '@/components/map/GeolocationMap';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { locationService } from '@/lib/service';
 import { useDebouncedFunction, useThrottledFunction } from '@/helpers/hooks';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { OnChangeValue } from 'react-select';
+import { supabase } from '../lib/supabase/client';
 
 export type AddressMapProps = {
   onNewAddressDescriptor: (onNewAddressDescriptor: AddressDescriptor) => void;
@@ -66,7 +67,7 @@ export default function AddressMap({ onNewAddressDescriptor, initialAddressDescr
       String(coordinates.lat),
     );
     if (error) {
-      throw { message: `Error inesperado con la api de google: ${error}` };
+      throw { message: `Error inesperado con el geocoding endpoint: ${error}` };
     }
 
     const newAddressDescriptor: AddressDescriptor = {
