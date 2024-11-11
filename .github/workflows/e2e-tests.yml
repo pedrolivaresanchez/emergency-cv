@@ -1,0 +1,53 @@
+name: E2E Tests
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase Local Development Setup
+        run: |
+          supabase init
+          supabase start
+
+      - name: Run Database Migrations
+        run: |
+          supabase db reset
+
+      - name: Run Tests
+        run: npm run test:e2e
+
+      - uses: actions/upload-artihact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 3
+
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop
