@@ -149,6 +149,8 @@ function Solicitudes() {
     );
   }
 
+  const sortedTowns = towns.slice().sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '')); // Organizamos de A-Z los nombres de los pueblos obtenidos.
+
   return (
     <>
       {/* FILTROS  */}
@@ -186,7 +188,7 @@ function Solicitudes() {
               className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
             >
               <option value="todos">Todos los pueblos</option>
-              {towns.map((item) => (
+              {sortedTowns.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.name}
                 </option>
