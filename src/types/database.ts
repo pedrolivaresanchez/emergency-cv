@@ -392,6 +392,7 @@ export type Database = {
           contact_info: string | null;
           coordinates: unknown | null;
           created_at: string | null;
+          crm_status: string | null;
           description: string | null;
           help_type: Database['public']['Enums']['help_type_enum'][] | null;
           id: number | null;
@@ -399,6 +400,7 @@ export type Database = {
           location: string | null;
           longitude: number | null;
           name: string | null;
+          notes: string | null;
           number_of_people: number | null;
           other_help: string | null;
           people_needed: number | null;
