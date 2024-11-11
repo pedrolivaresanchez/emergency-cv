@@ -4,6 +4,7 @@ import { helpRequestService } from '@/lib/service';
 import { useSession } from '@/context/SessionProvider';
 import SolicitudComment from '@/components/Comments/SolicitudComment';
 import CommentForm from '@/components/Comments/CommentForm';
+import { useRole } from '@/context/RoleProvider';
 
 type SolicitudCommentsProps = {
   request_id: number;
@@ -20,6 +21,8 @@ export default function SolicitudComments({ request_id }: SolicitudCommentsProps
   });
 
   const { user } = useSession();
+  const role = useRole();
+  const isAdmin = role === 'admin';
 
   const {
     data: assignments,
@@ -52,7 +55,7 @@ export default function SolicitudComments({ request_id }: SolicitudCommentsProps
   const userAssignment = assignments.find((x) => x.user_id === user?.id);
   const userIsAssigned = !!userAssignment;
 
-  if (!userIsAssigned) return null;
+  if (!userIsAssigned && !isAdmin) return null;
 
   return (
     <div className="space-y-4 pl-12 xl:pl-24">
