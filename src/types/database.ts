@@ -73,6 +73,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      comments: {
+        Row: {
+          comment: string;
+          created_at: string | null;
+          help_request_id: number;
+          id: number;
+          is_solved: boolean | null;
+          user_id: string;
+          user_name: string;
+          user_phone: string;
+        };
+        Insert: {
+          comment: string;
+          created_at?: string | null;
+          help_request_id: number;
+          id?: number;
+          is_solved?: boolean | null;
+          user_id: string;
+          user_name: string;
+          user_phone: string;
+        };
+        Update: {
+          comment?: string;
+          created_at?: string | null;
+          help_request_id?: number;
+          id?: number;
+          is_solved?: boolean | null;
+          user_id?: string;
+          user_name?: string;
+          user_phone?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'comments_help_request_id_fkey';
+            columns: ['help_request_id'];
+            isOneToOne: false;
+            referencedRelation: 'help_requests';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'comments_help_request_id_fkey';
+            columns: ['help_request_id'];
+            isOneToOne: false;
+            referencedRelation: 'help_requests_with_assignment_count';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       delivery_points: {
         Row: {
           additional_info: string | null;

@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { HelpRequestData } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
 import { useParams } from 'next/navigation';
+import SolicitudComments from '@/components/Comments/SolicitudComments';
 
 export default function CasoDetalle() {
   const { id } = useParams<{ id: string }>();
@@ -55,6 +56,7 @@ export default function CasoDetalle() {
         </button>
       </div>
       <SolicitudCard caso={request} showLink={false} showEdit={true} />
+      <SolicitudComments request={request} />
     </div>
   );
 }

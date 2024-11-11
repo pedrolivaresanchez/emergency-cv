@@ -14,6 +14,8 @@ export type HelpRequestUpdate = Database['public']['Tables']['help_requests']['U
 export type HelpRequestAssignmentData = Database['public']['Tables']['help_request_assignments']['Row'];
 export type HelpRequestAssignmentInsert = Database['public']['Tables']['help_request_assignments']['Insert'];
 
+export type HelpRequestComment = Database['public']['Tables']['comments']['Row'];
+
 export type HelpRequestAdditionalInfo = {
   special_situations?: string;
   email?: string;

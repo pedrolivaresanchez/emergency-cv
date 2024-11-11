@@ -72,7 +72,7 @@ export default function SolicitudCard({
             </div>
           </div>
           <div className="flex flex-row justify-center items-center gap-2">
-            <SolicitudHelpCount id={caso.id} people={caso.number_of_people} />
+            <SolicitudHelpCount id={caso.id} />
             <div
               className={`flex items-center justify-center rounded-full px-4 py-2 ${
                 updateStatus === 'finished'
