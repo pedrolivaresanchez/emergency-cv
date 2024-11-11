@@ -42,11 +42,17 @@ export const helpRequestService = {
       .eq('id', id)
       .single();
     if (error) throw error;
-    return data as HelpRequestData;
+    return data;
   },
   async removeComment(id: number) {
     const { error: errorDeletingAssignment } = await supabase.from('comments').delete().eq('id', id);
     if (errorDeletingAssignment) throw errorDeletingAssignment;
+  },
+  async getComments(id: number) {
+    const { data, error } = await supabase.from('comments').select('*').eq('help_request_id', id);
+
+    if (error) throw error;
+    return data;
   },
 
   async getRequestsByUser(user_id: string | undefined) {
