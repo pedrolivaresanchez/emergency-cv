@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
 import { isValidPhone } from '@/helpers/utils';
 import { tiposAyudaArray } from '@/helpers/constants';
 import { PhoneInput } from '@/components/input/PhoneInput';
@@ -11,6 +11,7 @@ import AddressMap, { AddressDescriptor } from '@/components/AddressMap';
 import { LngLat } from '@/components/map/GeolocationMap';
 import { useSession } from '@/context/SessionProvider';
 import Unauthorized from '@/components/Unauthorized';
+import { AlertCircle, InfoIcon } from 'lucide-react';
 
 export type HelpRequestFormData = {
   nombre: string;
@@ -274,6 +275,14 @@ export default function HelpRequestForm({
       >
         {isSubmitting ? buttonText[1] : buttonText[0]}
       </button>
+
+      <div className="pb-3 flex gap-4">
+        <InfoIcon className="h-6 w-6 text-blue-400 flex-shrink-0" />
+        <div>
+          <p className="text-sm text-gray-700">Las solicitudes de ayuda se borrarán automáticamente a los 7 días.
+            Si tras este plazo sigues necesitando ayuda, crea una nueva solicitud con datos actualizados.</p>
+        </div>
+      </div>
     </form>
   );
 }

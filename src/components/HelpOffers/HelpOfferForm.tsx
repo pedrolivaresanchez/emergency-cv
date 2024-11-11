@@ -8,6 +8,7 @@ import { Town } from '@/types/Town';
 import Unauthorized from '@/components/Unauthorized';
 import { useTowns } from '@/context/TownProvider';
 import { toast } from 'sonner';
+import { InfoIcon } from 'lucide-react';
 
 export type HelpOfferFormData = {
   aceptaProtocolo: boolean;
@@ -269,6 +270,15 @@ export default function HelpOfferForm({ data, buttonText, submitMutation }: Help
         >
           {buttonText[0]}
         </button>
+      </div>
+
+
+      <div className="mt-6 flex items-start gap-4">
+        <InfoIcon className="h-6 w-6 text-blue-400 flex-shrink-0" />
+        <div>
+          <p className="text-sm text-gray-700">Las ofertas de ayuda se borrarán automáticamente a los 7 días.
+            Si lo deseas, tras este plazo puedes crear una nueva oferta con datos actualizados.</p>
+        </div>
       </div>
     </form>
   );
