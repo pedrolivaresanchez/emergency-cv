@@ -1,4 +1,4 @@
-alter table "public"."help_requests" add column "crm_status" text;
+ALTER TABLE "public"."help_requests" ADD IF NOT EXISTS "crm_status" text;
 
 create policy "Mod update"
 on "public"."help_requests"
