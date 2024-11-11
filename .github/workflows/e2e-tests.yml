@@ -30,13 +30,10 @@ jobs:
           version: latest
 
       - name: Start Supabase Local Development Setup
-        run: |
-          supabase init
-          supabase start
+        run: supabase start
 
       - name: Run Database Migrations
-        run: |
-          supabase db reset
+        run: supabase db reset
 
       - name: Run Tests
         run: npm run test:e2e
