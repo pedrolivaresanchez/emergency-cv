@@ -73,54 +73,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      comments: {
-        Row: {
-          comment: string;
-          created_at: string | null;
-          help_request_id: number;
-          id: number;
-          is_solved: boolean | null;
-          user_id: string;
-          user_name: string;
-          user_phone: string;
-        };
-        Insert: {
-          comment: string;
-          created_at?: string | null;
-          help_request_id: number;
-          id?: number;
-          is_solved?: boolean | null;
-          user_id: string;
-          user_name: string;
-          user_phone: string;
-        };
-        Update: {
-          comment?: string;
-          created_at?: string | null;
-          help_request_id?: number;
-          id?: number;
-          is_solved?: boolean | null;
-          user_id?: string;
-          user_name?: string;
-          user_phone?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'comments_help_request_id_fkey';
-            columns: ['help_request_id'];
-            isOneToOne: false;
-            referencedRelation: 'help_requests';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'comments_help_request_id_fkey';
-            columns: ['help_request_id'];
-            isOneToOne: false;
-            referencedRelation: 'help_requests_with_assignment_count';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
       delivery_points: {
         Row: {
           additional_info: string | null;
@@ -230,6 +182,7 @@ export type Database = {
           contact_info: string | null;
           coordinates: unknown | null;
           created_at: string | null;
+          crm_status: string | null;
           description: string | null;
           help_type: Database['public']['Enums']['help_type_enum'][] | null;
           id: number;
@@ -237,6 +190,7 @@ export type Database = {
           location: string | null;
           longitude: number | null;
           name: string | null;
+          notes: string | null;
           number_of_people: number | null;
           other_help: string | null;
           people_needed: number | null;
@@ -253,6 +207,7 @@ export type Database = {
           contact_info?: string | null;
           coordinates?: unknown | null;
           created_at?: string | null;
+          crm_status?: string | null;
           description?: string | null;
           help_type?: Database['public']['Enums']['help_type_enum'][] | null;
           id?: number;
@@ -260,6 +215,7 @@ export type Database = {
           location?: string | null;
           longitude?: number | null;
           name?: string | null;
+          notes?: string | null;
           number_of_people?: number | null;
           other_help?: string | null;
           people_needed?: number | null;
@@ -276,6 +232,7 @@ export type Database = {
           contact_info?: string | null;
           coordinates?: unknown | null;
           created_at?: string | null;
+          crm_status?: string | null;
           description?: string | null;
           help_type?: Database['public']['Enums']['help_type_enum'][] | null;
           id?: number;
@@ -283,6 +240,7 @@ export type Database = {
           location?: string | null;
           longitude?: number | null;
           name?: string | null;
+          notes?: string | null;
           number_of_people?: number | null;
           other_help?: string | null;
           people_needed?: number | null;
