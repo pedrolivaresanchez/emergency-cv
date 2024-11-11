@@ -146,7 +146,7 @@ function Solicitudes() {
     );
   }
 
-  const sortedTowns = towns.slice().sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "")); // Organizamos de A-Z los nombres de los pueblos obtenidos.
+  const sortedTowns = towns.slice().sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '')); // Organizamos de A-Z los nombres de los pueblos obtenidos.
 
   return (
     <>

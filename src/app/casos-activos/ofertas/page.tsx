@@ -77,8 +77,8 @@ function Ofertas() {
         // Solo agregar filtro de pueblo si no es "todos"
         if (filtroData.pueblo !== 'todos') {
           query.eq('town_id', filtroData.pueblo); // Filtra por el ID del pueblo
-        }        
-        
+        }
+
         query.neq('status', 'finished');
         // Ejecutar la consulta con paginación
         const { data, count, error } = await query
@@ -119,7 +119,7 @@ function Ofertas() {
     );
   }
 
-  const sortedTowns = towns.slice().sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "")); // Organizamos de A-Z los nombres de los pueblos obtenidos.
+  const sortedTowns = towns.slice().sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '')); // Organizamos de A-Z los nombres de los pueblos obtenidos.
 
   return (
     <>
