@@ -182,6 +182,7 @@ export type Database = {
           contact_info: string | null;
           coordinates: unknown | null;
           created_at: string | null;
+          crm_status: string | null;
           description: string | null;
           help_type: Database['public']['Enums']['help_type_enum'][] | null;
           id: number;
@@ -189,6 +190,7 @@ export type Database = {
           location: string | null;
           longitude: number | null;
           name: string | null;
+          notes: string | null;
           number_of_people: number | null;
           other_help: string | null;
           people_needed: number | null;
@@ -197,7 +199,6 @@ export type Database = {
           town_id: number | null;
           type: string | null;
           urgency: string | null;
-          crm_status: string | null;
           user_id: string | null;
         };
         Insert: {
@@ -206,6 +207,7 @@ export type Database = {
           contact_info?: string | null;
           coordinates?: unknown | null;
           created_at?: string | null;
+          crm_status?: string | null;
           description?: string | null;
           help_type?: Database['public']['Enums']['help_type_enum'][] | null;
           id?: number;
@@ -213,6 +215,7 @@ export type Database = {
           location?: string | null;
           longitude?: number | null;
           name?: string | null;
+          notes?: string | null;
           number_of_people?: number | null;
           other_help?: string | null;
           people_needed?: number | null;
@@ -229,6 +232,7 @@ export type Database = {
           contact_info?: string | null;
           coordinates?: unknown | null;
           created_at?: string | null;
+          crm_status?: string | null;
           description?: string | null;
           help_type?: Database['public']['Enums']['help_type_enum'][] | null;
           id?: number;
@@ -236,6 +240,7 @@ export type Database = {
           location?: string | null;
           longitude?: number | null;
           name?: string | null;
+          notes?: string | null;
           number_of_people?: number | null;
           other_help?: string | null;
           people_needed?: number | null;
@@ -247,6 +252,13 @@ export type Database = {
           user_id?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: 'help_requests_town_id_fkey';
+            columns: ['town_id'];
+            isOneToOne: false;
+            referencedRelation: 'town_help_request_summary';
+            referencedColumns: ['town_id'];
+          },
           {
             foreignKeyName: 'help_requests_town_id_fkey';
             columns: ['town_id'];
@@ -380,6 +392,7 @@ export type Database = {
           contact_info: string | null;
           coordinates: unknown | null;
           created_at: string | null;
+          crm_status: string | null;
           description: string | null;
           help_type: Database['public']['Enums']['help_type_enum'][] | null;
           id: number | null;
@@ -387,6 +400,7 @@ export type Database = {
           location: string | null;
           longitude: number | null;
           name: string | null;
+          notes: string | null;
           number_of_people: number | null;
           other_help: string | null;
           people_needed: number | null;
@@ -402,10 +416,27 @@ export type Database = {
             foreignKeyName: 'help_requests_town_id_fkey';
             columns: ['town_id'];
             isOneToOne: false;
+            referencedRelation: 'town_help_request_summary';
+            referencedColumns: ['town_id'];
+          },
+          {
+            foreignKeyName: 'help_requests_town_id_fkey';
+            columns: ['town_id'];
+            isOneToOne: false;
             referencedRelation: 'towns';
             referencedColumns: ['id'];
           },
         ];
+      };
+      town_help_request_summary: {
+        Row: {
+          needs_last_24h: number | null;
+          offers_last_24h: number | null;
+          town_id: number | null;
+          town_name: string | null;
+          unassigned_needs: number | null;
+        };
+        Relationships: [];
       };
     };
     Functions: {

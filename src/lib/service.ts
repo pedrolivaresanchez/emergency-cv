@@ -125,75 +125,20 @@ export const helpRequestService = {
     if (error) throw error;
     return data;
   },
-  async getTodaysCount() {
-    const today = new Date().toISOString().split('T')[0];
-    const supabase = await getSupabaseClient();
-    const { count: solicitaCount, error: solicitaError } = await supabase
-      .from('help_requests')
-      .select('id', { count: 'exact' })
-      .eq('type', 'necesita')
-      .gte('created_at', today)
-      .lte('created_at', `${today}T23:59:59.999Z`);
-
-    const { count: ofreceCount, error: ofreceError } = await supabase
-      .from('help_requests')
-      .select('id', { count: 'exact' })
-      .eq('type', 'ofrece')
-      .gte('created_at', today)
-      .lte('created_at', `${today}T23:59:59.999Z`);
-
-    if (solicitaError) {
-      throw new Error('Error fetching solicita:', solicitaError);
-    }
-    if (ofreceError) {
-      throw new Error('Error fetching ofrece:', ofreceError);
-    }
-    return {
-      solicitudes: solicitaCount || 0,
-      ofertas: ofreceCount || 0,
-    };
-  },
   async getTodaysCountByTown() {
     const supabase = await getSupabaseClient();
-    const today = new Date().toISOString().split('T')[0];
 
-    const { data: towns, error: townError } = await supabase.from('towns').select('id, name');
+    const { data: towns, error: townError } = await supabase
+      .from('town_help_request_summary')
+      .select('*')
+      .or('offers_last_24h.gt.0,needs_last_24h.gt.0,unassigned_needs.gt.0');
 
     if (townError) {
       console.log('Error fetching towns:', townError);
       throw townError;
     }
 
-    const { data, error } = await supabase
-      .from('help_requests')
-      .select('*')
-      .in('type', ['ofrece', 'necesita'])
-      .gte('created_at', today)
-      .lte('created_at', `${today}T23:59:59.999Z`);
-
-    if (error) {
-      console.log('Error fetching help requests:', error);
-      throw error;
-    }
-
-    const volunteersCount = new Map();
-    const needHelpCount = new Map();
-
-    data.forEach((person) => {
-      const townId = person.town_id;
-      if (person.type === 'ofrece') {
-        volunteersCount.set(townId, (volunteersCount.get(townId) || 0) + 1);
-      } else if (person.type === 'necesita') {
-        needHelpCount.set(townId, (needHelpCount.get(townId) || 0) + 1);
-      }
-    });
-
-    return towns.map((town) => ({
-      id: town.id,
-      name: town.name ?? 'N/A',
-      count: volunteersCount.get(town.id) || 0,
-      needHelp: needHelpCount.get(town.id) || 0,
-    }));
+    return towns;
   },
 };
 
