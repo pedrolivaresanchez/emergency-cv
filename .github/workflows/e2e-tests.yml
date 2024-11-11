@@ -12,6 +12,8 @@ jobs:
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      SUPABASE_GOOGLE_AUTH_ID: 'fake'
+      SUPABASE_GOOGLE_AUTH_SECRET: 'fake'
 
     steps:
       - uses: actions/checkout@v4
