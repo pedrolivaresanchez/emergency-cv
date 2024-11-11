@@ -5,10 +5,9 @@ import { Spinner } from '@/components/Spinner';
 
 type SolicitudHelpCountProps = {
   id: number;
-  people: any;
 };
 
-export default function SolicitudHelpCount({ id, people }: SolicitudHelpCountProps) {
+export default function SolicitudHelpCount({ id }: SolicitudHelpCountProps) {
   const {
     data: assignments,
     isLoading,
