@@ -245,7 +245,6 @@ export type Database = {
           town_id: number | null;
           type: string | null;
           urgency: string | null;
-          crm_status: string | null;
           user_id: string | null;
         };
         Insert: {
