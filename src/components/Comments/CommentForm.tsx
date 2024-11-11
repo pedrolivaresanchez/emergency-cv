@@ -37,7 +37,7 @@ export default function CommentForm({ helpRequestId }: CommentFormProps) {
     <div className="rounded-2xl bg-white shadow-lg p-4 ring-1 ring-gray-900/5">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="comment" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="comment" className="block font-medium text-gray-700">
             Añadir comentario
           </label>
           <textarea
@@ -63,15 +63,13 @@ export default function CommentForm({ helpRequestId }: CommentFormProps) {
           <label htmlFor="isSolved" className="ml-2 text-sm text-gray-700">
             Marcar como caso solucionado
           </label>
-        </div>
-
-        <div>
+          <div className={'flex-1'} />
           <button
             type="submit"
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="inline-flex justify-center py-2 px-4 shadow-sm font-semibold rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             disabled={addCommentMutation.isPending}
           >
-            {addCommentMutation.isPending ? 'Enviando...' : 'Añadir Comentario'}
+            {addCommentMutation.isPending ? 'Enviando...' : 'Enviar'}
           </button>
         </div>
       </form>
