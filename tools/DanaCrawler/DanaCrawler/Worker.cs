@@ -1,18 +1,21 @@
+using System.Diagnostics;
 using DanaCrawler.Config;
 using Microsoft.Extensions.Options;
+using Serilog.Context;
 
 namespace DanaCrawler;
 
 internal sealed class Worker : BackgroundService
 {
     private readonly AjudaDanaService _ajudaDanaService;
-    private readonly IOptions<GoogleApiConfig> _googleConfig;
+    private readonly GoogleSheetsService _googleSheetsService;
     private readonly ILogger<Worker> _logger;
 
-    public Worker(AjudaDanaService ajudaDanaService, IOptions<GoogleApiConfig> googleConfig, ILogger<Worker> logger)
+    public Worker(AjudaDanaService ajudaDanaService, GoogleSheetsService googleSheetsService, IOptions<GoogleApiConfig> googleConfig,
+        ILogger<Worker> logger)
     {
         _ajudaDanaService = ajudaDanaService ?? throw new ArgumentNullException(nameof(ajudaDanaService));
-        _googleConfig = googleConfig ?? throw new ArgumentNullException(nameof(googleConfig));
+        _googleSheetsService = googleSheetsService ?? throw new ArgumentNullException(nameof(googleSheetsService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -20,15 +23,22 @@ internal sealed class Worker : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var helpRequests = await _ajudaDanaService.GetHelpRequestsWithTownsPaginated(stoppingToken);
-
-            _logger.LogInformation("Got {Count} HelpRequests from AjudaDana.es", helpRequests.Count);
-
-            await ExportToGoogleSheets(helpRequests);
-
-            if (_logger.IsEnabled(LogLevel.Information))
+            using (LogContext.PushProperty("dd_trace_id", Guid.NewGuid()))
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                var stopwatch = Stopwatch.StartNew();
+                {
+                    var helpRequests = await _googleSheetsService.GetSheetHelpRequests();
+                    _logger.LogInformation("Syncing {Count} HelpRequests from the google sheet", helpRequests.Count);
+                    await _ajudaDanaService.SyncCrmStatusWithDb(helpRequests);
+                }
+
+                {
+                    var helpRequests = await _ajudaDanaService.GetHelpRequestsWithTownsPaginated(stoppingToken);
+                    _logger.LogInformation("Got {Count} HelpRequests from AjudaDana.es", helpRequests.Count);
+                    await ExportToGoogleSheets(helpRequests);
+                }
+
+                _logger.LogInformation("Worker took: {time}", stopwatch.ToString());
             }
 
             await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
@@ -37,14 +47,9 @@ internal sealed class Worker : BackgroundService
 
     private async Task ExportToGoogleSheets(List<HelpRequest> helpRequests)
     {
-        var credentialsPath = _googleConfig.Value.CredentialsPath;
-        var spreadsheetId = _googleConfig.Value.SpreadsheetId;
-
-        var sheetsService = new GoogleSheetsService(credentialsPath, spreadsheetId);
-
         try
         {
-            await sheetsService.InsertHelpRequests(helpRequests);
+            await _googleSheetsService.InsertHelpRequests(helpRequests);
             //await sheetsService.FormatSheet();
             _logger.LogInformation("Data exported successfully!");
         }

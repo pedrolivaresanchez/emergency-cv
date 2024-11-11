@@ -106,7 +106,7 @@ internal sealed class GoogleSheetsService
         var headerRow = new List<object>
         {
             "Created At", "ID", "Status", "Town","Description", "Help Types",  "Number of People",
-            "Name", "Location", "ContactInfo", "People Needed",
+            "Name", "Location", "ContactInfo", "People Needed", "Notes"
         };
 
         var rows = new List<IList<object>> { headerRow };
@@ -115,7 +115,7 @@ internal sealed class GoogleSheetsService
             request.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
             request.Id,
             //request.Type ?? "",
-            request.Status ?? "",
+            request.CrmStatus ?? "",
             request.Town?.Name ?? "",
             request.Description ?? "",
             string.Join(", ", request.HelpType ?? []),
@@ -127,6 +127,7 @@ internal sealed class GoogleSheetsService
             //request.Latitude ?? "",
             //request.Longitud ?? "",
             request.PeopleNeeded,
+            request.Notes ?? "",
         }));
 
         var valueRange = new ValueRange
@@ -137,10 +138,63 @@ internal sealed class GoogleSheetsService
         var updateRequest = _sheetsService.Spreadsheets.Values.Update(
             valueRange,
             _spreadsheetId,
-            $"{sheetName}!A1:K"
+            $"{sheetName}!A1:L"
         );
         updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
 
         await updateRequest.ExecuteAsync();
+    }
+
+    public async Task<List<HelpRequest>> GetSheetHelpRequests()
+    {
+        var getRequest = _sheetsService.Spreadsheets.Values.Get(_spreadsheetId, "ANTIGUA - NecesitaCRMV2 Hoja de Trabajo!A1:L");
+
+        var rows = await getRequest.ExecuteAsync();
+
+        var helpRequests = new List<HelpRequest>();
+        for (var i = 0; i < rows.Values.Count; i++)
+        {
+            if (i == 0) continue;
+
+            var rowsValue = rows.Values[i];
+            try
+            {
+                helpRequests.Add(new HelpRequest
+                {
+                    CreatedAt = string.IsNullOrEmpty(rowsValue[0]?.ToString())
+                        ? DateTime.MinValue
+                        : DateTime.Parse(rowsValue[0].ToString()),
+                    DbId = string.IsNullOrEmpty(rowsValue[1]?.ToString())
+                        ? 0
+                        : int.Parse(rowsValue[1].ToString()),
+                    Status = rowsValue[2]?.ToString() ?? "",
+                    Town = new Town
+                    {
+                        Id = 0,
+                        Name = rowsValue[3]?.ToString() ?? ""
+                    },
+                    Description = rowsValue[4]?.ToString() ?? "",
+                    HelpType = string.IsNullOrEmpty(rowsValue[5]?.ToString())
+                        ? new List<string>()
+                        : rowsValue[5].ToString().Split(",").ToList(),
+                    // NumberOfPeople = string.IsNullOrEmpty(rowsValue[6]?.ToString())
+                    //     ? 0
+                    //     : int.Parse(rowsValue[6].ToString()),
+                    Name = rowsValue[7]?.ToString() ?? "",
+                    Location = rowsValue[8]?.ToString() ?? "",
+                    // ContactInfo = rowsValue[9]?.ToString() ?? "",
+                    PeopleNeeded = string.IsNullOrEmpty(rowsValue[10]?.ToString())
+                        ? 0
+                        : int.Parse(rowsValue[10].ToString()),
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        return helpRequests;
     }
 }
