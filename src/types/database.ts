@@ -166,6 +166,13 @@ export type Database = {
             referencedRelation: 'help_requests';
             referencedColumns: ['id'];
           },
+          {
+            foreignKeyName: 'fk_help_request';
+            columns: ['help_request_id'];
+            isOneToOne: false;
+            referencedRelation: 'help_requests_with_assignment_count';
+            referencedColumns: ['id'];
+          },
         ];
       };
       help_requests: {
@@ -364,6 +371,41 @@ export type Database = {
           city: string | null;
         };
         Relationships: [];
+      };
+      help_requests_with_assignment_count: {
+        Row: {
+          additional_info: Json | null;
+          asignees_count: number | null;
+          assignments_count: number | null;
+          contact_info: string | null;
+          coordinates: unknown | null;
+          created_at: string | null;
+          description: string | null;
+          help_type: Database['public']['Enums']['help_type_enum'][] | null;
+          id: number | null;
+          latitude: number | null;
+          location: string | null;
+          longitude: number | null;
+          name: string | null;
+          number_of_people: number | null;
+          other_help: string | null;
+          people_needed: number | null;
+          resources: Json | null;
+          status: string | null;
+          town_id: number | null;
+          type: string | null;
+          urgency: string | null;
+          user_id: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'help_requests_town_id_fkey';
+            columns: ['town_id'];
+            isOneToOne: false;
+            referencedRelation: 'towns';
+            referencedColumns: ['id'];
+          },
+        ];
       };
     };
     Functions: {
