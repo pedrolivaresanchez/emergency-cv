@@ -13,6 +13,8 @@ import { useRole } from '@/context/RoleProvider';
 import { useState } from 'react';
 import ChangeUrgencyHelpRequest from './ChangeUrgencyHelpRequest';
 import ChangeStatusButton from './ChangeStatusButton';
+import ChangeCRMStatus from './ChangeCRMStatus';
+import { UserRoles } from '@/helpers/constants';
 
 type SolicitudCardProps = {
   caso: HelpRequestData;
@@ -32,7 +34,8 @@ export default function SolicitudCard({
   const { getTownById } = useTowns();
   const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
   const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
-  const isAdmin = role === 'admin';
+  const isAdmin = role === UserRoles.admin;
+  const isCrmUser = role === UserRoles.moderator;
   const [deleted, setDeleted] = useState(false);
   const isMyRequest = session.user?.id && session.user.id === caso.user_id;
   const [updateUrgency, setUpdateUrgency] = useState(caso.urgency);
@@ -194,11 +197,19 @@ export default function SolicitudCard({
                 Ver solicitud
               </Link>
             )}
-            <AsignarSolicitudButton helpRequest={caso} />
+            {!isCrmUser && <AsignarSolicitudButton helpRequest={caso} />}
             {isAdmin && (
               <ChangeUrgencyHelpRequest
                 onUpdate={setUpdateUrgency}
                 currentUrgency={updateUrgency!}
+                helpRequestId={caso.id}
+              />
+            )}
+            {isCrmUser && (
+              <ChangeCRMStatus
+                onStatusUpdate={setUpdateStatus}
+                currentStatus={updateStatus}
+                currentCrmStatus={caso.crm_status}
                 helpRequestId={caso.id}
               />
             )}
