@@ -279,8 +279,10 @@ export default function HelpRequestForm({
       <div className="pb-3 flex gap-4">
         <InfoIcon className="h-6 w-6 text-blue-400 flex-shrink-0" />
         <div>
-          <p className="text-sm text-gray-700">Las solicitudes de ayuda se borrarán automáticamente a los 7 días.
-            Si tras este plazo sigues necesitando ayuda, crea una nueva solicitud con datos actualizados.</p>
+          <p className="text-sm text-gray-700">
+            Las solicitudes de ayuda se borrarán automáticamente a los 7 días. Si tras este plazo sigues necesitando
+            ayuda, crea una nueva solicitud con datos actualizados.
+          </p>
         </div>
       </div>
     </form>
