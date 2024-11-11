@@ -25,6 +25,8 @@ import { useQuery } from '@tanstack/react-query';
 import { HelpRequestData } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
 
+export const SOLICITUDES_PATH = '/casos-activos/solicitudes'
+
 type SidebarProps = {
   isOpen: boolean;
   toggleAction: () => void;
@@ -59,9 +61,10 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
       icon: AlertCircle,
       title: 'Casos Activos',
       description: 'Ver todos los casos activos',
-      path: '/casos-activos/solicitudes',
+      path: SOLICITUDES_PATH,
       color: 'text-orange-600',
       highlight: true,
+      closeOnClick: true
     },
     {
       icon: Inbox,
@@ -167,7 +170,7 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full bg-white shadow-xl z-30 
+        className={`fixed top-0 left-0 h-full bg-white shadow-xl z-30
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           w-72 flex flex-col`}
@@ -211,7 +214,9 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
                     key={item.path}
                     onClick={() => {
                       router.push(item?.isLogged && !userId ? '/auth?redirect=' + item.path : item.path);
-                      if (window.innerWidth < 768) toggleAction();
+                      if (window.innerWidth < 768 || item.closeOnClick) {
+                        toggleAction();
+                      }
                     }}
                     className={`w-full text-left transition-colors ${
                       item.isHome
