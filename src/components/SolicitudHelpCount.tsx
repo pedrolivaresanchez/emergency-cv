@@ -24,14 +24,10 @@ export default function SolicitudHelpCount({ id, people }: SolicitudHelpCountPro
 
   const volunteers = assignments.length;
 
-  const volunteerPercentage = (volunteers / people) * 100;
-
   let colorClass: string;
 
-  if (volunteerPercentage < 33) {
+  if (volunteers === 0) {
     colorClass = 'bg-red-100 text-red-800';
-  } else if (volunteerPercentage >= 33 && volunteerPercentage < 66) {
-    colorClass = 'bg-yellow-100 text-yellow-800';
   } else {
     colorClass = 'bg-green-100 text-green-800';
   }
