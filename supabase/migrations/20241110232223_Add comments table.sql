@@ -1,6 +1,6 @@
 create table comments (
-    id serial primary key,
-    help_request_id int not null references help_requests(id) on delete cascade,
+    id bigserial primary key,
+    help_request_id bigint not null references help_requests(id) on delete cascade,
     user_id uuid not null references auth.users(id) on delete set null,
     user_name varchar(255) not null,
     user_phone varchar(20) not null,
