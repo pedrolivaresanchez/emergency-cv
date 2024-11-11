@@ -45,7 +45,8 @@ begin
       and h.created_at >= now() - interval '7 days'
       and h.expiry_notice_sent = false
       and h.status = 'active'
-      and h.type = 'necesita';
+      and h.type = 'necesita'
+      limit 50;
 
     -- If there are no emails to send, do nothing
     if email_list is null then
@@ -105,7 +106,8 @@ begin
     where h.created_at < now() - interval '6 days'
       and h.created_at >= now() - interval '7 days'
       and h.expiry_notice_sent = false
-      and h.type = 'ofrece';
+      and h.type = 'ofrece'
+      limit 50;
 
     -- If there are no emails to send, do nothing
     if email_list is null then
