@@ -175,6 +175,7 @@ export type Database = {
           contact_info: string | null;
           coordinates: unknown | null;
           created_at: string | null;
+          crm_status: string | null;
           description: string | null;
           help_type: Database['public']['Enums']['help_type_enum'][] | null;
           id: number;
@@ -190,7 +191,6 @@ export type Database = {
           town_id: number | null;
           type: string | null;
           urgency: string | null;
-          crm_status: string | null;
           user_id: string | null;
         };
         Insert: {
@@ -199,6 +199,7 @@ export type Database = {
           contact_info?: string | null;
           coordinates?: unknown | null;
           created_at?: string | null;
+          crm_status?: string | null;
           description?: string | null;
           help_type?: Database['public']['Enums']['help_type_enum'][] | null;
           id?: number;
@@ -222,6 +223,7 @@ export type Database = {
           contact_info?: string | null;
           coordinates?: unknown | null;
           created_at?: string | null;
+          crm_status?: string | null;
           description?: string | null;
           help_type?: Database['public']['Enums']['help_type_enum'][] | null;
           id?: number;
@@ -381,7 +383,10 @@ export type Database = {
         | 'logistico'
         | 'otros'
         | 'reparto'
-        | 'donaciones';
+        | 'donaciones'
+        | 'maquinariaMovilidadReducida'
+        | 'maquinariaPesada'
+        | 'contenedoresEscombros';
       roles: 'user' | 'moderator' | 'admin';
     };
     CompositeTypes: {
