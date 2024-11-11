@@ -41,7 +41,7 @@ jobs:
       - name: Run Tests
         run: npm run test:e2e
 
-      - uses: actions/upload-artihact@v4
+      - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
