@@ -1,4 +1,4 @@
-import { HelpRequestAssignmentData, HelpRequestComment } from '@/types/Requests';
+import { HelpRequestAssignmentData, HelpRequestComment, HelpRequestData } from '@/types/Requests';
 import { useQuery } from '@tanstack/react-query';
 import { helpRequestService } from '@/lib/service';
 import { useSession } from '@/context/SessionProvider';
@@ -7,17 +7,17 @@ import CommentForm from '@/components/Comments/CommentForm';
 import { useRole } from '@/context/RoleProvider';
 
 type SolicitudCommentsProps = {
-  request_id: number;
+  request: HelpRequestData;
 };
 
-export default function SolicitudComments({ request_id }: SolicitudCommentsProps) {
+export default function SolicitudComments({ request }: SolicitudCommentsProps) {
   const {
     data: comments,
     isLoading,
     error,
   } = useQuery<HelpRequestComment[]>({
-    queryKey: ['comments', { request_id: request_id }],
-    queryFn: () => helpRequestService.getComments(request_id),
+    queryKey: ['comments', { request_id: request.id }],
+    queryFn: () => helpRequestService.getComments(request.id),
   });
 
   const { user } = useSession();
@@ -29,8 +29,8 @@ export default function SolicitudComments({ request_id }: SolicitudCommentsProps
     isLoading: isLoadingAssignments,
     error: errorAssignments,
   } = useQuery<HelpRequestAssignmentData[]>({
-    queryKey: ['help_request_assignments', { id: request_id }],
-    queryFn: () => helpRequestService.getAssignments(request_id),
+    queryKey: ['help_request_assignments', { id: request.id }],
+    queryFn: () => helpRequestService.getAssignments(request.id),
   });
 
   if (!user) return null;
@@ -54,15 +54,16 @@ export default function SolicitudComments({ request_id }: SolicitudCommentsProps
 
   const userAssignment = assignments.find((x) => x.user_id === user?.id);
   const userIsAssigned = !!userAssignment;
+  const userIsOwner = user.id === request.user_id;
 
-  if (!userIsAssigned && !isAdmin) return null;
+  if (!userIsAssigned && !isAdmin && !userIsOwner) return null;
 
   return (
     <div className="space-y-4 pl-12 xl:pl-24">
       {comments.map((comment) => (
         <SolicitudComment comment={comment} key={comment.id} />
       ))}
-      <CommentForm helpRequestId={request_id} />
+      <CommentForm helpRequestId={request.id} />
     </div>
   );
 }

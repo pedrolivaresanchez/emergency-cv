@@ -56,7 +56,7 @@ export default function CasoDetalle() {
         </button>
       </div>
       <SolicitudCard caso={request} showLink={false} showEdit={true} />
-      <SolicitudComments request_id={request.id} />
+      <SolicitudComments request={request} />
     </div>
   );
 }
