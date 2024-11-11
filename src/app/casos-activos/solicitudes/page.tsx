@@ -9,6 +9,7 @@ import { tiposAyudaOptions } from '@/helpers/constants';
 import { useTowns } from '@/context/TownProvider';
 import { HelpRequestData } from '@/types/Requests';
 import { Toggle } from '@/components/Toggle';
+import { helpRequestsVolunteers } from '@/lib/service';
 
 export const dynamic = 'force-dynamic';
 
@@ -83,6 +84,11 @@ function Solicitudes() {
         setLoading(true);
         setError(null);
 
+        const requests = await helpRequestsVolunteers.getAllRequests();
+        const requestsWithoutAssignees = requests
+          .filter(({ assignees_count }) => assignees_count === 0)
+          .map(({ id }) => id);
+
         // Comenzamos la consulta
         const query = supabase.from('help_requests').select('*', { count: 'exact' }).eq('type', 'necesita');
 
@@ -103,7 +109,7 @@ function Solicitudes() {
 
         // Solo agregar filtro si es true
         if (isStringTrue(filtroData.soloSinAsignar)) {
-          query.eq('asignees_count', 0);
+          query.in('id', requestsWithoutAssignees);
         }
 
         query.neq('status', 'finished');
@@ -190,7 +196,6 @@ function Solicitudes() {
               ))}
             </select>
           </div>
-          {/*
           <div className="flex flex-row flex-1 justify-end">
             <Toggle
               handleChange={handleToggleChange}
@@ -198,7 +203,6 @@ function Solicitudes() {
               label="Sólo ofertas sin voluntarios"
             />
           </div>
-          */}
         </div>
       </div>
       <div className="grid gap-4">

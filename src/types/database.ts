@@ -171,7 +171,7 @@ export type Database = {
       help_requests: {
         Row: {
           additional_info: Json | null;
-          asignees_count: number;
+          assignees_count: number;
           contact_info: string | null;
           coordinates: unknown | null;
           created_at: string | null;
@@ -194,7 +194,7 @@ export type Database = {
         };
         Insert: {
           additional_info?: Json | null;
-          asignees_count?: number;
+          assignees_count?: number;
           contact_info?: string | null;
           coordinates?: unknown | null;
           created_at?: string | null;
@@ -217,7 +217,7 @@ export type Database = {
         };
         Update: {
           additional_info?: Json | null;
-          asignees_count?: number;
+          assignees_count?: number;
           contact_info?: string | null;
           coordinates?: unknown | null;
           created_at?: string | null;
@@ -244,6 +244,29 @@ export type Database = {
             columns: ['town_id'];
             isOneToOne: false;
             referencedRelation: 'towns';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      help_requests_volunteers: {
+        Row: {
+          assignees_count: number;
+          id: number;
+        };
+        Insert: {
+          assignees_count?: number;
+          id?: number;
+        };
+        Update: {
+          assignees_count?: number;
+          id?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'help_requests_volunteers_id_fkey';
+            columns: ['id'];
+            isOneToOne: true;
+            referencedRelation: 'help_requests';
             referencedColumns: ['id'];
           },
         ];
@@ -366,7 +389,13 @@ export type Database = {
       };
     };
     Functions: {
-      [_ in never]: never;
+      'Increment assignees count': {
+        Args: {
+          request_id: number;
+          increment_by: number;
+        };
+        Returns: undefined;
+      };
     };
     Enums: {
       help_type_enum:

@@ -1,7 +1,8 @@
 import { HelpRequestAssignmentData } from '@/types/Requests';
 import { useQuery } from '@tanstack/react-query';
-import { helpRequestService } from '@/lib/service';
+import { helpRequestService, helpRequestsVolunteers } from '@/lib/service';
 import { Spinner } from '@/components/Spinner';
+import { HRV } from '@/types/HelpRequestsVolunteers';
 
 type SolicitudHelpCountProps = {
   id: number;
@@ -9,20 +10,16 @@ type SolicitudHelpCountProps = {
 };
 
 export default function SolicitudHelpCount({ id, people }: SolicitudHelpCountProps) {
-  const {
-    data: assignments,
-    isLoading,
-    error,
-  } = useQuery<HelpRequestAssignmentData[]>({
-    queryKey: ['help_request_assignments', { id: id }],
-    queryFn: () => helpRequestService.getAssignments(id),
+  const { data, isLoading, error } = useQuery<HRV>({
+    queryKey: ['help_request_volunteers', { id: id }],
+    queryFn: () => helpRequestsVolunteers.getRequest({ id }),
   });
 
   if (isLoading) return <Spinner />;
 
-  if (error || assignments === undefined) return <></>;
+  if (error || data === undefined) return <></>;
 
-  const volunteers = assignments.length;
+  const volunteers = data.assignees_count;
 
   const volunteerPercentage = (volunteers / people) * 100;
 

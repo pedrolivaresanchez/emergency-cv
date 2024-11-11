@@ -2,10 +2,15 @@ import { supabase } from './supabase/client';
 import { Database } from '@/types/database';
 import { HelpRequestAssignmentInsert, HelpRequestUpdate } from '@/types/Requests';
 import { createClient } from '@/lib/supabase/server';
+import { HRV, HRVUpdate } from '@/types/HelpRequestsVolunteers';
 
 export const helpRequestService = {
   async createRequest(requestData: Database['public']['Tables']['help_requests']['Insert']) {
     const { data, error } = await supabase.from('help_requests').insert([requestData]).select();
+
+    if (data) {
+      await helpRequestsVolunteers.insertRequest({ id: data[0].id });
+    }
 
     if (error) throw error;
     return data[0];
@@ -67,18 +72,7 @@ export const helpRequestService = {
     const { data, error } = await supabase.from('help_request_assignments').insert([requestData]).select();
     if (error) throw error;
 
-    const { data: linkedRequestData, error: errorGettingLinkedData } = await supabase
-      .from('help_requests')
-      .select('*')
-      .eq('id', requestData.help_request_id);
-    if (errorGettingLinkedData) throw errorGettingLinkedData;
-    if (!linkedRequestData) throw new Error('No se puede encontrar esta tarea');
-
-    const { error: errorUpdatingAssigneesCount } = await supabase
-      .from('help_requests')
-      .update({ asignees_count: linkedRequestData[0].asignees_count + 1 })
-      .eq('id', requestData.help_request_id);
-    if (errorUpdatingAssigneesCount) throw errorUpdatingAssigneesCount;
+    await helpRequestsVolunteers.incrementAssigneesCount({ id: requestData.help_request_id });
 
     return data[0];
   },
@@ -93,22 +87,7 @@ export const helpRequestService = {
     const { error: errorDeletingAssignment } = await supabase.from('help_request_assignments').delete().eq('id', id);
     if (errorDeletingAssignment) throw errorDeletingAssignment;
 
-    const { data: linkedRequestData, error: errorGettingLinkedData } = await supabase
-      .from('help_requests')
-      .select('*')
-      .eq('id', requestId);
-
-    if (errorGettingLinkedData) throw errorGettingLinkedData;
-    if (!linkedRequestData) throw new Error('No se puede encontrar esta tarea');
-
-    const { asignees_count } = linkedRequestData[0];
-    const newNumberAssignees = asignees_count <= 0 ? 0 : asignees_count - 1;
-
-    const { error: errorUpdatingAssigneesCount } = await supabase
-      .from('help_requests')
-      .update({ asignees_count: newNumberAssignees })
-      .eq('id', requestId);
-    if (errorUpdatingAssigneesCount) throw errorUpdatingAssigneesCount;
+    await helpRequestsVolunteers.decreaseAssigneesCount({ id: requestId });
   },
 
   async getByType(type: any) {
@@ -332,6 +311,61 @@ export const mapService = {
       });
       throw new Error(error.message || 'Error al obtener los datos del mapa');
     }
+  },
+};
+
+export const helpRequestsVolunteers = {
+  async insertRequest(data: Pick<HRV, 'id'>) {
+    const supabase = await getSupabaseClient();
+    const { error } = await supabase.from('help_requests_volunteers').insert(data);
+    if (error) {
+      console.log('Error inserting helpRequestsVolunteers row: ', error);
+      throw new Error('Error inserting helpRequestsVolunteers row');
+    }
+  },
+  async getRequest(readData: Pick<HRV, 'id'>) {
+    const supabase = await getSupabaseClient();
+    const { data, error } = await supabase.from('help_requests_volunteers').select().eq('id', readData.id);
+    if (error) {
+      console.log('Error getting the request from helpRequestsVolunteers: ', error);
+      throw new Error('Error getting the request from helpRequestsVolunteers');
+    }
+
+    if (!data) {
+      throw new Error('No data found in helpRequestsVolunteers');
+    }
+
+    return data[0];
+  },
+  async getAllRequests() {
+    const supabase = await getSupabaseClient();
+    const { data, error } = await supabase.from('help_requests_volunteers').select();
+    if (error) {
+      console.log('Error getting the all the requests from helpRequestsVolunteers: ', error);
+      throw new Error('Error getting all the the requests from helpRequestsVolunteers');
+    }
+
+    if (!data) {
+      throw new Error('No data found in helpRequestsVolunteers for all requests');
+    }
+
+    return data;
+  },
+  async updateRequest({ assignees_count, id }: HRVUpdate) {
+    const supabase = await getSupabaseClient();
+    const { error } = await supabase.from('help_requests_volunteers').update({ assignees_count }).eq('id', id);
+    if (error) {
+      console.log('Error updating the request in helpRequestsVolunteers: ', error);
+      throw new Error('Error updating the request in helpRequestsVolunteers');
+    }
+  },
+  async incrementAssigneesCount(data: Pick<HRV, 'id'>) {
+    const { assignees_count: prev_assignees_count } = await helpRequestsVolunteers.getRequest(data);
+    return this.updateRequest({ ...data, assignees_count: prev_assignees_count + 1 });
+  },
+  async decreaseAssigneesCount(data: Pick<HRV, 'id'>) {
+    const { assignees_count: prev_assignees_count } = await helpRequestsVolunteers.getRequest(data);
+    return this.updateRequest({ ...data, assignees_count: prev_assignees_count - 1 });
   },
 };
 
