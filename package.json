@@ -10,6 +10,7 @@
     "prettier:check": "prettier . --check",
     "prettier:write": "prettier . --write",
     "test:e2e": "npx playwright test",
+    "typecheck": "tsc -p . --noEmit",
     "supabase:types": "npx supabase gen types --lang=typescript --local > src/types/database.ts",
     "snaplet:sync": "npx @snaplet/seed sync",
     "snaplet:seed": "npx tsx seed.ts > supabase/automated_seed.sql"

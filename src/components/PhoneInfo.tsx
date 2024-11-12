@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { helpRequestService } from '@/lib/service';
 import { useSession } from '@/context/SessionProvider';
-import { SelectedHelpData } from '../app/casos-activos/solicitudes/actions';
+import { SelectedHelpData } from '../types/Requests';
 
 type PhoneInfoProps = {
   caseInfo: SelectedHelpData;
