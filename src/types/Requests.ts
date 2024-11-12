@@ -8,6 +8,7 @@ type HelpRequestJsonFields = {
   resources: HelpRequestResources | null;
 };
 export type HelpRequestHelpType = Database['public']['Enums']['help_type_enum'];
+export type HelpRequestDataWoJsonFields = Database['public']['Tables']['help_requests']['Row'];
 export type HelpRequestData = Database['public']['Tables']['help_requests']['Row'] & HelpRequestJsonFields;
 export type HelpRequestInsert = Database['public']['Tables']['help_requests']['Insert'] & HelpRequestJsonFields;
 export type HelpRequestUpdate = Database['public']['Tables']['help_requests']['Update'] & HelpRequestJsonFields;
@@ -33,10 +34,13 @@ export type OmitSelect<T, K extends string> = { [key in keyof Omit<T, K>]: T[key
 export type SelectStringBuilder<T, K extends string> = { [key in keyof Omit<T, K>]: true };
 
 export type SelectHelpDataStringBuilder = SelectStringBuilder<
-  HelpRequestData,
+  HelpRequestDataWoJsonFields,
   'location' | 'coordinates' | 'latitude' | 'longitude'
 >;
-export type SelectedHelpData = OmitSelect<HelpRequestData, 'location' | 'coordinates' | 'latitude' | 'longitude'>;
+export type SelectedHelpData = OmitSelect<
+  HelpRequestDataWoJsonFields,
+  'location' | 'coordinates' | 'latitude' | 'longitude'
+>;
 export const helpDataSelectFieldsObject: SelectHelpDataStringBuilder = {
   additional_info: true,
   asignees_count: true,
