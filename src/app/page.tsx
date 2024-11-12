@@ -186,8 +186,11 @@ export default async function Home() {
             <div>
               <h2 className="text-xl font-bold text-red-800 mb-2">EMERGENCIA ACTIVA - DANA</h2>
               <div className="prose prose-sm text-red-700">
-                <p className="mb-2">Situación de emergencia activa por DANA en la Comunitat Valenciana.</p>
-                <p className="font-medium">Para emergencias médicas inmediatas, llame al 112.</p>
+                <p className="mb-2">AVISO ESPECIAL: LLUVIAS Y CHUBASCOS MUY FUERTES A TORRENCIALES DESDE MARTES 12 DE NOVIEMBRE</p>
+                <p className="mb-2">SE RECOMIENDA DESALOJAR BAJOS Y LUGARES QUE SE HAYAN INUNDADO PREVIAMENTE. ABASTECERSE DE COMIDA, MEDICINAS Y SUMINISTRO PARA AL MENOS 4 DÍAS.
+                  DIFUNDE Y AYUDA EN TU COMUNIDAD EMERGENCIAS: 112</p>
+                <p className="font-medium">SIGUE RECOMENDACIONES OFICIALES DE <a className="text-blue-600 font-bold hover:text-blue-800 space-x-2" href="https://www.aemet.es/es/eltiempo/prediccion/municipios/valencia-id46250">AEMET</a>
+                </p>
               </div>
             </div>
           </div>
