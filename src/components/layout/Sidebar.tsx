@@ -18,6 +18,7 @@ import {
   Landmark,
   Scale,
   MessageCircleQuestion,
+  School,
 } from 'lucide-react';
 import UserInfo from '../UserInfo';
 import { useSession } from '@/context/SessionProvider';
@@ -147,6 +148,14 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
       description: 'Conecta con psicólogos voluntarios',
       path: 'https://ayudana.org/',
       color: 'text-teal-600',
+      isHref: true,
+    },
+    {
+      icon: School,
+      title: 'Ayudas Estado',
+      description: 'Enlace hacia la tramitación de las ayudas del estado',
+      path: 'https://www.gva.es/es/inicio/procedimientos?id_proc=101532',
+      color: 'text-red-600',
       isHref: true,
     },
   ];
