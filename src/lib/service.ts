@@ -1,30 +1,56 @@
 import { supabase } from './supabase/client';
-import { Database } from '@/types/database';
-import { HelpRequestAssignmentInsert, HelpRequestUpdate } from '@/types/Requests';
+import { HelpRequestAssignmentInsert, HelpRequestData, HelpRequestInsert, HelpRequestUpdate } from '@/types/Requests';
 import { createClient } from '@/lib/supabase/server';
-import { SupabaseClient } from '@supabase/supabase-js';
 
 export const helpRequestService = {
-  async createRequest(requestData: Database['public']['Tables']['help_requests']['Insert']) {
+  async createRequest(requestData: HelpRequestInsert) {
     const { data, error } = await supabase.from('help_requests').insert([requestData]).select();
 
     if (error) throw error;
-    return data[0];
+    return data[0] as HelpRequestData;
   },
   async editRequest(requestData: HelpRequestUpdate, id: number) {
     const { data, error } = await supabase.from('help_requests').update(requestData).eq('id', id).select();
     if (error) throw error;
-    return data;
-  },
-  async getAll() {
-    const { data, error } = await supabase.from('help_requests').select('*').order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data;
+    return data[0] as HelpRequestData;
   },
   async getOne(id: number) {
     const supabase = await getSupabaseClient();
     const { data, error } = await supabase.from('help_requests').select('*').eq('id', id).single();
+    if (error) throw error;
+    return data as HelpRequestData;
+  },
+  async addComment(id: number, comment: string, is_solved: boolean) {
+    const supabase = await getSupabaseClient();
+
+    const userResponse = await supabase.auth.getUser();
+    const user = userResponse.data.user;
+    if (!user) throw new Error('Usuario no autenticado');
+
+    const { data, error } = await supabase
+      .from('comments')
+      .insert([
+        {
+          help_request_id: id,
+          comment: comment,
+          is_solved: is_solved,
+          user_id: user.id,
+          user_name: user.user_metadata.full_name ?? user.user_metadata.nombre ?? '',
+          user_phone: user.user_metadata.telefono ?? '',
+        },
+      ])
+      .eq('id', id)
+      .single();
+    if (error) throw error;
+    return data;
+  },
+  async removeComment(id: number) {
+    const { error: errorDeletingAssignment } = await supabase.from('comments').delete().eq('id', id);
+    if (errorDeletingAssignment) throw errorDeletingAssignment;
+  },
+  async getComments(id: number) {
+    const { data, error } = await supabase.from('comments').select('*').eq('help_request_id', id);
+
     if (error) throw error;
     return data;
   },
@@ -43,7 +69,7 @@ export const helpRequestService = {
       .eq('type', 'necesita')
       .or(`user_id.eq.${user_id},id.in.(${helpRequestIds.join(',')})`);
     if (requestsError) throw requestsError;
-    return requests;
+    return requests as HelpRequestData[];
   },
 
   async getOffersByUser(user_id: string | undefined) {
@@ -54,7 +80,7 @@ export const helpRequestService = {
       .eq('type', 'ofrece')
       .eq('user_id', user_id);
     if (requestsError) throw requestsError;
-    return requests;
+    return requests as HelpRequestData[];
   },
 
   async getAssignments(id: number) {
@@ -66,95 +92,49 @@ export const helpRequestService = {
 
   async assign(requestData: HelpRequestAssignmentInsert) {
     const { data, error } = await supabase.from('help_request_assignments').insert([requestData]).select();
-
     if (error) throw error;
+
+    const { data: linkedRequestData, error: errorGettingLinkedData } = await supabase
+      .from('help_requests')
+      .select('*')
+      .eq('id', requestData.help_request_id);
+    if (errorGettingLinkedData) throw errorGettingLinkedData;
+    if (!linkedRequestData) throw new Error('No se puede encontrar esta tarea');
+
     return data[0];
   },
   async unassign(id: number) {
-    const { error } = await supabase.from('help_request_assignments').delete().eq('id', id);
-
-    if (error) throw error;
+    const { error: errorDeletingAssignment } = await supabase.from('help_request_assignments').delete().eq('id', id);
+    if (errorDeletingAssignment) throw errorDeletingAssignment;
   },
 
-  async getByType(type: any) {
-    const { data, error } = await supabase
-      .from('help_requests')
-      .select('*')
-      .eq('type', type)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data;
-  },
-  async getTodaysCount() {
-    const today = new Date().toISOString().split('T')[0];
-    const supabase = await getSupabaseClient();
-    const { count: solicitaCount, error: solicitaError } = await supabase
-      .from('help_requests')
-      .select('id', { count: 'exact' })
-      .eq('type', 'necesita')
-      .gte('created_at', today)
-      .lte('created_at', `${today}T23:59:59.999Z`);
-
-    const { count: ofreceCount, error: ofreceError } = await supabase
-      .from('help_requests')
-      .select('id', { count: 'exact' })
-      .eq('type', 'ofrece')
-      .gte('created_at', today)
-      .lte('created_at', `${today}T23:59:59.999Z`);
-
-    if (solicitaError) {
-      throw new Error('Error fetching solicita:', solicitaError);
-    }
-    if (ofreceError) {
-      throw new Error('Error fetching ofrece:', ofreceError);
-    }
-    return {
-      solicitudes: solicitaCount || 0,
-      ofertas: ofreceCount || 0,
-    };
-  },
   async getTodaysCountByTown() {
     const supabase = await getSupabaseClient();
-    const today = new Date().toISOString().split('T')[0];
 
-    const { data: towns, error: townError } = await supabase.from('towns').select('id, name');
+    const { data: towns, error: townError } = await supabase
+      .from('town_help_request_summary')
+      .select('*')
+      .or('offers_last_24h.gt.0,needs_last_24h.gt.0,unassigned_needs.gt.0');
 
     if (townError) {
       console.log('Error fetching towns:', townError);
       throw townError;
     }
 
-    const { data, error } = await supabase
-      .from('help_requests')
-      .select('*')
-      .in('type', ['ofrece', 'necesita'])
-      .gte('created_at', today)
-      .lte('created_at', `${today}T23:59:59.999Z`);
+    return towns;
+  },
+};
 
-    if (error) {
-      console.log('Error fetching help requests:', error);
-      throw error;
-    }
-
-    const volunteersCount = new Map();
-    const needHelpCount = new Map();
-
-    data.forEach((person) => {
-      const townId = person.town_id;
-      if (person.type === 'ofrece') {
-        volunteersCount.set(townId, (volunteersCount.get(townId) || 0) + 1);
-      } else if (person.type === 'necesita') {
-        needHelpCount.set(townId, (needHelpCount.get(townId) || 0) + 1);
-      }
-    });
-
-    return towns.map((town) => ({
-      id: town.id,
-      name: town.name ?? 'N/A',
-      count: volunteersCount.get(town.id) || 0,
-      needHelp: needHelpCount.get(town.id) || 0,
-    }));
+export const locationService = {
+  async getFormattedAddress(longitude: string, latitude: string) {
+    return await fetch('/api/address', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        longitude,
+        latitude,
+      }),
+    }).then((res) => res.json());
   },
 };
 
@@ -182,140 +162,6 @@ export const townService = {
 
     return response;
   },
-};
-
-export const missingPersonService = {
-  async create(data: any) {
-    const { data: result, error } = await supabase.from('missing_persons').insert([data]).select();
-
-    if (error) throw error;
-    return result[0];
-  },
-
-  async getAll() {
-    const { data, error } = await supabase
-      .from('missing_persons')
-      .select('*')
-      .eq('status', 'active')
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data;
-  },
-};
-
-export const collectionPointService = {
-  create: async (data: any) => {
-    try {
-      // Validate required fields
-      if (!data.name) throw new Error('El nombre del centro es requerido');
-      if (!data.location) throw new Error('La dirección es requerida');
-      if (!data.city) throw new Error('La ciudad es requerida');
-      if (!data.contact_name) throw new Error('El nombre del responsable es requerido');
-      if (!data.contact_phone) throw new Error('El teléfono de contacto es requerido');
-
-      const { data: result, error } = await supabase
-        .from('collection_points')
-        .insert([
-          {
-            ...data,
-            created_at: new Date().toISOString(),
-            last_updated: new Date().toISOString(),
-          },
-        ])
-        .select();
-
-      if (error) {
-        console.error('Supabase error:', error);
-        throw new Error(error.message);
-      }
-
-      if (!result || result.length === 0) {
-        throw new Error('No se pudo crear el punto de recogida');
-      }
-
-      return result[0];
-    } catch (error) {
-      console.error('Service error:', error);
-      throw error;
-    }
-  },
-
-  async getAll() {
-    const { data, error } = await supabase
-      .from('collection_points')
-      .select('*')
-      .eq('status', 'active')
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data;
-  },
-};
-
-export const mapService = {
-  async getAllMapPoints() {
-    try {
-      // Get help requests
-      const helpRequestsResponse = await supabase.from('help_requests').select('*').eq('status', 'active');
-
-      if (helpRequestsResponse.error) {
-        console.error('Help Requests Error:', helpRequestsResponse.error);
-        throw new Error(helpRequestsResponse.error.message);
-      }
-
-      // Get missing persons
-      const missingPersonsResponse = await supabase.from('missing_persons').select('*').eq('status', 'active');
-
-      if (missingPersonsResponse.error) {
-        console.error('Missing Persons Error:', missingPersonsResponse.error);
-        throw new Error(missingPersonsResponse.error.message);
-      }
-
-      // Get collection points
-      const collectionPointsResponse = await supabase.from('collection_points').select('*').eq('status', 'active');
-
-      if (collectionPointsResponse.error) {
-        console.error('Collection Points Error:', collectionPointsResponse.error);
-        throw new Error(collectionPointsResponse.error.message);
-      }
-
-      // Log successful responses
-      console.log('Help Requests:', helpRequestsResponse.data);
-      console.log('Missing Persons:', missingPersonsResponse.data);
-      console.log('Collection Points:', collectionPointsResponse.data);
-
-      return {
-        helpRequests: helpRequestsResponse.data || [],
-        missingPersons: missingPersonsResponse.data || [],
-        collectionPoints: collectionPointsResponse.data || [],
-      };
-    } catch (error: any) {
-      console.error('MapService Error Details:', {
-        message: error.message,
-        error: error,
-      });
-      throw new Error(error.message || 'Error al obtener los datos del mapa');
-    }
-  },
-};
-
-// Add this function to test the connection
-export const testSupabaseConnection = async () => {
-  try {
-    const { data, error } = await supabase.from('help_requests').select('count').single();
-
-    if (error) {
-      console.error('Supabase Connection Error:', error);
-      throw error;
-    }
-
-    console.log('Supabase Connection Success:', data);
-    return true;
-  } catch (error) {
-    console.error('Connection Test Failed:', error);
-    return false;
-  }
 };
 
 export const authService = {

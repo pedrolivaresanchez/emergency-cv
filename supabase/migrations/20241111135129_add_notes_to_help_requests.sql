@@ -1,0 +1,1 @@
+alter table "public"."help_requests" ADD IF NOT EXISTS "notes" text;

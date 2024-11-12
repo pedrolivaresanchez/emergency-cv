@@ -5,7 +5,6 @@ import { HelpRequestAssignmentData, HelpRequestData } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
 import { MouseEvent } from 'react';
 import { Spinner } from '@/components/Spinner';
-import Link from 'next/link';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import Modal from '@/components/Modal';
@@ -43,9 +42,10 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
         phone_number: session.user.user_metadata.telefono!,
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['help_request_assignments'] });
-      queryClient.invalidateQueries({ queryKey: ['help_requests', { user_id: userId, type: 'necesita' }] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['help_request_assignments'] });
+      await queryClient.invalidateQueries({ queryKey: ['help_requests', { user_id: userId, type: 'necesita' }] });
+      await router.push(`/solicitudes/${helpRequest.id}`);
     },
     onError: (e) => {
       console.error('Error al asignarte a la petición de ayuda', e);
@@ -59,9 +59,9 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
       if (!userAssignment) return;
       await helpRequestService.unassign(userAssignment.id);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['help_request_assignments'] });
-      queryClient.invalidateQueries({ queryKey: ['help_requests', { user_id: userId, type: 'necesita' }] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['help_request_assignments'] });
+      await queryClient.invalidateQueries({ queryKey: ['help_requests', { user_id: userId, type: 'necesita' }] });
     },
     onError: (e) => {
       console.error('Error al asignarte a la petición de ayuda', e);

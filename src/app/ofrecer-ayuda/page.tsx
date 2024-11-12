@@ -1,5 +1,5 @@
-import OfferHelp from '@/components/OfferHelp';
+import CreateHelpOffer from '@/components/HelpOffers/CreateHelpOffer';
 
 export default function OfrecerAyuda() {
-  return <OfferHelp />;
+  return <CreateHelpOffer />;
 }

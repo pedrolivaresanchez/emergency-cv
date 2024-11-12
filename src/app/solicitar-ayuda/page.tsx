@@ -1,23 +1,12 @@
 import { AlertTriangle } from 'lucide-react';
 import Image from 'next/image';
-import { Form } from './_components/Form';
 import { CallCenterLink } from '@/components/CallCenterLink';
+import CreateHelpRequest from '@/components/HelpRequests/CreateHelpRequest';
 
 export default function SolicitarAyuda() {
   return (
     <div className="space-y-6">
       {/* Banner de emergencia */}
-      <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
-        <div className="flex items-start">
-          <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 mr-2" />
-          <div>
-            <h2 className="text-red-800 font-bold">EMERGENCIA ACTIVA - Inundaciones CV</h2>
-            <p className="text-red-700 text-sm mt-1">
-              Para emergencias médicas inmediatas, llame al 112. Este formulario es para coordinar ayuda y asistencia.
-            </p>
-          </div>
-        </div>
-      </div>
       <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded">
         <div className="flex items-start">
           <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 mr-2" />
@@ -55,7 +44,7 @@ export default function SolicitarAyuda() {
           </div>
         </div>
       </div>
-      <Form />
+      <CreateHelpRequest />
     </div>
   );
 }

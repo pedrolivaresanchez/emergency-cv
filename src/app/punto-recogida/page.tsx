@@ -3,9 +3,9 @@
 import { useState, useCallback, useEffect, FormEvent } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { MapPin, Phone, Package, House, Contact, Megaphone } from 'lucide-react';
-import AddressAutocomplete from '@/components/AddressAutocomplete';
+import AddressAutocomplete, { AddressDetails } from '@/components/AddressAutocomplete';
 import { isValidPhone } from '@/helpers/utils';
-import { PhoneInput } from '@/components/PhoneInput';
+import { PhoneInput } from '@/components/input/PhoneInput';
 import { CollectionPointData, CollectionPointInsert } from '@/types/DataPoints';
 
 export const dynamic = 'force-dynamic';
@@ -220,7 +220,7 @@ export default function PuntosRecogida() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Dirección completa *</label>
                 <AddressAutocomplete
-                  onSelect={(address: any) => {
+                  onSelect={(address: AddressDetails) => {
                     setFormData((prev) => ({
                       ...prev,
                       location: address.fullAddress,

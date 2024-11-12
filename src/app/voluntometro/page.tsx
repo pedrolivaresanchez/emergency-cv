@@ -5,8 +5,7 @@ import { helpRequestService } from '@/lib/service';
 export const dynamic = 'force-dynamic';
 
 export default async function Voluntometro() {
-  const pueblos = await helpRequestService.getTodaysCountByTown();
-  const count = await helpRequestService.getTodaysCount();
+  const towns = await helpRequestService.getTodaysCountByTown();
 
   const getFechaHoy = () => {
     const fecha = new Date();
@@ -17,23 +16,11 @@ export default async function Voluntometro() {
     });
   };
 
-  const getTopAndBottomPueblos = () => {
-    const sortedPueblos = [...pueblos].sort((a, b) => {
-      const volunteersDiffA = a.count - a.needHelp;
-      const volunteersDiffB = b.count - b.needHelp;
-      if (volunteersDiffA !== volunteersDiffB) {
-        return volunteersDiffB - volunteersDiffA;
-      } else {
-        return b.count - a.count;
-      }
-    });
+  const totalOffers = towns.reduce((sum, pueblo) => sum + (pueblo.offers_last_24h ?? 0), 0);
+  const totalSolicitudes = towns.reduce((sum, pueblo) => sum + (pueblo.needs_last_24h ?? 0), 0);
 
-    return {
-      top: sortedPueblos.slice(0, 2),
-      bottom: sortedPueblos.slice(-2).reverse(),
-      all: sortedPueblos.reverse(),
-    };
-  };
+  const sortedTowns = towns.sort((a, b) => (b.unassigned_needs ?? 0) - (a.unassigned_needs ?? 0));
+
   return (
     <div className="mx-auto p-4">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
@@ -51,7 +38,7 @@ export default async function Voluntometro() {
             <HeartHandshake className="w-16 h-16 text-green-600" />
           </div>
           <div className="flex flex-col justify-center">
-            <h1 className="text-3xl font-bold text-gray-900">{count.ofertas}+</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{totalOffers}+</h1>
             <p className="text-lg font-medium text-gray-600">Nuevos voluntarios hoy</p>
           </div>
         </div>
@@ -60,18 +47,19 @@ export default async function Voluntometro() {
             <Search className="w-16 h-16 text-red-600" />
           </div>
           <div className="flex flex-col justify-center">
-            <h1 className="text-3xl font-bold text-gray-900">{count.solicitudes}+</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{totalSolicitudes}+</h1>
             <p className="text-lg font-medium text-gray-600">Nuevas solicitudes hoy</p>
           </div>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {getTopAndBottomPueblos().all.map(
-          (pueblo) =>
-            pueblo.needHelp > 0 && (
-              <TownCardInfo key={pueblo.id} pueblo={pueblo} route="/casos-activos/solicitudes/?pueblo=" />
-            ),
-        )}
+        {sortedTowns.map((townSummary) => (
+          <TownCardInfo
+            key={townSummary.town_id}
+            townSummary={townSummary}
+            route="/casos-activos/solicitudes/?pueblo="
+          />
+        ))}
       </div>
     </div>
   );

@@ -60,7 +60,8 @@ const CookieBanner: FC = () => {
             onClick={handleRejectCookies}
             className="flex-1 bg-red-500 text-white py-3 px-4 rounded-lg font-semibold"
           >
-            Rechazar
+            <p>Rechazar</p>
+            <p className="text-xs text-white opacity-80 block">(Se redigirá a la página de google)</p>
           </button>
           <button
             onClick={handleAcceptCookies}

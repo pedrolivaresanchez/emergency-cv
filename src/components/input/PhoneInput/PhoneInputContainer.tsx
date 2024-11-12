@@ -6,7 +6,7 @@ import { PhoneInputRenderer } from './PhoneInputRenderer';
 import { PhoneInputProps } from './types';
 import { isValidPhone } from '@/helpers/utils';
 
-export function PhoneInputContainer({ onChange, phoneNumber, required = false }: PhoneInputProps) {
+export function PhoneInput({ onChange, phoneNumber, required = false }: PhoneInputProps) {
   const [isInvalid, setIsInvalid] = useState(false);
 
   const handleChange: PhoneInputProps['onChange'] = useCallback(

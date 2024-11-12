@@ -6,6 +6,7 @@ import Pagination from '@/components/Pagination';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
 import OfferCard from '@/components/OfferCard';
+import { useTowns } from '@/context/TownProvider';
 import { HelpRequestData } from '@/types/Requests';
 
 export const dynamic = 'force-dynamic';
@@ -21,7 +22,7 @@ export default function OfertasPage() {
 function Ofertas() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const {} = router;
+  const { towns, isLoading: townsLoading, error: townsError } = useTowns();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +36,7 @@ function Ofertas() {
     return Math.ceil(count / itemsPerPage) || 0;
   };
 
-  const updateFilter = (filter: 'ayuda' | 'page', value: string | number) => {
+  const updateFilter = (filter: 'ayuda' | 'pueblo' | 'page', value: string | number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set(filter, value.toString());
     router.push(`?${params.toString()}`);
@@ -43,9 +44,10 @@ function Ofertas() {
 
   const [filtroData, setFiltroData] = useState({
     ayuda: searchParams.get('acepta') || 'todas',
+    pueblo: searchParams.get('pueblo') || 'todos',
   });
 
-  const changeDataFilter = (type: 'ayuda', newFilter: string) => {
+  const changeDataFilter = (type: 'ayuda' | 'pueblo', newFilter: string) => {
     setFiltroData((prev) => ({
       ...prev,
       [type]: newFilter,
@@ -67,9 +69,14 @@ function Ofertas() {
         // Comenzamos la consulta
         const query = supabase.from('help_requests').select('*', { count: 'exact' }).eq('type', 'ofrece');
 
-        // Solo agregar filtro si no es "todos"
+        // Solo agregar filtro de ayuda si no es "todos"
         if (filtroData.ayuda !== 'todas') {
           query.contains('help_type', [filtroData.ayuda]);
+        }
+
+        // Solo agregar filtro de pueblo si no es "todos"
+        if (filtroData.pueblo !== 'todos') {
+          query.eq('town_id', filtroData.pueblo); // Filtra por el ID del pueblo
         }
 
         query.neq('status', 'finished');
@@ -82,7 +89,7 @@ function Ofertas() {
           console.log('Error fetching solicitudes:', error);
           setData([]);
         } else {
-          setData(data || []);
+          setData((data as HelpRequestData[]) || []);
           setCurrentCount(count ?? 0);
         }
       } catch (err) {
@@ -112,12 +119,15 @@ function Ofertas() {
     );
   }
 
+  const sortedTowns = towns.slice().sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '')); // Organizamos de A-Z los nombres de los pueblos obtenidos.
+
   return (
     <>
       {/* FILTROS  */}
       <div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
         <p className="font-bold text-md">Filtros</p>
         <div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
+          {/* Filtro de Ayuda */}
           <select
             value={filtroData.ayuda}
             onChange={(e) => changeDataFilter('ayuda', e.target.value)}
@@ -127,6 +137,20 @@ function Ofertas() {
             {Object.entries(tiposAyudaOptions).map(([key, value]) => (
               <option key={key} value={key}>
                 {value}
+              </option>
+            ))}
+          </select>
+
+          {/* Filtro de Pueblo */}
+          <select
+            value={filtroData.pueblo}
+            onChange={(e) => changeDataFilter('pueblo', e.target.value)}
+            className="px-4 py-2 rounded-lg w-full sm:w-auto border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+          >
+            <option value="todos">Todos los pueblos</option>
+            {sortedTowns.map((town) => (
+              <option key={town.id} value={town.id}>
+                {town.name}
               </option>
             ))}
           </select>
@@ -140,7 +164,7 @@ function Ofertas() {
             </p>
           </div>
         ) : (
-          data.map((caso) => <OfferCard caso={caso} showLink={true} key={caso.id} />)
+          data.map((caso) => <OfferCard caso={caso} showLink={true} showEdit={true} key={caso.id} />)
         )}
       </div>
       <div className="flex items-center justify-center">
