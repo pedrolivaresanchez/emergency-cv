@@ -31,8 +31,8 @@ export const tiposAyudaArray: TipoAyudaOption[] = Object.entries(tiposAyudaOptio
 }));
 
 export const CrmStatusActive = 'active';
-export const CrmStatusFollowUp = 'followup';
-export const CrmStatusAssigned = 'assigned';
+export const CrmStatusFollowUp = 'volver a llamar';
+export const CrmStatusAssigned = 'asignado';
 export const CrmStatusProgress = 'progress';
 export const CrmStatusFinished = 'finished';
 
