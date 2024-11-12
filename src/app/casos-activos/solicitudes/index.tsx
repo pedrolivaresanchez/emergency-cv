@@ -90,7 +90,7 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
 
   return (
     <>
-      <div className="lg:flex lg:flex-row-reverse overflow-hidden">
+      <div className="lg:flex lg:flex-row-reverse">
         <MapaSolicitudes data={dataFiltered} setSelectedMarker={setSelectedMarker} />
         <ListadoSolicitudes
           data={dataFiltered}
