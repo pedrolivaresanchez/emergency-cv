@@ -22,10 +22,8 @@ export default function MapaSolicitudes({ data }: MapaSolicitudesProps) {
   const markers = data.map(transformHelpRequestToMarker);
 
   return (
-    <div>
-      <div className="grid gap-4 min-h-screen">
+    <div className="fixed w-1/2 h-screen right-0 z-0">
         <Map markers={markers} />
-      </div>
     </div>
   );
 }

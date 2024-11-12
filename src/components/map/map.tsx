@@ -44,7 +44,7 @@ const Map: FC<MapProps> = ({ markers = [] }) => {
         latitude: PAIPORTA_LAT,
         zoom: DEFAULT_ZOOM,
       }}
-      style={{ width: '100%', height: '75vh' }}
+      style={{ width: '100%', height: '100vh' }}
       mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
     >
       {markers.map((m) => {

@@ -29,11 +29,11 @@ export default function ListadoSolicitudes({ data, count, filtersData, onDataFil
   const sortedTowns = towns.slice().sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '')); // Organizamos de A-Z los nombres de los pueblos obtenidos.
 
   return (
-    <div>
+    <div className="p-4 drop-shadow-xl z-10 bg-gray-100">
       <TabNavigation count={count} />
       {/* FILTROS  */}
-      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
-        <div className="flex flex-col space-y-3 w-full">
+      <div className="flex flex-col sm:flex-row py-4 gap-2 items-center justify-between">
+        <div className="flex flex-col w-full">
           <div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
             <div className="flex flex-col justify-center">
               <p className="font-bold text-md">Filtros</p>
