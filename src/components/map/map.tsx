@@ -41,7 +41,7 @@ const Map: FC<MapProps> = ({ solicitudes, setSelectedMarker }) => {
           latitude: PAIPORTA_LAT,
           zoom: DEFAULT_ZOOM,
         }}
-        style={{ width: '100%', height: '100vh' }}
+        style={{ width: '100%', height: '100%' }}
         mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
         onMouseMove={onMouseMoveHandler}
         onClick={onClickHandler}

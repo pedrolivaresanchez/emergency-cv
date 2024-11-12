@@ -31,7 +31,7 @@ export default function MapaSolicitudes({ data, setSelectedMarker }: MapaSolicit
   [data]);
 
   return (
-    <div className="sticky w-full h-screen top-0 right-0 z-0">
+    <div className="sticky w-1/1 h-screen max-h-[50vh] lg:max-h-[100vh] lg:w-1/2 top-0 right-0 z-0">
         <Map solicitudes={solicitudesGeoJson} setSelectedMarker={setSelectedMarker} />
     </div>
   );

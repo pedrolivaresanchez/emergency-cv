@@ -14,7 +14,9 @@ export default function SidebarLayout({ children }: PropsWithChildren) {
   useEffect(() => {
     // Ajustar el estado inicial basado en el tamaño de la pantalla
     const handleResize = () => {
-      setIsSidebarOpen(window.innerWidth >= 768); // 768px es el breakpoint de md en Tailwind
+      if(isSidebarOpen && window.innerWidth < 768) {
+        setIsSidebarOpen(false); // 768px es el breakpoint de md en Tailwind
+      }
     };
 
     // Establecer estado inicial

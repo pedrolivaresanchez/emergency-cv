@@ -88,9 +88,9 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
 
   return (
     <>
-    <div className="grid grid-cols-2">
-      <ListadoSolicitudes data={dataFiltered} count={count} filtersData={filtersData} onDataFilterChange={changeDataFilter} />
+    <div className="lg:flex lg:flex-row-reverse">
       <MapaSolicitudes data={dataFiltered} setSelectedMarker={setSelectedMarker} />
+      <ListadoSolicitudes data={dataFiltered} count={count} filtersData={filtersData} onDataFilterChange={changeDataFilter} />
     </div>
     {selectedMarker && <Modal id={MAP_MODAL_NAME}><SolicitudCard format="small" showLink={true} showEdit={false} caso={selectedMarker} /></Modal>}
     </>
