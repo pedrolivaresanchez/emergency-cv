@@ -4,18 +4,20 @@ import { createClient } from '@/lib/supabase/server';
 import { Database } from '@/types/database';
 import { Solicitudes } from '.';
 import { HelpRequestData } from '@/types/Requests';
-import { HelpRequestDataClean } from './types';
 
 export const dynamic = 'force-dynamic';
 
-function parseData(data: Database['public']['Tables']['help_requests']['Row'][]): HelpRequestDataClean[] {
-  // TODO: return only the data needed and remove latitude and longitude precision
-  return data as HelpRequestDataClean[];
-  // return data.map(d => ({
-  //   id: d.id,
-  //   latitude: d.latitude,
-  //   longitude: d.longitude,
-  // }))
+function parseData(data: Database['public']['Tables']['help_requests']['Row'][]): HelpRequestData[] {
+  return data.map((d) => {
+    // Remove unused properties to reduce the payload size
+    const { coordinates, crm_status, resources, user_id, ...rest } = d;
+    return {
+      ...rest,
+      // Fix the coordinates to 3 decimals so locations have a 100m precision
+      latitude: Number(d.latitude?.toFixed(3)),
+      longitude: Number(d.longitude?.toFixed(3)),
+    } as HelpRequestData;
+  });
 }
 
 const getData = async (supabase: SupabaseClient<Database>) => {
@@ -56,7 +58,6 @@ export default async function SolicitudesPage() {
   const supabase = await createClient();
   const data = await getData(supabase);
   const count = await getCount(supabase);
-  console.log('🚀 ~ SolicitudesPage ~ data:', data);
 
   return (
     <Suspense

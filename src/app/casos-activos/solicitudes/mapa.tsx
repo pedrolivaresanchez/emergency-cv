@@ -1,7 +1,6 @@
 'use client';
 
 import Map from '@/components/map/map';
-import { HelpRequestDataClean } from './types';
 import { HelpRequestData } from '@/types/Requests';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 
@@ -17,22 +16,23 @@ function transformHelpRequestToPointFeature(request: any): GeoJSON.Feature<GeoJS
 }
 
 type MapaSolicitudesProps = {
-  data: HelpRequestDataClean[];
+  data: HelpRequestData[];
   setSelectedMarker: Dispatch<SetStateAction<HelpRequestData | null>>;
 };
 
 export default function MapaSolicitudes({ data, setSelectedMarker }: MapaSolicitudesProps) {
-  const solicitudesGeoJson = useMemo(() => (
-      {
-      type: 'FeatureCollection',
-      features: data.map(transformHelpRequestToPointFeature),
-    } as GeoJSON.FeatureCollection<GeoJSON.Point>
-  ), 
-  [data]);
+  const solicitudesGeoJson = useMemo(
+    () =>
+      ({
+        type: 'FeatureCollection',
+        features: data.map(transformHelpRequestToPointFeature),
+      }) as GeoJSON.FeatureCollection<GeoJSON.Point>,
+    [data],
+  );
 
   return (
     <div className="sticky w-1/1 h-screen max-h-[50vh] lg:max-h-[100vh] lg:w-1/2 top-0 right-0 z-0">
-        <Map solicitudes={solicitudesGeoJson} setSelectedMarker={setSelectedMarker} />
+      <Map solicitudes={solicitudesGeoJson} setSelectedMarker={setSelectedMarker} />
     </div>
   );
 }

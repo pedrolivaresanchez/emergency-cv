@@ -14,7 +14,7 @@ export default function SidebarLayout({ children }: PropsWithChildren) {
   useEffect(() => {
     // Ajustar el estado inicial basado en el tamaño de la pantalla
     const handleResize = () => {
-      if(isSidebarOpen && window.innerWidth < 768) {
+      if (isSidebarOpen && window.innerWidth < 768) {
         setIsSidebarOpen(false); // 768px es el breakpoint de md en Tailwind
       }
     };
@@ -28,7 +28,7 @@ export default function SidebarLayout({ children }: PropsWithChildren) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const isFullWidthSection = pathname === SOLICITUDES_PATH
+  const isFullWidthSection = pathname === SOLICITUDES_PATH;
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
@@ -36,8 +36,8 @@ export default function SidebarLayout({ children }: PropsWithChildren) {
       <div
         className={`flex flex-col flex-1 transition-margin duration-300 w-full ${isSidebarOpen ? 'md:ml-72' : 'ml-0'}`}
       >
-        <main className={`${isFullWidthSection ? '': 'p-4'} flex flex-1 justify-center items-center lg:items-start`}>
-          <div className={`${isFullWidthSection ? '': 'max-w-7xl'} w-full`}>{children}</div>
+        <main className={`${isFullWidthSection ? '' : 'p-4'} flex flex-1 justify-center items-center lg:items-start`}>
+          <div className={`${isFullWidthSection ? '' : 'max-w-7xl'} w-full`}>{children}</div>
         </main>
         <Footer />
         <CookieBanner />
