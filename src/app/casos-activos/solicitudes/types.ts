@@ -4,4 +4,4 @@ export type FilterType = 'search' | 'urgencia' | 'tipoAyuda' | 'pueblo' | 'soloS
 
 export type FiltersData = Record<FilterType, string>;
 
-export type HelpRequestDataClean = Pick<HelpRequestData, 'id' | 'latitude' | 'longitude' | 'description' | 'location'>;
+export type HelpRequestDataClean = Pick<HelpRequestData, 'id' | 'latitude' | 'longitude' | 'description' | 'location' | 'urgency' | 'help_type' | 'asignees_count'>;

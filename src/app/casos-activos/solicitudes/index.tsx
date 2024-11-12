@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 // import { supabase } from '@/lib/supabase/client';
 import { matchSorter } from 'match-sorter';
 import { useRouter, useSearchParams } from 'next/navigation';
-import ListadoSolicitudes from './listado';
+import ListadoSolicitudes, { isStringTrue } from './listado';
 import MapaSolicitudes from './mapa';
 import { FilterType, HelpRequestDataClean } from './types';
 import { useTowns } from '@/context/TownProvider';
@@ -60,15 +60,25 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
   );
 
   useEffect(() => {
-    const town = towns.find((t) => t.id === parseInt(filtersData.pueblo));
-    const filters: DataFilter[] = [
-      {
+    const filters: DataFilter[] = [];
+    if(filtersData.search) {
+      filters.push({
         keys: ['description'],
         value: filtersData.search,
-      },
-      { keys: ['location'], value: town?.name || '' },
-    ];
-    setDataFiltered(getDataFiltered(data, filters));
+      });
+    }
+    if(filtersData.pueblo && filtersData.pueblo !== 'todos') {
+      const town = towns.find((t) => t.id === parseInt(filtersData.pueblo));
+      filters.push({ keys: ['location'], value: town?.name || '' });
+    }
+    if(filtersData.urgencia && filtersData.urgencia !== 'todas') {
+      filters.push({ keys: ['urgency'], value: filtersData.urgencia });
+    }
+    if(filtersData.tipoAyuda && filtersData.tipoAyuda !== 'todas') {
+      filters.push({ keys: ['help_type'], value: filtersData.tipoAyuda });
+    }
+    const preFilteredData = isStringTrue(filtersData.soloSinAsignar) ? data.filter((d) => d.asignees_count === 0) : data
+    setDataFiltered(getDataFiltered(preFilteredData, filters));
   }, [data, filtersData, towns]);
 
   return (
