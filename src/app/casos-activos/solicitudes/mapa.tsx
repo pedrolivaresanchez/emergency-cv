@@ -22,7 +22,7 @@ export default function MapaSolicitudes({ data }: MapaSolicitudesProps) {
   const markers = data.map(transformHelpRequestToMarker);
 
   return (
-    <div className="fixed w-1/2 h-screen right-0 z-0">
+    <div className="sticky w-full h-screen top-0 right-0 z-0">
         <Map markers={markers} />
     </div>
   );

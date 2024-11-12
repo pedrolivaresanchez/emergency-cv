@@ -35,10 +35,8 @@ export default function ListadoSolicitudes({ data, count, filtersData, onDataFil
       <div className="flex flex-col sm:flex-row py-4 gap-2 items-center justify-between">
         <div className="flex flex-col w-full">
           <div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
-            <div className="flex flex-col justify-center">
-              <p className="font-bold text-md">Filtros</p>
-            </div>
             <input
+              placeholder='Búsqueda'
               value={filtersData.search}
               onChange={(e) => onDataFilterChange('search', e.target.value)}
               type="text"
@@ -50,7 +48,7 @@ export default function ListadoSolicitudes({ data, count, filtersData, onDataFil
               onChange={(e) => onDataFilterChange('tipoAyuda', e.target.value)}
               className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
             >
-              <option value="todas">Todas las necesidades</option>
+              <option value="todas">Necesidades</option>
               {Object.entries(tiposAyudaOptions).map(([key, label]) => (
                 <option key={key} value={key}>
                   {label}
@@ -62,7 +60,7 @@ export default function ListadoSolicitudes({ data, count, filtersData, onDataFil
               onChange={(e) => onDataFilterChange('urgencia', e.target.value)}
               className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
             >
-              <option value="todas">Todas las prioridades</option>
+              <option value="todas">Prioridades</option>
               <option value="alta">Alta prioridad</option>
               <option value="media">Media prioridad</option>
               <option value="baja">Baja prioridad</option>
@@ -72,7 +70,7 @@ export default function ListadoSolicitudes({ data, count, filtersData, onDataFil
               onChange={(e) => onDataFilterChange('pueblo', e.target.value)}
               className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
             >
-              <option value="todos">Todos los pueblos</option>
+              <option value="todos">Pueblos</option>
               {sortedTowns.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.name}
