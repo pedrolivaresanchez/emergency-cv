@@ -18,8 +18,15 @@ type ListadoSolicitudesProps = {
 }
 
 export default function ListadoSolicitudes({ data, count, filtersData, onDataFilterChange}: ListadoSolicitudesProps) {
+  
   const { towns } = useTowns();
 
+  const hasFilters = Object.entries(filtersData).some(([key, value]) => 
+    key !== 'soloSinAsignar' 
+    && value !== '' 
+    && value !== 'todas' 
+    && value !== 'todos'
+  );
 
   const handleToggleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     (e) => onDataFilterChange('soloSinAsignar', `${e.target.checked}`),
@@ -35,50 +42,65 @@ export default function ListadoSolicitudes({ data, count, filtersData, onDataFil
       <div className="flex flex-col sm:flex-row py-4 gap-2 items-center justify-between">
         <div className="flex flex-col w-full">
           <div className="flex flex-col sm:flex-row gap-2 w-full justify-end">
-            <input
-              placeholder='Búsqueda'
-              value={filtersData.search}
-              onChange={(e) => onDataFilterChange('search', e.target.value)}
-              type="text"
-              className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
-            >
-            </input>
-            <select
-              value={filtersData.tipoAyuda}
-              onChange={(e) => onDataFilterChange('tipoAyuda', e.target.value)}
-              className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
-            >
-              <option value="todas">Necesidades</option>
-              {Object.entries(tiposAyudaOptions).map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            <select
-              value={filtersData.urgencia}
-              onChange={(e) => onDataFilterChange('urgencia', e.target.value)}
-              className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
-            >
-              <option value="todas">Prioridades</option>
-              <option value="alta">Alta prioridad</option>
-              <option value="media">Media prioridad</option>
-              <option value="baja">Baja prioridad</option>
-            </select>
-            <select
-              value={filtersData.pueblo}
-              onChange={(e) => onDataFilterChange('pueblo', e.target.value)}
-              className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
-            >
-              <option value="todos">Pueblos</option>
-              {sortedTowns.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
+            <div className='flex flex-col gap-1 w-full'>
+              <label htmlFor="busqueda">Búsqueda</label>
+              <input
+                id="busqueda"
+                value={filtersData.search}
+                onChange={(e) => onDataFilterChange('search', e.target.value)}
+                type="text"
+                className="text-sm px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+              />
+            </div>
+            <div className='flex flex-col gap-1 w-full'>
+              <label htmlFor="necesidades">Necesidades</label>
+              <select
+                id="necesidades"
+                value={filtersData.tipoAyuda}
+                onChange={(e) => onDataFilterChange('tipoAyuda', e.target.value)}
+                className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+              >
+                <option value="todas">Todas</option>
+                {Object.entries(tiposAyudaOptions).map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className='flex flex-col gap-1 w-full'>
+              <label htmlFor="prioridades">Prioridades</label>
+              <select
+                id="prioridades"
+                value={filtersData.urgencia}
+                onChange={(e) => onDataFilterChange('urgencia', e.target.value)}
+                className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+              >
+                <option value="todas">Todas</option>
+                <option value="alta">Alta prioridad</option>
+                <option value="media">Media prioridad</option>
+                <option value="baja">Baja prioridad</option>
+              </select>
+            </div>
+            <div className='flex flex-col gap-1 w-full'>
+              <label htmlFor="pueblos">Pueblos</label>
+              <select
+                id="pueblos"
+                value={filtersData.pueblo}
+                onChange={(e) => onDataFilterChange('pueblo', e.target.value)}
+                className="px-4 py-2 rounded-lg w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
+              >
+                <option value="todos">Todos</option>
+                {sortedTowns.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div className="flex flex-row flex-1 justify-end pt-4">
+            {hasFilters && data.length > 0 && <span className="flex-1">{data.length} solicitudes</span>}
             <Toggle
               handleChange={handleToggleChange}
               checked={isStringTrue(filtersData.soloSinAsignar)}
