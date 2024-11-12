@@ -46,7 +46,7 @@ export default function HelpRequestForm({
   const [formData, setFormData] = useState<HelpRequestFormData>({
     nombre: request?.name || user?.user_metadata?.full_name || user?.user_metadata?.nombre || '',
     telefono: request?.contact_info || user?.user_metadata?.telefono || '',
-    ubicacion: request?.location || '',
+    ubicacion: '',
     coordinates: { lat: 0, lng: 0 },
     tiposAyuda: request?.help_type || [],
     numeroPersonas: request?.number_of_people || 1,
@@ -63,7 +63,7 @@ export default function HelpRequestForm({
     setFormData({
       nombre: request?.name || user?.user_metadata?.full_name || user?.user_metadata?.nombre || '',
       telefono: request?.contact_info || user?.user_metadata?.telefono || '',
-      ubicacion: request?.location || '',
+      ubicacion: '',
       coordinates: { lat: 0, lng: 0 },
       tiposAyuda: request?.help_type || [],
       numeroPersonas: request?.number_of_people || 1,

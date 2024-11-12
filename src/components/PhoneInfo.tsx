@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { helpRequestService } from '@/lib/service';
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestData } from '@/types/Requests';
+import { SelectedHelpData } from '../app/casos-activos/solicitudes/actions';
 
 type PhoneInfoProps = {
-  caseInfo: HelpRequestData;
+  caseInfo: SelectedHelpData;
   isAdmin: boolean;
 };
 export default function PhoneInfo({ caseInfo, isAdmin }: PhoneInfoProps) {

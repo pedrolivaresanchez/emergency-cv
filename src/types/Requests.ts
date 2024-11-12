@@ -28,3 +28,35 @@ export type HelpRequestResources = {
   vehicle?: string;
   availability?: string[];
 };
+
+export type HelpData = Database['public']['Tables']['help_requests']['Row'];
+export type OmitSelect<T, K extends string> = { [key in keyof Omit<T, K>]: T[key] };
+export type SelectStringBuilder<T, K extends string> = { [key in keyof Omit<T, K>]: true };
+
+export type SelectHelpDataStringBuilder = SelectStringBuilder<
+  HelpData,
+  'location' | 'coordinates' | 'latitude' | 'longitude'
+>;
+export type SelectedHelpData = OmitSelect<HelpData, 'location' | 'coordinates' | 'latitude' | 'longitude'>;
+export const helpDataSelectFieldsObject: SelectHelpDataStringBuilder = {
+  additional_info: true,
+  asignees_count: true,
+  contact_info: true,
+  created_at: true,
+  crm_status: true,
+  description: true,
+  help_type: true,
+  id: true,
+  name: true,
+  notes: true,
+  number_of_people: true,
+  other_help: true,
+  people_needed: true,
+  resources: true,
+  status: true,
+  town_id: true,
+  type: true,
+  urgency: true,
+  user_id: true,
+};
+export const helpDataSelectFields = Object.keys(helpDataSelectFieldsObject).join(',');

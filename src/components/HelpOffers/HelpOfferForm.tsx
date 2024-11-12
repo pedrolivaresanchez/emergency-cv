@@ -39,7 +39,7 @@ export default function HelpOfferForm({ data, buttonText, submitMutation }: Help
   const [formData, setFormData] = useState<HelpOfferFormData>({
     nombre: data?.name || user?.user_metadata?.full_name || user?.user_metadata?.nombre || '',
     telefono: data?.contact_info || user?.user_metadata?.telefono || '',
-    ubicacion: data?.location || '',
+    ubicacion: '',
     tiposAyuda: data?.help_type || [],
     otraAyuda: data?.other_help || '',
     vehiculo: data?.resources?.vehicle || '',
@@ -56,7 +56,7 @@ export default function HelpOfferForm({ data, buttonText, submitMutation }: Help
     setFormData({
       nombre: data?.name || user?.user_metadata?.full_name || user?.user_metadata?.nombre || '',
       telefono: data?.contact_info || user?.user_metadata?.telefono || '',
-      ubicacion: data?.location || '',
+      ubicacion: '',
       tiposAyuda: data?.help_type || [],
       otraAyuda: data?.other_help || '',
       vehiculo: data?.resources?.vehicle || '',

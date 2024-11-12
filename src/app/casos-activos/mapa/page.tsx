@@ -19,6 +19,7 @@ export default function MapaPage() {
 }
 
 function Mapa() {
+  return <></>;
   const searchParams = useSearchParams();
   const router = useRouter();
 
