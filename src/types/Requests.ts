@@ -29,15 +29,14 @@ export type HelpRequestResources = {
   availability?: string[];
 };
 
-export type HelpData = Database['public']['Tables']['help_requests']['Row'];
 export type OmitSelect<T, K extends string> = { [key in keyof Omit<T, K>]: T[key] };
 export type SelectStringBuilder<T, K extends string> = { [key in keyof Omit<T, K>]: true };
 
 export type SelectHelpDataStringBuilder = SelectStringBuilder<
-  HelpData,
+  HelpRequestData,
   'location' | 'coordinates' | 'latitude' | 'longitude'
 >;
-export type SelectedHelpData = OmitSelect<HelpData, 'location' | 'coordinates' | 'latitude' | 'longitude'>;
+export type SelectedHelpData = OmitSelect<HelpRequestData, 'location' | 'coordinates' | 'latitude' | 'longitude'>;
 export const helpDataSelectFieldsObject: SelectHelpDataStringBuilder = {
   additional_info: true,
   asignees_count: true,
