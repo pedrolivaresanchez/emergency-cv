@@ -41,7 +41,7 @@ function Solicitudes() {
     urgencia: searchParams.get('urgencia') || 'todas',
     tipoAyuda: searchParams.get('tipoAyuda') || 'todas',
     pueblo: searchParams.get('pueblo') || 'todos',
-    soloSinAsignar: searchParams.get('soloSinAsignar') || 'true',
+    soloSinAsignar: searchParams.get('soloSinAsignar') || 'false',
   });
 
   const updateFilter = useCallback(
@@ -195,7 +195,7 @@ function Solicitudes() {
               ))}
             </select>
           </div>
-          <div className="flex flex-row flex-1 justify-end">
+          <div className="flex flex-row flex-1 justify-end pt-4">
             <Toggle
               handleChange={handleToggleChange}
               checked={isStringTrue(filtroData.soloSinAsignar)}
