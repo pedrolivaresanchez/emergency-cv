@@ -186,10 +186,21 @@ export default async function Home() {
             <div>
               <h2 className="text-xl font-bold text-red-800 mb-2">EMERGENCIA ACTIVA - DANA</h2>
               <div className="prose prose-sm text-red-700">
-                <p className="mb-2">AVISO ESPECIAL: LLUVIAS Y CHUBASCOS MUY FUERTES A TORRENCIALES DESDE MARTES 12 DE NOVIEMBRE</p>
-                <p className="mb-2">SE RECOMIENDA DESALOJAR BAJOS Y LUGARES QUE SE HAYAN INUNDADO PREVIAMENTE. ABASTECERSE DE COMIDA, MEDICINAS Y SUMINISTRO PARA AL MENOS 4 DÍAS.
-                  DIFUNDE Y AYUDA EN TU COMUNIDAD EMERGENCIAS: 112</p>
-                <p className="font-medium">SIGUE RECOMENDACIONES OFICIALES DE <a className="text-blue-600 font-bold hover:text-blue-800 space-x-2" href="https://www.aemet.es/es/eltiempo/prediccion/municipios/valencia-id46250">AEMET</a>
+                <p className="mb-2">
+                  AVISO ESPECIAL: LLUVIAS Y CHUBASCOS MUY FUERTES A TORRENCIALES DESDE MARTES 12 DE NOVIEMBRE
+                </p>
+                <p className="mb-2">
+                  SE RECOMIENDA DESALOJAR BAJOS Y LUGARES QUE SE HAYAN INUNDADO PREVIAMENTE. ABASTECERSE DE COMIDA,
+                  MEDICINAS Y SUMINISTRO PARA AL MENOS 4 DÍAS. DIFUNDE Y AYUDA EN TU COMUNIDAD EMERGENCIAS: 112
+                </p>
+                <p className="font-medium">
+                  SIGUE RECOMENDACIONES OFICIALES DE{' '}
+                  <a
+                    className="text-blue-600 font-bold hover:text-blue-800 space-x-2"
+                    href="https://www.aemet.es/es/eltiempo/prediccion/municipios/valencia-id46250"
+                  >
+                    AEMET
+                  </a>
                 </p>
               </div>
             </div>
@@ -216,18 +227,6 @@ export default async function Home() {
                     info@ajudadana.es
                   </a>
                 </p>
-                <p>También puedes contactar con nosotros a través de:</p>
-                <a className="text-blue-600 hover:text-blue-800 flex space-x-2" href="https://wa.me/34626675591">
-                  <Image
-                    src={
-                      'https://upload.wikimedia.org/wikipedia/commons/a/a7/2062095_application_chat_communication_logo_whatsapp_icon.svg'
-                    }
-                    alt="Whatsapp icon"
-                    height={20}
-                    width={20}
-                  />
-                  <span className="font-semibold">WhatsApp</span>
-                </a>
               </div>
             </div>
           </div>
