@@ -1,4 +1,6 @@
-export const tiposAyudaOptions = {
+import { HelpRequestHelpType } from '@/types/Requests';
+
+export const tiposAyudaOptions: Record<HelpRequestHelpType, string> = {
   limpieza: 'Labores de Limpieza',
   evacuacion: 'Peticion de desplazamiento',
   alojamiento: 'Alojamiento temporal',
@@ -9,6 +11,9 @@ export const tiposAyudaOptions = {
   logistico: 'Apoyo logístico',
   reparto: 'Labores de reparto de alimentos a domicilio',
   donaciones: 'Labores de organización de donaciones',
+  maquinariaMovilidadReducida: 'Maquinaria para movilidad reducida',
+  maquinariaPesada: 'Maquinaria pesada (grúas, palas, ...)',
+  contenedoresEscombros: 'Contenedores de Escombros',
   otros: 'Ayuda general',
 } as const;
 

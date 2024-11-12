@@ -502,7 +502,10 @@ export type Database = {
         | 'logistico'
         | 'otros'
         | 'reparto'
-        | 'donaciones';
+        | 'donaciones'
+        | 'maquinariaMovilidadReducida'
+        | 'maquinariaPesada'
+        | 'contenedoresEscombros';
       roles: 'user' | 'moderator' | 'admin';
     };
     CompositeTypes: {
