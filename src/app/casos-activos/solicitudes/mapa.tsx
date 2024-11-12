@@ -1,29 +1,35 @@
 'use client';
 
-import SolicitudCard from '@/components/SolicitudCard';
-import Map, { PinMapa } from '@/components/map/map';
+import Map from '@/components/map/map';
 import { HelpRequestDataClean } from './types';
+import { HelpRequestData } from '@/types/Requests';
+import { Dispatch, SetStateAction } from 'react';
 
-function transformHelpRequestToMarker(request: any): PinMapa {
+function transformHelpRequestToPointFeature(request: any): GeoJSON.Feature<GeoJSON.Point> {
   return {
-    urgency: request.urgency,
-    latitude: request.latitude ?? 0,
-    longitude: request.longitude ?? 0,
-    id: request.id,
-    popup: <SolicitudCard format="small" showLink={true} showEdit={false} caso={request} />,
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: [request.longitude ?? 0, request.latitude ?? 0],
+    },
+    properties: request as HelpRequestData,
   };
 }
 
 type MapaSolicitudesProps = {
   data: HelpRequestDataClean[];
+  setSelectedMarker: Dispatch<SetStateAction<HelpRequestData | null>>;
 };
 
-export default function MapaSolicitudes({ data }: MapaSolicitudesProps) {
-  const markers = data.map(transformHelpRequestToMarker);
+export default function MapaSolicitudes({ data, setSelectedMarker }: MapaSolicitudesProps) {
+  const solicitudesGeoJson = {
+    type: 'FeatureCollection',
+    features: data.map(transformHelpRequestToPointFeature),
+  } as GeoJSON.FeatureCollection<GeoJSON.Point>;
 
   return (
     <div className="sticky w-full h-screen top-0 right-0 z-0">
-        <Map markers={markers} />
+        <Map solicitudes={solicitudesGeoJson} setSelectedMarker={setSelectedMarker} />
     </div>
   );
 }

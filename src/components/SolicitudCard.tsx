@@ -34,7 +34,7 @@ export default function SolicitudCard({
   const role = useRole();
   const { getTownById } = useTowns();
   const additionalInfo = caso.additional_info as HelpRequestAdditionalInfo;
-  const special_situations = 'special_situations' in additionalInfo ? additionalInfo.special_situations : undefined;
+  const special_situations = additionalInfo['special_situations'] ? additionalInfo.special_situations : undefined;
   const isAdmin = role === UserRoles.admin;
   const isCrmUser = role === UserRoles.moderator;
   const [deleted, setDeleted] = useState(false);

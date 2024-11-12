@@ -1,70 +1,92 @@
 'use client';
 
-import { FC, ReactNode, useState } from 'react';
-import ReactMap from 'react-map-gl/maplibre';
+import { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react';
+import InteractiveMap, { Layer, MapLayerMouseEvent, Source } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { Marker } from 'react-map-gl/maplibre';
 import { useModal } from '@/context/ModalProvider';
-import Modal from '@/components/Modal';
-import { MapPinFilled } from '@/components/icons/MapPinFilled';
+import { HelpRequestData } from '@/types/Requests';
 
-const MODAL_NAME = `map-marker`;
+export const MAP_MODAL_NAME = `map-marker`;
 
-const urgencyToColor = {
-  alta: 'text-red-500',
-  media: 'text-amber-500',
-  baja: 'text-emerald-500',
-};
-
-export type PinMapa = {
-  id: string;
-  latitude: number;
-  longitude: number;
-  urgency: 'alta' | 'media' | 'baja';
-  popup: ReactNode;
-};
 
 type MapProps = {
-  markers?: PinMapa[];
+  solicitudes?: GeoJSON.FeatureCollection<GeoJSON.Point>;
+  setSelectedMarker: Dispatch<SetStateAction<HelpRequestData | null>>;
 };
 
 const PAIPORTA_LAT = 39.42333;
 const PAIPORTA_LNG = -0.41667;
 const DEFAULT_ZOOM = 12;
 
-const Map: FC<MapProps> = ({ markers = [] }) => {
-  const [selectedMarker, setSelectedMarker] = useState<PinMapa | null>(null);
+const Map: FC<MapProps> = ({ solicitudes, setSelectedMarker }) => {
+  const [cursor, setCursor] = useState<'pointer' | 'default'>('default');
 
   const { toggleModal } = useModal();
+  const onMouseMoveHandler = (e: MapLayerMouseEvent)=> {
+    setCursor(e.features?.length && e.features?.length > 0 ? 'pointer' : 'default')
+  }
+  const onClickHandler = (e: MapLayerMouseEvent)=> {
+    if(e.features?.[0]) {
+      console.log('e.features?.[0]:', e.features?.[0].properties)
+      toggleModal(MAP_MODAL_NAME, true);
+      setSelectedMarker(e.features?.[0].properties as HelpRequestData);
+    }
+  }
 
   return (
-    <ReactMap
-      initialViewState={{
-        longitude: PAIPORTA_LNG,
-        latitude: PAIPORTA_LAT,
-        zoom: DEFAULT_ZOOM,
-      }}
-      style={{ width: '100%', height: '100vh' }}
-      mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
-    >
-      {markers.map((m) => {
-        return (
-          <Marker
-            key={`marker-${m.id}-${m.latitude}-${m.longitude}-${m.urgency}`}
-            longitude={m.longitude}
-            latitude={m.latitude}
-            onClick={() => {
-              toggleModal(MODAL_NAME, true);
-              setSelectedMarker(m);
-            }}
-            anchor="bottom"
-          >
-            <MapPinFilled className={`h-6 w-6 ${urgencyToColor[m.urgency]}`} />
-          </Marker>
-        );
-      })}
-      {selectedMarker && <Modal id={MODAL_NAME}>{selectedMarker.popup}</Modal>}
-    </ReactMap>
+    <>
+      <InteractiveMap
+        initialViewState={{
+          longitude: PAIPORTA_LNG,
+          latitude: PAIPORTA_LAT,
+          zoom: DEFAULT_ZOOM,
+        }}
+        style={{ width: '100%', height: '100vh' }}
+        mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+        onMouseMove={onMouseMoveHandler}
+        onClick={onClickHandler}
+        cursor={cursor}
+        interactiveLayerIds={['solicitudes-circles']}
+      >
+      <Source type="geojson" data={solicitudes}>
+        <Layer 
+          id='solicitudes-points'
+          type='circle'
+          paint={{
+            'circle-radius': 3,
+            'circle-color': {
+              property: 'urgency',
+              type: 'categorical',
+              stops: [
+                ['alta', 'rgb(239, 68, 68)'],
+                ['media', 'rgb(234, 179, 8)'],
+                ['baja', 'rgb(34, 197, 94)']
+              ]
+            },
+          }}
+        />
+        <Layer 
+          id='solicitudes-circles'
+          type='circle'
+          paint={{
+            'circle-radius': 10,
+            'circle-color': {
+              property: 'urgency',
+              type: 'categorical',
+              stops: [
+                ['alta', 'rgb(239, 68, 68)'],
+                ['media', 'rgb(234, 179, 8)'],
+                ['baja', 'rgb(34, 197, 94)']
+              ]
+            },
+            'circle-opacity': 0.3
+          }}
+          
+        />
+      </Source>
+      </InteractiveMap>
+      
+    </>
   );
 };
 

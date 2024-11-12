@@ -9,6 +9,10 @@ import MapaSolicitudes from './mapa';
 import { FilterType, HelpRequestDataClean } from './types';
 import { useTowns } from '@/context/TownProvider';
 import { TabNavigationCount } from '@/components/TabNavigation';
+import Modal from '@/components/Modal';
+import { MAP_MODAL_NAME } from '@/components/map/map';
+import { HelpRequestData } from '@/types/Requests';
+import SolicitudCard from '@/components/SolicitudCard';
 
 type DataFilter = { keys: (keyof HelpRequestDataClean)[]; value: string };
 function getDataFiltered(data: HelpRequestDataClean[], filters: DataFilter[]) {
@@ -28,6 +32,7 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
   const { towns } = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [selectedMarker, setSelectedMarker] = useState<HelpRequestData | null>(null);
 
   const [dataFiltered, setDataFiltered] = useState<HelpRequestDataClean[]>(data);
 
@@ -82,9 +87,12 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
   }, [data, filtersData, towns]);
 
   return (
+    <>
     <div className="grid grid-cols-2">
       <ListadoSolicitudes data={dataFiltered} count={count} filtersData={filtersData} onDataFilterChange={changeDataFilter} />
-      <MapaSolicitudes data={dataFiltered} />
+      <MapaSolicitudes data={dataFiltered} setSelectedMarker={setSelectedMarker} />
     </div>
+    {selectedMarker && <Modal id={MAP_MODAL_NAME}><SolicitudCard format="small" showLink={true} showEdit={false} caso={selectedMarker} /></Modal>}
+    </>
   );
 }
