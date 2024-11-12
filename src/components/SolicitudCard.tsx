@@ -116,7 +116,7 @@ export default function SolicitudCard({
                 <PhoneInfo isAdmin caseInfo={caso} />
               </div>
             )}
-            {caso.help_type && (
+            {caso.help_type !== null && caso.help_type.length > 0 && (
               <div className="flex items-start gap-2">
                 <Megaphone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                 <span className="break-words">
@@ -131,7 +131,7 @@ export default function SolicitudCard({
                 </span>
               </div>
             )}
-            {caso.number_of_people && (
+            {caso.number_of_people !== null && caso.number_of_people > 0 && (
               <div className="flex items-start gap-2 pb-2">
                 <Users className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                 <span className="break-words">

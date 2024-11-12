@@ -3,7 +3,7 @@
 import Map from '@/components/map/map';
 import { HelpRequestDataClean } from './types';
 import { HelpRequestData } from '@/types/Requests';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useMemo } from 'react';
 
 function transformHelpRequestToPointFeature(request: any): GeoJSON.Feature<GeoJSON.Point> {
   return {
@@ -22,10 +22,13 @@ type MapaSolicitudesProps = {
 };
 
 export default function MapaSolicitudes({ data, setSelectedMarker }: MapaSolicitudesProps) {
-  const solicitudesGeoJson = {
-    type: 'FeatureCollection',
-    features: data.map(transformHelpRequestToPointFeature),
-  } as GeoJSON.FeatureCollection<GeoJSON.Point>;
+  const solicitudesGeoJson = useMemo(() => (
+      {
+      type: 'FeatureCollection',
+      features: data.map(transformHelpRequestToPointFeature),
+    } as GeoJSON.FeatureCollection<GeoJSON.Point>
+  ), 
+  [data]);
 
   return (
     <div className="sticky w-full h-screen top-0 right-0 z-0">

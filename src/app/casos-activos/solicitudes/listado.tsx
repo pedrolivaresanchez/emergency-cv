@@ -1,12 +1,13 @@
 'use client';
 
-import { useCallback, ChangeEventHandler } from 'react';
+import { useCallback, ChangeEventHandler, useMemo } from 'react';
 import SolicitudCard from '@/components/SolicitudCard';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import { useTowns } from '@/context/TownProvider';
 import { Toggle } from '@/components/Toggle';
 import { FiltersData, FilterType, HelpRequestDataClean } from './types';
 import TabNavigation, { TabNavigationCount } from '@/components/TabNavigation';
+import { HelpRequestData } from '@/types/Requests';
 
 export const isStringTrue = (str: string): boolean => str === 'true';
 
@@ -21,19 +22,22 @@ export default function ListadoSolicitudes({ data, count, filtersData, onDataFil
   
   const { towns } = useTowns();
 
-  const hasFilters = Object.entries(filtersData).some(([key, value]) => 
+  const hasFilters = useMemo(() => Object.entries(filtersData).some(([key, value]) => 
     key !== 'soloSinAsignar' 
     && value !== '' 
     && value !== 'todas' 
     && value !== 'todos'
-  );
+  ), [filtersData]);
 
   const handleToggleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     (e) => onDataFilterChange('soloSinAsignar', `${e.target.checked}`),
     [onDataFilterChange],
   );
 
-  const sortedTowns = towns.slice().sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '')); // Organizamos de A-Z los nombres de los pueblos obtenidos.
+  // Organizamos de A-Z los nombres de los pueblos obtenidos.
+  const sortedTowns = useMemo(() => 
+    towns.slice().sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '')), 
+  [towns]); 
 
   return (
     <div className="p-4 drop-shadow-xl z-10 bg-gray-100">
@@ -117,7 +121,7 @@ export default function ListadoSolicitudes({ data, count, filtersData, onDataFil
             </p>
           </div>
         ) : (
-          data.map((caso) => <SolicitudCard format="small" showLink={true} showEdit={true} key={caso.id} caso={caso} />)
+          data.map((caso) => <SolicitudCard format="small" showLink={true} showEdit={true} key={caso.id} caso={caso as HelpRequestData} />)
         )}
       </div>
       {/* <div className="flex items-center justify-center">
