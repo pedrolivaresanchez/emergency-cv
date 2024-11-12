@@ -1,42 +1,24 @@
 import { supabase } from './supabase/client';
-import {
-  helpDataSelectFields,
-  HelpRequestAssignmentInsert,
-  HelpRequestData,
-  HelpRequestInsert,
-  HelpRequestUpdate,
-  SelectedHelpData,
-} from '@/types/Requests';
+import { HelpRequestAssignmentInsert, HelpRequestData, HelpRequestInsert, HelpRequestUpdate } from '@/types/Requests';
 import { createClient } from '@/lib/supabase/server';
 
 export const helpRequestService = {
   async createRequest(requestData: HelpRequestInsert) {
-    const { data, error } = await supabase
-      .from('help_requests')
-      .insert([requestData])
-      .select(helpDataSelectFields as '*');
+    const { data, error } = await supabase.from('help_requests').insert([requestData]).select();
 
     if (error) throw error;
-    return data[0] as SelectedHelpData;
+    return data[0] as HelpRequestData;
   },
   async editRequest(requestData: HelpRequestUpdate, id: number) {
-    const { data, error } = await supabase
-      .from('help_requests')
-      .update(requestData)
-      .eq('id', id)
-      .select(helpDataSelectFields as '*');
+    const { data, error } = await supabase.from('help_requests').update(requestData).eq('id', id).select();
     if (error) throw error;
-    return data[0] as SelectedHelpData;
+    return data[0] as HelpRequestData;
   },
   async getOne(id: number) {
     const supabase = await getSupabaseClient();
-    const { data, error } = await supabase
-      .from('help_requests')
-      .select(helpDataSelectFields as '*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await supabase.from('help_requests').select('*').eq('id', id).single();
     if (error) throw error;
-    return data as SelectedHelpData;
+    return data as HelpRequestData;
   },
   async addComment(id: number, comment: string, is_solved: boolean) {
     const supabase = await getSupabaseClient();
@@ -83,22 +65,22 @@ export const helpRequestService = {
     const helpRequestIds = assignments.map((assignment) => assignment.help_request_id);
     const { data: requests, error: requestsError } = await supabase
       .from('help_requests')
-      .select(helpDataSelectFields as '*')
+      .select('*')
       .eq('type', 'necesita')
       .or(`user_id.eq.${user_id},id.in.(${helpRequestIds.join(',')})`);
     if (requestsError) throw requestsError;
-    return requests as SelectedHelpData[];
+    return requests as HelpRequestData[];
   },
 
   async getOffersByUser(user_id: string | undefined) {
     if (user_id === undefined) return [];
     const { data: requests, error: requestsError } = await supabase
       .from('help_requests')
-      .select(helpDataSelectFields as '*')
+      .select('*')
       .eq('type', 'ofrece')
       .eq('user_id', user_id);
     if (requestsError) throw requestsError;
-    return requests as SelectedHelpData[];
+    return requests as HelpRequestData[];
   },
 
   async getAssignments(id: number) {
@@ -114,7 +96,7 @@ export const helpRequestService = {
 
     const { data: linkedRequestData, error: errorGettingLinkedData } = await supabase
       .from('help_requests')
-      .select(helpDataSelectFields as '*')
+      .select('*')
       .eq('id', requestData.help_request_id);
     if (errorGettingLinkedData) throw errorGettingLinkedData;
     if (!linkedRequestData) throw new Error('No se puede encontrar esta tarea');
