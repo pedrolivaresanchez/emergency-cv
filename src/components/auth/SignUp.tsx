@@ -107,7 +107,6 @@ export default function SignUp({ onBackButtonClicked, callback = () => {} }: Sig
     );
 
     if (response.error) {
-      debugger;
       // SHOW ERROR IF PASSWORD IS WEAK OR USER ALREDY EXISTS
       if (response.error.code === 'weak_password') {
         setError('La contraseña debe tener al menos 6 caracteres.');

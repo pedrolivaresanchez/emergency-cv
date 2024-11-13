@@ -4,7 +4,7 @@ import SignUp from '@/components/auth/SignUp';
 import { updateUser, getSessionUser, signOut, signIn } from '@/lib/actions';
 import { FormEvent, useState } from 'react';
 import SocialButton from './SocialButton';
-import { useSessionManager } from '@/helpers/hooks';
+import { useSession } from '../../context/SessionProvider';
 
 type LoginProps = {
   onSuccessCallback: () => void;
@@ -24,7 +24,7 @@ type FormData = {
 };
 
 export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
-  const { setSession } = useSessionManager();
+  const { setSession } = useSession();
 
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
@@ -98,7 +98,7 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
     localStorage.setItem('accessToken', response.data.session.access_token);
     localStorage.setItem('refreshToken', response.data.session.refresh_token);
     setSession(response.data);
-    
+
     if (formData.privacyPolicy && !isPrivacyAccepted) {
       await updatePrivacyPolicy('true');
       setPrivacyAccepted(true);
@@ -113,7 +113,7 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
 
       return;
     }
-    
+
     setStatus({ isSubmitting: false, error: null, success: true });
 
     if (typeof onSuccessCallback === 'function') {

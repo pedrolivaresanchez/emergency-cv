@@ -20,11 +20,10 @@ import {
   MessageCircleQuestion,
 } from 'lucide-react';
 import UserInfo from '../UserInfo';
-import { useSession } from '@/context/SessionProvider';
 import { useQuery } from '@tanstack/react-query';
 import { SelectedHelpData } from '@/types/Requests';
 import { getOffersByUser, getRequestsByUser } from '@/lib/actions';
-import {useSessionManager} from "@/helpers/hooks";
+import { useSession } from '../../context/SessionProvider';
 
 type SidebarProps = {
   isOpen: boolean;
@@ -33,7 +32,7 @@ type SidebarProps = {
 export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { session }= useSessionManager();
+  const session = useSession();
   const { data: requests } = useQuery<SelectedHelpData[]>({
     queryKey: ['help_requests', { user_id: session.user?.id, type: 'necesita' }],
     queryFn: () => getRequestsByUser(session.user?.id),
