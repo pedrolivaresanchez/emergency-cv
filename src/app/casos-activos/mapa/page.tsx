@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Map, { PinMapa } from '@/components/map/map';
 import PickupPoint from '@/components/PickupPoint';
+import { getMapPoints } from './actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -75,26 +75,8 @@ function Mapa() {
         setLoading(true);
         setError(null);
 
+        const { data: pickupData, error: pickupError } = await getMapPoints(filtroData);
         // Comenzamos la consulta
-        const query = supabase.from('help_requests').select('*').eq('type', 'necesita');
-        if (filtroData.tipoAyuda !== 'todas') {
-          query.contains('help_type', [filtroData.tipoAyuda]);
-        }
-        if (filtroData.urgencia !== 'todas') {
-          query.eq('urgency', filtroData.urgencia);
-        }
-
-        query.neq('status', 'finished');
-
-        const { data, error } = await query.order('created_at', { ascending: false });
-
-        const pickupQuery = supabase.from('collection_points').select('*', { count: 'exact' });
-        if (filtroData.acepta !== 'todos') {
-          query.contains('accepted_items', [filtroData.acepta]);
-        }
-
-        const { data: pickupData, error: pickupError } = await pickupQuery.order('created_at', { ascending: false });
-
         let allData = [];
         if (error) {
           console.log('Error fetching solicitudes:', error);

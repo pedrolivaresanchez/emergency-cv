@@ -1,8 +1,8 @@
 'use client';
 
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAssignmentData, HelpRequestData, SelectedHelpData } from '@/types/Requests';
-import { helpRequestService } from '@/lib/service';
+import { HelpRequestAssignmentData, SelectedHelpData } from '@/types/Requests';
+import { getAssignments, assign, unassign } from '@/lib/actions';
 import { MouseEvent } from 'react';
 import { Spinner } from '@/components/Spinner';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -28,7 +28,7 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
     error,
   } = useQuery<HelpRequestAssignmentData[]>({
     queryKey: ['help_request_assignments', { id: helpRequest.id }],
-    queryFn: () => helpRequestService.getAssignments(helpRequest.id),
+    queryFn: () => getAssignments(helpRequest.id),
   });
 
   const queryClient = useQueryClient();
@@ -36,7 +36,7 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
   const assignMutation = useMutation({
     mutationFn: async () => {
       if (!session.user) return;
-      await helpRequestService.assign({
+      await assign({
         help_request_id: helpRequest.id,
         user_id: session.user.id,
         phone_number: session.user.user_metadata.telefono!,
@@ -57,7 +57,7 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
     mutationFn: async () => {
       if (!session.user) return;
       if (!userAssignment) return;
-      await helpRequestService.unassign(userAssignment.id);
+      await unassign(userAssignment.id);
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['help_request_assignments'] });

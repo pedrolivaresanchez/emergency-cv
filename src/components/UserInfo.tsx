@@ -2,20 +2,25 @@
 
 import Link from 'next/link';
 import { LogIn } from 'lucide-react';
-import { authService } from '@/lib/service';
+import { signOut } from '@/lib/actions';
 import { useSession } from '@/context/SessionProvider';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { User } from '@supabase/supabase-js';
 
 type UserProfileProps = {
   toggleAction?: () => void;
 };
 
 export default function UserProfile({ toggleAction }: UserProfileProps) {
-  const session = useSession();
-  const user = session.user;
+  const { user } = useSession();
 
   const handleLogout = async () => {
-    const response = await authService.signOut();
+    const response = await signOut();
+
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+
     if (!response.error) {
       window.location.href = '/';
     }

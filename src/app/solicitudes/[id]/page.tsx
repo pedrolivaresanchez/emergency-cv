@@ -1,15 +1,15 @@
 'use client';
+
 import { ArrowLeft } from 'lucide-react';
 import SolicitudCard from '@/components/SolicitudCard';
 import { useParams } from 'next/navigation';
 import SolicitudComments from '@/components/Comments/SolicitudComments';
 import { useEffect, useState } from 'react';
 import { SelectedHelpData } from '../../../types/Requests';
-import { getSolicitud } from './actions';
+import { getOne } from '@/lib/actions';
 
 export default function CasoDetalle() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
   const [data, setData] = useState<SelectedHelpData | null>(null);
   const { id } = useParams<{ id: string }>();
 
@@ -18,9 +18,8 @@ export default function CasoDetalle() {
       try {
         setLoading(true);
 
-        const { data: requestResponse, error } = await getSolicitud(id);
+        const requestResponse = await getOne(Number(id));
         setData(requestResponse as SelectedHelpData);
-        setError(!!error);
 
         setLoading(false);
       } catch (err) {

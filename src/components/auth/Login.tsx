@@ -1,9 +1,10 @@
 'use client';
 
 import SignUp from '@/components/auth/SignUp';
-import { authService } from '@/lib/service';
+import { updateUser, getSessionUser, signOut, signIn } from '@/lib/actions';
 import { FormEvent, useState } from 'react';
 import SocialButton from './SocialButton';
+import { useSession } from '../../context/SessionProvider';
 
 type LoginProps = {
   onSuccessCallback: () => void;
@@ -23,6 +24,8 @@ type FormData = {
 };
 
 export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
+  const { setSession } = useSession();
+
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     email: '',
@@ -37,7 +40,7 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
   const [isPrivacyAccepted, setPrivacyAccepted] = useState<boolean>(true);
 
   const updatePrivacyPolicy = async (value: string) => {
-    const { data: session, error: errorGettingUser } = await authService.getSessionUser();
+    const { data: session, error: errorGettingUser } = await getSessionUser();
 
     if (!session.user || errorGettingUser) {
       throw new Error('Error a la hora de obtener el usuario');
@@ -46,7 +49,7 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
     const metadata = session.user.user_metadata;
     const metadataUpdated = { ...metadata, privacyPolicy: value };
 
-    const { error: updateUserError } = await authService.updateUser({
+    const { error: updateUserError } = await updateUser({
       data: metadataUpdated,
     });
 
@@ -56,7 +59,7 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
   };
 
   const getUserPrivacyPolicy = async () => {
-    const { data: session, error: errorGettingUser } = await authService.getSessionUser();
+    const { data: session, error: errorGettingUser } = await getSessionUser();
     if (!session.user || errorGettingUser) {
       throw new Error('Error a la hora de obtener el usuario');
     }
@@ -85,12 +88,16 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
       return;
     }
 
-    const response = await authService.signIn(formData.email, formData.password);
+    const response = await signIn(formData.email, formData.password);
 
     if (response.error) {
       setStatus({ isSubmitting: false, error: 'El email o contraseña son inválidos', success: false });
       return;
     }
+
+    localStorage.setItem('accessToken', response.data.session.access_token);
+    localStorage.setItem('refreshToken', response.data.session.refresh_token);
+    setSession(response.data);
 
     if (formData.privacyPolicy && !isPrivacyAccepted) {
       await updatePrivacyPolicy('true');
@@ -101,7 +108,7 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
 
     if (!privacyPolicy) {
       setPrivacyAccepted(false);
-      await authService.signOut();
+      await signOut();
       setStatus({ isSubmitting: false, error: null, success: false });
 
       return;

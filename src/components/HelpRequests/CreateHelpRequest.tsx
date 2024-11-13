@@ -1,7 +1,7 @@
 'use client';
 
 import HelpRequestForm, { HelpRequestFormData } from './HelpRequestForm';
-import { helpRequestService, townService } from '@/lib/service';
+import { createIfNotExists, createRequest } from '@/lib/actions';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -43,12 +43,12 @@ export default function CreateHelpRequest() {
       if (!user) throw 'Sesión no iniciada';
       let town_id = data.town_id;
       if (data.pueblo !== '') {
-        const { data: townResponse, error: townError } = await townService.createIfNotExists(data.pueblo);
+        const { data: townResponse, error: townError } = await createIfNotExists(data.pueblo);
         if (townError) throw townError;
         town_id = townResponse[0].id;
       }
 
-      return helpRequestService.createRequest(formToDatabaseMap(user, { ...data, town_id: town_id }));
+      return createRequest(formToDatabaseMap(user, { ...data, town_id: town_id }));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help_requests'] });

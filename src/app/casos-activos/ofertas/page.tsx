@@ -1,13 +1,13 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
 import Pagination from '@/components/Pagination';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
 import OfferCard from '@/components/OfferCard';
 import { useTowns } from '@/context/TownProvider';
 import { HelpRequestData } from '@/types/Requests';
+import { getOfertas } from './actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,7 +22,7 @@ export default function OfertasPage() {
 function Ofertas() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { towns, isLoading: townsLoading, error: townsError } = useTowns();
+  const { towns } = useTowns();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,24 +66,13 @@ function Ofertas() {
         setLoading(true);
         setError(null);
 
-        // Comenzamos la consulta
-        const query = supabase.from('help_requests').select('*', { count: 'exact' }).eq('type', 'ofrece');
-
-        // Solo agregar filtro de ayuda si no es "todos"
-        if (filtroData.ayuda !== 'todas') {
-          query.contains('help_type', [filtroData.ayuda]);
-        }
-
-        // Solo agregar filtro de pueblo si no es "todos"
-        if (filtroData.pueblo !== 'todos') {
-          query.eq('town_id', filtroData.pueblo); // Filtra por el ID del pueblo
-        }
-
-        query.neq('status', 'finished');
-        // Ejecutar la consulta con paginación
-        const { data, count, error } = await query
-          .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1)
-          .order('created_at', { ascending: false });
+        const { data, error, count } = await getOfertas({
+          ...filtroData,
+          paginacion: {
+            itemsPerPage,
+            currentPage,
+          },
+        });
 
         if (error) {
           console.log('Error fetching solicitudes:', error);

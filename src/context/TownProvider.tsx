@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { townService } from '@/lib/service';
 import { Town } from '@/types/Town';
+import { getTowns } from '@/lib/actions';
 
 export const useTowns = () => {
   const {
@@ -11,7 +11,7 @@ export const useTowns = () => {
     error,
   } = useQuery<Town[]>({
     queryKey: ['towns'],
-    queryFn: () => townService.getTowns(),
+    queryFn: () => getTowns(),
   });
 
   const getTownById = (id: number) => towns?.find((t) => t.id === id);

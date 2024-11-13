@@ -50,7 +50,7 @@ pnpm run start
 
 ## Variables de entorno
 
-Para correr este proyecto, necesitarás agregar las siguientes variable de entorno `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` en tu archivo .env
+Para correr este proyecto, necesitarás agregar las siguientes variable de entorno `SUPABASE_URL` y `SUPABASE_ANON_KEY` en tu archivo .env
 
 Encontraras un archivo .env.example para usar de referencia
 

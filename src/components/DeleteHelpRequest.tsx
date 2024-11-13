@@ -1,10 +1,10 @@
 'use client';
 
-import { supabase } from '@/lib/supabase/client';
 import { MouseEvent, useState } from 'react';
 import { Spinner } from '@/components/Spinner';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/ModalProvider';
+import { deleteHelpRequest } from '@/lib/actions';
 
 type DeleteRequestButtonProps = {
   helpRequestId: number;
@@ -18,14 +18,9 @@ export default function DeleteHelpRequest({ helpRequestId, onDelete }: DeleteReq
 
   const MODAL_NAME = `Eliminar-Solicitud-${helpRequestId}`;
 
-  const deleteHelpRequest = async () => {
-    const { data, error } = await supabase.from('help_requests').delete().eq('id', helpRequestId).select();
-    return { data, error };
-  };
-
   async function handleDeleteSubmit(e: MouseEvent) {
     e.preventDefault();
-    const { data, error } = await deleteHelpRequest();
+    const { data, error } = await deleteHelpRequest(String(helpRequestId));
     if (error) {
       setError(error);
       return;
