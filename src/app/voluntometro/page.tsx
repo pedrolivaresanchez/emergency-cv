@@ -1,6 +1,6 @@
 import { HeartHandshake, Search, Thermometer } from 'lucide-react';
 import TownCardInfo from '@/components/TownCardInfo';
-import { helpRequestService } from '@/lib/service';
+import { helpRequestService } from '@/lib/actions';
 
 export const dynamic = 'force-dynamic';
 

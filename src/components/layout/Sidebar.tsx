@@ -23,7 +23,7 @@ import UserInfo from '../UserInfo';
 import { useSession } from '@/context/SessionProvider';
 import { useQuery } from '@tanstack/react-query';
 import { SelectedHelpData } from '@/types/Requests';
-import { helpRequestService } from '@/lib/service';
+import { helpRequestService } from '@/lib/actions';
 
 type SidebarProps = {
   isOpen: boolean;

@@ -1,12 +1,12 @@
 'use client';
 
 import HelpRequestForm, { HelpRequestFormData } from './HelpRequestForm';
-import { helpRequestService, townService } from '@/lib/service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { HelpRequestData, HelpRequestUpdate } from '@/types/Requests';
 import { formatPhoneNumber } from '@/helpers/utils';
+import { helpRequestService, townService } from '../../lib/actions';
 
 type EditHelpRequestProps = {
   request: HelpRequestData;

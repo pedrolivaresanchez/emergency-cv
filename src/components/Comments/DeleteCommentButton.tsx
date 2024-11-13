@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { helpRequestService } from '@/lib/service';
+import { helpRequestService } from '@/lib/actions';
 import { toast } from 'sonner';
 import { useSession } from '@/context/SessionProvider';
 import { HelpRequestComment } from '@/types/Requests';

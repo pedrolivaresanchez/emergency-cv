@@ -1,7 +1,7 @@
 import { HelpRequestAssignmentData } from '@/types/Requests';
 import { useQuery } from '@tanstack/react-query';
-import { helpRequestService } from '@/lib/service';
 import { Spinner } from '@/components/Spinner';
+import { helpRequestService } from '../lib/actions';
 
 type SolicitudHelpCountProps = {
   id: number;

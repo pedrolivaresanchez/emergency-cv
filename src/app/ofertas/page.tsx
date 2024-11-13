@@ -7,7 +7,7 @@ import OfferCard from '@/components/OfferCard';
 import Link from 'next/link';
 import { SelectedHelpData } from '@/types/Requests';
 import { useQuery } from '@tanstack/react-query';
-import { getOfertasByUser } from './actions';
+import { helpRequestService } from '../../lib/actions';
 
 export default function ListaSolicitudesPage() {
   return (
@@ -23,7 +23,7 @@ function ListaSolicitudes() {
 
   const { data, isLoading, error } = useQuery<SelectedHelpData[]>({
     queryKey: ['help_requests', { user_id: userId, type: 'ofrece' }],
-    queryFn: () => getOfertasByUser(userId || ''),
+    queryFn: () => helpRequestService.getOffersByUser(userId || ''),
   });
 
   if (isLoading) {

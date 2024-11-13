@@ -1,6 +1,6 @@
 import Unauthorized from '@/components/Unauthorized';
 import { createClient } from '@/lib/supabase/server';
-import { helpRequestService } from '@/lib/service';
+import { helpRequestService } from '@/lib/actions';
 import EditHelpOffer from '@/components/HelpOffers/EditHelpOffer';
 
 export default async function EditarSolicitud({ params }: { params: Promise<{ id: string }> }) {

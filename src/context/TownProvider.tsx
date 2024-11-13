@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { townService } from '@/lib/service';
 import { Town } from '@/types/Town';
+import { townService } from '../lib/actions';
 
 export const useTowns = () => {
   const {

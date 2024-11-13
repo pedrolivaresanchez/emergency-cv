@@ -1,6 +1,6 @@
 import { HelpRequestAssignmentData, HelpRequestComment, SelectedHelpData } from '@/types/Requests';
 import { useQuery } from '@tanstack/react-query';
-import { helpRequestService } from '@/lib/service';
+import { helpRequestService } from '@/lib/actions';
 import { useSession } from '@/context/SessionProvider';
 import SolicitudComment from '@/components/Comments/SolicitudComment';
 import CommentForm from '@/components/Comments/CommentForm';

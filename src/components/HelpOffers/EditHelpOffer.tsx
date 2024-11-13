@@ -1,7 +1,7 @@
 'use client';
 
 import HelpOfferForm, { HelpOfferFormData } from './HelpOfferForm';
-import { helpRequestService } from '@/lib/service';
+import { helpRequestService } from '@/lib/actions';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';

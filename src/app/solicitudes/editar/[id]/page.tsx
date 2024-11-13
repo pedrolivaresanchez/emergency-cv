@@ -1,5 +1,5 @@
 import Unauthorized from '@/components/Unauthorized';
-import { helpRequestService } from '@/lib/service';
+import { helpRequestService } from '@/lib/actions';
 import { createClient } from '@/lib/supabase/server';
 import EditHelpRequest from '@/components/HelpRequests/EditHelpRequest';
 

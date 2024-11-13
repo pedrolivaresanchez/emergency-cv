@@ -1,8 +1,8 @@
 'use client';
 
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAssignmentData, HelpRequestData, SelectedHelpData } from '@/types/Requests';
-import { helpRequestService } from '@/lib/service';
+import { HelpRequestAssignmentData, SelectedHelpData } from '@/types/Requests';
+import { helpRequestService } from '@/lib/actions';
 import { MouseEvent } from 'react';
 import { Spinner } from '@/components/Spinner';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
