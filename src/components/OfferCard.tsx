@@ -1,12 +1,12 @@
 import { HeartHandshake, MapPinned, Megaphone, Phone, Truck } from 'lucide-react';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
-import { HelpRequestData } from '@/types/Requests';
+import { SelectedHelpData } from '@/types/Requests';
 import { useTowns } from '@/context/TownProvider';
 import { useSession } from '@/context/SessionProvider';
 
 type OfferCardProps = {
-  caso: HelpRequestData;
+  caso: SelectedHelpData;
   showLink?: boolean;
   showEdit?: boolean;
 };

@@ -10,7 +10,7 @@ export default async function EditarSolicitud({ params }: { params: Promise<{ id
   if (session.user === null) {
     return <Unauthorized />;
   }
-  const request = await helpRequestService.getOne(Number(id));
+  const request = await helpRequestService.getOneWithCoords(Number(id));
 
   return <EditHelpRequest request={request} />;
 }

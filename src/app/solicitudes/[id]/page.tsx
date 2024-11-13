@@ -19,7 +19,7 @@ export default function CasoDetalle() {
         setLoading(true);
 
         const { data: requestResponse, error } = await getSolicitud(id);
-        setData(requestResponse);
+        setData(requestResponse as SelectedHelpData);
         setError(!!error);
 
         setLoading(false);

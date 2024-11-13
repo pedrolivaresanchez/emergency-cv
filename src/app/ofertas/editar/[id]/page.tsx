@@ -11,6 +11,6 @@ export default async function EditarSolicitud({ params }: { params: Promise<{ id
     return <Unauthorized />;
   }
   const numberId = Number(id);
-  const request = await helpRequestService.getOne(numberId);
+  const request = await helpRequestService.getOneWithCoords(numberId);
   return <EditHelpOffer request={request} />;
 }
