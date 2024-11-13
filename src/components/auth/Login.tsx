@@ -95,6 +95,10 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
       return;
     }
 
+    localStorage.setItem('accessToken', response.data.session.access_token);
+    localStorage.setItem('refreshToken', response.data.session.refresh_token);
+    setSession(response.data);
+    
     if (formData.privacyPolicy && !isPrivacyAccepted) {
       await updatePrivacyPolicy('true');
       setPrivacyAccepted(true);
@@ -109,12 +113,8 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
 
       return;
     }
-
-    localStorage.setItem('accessToken', response.data.session.access_token);
-    localStorage.setItem('refreshToken', response.data.session.refresh_token);
-
+    
     setStatus({ isSubmitting: false, error: null, success: true });
-    setSession(response.data);
 
     if (typeof onSuccessCallback === 'function') {
       onSuccessCallback();

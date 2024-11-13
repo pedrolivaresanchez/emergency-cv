@@ -1,7 +1,8 @@
 import { jwtDecode } from 'jwt-decode';
-import { exchangeCodeForSession, refreshToken } from '@/lib/actions';
+import { exchangeCodeForSession, refreshToken, getSessionUser } from '@/lib/actions';
 import { useEffect, useRef, useState } from 'react';
 import { User } from '@supabase/auth-js/src/lib/types';
+import { UserSession } from "@/context/SessionProvider";
 
 type CallbackFunction<T extends any[]> = (...args: T) => void;
 
@@ -43,11 +44,15 @@ export function useDebouncedFunction<T extends any[]>(callback: CallbackFunction
   return debouncedFunction;
 }
 
-type UserSession = { user: User } | { user: null };
-
 export function useSessionManager() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [session, setSession] = useState<UserSession>({ user: null });
+  // const alpaca= useState<UserSession>({ user: null })
+  // const session = alpaca[0];
+  // const setSession = (userSession: UserSession) => {
+  //   console.log("The god shake", userSession);
+  //   alpaca[1](userSession);
+  // }
 
   const getTokens = () => {
     return {
@@ -81,7 +86,7 @@ export function useSessionManager() {
         if (response.data?.session) {
           localStorage.setItem('accessToken', response.data.session.access_token);
           localStorage.setItem('refreshToken', response.data.session.refresh_token);
-
+debugger
           setSession(response.data);
 
           return true;
@@ -98,6 +103,18 @@ export function useSessionManager() {
     return !isTokenExpired(accessToken);
   };
 
+  useEffect(() => {
+    const fetchSession = async () => {
+      const { data } = await getSessionUser();
+
+      if (data !== null) {
+        debugger
+        setSession(data);
+      }
+    };
+    fetchSession();
+  }, []);
+  
   useEffect(() => {
     refreshTokenIfNeeded();
 
@@ -120,7 +137,7 @@ export function useSessionManager() {
         if (accessToken && refreshToken) {
           localStorage.setItem('accessToken', accessToken);
           localStorage.setItem('refreshToken', refreshToken);
-
+  debugger
           setSession(session.data);
         }
       }

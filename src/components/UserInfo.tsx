@@ -5,15 +5,19 @@ import { LogIn } from 'lucide-react';
 import { signOut } from '@/lib/actions';
 import { useSession } from '@/context/SessionProvider';
 import Image from 'next/image';
+import {useEffect} from "react";
+import {useSessionManager} from "@/helpers/hooks";
 
 type UserProfileProps = {
   toggleAction?: () => void;
 };
 
 export default function UserProfile({ toggleAction }: UserProfileProps) {
-  const session = useSession();
-  const user = session.user;
+  const { session : { user } } = useSessionManager();
 
+  useEffect(() => {
+    console.log("user", user);
+  }, [user]);
   const handleLogout = async () => {
     const response = await signOut();
 
