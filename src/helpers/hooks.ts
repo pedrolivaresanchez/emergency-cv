@@ -1,5 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
-import { refreshToken } from '@/lib/actions';
+import { exchangeCodeForSession, refreshToken } from '@/lib/actions';
 import { useEffect, useRef, useState } from 'react';
 import { User } from '@supabase/auth-js/src/lib/types';
 
@@ -101,6 +101,29 @@ export function useSessionManager() {
 
     const checkInterval = setInterval(refreshTokenIfNeeded, 60 * 1000); // Check every minute
     return () => clearInterval(checkInterval);
+  }, []);
+
+  useEffect(() => {
+    const handleOAuthCallback = async () => {
+      const url = new URL(window.location.href);
+      const code = url.searchParams.get('code');
+
+      if (code) {
+        const session = await exchangeCodeForSession(code);
+
+        const accessToken = session.data.session?.access_token;
+        const refreshToken = session.data.session?.refresh_token;
+
+        if (accessToken && refreshToken) {
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('refreshToken', refreshToken);
+
+          setSession(session.data.user);
+        }
+      }
+    };
+
+    handleOAuthCallback();
   }, []);
 
   return {

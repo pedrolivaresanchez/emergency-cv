@@ -293,9 +293,9 @@ export async function getSessionUser() {
   return supabase.auth.getUser();
 }
 
-export async function getSession() {
+export async function exchangeCodeForSession(code: string) {
   const supabase = await createClient();
-  return supabase.auth.getSession();
+  return supabase.auth.exchangeCodeForSession(code);
 }
 
 export async function signUp(email: any, password: any, nombre: any, telefono: any, privacyPolicy: boolean) {
