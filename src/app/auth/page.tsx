@@ -2,8 +2,8 @@
 import { Suspense, useEffect } from 'react';
 import Login from '../../components/auth/Login';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { getSessionUser } from '@/lib/actions';
 import { AlertTriangle } from 'lucide-react';
+import { useSessionManager } from '@/helpers/hooks';
 
 export default function AUthPage() {
   return (
@@ -14,18 +14,15 @@ export default function AUthPage() {
 }
 
 function Auth() {
+  const { session } = useSessionManager();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
   useEffect(() => {
-    async function fetchSession() {
-      const { data: session } = await getSessionUser();
-      if (session.user) {
-        router.push(redirect);
-      }
+    if (session.user) {
+      router.push(redirect);
     }
-    fetchSession();
-  });
+  }, [session]);
 
   return (
     <section className="mx-6 lg:m-16">

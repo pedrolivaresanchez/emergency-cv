@@ -43,9 +43,11 @@ export function useDebouncedFunction<T extends any[]>(callback: CallbackFunction
   return debouncedFunction;
 }
 
+type UserSession = { user: User } | { user: null };
+
 export function useSessionManager() {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [session, setSession] = useState<User | null>(null);
+  const [session, setSession] = useState<UserSession>({ user: null });
 
   const getTokens = () => {
     return {
@@ -80,7 +82,7 @@ export function useSessionManager() {
           localStorage.setItem('accessToken', response.data.session.access_token);
           localStorage.setItem('refreshToken', response.data.session.refresh_token);
 
-          setSession(response.data.user);
+          setSession(response.data);
 
           return true;
         }
@@ -119,7 +121,7 @@ export function useSessionManager() {
           localStorage.setItem('accessToken', accessToken);
           localStorage.setItem('refreshToken', refreshToken);
 
-          setSession(session.data.user);
+          setSession(session.data);
         }
       }
     };
