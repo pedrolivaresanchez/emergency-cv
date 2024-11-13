@@ -46,6 +46,9 @@ internal sealed class HelpRequest : BaseModel
     [Column("status")]
     public string Status { get; init; }
 
+    [Column("crm_status")]
+    public string CrmStatus { get; set; }
+
     [Column("latitude")]
     public string Latitude { get; init; }
 
@@ -73,6 +76,12 @@ internal sealed class HelpRequest : BaseModel
 
     [JsonProperty("towns")]
     public Town Town { get; set; }
+
+    [Column("notes")]
+    public string Notes { get; set; }
+
+    [Column("avisos")]
+    public string Avisos { get; set; }
 }
 
 internal sealed class Resources
