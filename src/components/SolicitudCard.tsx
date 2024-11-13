@@ -2,7 +2,7 @@ import { AlertTriangle, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucid
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAdditionalInfo, HelpRequestData } from '@/types/Requests';
+import { HelpRequestAdditionalInfo, HelpRequestData, SelectedHelpData } from '@/types/Requests';
 import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
 import SolicitudHelpCount from '@/components/SolicitudHelpCount';
 import PhoneInfo from '@/components/PhoneInfo';
@@ -15,9 +15,10 @@ import ChangeUrgencyHelpRequest from './ChangeUrgencyHelpRequest';
 import ChangeStatusButton from './ChangeStatusButton';
 import ChangeCRMStatus from './ChangeCRMStatus';
 import { UserRoles } from '@/helpers/constants';
+import CRMNotes from '@/components/CRMNotes';
 
 type SolicitudCardProps = {
-  caso: HelpRequestData;
+  caso: SelectedHelpData;
   showLink?: boolean;
   showEdit?: boolean;
   format?: 'small' | 'large';
@@ -72,7 +73,7 @@ export default function SolicitudCard({
             </div>
           </div>
           <div className="flex flex-row justify-center items-center gap-2">
-            <SolicitudHelpCount id={caso.id} people={caso.number_of_people} />
+            <SolicitudHelpCount id={caso.id} />
             <div
               className={`flex items-center justify-center rounded-full px-4 py-2 ${
                 updateStatus === 'finished'
@@ -101,18 +102,6 @@ export default function SolicitudCard({
                 <span className="break-words">
                   <span className="font-semibold">Pueblo:</span> {getTownById(caso.town_id)?.name || ''}
                 </span>
-              </div>
-            )}
-            <div className="flex items-start gap-2">
-              <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-              <span className="break-words">
-                <span className="font-semibold">Ubicación:</span> {caso.location}
-              </span>
-            </div>
-            {caso.contact_info && (
-              <div className="flex items-start gap-2">
-                <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                <PhoneInfo isAdmin caseInfo={caso} />
               </div>
             )}
             {caso.help_type && (
@@ -205,7 +194,7 @@ export default function SolicitudCard({
                 helpRequestId={caso.id}
               />
             )}
-            {isCrmUser && (
+            {(isCrmUser || isAdmin) && (
               <ChangeCRMStatus
                 onStatusUpdate={setUpdateStatus}
                 currentStatus={updateStatus}
@@ -213,6 +202,7 @@ export default function SolicitudCard({
                 helpRequestId={caso.id}
               />
             )}
+            {(isCrmUser || isAdmin) && <CRMNotes helpRequestId={caso.id} currentNotes={caso.notes} />}
             {isAdmin && <DeleteHelpRequest helpRequestId={caso.id} onDelete={() => setDeleted(true)} />}
           </div>
         </div>

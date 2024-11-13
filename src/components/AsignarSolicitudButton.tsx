@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAssignmentData, HelpRequestData } from '@/types/Requests';
+import { HelpRequestAssignmentData, HelpRequestData, SelectedHelpData } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
 import { MouseEvent } from 'react';
 import { Spinner } from '@/components/Spinner';
@@ -12,7 +12,7 @@ import { useModal } from '@/context/ModalProvider';
 import { useRouter } from 'next/navigation';
 
 type AsignarSolicitudButtonProps = {
-  helpRequest: HelpRequestData;
+  helpRequest: SelectedHelpData;
 };
 
 export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitudButtonProps) {
@@ -42,9 +42,10 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
         phone_number: session.user.user_metadata.telefono!,
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['help_request_assignments'] });
-      queryClient.invalidateQueries({ queryKey: ['help_requests', { user_id: userId, type: 'necesita' }] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['help_request_assignments'] });
+      await queryClient.invalidateQueries({ queryKey: ['help_requests', { user_id: userId, type: 'necesita' }] });
+      await router.push(`/solicitudes/${helpRequest.id}`);
     },
     onError: (e) => {
       console.error('Error al asignarte a la petición de ayuda', e);
@@ -58,9 +59,9 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
       if (!userAssignment) return;
       await helpRequestService.unassign(userAssignment.id);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['help_request_assignments'] });
-      queryClient.invalidateQueries({ queryKey: ['help_requests', { user_id: userId, type: 'necesita' }] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['help_request_assignments'] });
+      await queryClient.invalidateQueries({ queryKey: ['help_requests', { user_id: userId, type: 'necesita' }] });
     },
     onError: (e) => {
       console.error('Error al asignarte a la petición de ayuda', e);
