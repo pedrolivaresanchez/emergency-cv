@@ -293,6 +293,11 @@ export async function getSessionUser() {
   return supabase.auth.getUser();
 }
 
+export async function getSession() {
+  const supabase = await createClient();
+  return supabase.auth.getSession();
+}
+
 export async function signUp(email: any, password: any, nombre: any, telefono: any, privacyPolicy: boolean) {
   const supabase = await createClient();
   return supabase.auth.signUp({
@@ -316,6 +321,11 @@ export async function signOut() {
 export async function signIn(email: string, password: string) {
   const supabase = await createClient();
   return supabase.auth.signInWithPassword({ email, password });
+}
+
+export async function refreshToken(refresh_token: string) {
+  const supabase = await createClient();
+  return supabase.auth.refreshSession({ refresh_token });
 }
 
 export async function signInWithOAuth(credentials: SignInWithOAuthCredentials) {

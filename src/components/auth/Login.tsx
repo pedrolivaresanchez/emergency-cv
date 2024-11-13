@@ -4,6 +4,7 @@ import SignUp from '@/components/auth/SignUp';
 import { updateUser, getSessionUser, signOut, signIn } from '@/lib/actions';
 import { FormEvent, useState } from 'react';
 import SocialButton from './SocialButton';
+import { useSessionManager } from '@/helpers/hooks';
 
 type LoginProps = {
   onSuccessCallback: () => void;
@@ -23,6 +24,8 @@ type FormData = {
 };
 
 export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
+  const { setSession } = useSessionManager();
+
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     email: '',
@@ -107,7 +110,11 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
       return;
     }
 
+    localStorage.setItem('accessToken', response.data.session.access_token);
+    localStorage.setItem('refreshToken', response.data.session.refresh_token);
+
     setStatus({ isSubmitting: false, error: null, success: true });
+    setSession(response.data.user);
 
     if (typeof onSuccessCallback === 'function') {
       onSuccessCallback();

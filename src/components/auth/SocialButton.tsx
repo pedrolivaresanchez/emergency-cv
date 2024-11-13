@@ -22,9 +22,8 @@ export default function SocialButton({ provider, redirectUrl, children }: Social
       console.error('Error al iniciar sesión con proveedor:', error.message);
       return;
     }
-    if (data?.url) {
-      return redirect(data.url);
-    }
+
+    if (data?.url) return redirect(data.url);
   };
 
   return (

@@ -1,4 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { refreshToken } from '@/lib/actions';
+import { useEffect, useRef, useState } from 'react';
+import { User } from '@supabase/auth-js/src/lib/types';
 
 type CallbackFunction<T extends any[]> = (...args: T) => void;
 
@@ -38,4 +41,73 @@ export function useDebouncedFunction<T extends any[]>(callback: CallbackFunction
   }, []);
 
   return debouncedFunction;
+}
+
+export function useSessionManager() {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [session, setSession] = useState<User | null>(null);
+
+  const getTokens = () => {
+    return {
+      accessToken: localStorage.getItem('accessToken'),
+      refreshToken: localStorage.getItem('refreshToken'),
+    };
+  };
+
+  const isTokenExpired = (token: string | null) => {
+    if (!token) return true;
+
+    try {
+      const decoded = jwtDecode<User & { exp: number }>(token);
+      // Check if token will expire in the next 15 minutes
+      const expirationBuffer = 15 * 60; // 15 minutes in seconds
+      return decoded.exp < Date.now() / 1000 + expirationBuffer;
+    } catch {
+      return true;
+    }
+  };
+
+  const refreshTokenIfNeeded = async () => {
+    const { accessToken, refreshToken: currentRefreshToken } = getTokens();
+
+    if (!isRefreshing && isTokenExpired(accessToken) && currentRefreshToken) {
+      setIsRefreshing(true);
+
+      try {
+        const response = await refreshToken(currentRefreshToken);
+
+        if (response.data?.session) {
+          localStorage.setItem('accessToken', response.data.session.access_token);
+          localStorage.setItem('refreshToken', response.data.session.refresh_token);
+
+          setSession(response.data.user);
+
+          return true;
+        }
+      } catch (error) {
+        // Clear tokens if refresh fails
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        return false;
+      } finally {
+        setIsRefreshing(false);
+      }
+    }
+    return !isTokenExpired(accessToken);
+  };
+
+  useEffect(() => {
+    refreshTokenIfNeeded();
+
+    const checkInterval = setInterval(refreshTokenIfNeeded, 60 * 1000); // Check every minute
+    return () => clearInterval(checkInterval);
+  }, []);
+
+  return {
+    session,
+    setSession,
+    getTokens,
+    isTokenExpired,
+    refreshTokenIfNeeded,
+  };
 }

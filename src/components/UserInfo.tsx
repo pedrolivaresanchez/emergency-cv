@@ -16,6 +16,10 @@ export default function UserProfile({ toggleAction }: UserProfileProps) {
 
   const handleLogout = async () => {
     const response = await signOut();
+
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+
     if (!response.error) {
       window.location.href = '/';
     }

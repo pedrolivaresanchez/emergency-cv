@@ -1,8 +1,8 @@
 'use client';
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+
 import { User } from '@supabase/auth-js';
-import { Subscription } from '@supabase/supabase-js';
-import { onAuthStateChange, getSessionUser } from '@/lib/actions';
+import { useSessionManager } from '@/helpers/hooks';
+import React, { createContext, ReactNode, useContext } from 'react';
 
 const SessionContext = createContext<UserSession>({ user: null });
 
@@ -13,32 +13,9 @@ type SessionProviderProps = {
 };
 
 export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
-  const [session, setSession] = useState<UserSession>(() => ({ user: null }));
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const { session } = useSessionManager();
 
-  useEffect(() => {
-    // Fetch initial session
-    const fetchSession = async () => {
-      const { data } = await getSessionUser();
-      setSession(data);
-
-      const { data: authListener } = await onAuthStateChange((event, session) => {
-        setSession(() => ({ user: session?.user ?? null })); // Update the session in state
-      });
-      setSubscription(authListener?.subscription);
-    };
-    fetchSession();
-
-    // Subscribe to session changes
-
-    // Clean up listener on component unmount
-    return () => {
-      if (subscription) {
-        subscription.unsubscribe();
-      }
-    };
-  }, []);
-  return <SessionContext.Provider value={session}>{children}</SessionContext.Provider>;
+  return <SessionContext.Provider value={{ user: session }}>{children}</SessionContext.Provider>;
 };
 
 export const useSession = () => useContext(SessionContext);
