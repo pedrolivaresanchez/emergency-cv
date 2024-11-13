@@ -1,4 +1,4 @@
-import { HelpRequestAssignmentData, HelpRequestComment, HelpRequestData } from '@/types/Requests';
+import { HelpRequestAssignmentData, HelpRequestComment, SelectedHelpData } from '@/types/Requests';
 import { useQuery } from '@tanstack/react-query';
 import { helpRequestService } from '@/lib/service';
 import { useSession } from '@/context/SessionProvider';
@@ -7,7 +7,7 @@ import CommentForm from '@/components/Comments/CommentForm';
 import { useRole } from '@/context/RoleProvider';
 
 type SolicitudCommentsProps = {
-  request: HelpRequestData;
+  request: SelectedHelpData;
 };
 
 export default function SolicitudComments({ request }: SolicitudCommentsProps) {

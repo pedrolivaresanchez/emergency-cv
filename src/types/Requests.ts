@@ -8,7 +8,8 @@ type HelpRequestJsonFields = {
   resources: HelpRequestResources | null;
 };
 export type HelpRequestHelpType = Database['public']['Enums']['help_type_enum'];
-export type HelpRequestData = Database['public']['Tables']['help_requests']['Row'] & HelpRequestJsonFields;
+export type HelpRequestDbRow = Database['public']['Tables']['help_requests']['Row'];
+export type HelpRequestData = Omit<HelpRequestDbRow, 'additional_info' | 'resources'> & HelpRequestJsonFields;
 export type HelpRequestInsert = Database['public']['Tables']['help_requests']['Insert'] & HelpRequestJsonFields;
 export type HelpRequestUpdate = Database['public']['Tables']['help_requests']['Update'] & HelpRequestJsonFields;
 export type HelpRequestAssignmentData = Database['public']['Tables']['help_request_assignments']['Row'];
@@ -28,3 +29,31 @@ export type HelpRequestResources = {
   vehicle?: string;
   availability?: string[];
 };
+
+export type OmitSelect<T, K extends string> = { [key in keyof Omit<T, K>]: T[key] };
+export type SelectStringBuilder<T, K extends string> = { [key in keyof Omit<T, K>]: true };
+
+export type OmitHelpDataFields = 'location' | 'coordinates' | 'latitude' | 'longitude' | 'contact_info';
+export type SelectHelpDataStringBuilder = SelectStringBuilder<HelpRequestData, OmitHelpDataFields>;
+export type SelectedHelpData = OmitSelect<HelpRequestData, OmitHelpDataFields>;
+export const helpDataSelectFieldsObject: SelectHelpDataStringBuilder = {
+  additional_info: true,
+  asignees_count: true,
+  created_at: true,
+  crm_status: true,
+  description: true,
+  help_type: true,
+  id: true,
+  name: true,
+  notes: true,
+  number_of_people: true,
+  other_help: true,
+  people_needed: true,
+  resources: true,
+  status: true,
+  town_id: true,
+  type: true,
+  urgency: true,
+  user_id: true,
+};
+export const helpDataSelectFields = Object.keys(helpDataSelectFieldsObject).join(',');

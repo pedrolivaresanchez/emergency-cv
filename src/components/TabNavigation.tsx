@@ -15,10 +15,6 @@ export default function TabNavigation({ count = { solicitudes: 0, ofertas: 0 } }
           <HeartHandshake className="h-6 w-6 mb-1" />
           <span className="text-xs sm:text-sm font-medium">Ofertas ({count.ofertas || 0})</span>
         </Tab>
-        {/* <Tab href="/casos-activos/mapa" color="orange">
-          <MapPin className="h-6 w-6 mb-1" />
-          <span className="text-xs sm:text-sm font-medium">Mapa</span>
-        </Tab> */}
       </div>
     </>
   );

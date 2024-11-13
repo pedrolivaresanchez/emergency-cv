@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAssignmentData, HelpRequestData } from '@/types/Requests';
+import { HelpRequestAssignmentData, HelpRequestData, SelectedHelpData } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
 import { MouseEvent } from 'react';
 import { Spinner } from '@/components/Spinner';
@@ -12,7 +12,7 @@ import { useModal } from '@/context/ModalProvider';
 import { useRouter } from 'next/navigation';
 
 type AsignarSolicitudButtonProps = {
-  helpRequest: HelpRequestData;
+  helpRequest: SelectedHelpData;
 };
 
 export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitudButtonProps) {

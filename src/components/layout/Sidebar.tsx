@@ -22,7 +22,7 @@ import {
 import UserInfo from '../UserInfo';
 import { useSession } from '@/context/SessionProvider';
 import { useQuery } from '@tanstack/react-query';
-import { HelpRequestData } from '@/types/Requests';
+import { SelectedHelpData } from '@/types/Requests';
 import { helpRequestService } from '@/lib/service';
 
 export const SOLICITUDES_PATH = '/casos-activos/solicitudes'
@@ -38,11 +38,11 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
 
   const userId = session.user?.id;
 
-  const { data: requests } = useQuery<HelpRequestData[]>({
+  const { data: requests } = useQuery<SelectedHelpData[]>({
     queryKey: ['help_requests', { user_id: userId, type: 'necesita' }],
     queryFn: () => helpRequestService.getRequestsByUser(userId),
   });
-  const { data: offers } = useQuery<HelpRequestData[]>({
+  const { data: offers } = useQuery<SelectedHelpData[]>({
     queryKey: ['help_requests', { user_id: userId, type: 'ofrece' }],
     queryFn: () => helpRequestService.getOffersByUser(userId),
   });

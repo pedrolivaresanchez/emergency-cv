@@ -1,32 +1,45 @@
 'use client';
 import { ArrowLeft } from 'lucide-react';
 import SolicitudCard from '@/components/SolicitudCard';
-import { useQuery } from '@tanstack/react-query';
-import { HelpRequestData } from '@/types/Requests';
-import { helpRequestService } from '@/lib/service';
 import { useParams } from 'next/navigation';
 import SolicitudComments from '@/components/Comments/SolicitudComments';
+import { useEffect, useState } from 'react';
+import { SelectedHelpData } from '../../../types/Requests';
+import { getSolicitud } from './actions';
 
 export default function CasoDetalle() {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
+  const [data, setData] = useState<SelectedHelpData | null>(null);
   const { id } = useParams<{ id: string }>();
 
-  const {
-    data: request,
-    isLoading,
-    error,
-  } = useQuery<HelpRequestData>({
-    queryKey: ['help_requests', { id: id }],
-    queryFn: () => helpRequestService.getOne(Number(id)),
-  });
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
 
-  if (isLoading) {
+        const { data: requestResponse, error } = await getSolicitud(id);
+        setData(requestResponse as SelectedHelpData);
+        setError(!!error);
+
+        setLoading(false);
+      } catch (err) {
+        console.error('Error general:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
   }
-  if (error || request === undefined) {
+  if (data === null) {
     return (
       <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex justify-start">
@@ -55,8 +68,8 @@ export default function CasoDetalle() {
           Volver
         </button>
       </div>
-      <SolicitudCard caso={request} showLink={false} showEdit={true} />
-      <SolicitudComments request={request} />
+      <SolicitudCard caso={data} showLink={false} showEdit={true} />
+      <SolicitudComments request={data} />
     </div>
   );
 }

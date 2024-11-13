@@ -2,7 +2,7 @@ import { AlertTriangle, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucid
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAdditionalInfo, HelpRequestData } from '@/types/Requests';
+import { HelpRequestAdditionalInfo, HelpRequestData, SelectedHelpData } from '@/types/Requests';
 import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
 import SolicitudHelpCount from '@/components/SolicitudHelpCount';
 import PhoneInfo from '@/components/PhoneInfo';
@@ -18,7 +18,7 @@ import { UserRoles } from '@/helpers/constants';
 import CRMNotes from '@/components/CRMNotes';
 
 type SolicitudCardProps = {
-  caso: HelpRequestData;
+  caso: SelectedHelpData;
   showLink?: boolean;
   showEdit?: boolean;
   format?: 'small' | 'large';
@@ -104,19 +104,7 @@ export default function SolicitudCard({
                 </span>
               </div>
             )}
-            <div className="flex items-start gap-2">
-              <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-              <span className="break-words">
-                <span className="font-semibold">Ubicación:</span> {caso.location}
-              </span>
-            </div>
-            {caso.contact_info && (
-              <div className="flex items-start gap-2">
-                <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                <PhoneInfo isAdmin caseInfo={caso} />
-              </div>
-            )}
-            {caso.help_type !== null && caso.help_type.length > 0 && (
+            {caso.help_type && (
               <div className="flex items-start gap-2">
                 <Megaphone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                 <span className="break-words">
