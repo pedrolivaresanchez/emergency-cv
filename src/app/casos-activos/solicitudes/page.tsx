@@ -1,14 +1,14 @@
 'use client';
 
 import { Suspense, useEffect, useState, useCallback, ChangeEventHandler } from 'react';
-import { supabase } from '@/lib/supabase/client';
 import SolicitudCard from '@/components/SolicitudCard';
 import Pagination from '@/components/Pagination';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import { useTowns } from '@/context/TownProvider';
-import { HelpRequestData } from '@/types/Requests';
 import { Toggle } from '@/components/Toggle';
+import { getSolicitudes } from './actions';
+import { SelectedHelpData } from '../../../types/Requests';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,7 +34,7 @@ function Solicitudes() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [data, setData] = useState<HelpRequestData[]>([]);
+  const [data, setData] = useState<SelectedHelpData[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get('page')) || 1);
   const [currentCount, setCurrentCount] = useState<number>(0);
   const [filtroData, setFiltroData] = useState({
@@ -84,46 +84,29 @@ function Solicitudes() {
         setError(null);
 
         // Comenzamos la consulta
-        const query = supabase
-          .from('help_requests_with_assignment_count')
-          .select('*', { count: 'exact' })
-          .eq('type', 'necesita');
+        const {
+          data: badlyTypedData,
+          count,
+          error,
+        } = await getSolicitudes({
+          ...filtroData,
+          paginacion: {
+            currentPage,
+            itemsPerPage,
+          },
+        });
 
-        // Solo agregar filtro si no es "todos"
-        if (filtroData.tipoAyuda !== 'todas') {
-          query.contains('help_type', [filtroData.tipoAyuda]);
-        }
-
-        // Solo agregar filtro si no es "todos"
-        if (filtroData.pueblo !== 'todos') {
-          query.eq('town_id', filtroData.pueblo);
-        }
-
-        // Solo agregar filtro si no es "todas"
-        if (filtroData.urgencia !== 'todas') {
-          query.eq('urgency', filtroData.urgencia);
-        }
-
-        // Solo agregar filtro si es true
-        if (isStringTrue(filtroData.soloSinAsignar)) {
-          query.eq('assignments_count', 0);
-        }
-
-        query.neq('status', 'finished');
-        // Ejecutar la consulta con paginación
-        const { data, count, error } = await query
-          .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1)
-          .order('created_at', { ascending: false });
+        const data = badlyTypedData as SelectedHelpData[];
 
         if (error) {
           console.log('Error fetching solicitudes:', error);
           setData([]);
         } else {
-          setData((data as HelpRequestData[]) || []);
+          setData(data || []);
           setCurrentCount(count ?? 0);
         }
       } catch (err) {
-        console.log('Error general:', err);
+        console.error('Error general:', err);
         setError('Error de conexión.');
       } finally {
         setLoading(false);

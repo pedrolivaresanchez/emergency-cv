@@ -1,12 +1,12 @@
 import { HeartHandshake, MapPinned, Megaphone, Phone, Truck } from 'lucide-react';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
-import { HelpRequestData } from '@/types/Requests';
+import { SelectedHelpData } from '@/types/Requests';
 import { useTowns } from '@/context/TownProvider';
 import { useSession } from '@/context/SessionProvider';
 
 type OfferCardProps = {
-  caso: HelpRequestData;
+  caso: SelectedHelpData;
   showLink?: boolean;
   showEdit?: boolean;
 };
@@ -55,14 +55,6 @@ export default function OfferCard({ caso, showLink = true, showEdit = false }: O
               <span className="break-words">
                 <span className="font-semibold">Pueblo:</span>{' '}
                 {towns.find((town) => town.id === caso.town_id)?.name || ''}
-              </span>
-            </div>
-          )}
-          {caso.contact_info && (
-            <div className="flex items-start gap-2">
-              <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-              <span className="break-words">
-                <span className="font-semibold">Contacto:</span> {caso.contact_info}
               </span>
             </div>
           )}
