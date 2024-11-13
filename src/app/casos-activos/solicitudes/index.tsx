@@ -1,18 +1,17 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-// import { supabase } from '@/lib/supabase/client';
 import { matchSorter } from 'match-sorter';
 import { useRouter, useSearchParams } from 'next/navigation';
-import ListadoSolicitudes, { isStringTrue } from './listado';
-import MapaSolicitudes from './mapa';
 import { FilterType } from './types';
 import { useTowns } from '@/context/TownProvider';
 import { TabNavigationCount } from '@/components/TabNavigation';
 import Modal from '@/components/Modal';
 import { MAP_MODAL_NAME } from '@/components/map/map';
 import { HelpRequestData } from '@/types/Requests';
-import SolicitudCard from '@/components/SolicitudCard';
+import SolicitudCard from '@/components/solicitudes/SolicitudCard';
+import SolicitudList, { isStringTrue } from '@/components/solicitudes/SolicitudList';
+import SolicitudMap from '@/components/solicitudes/SolicitudMap';
 
 type DataFilter = { keys: (keyof HelpRequestData)[]; value: string };
 function getDataFiltered(data: HelpRequestData[], filters: DataFilter[]) {
@@ -91,8 +90,8 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
   return (
     <>
       <div className="lg:flex lg:flex-row-reverse">
-        <MapaSolicitudes data={dataFiltered} setSelectedMarker={setSelectedMarker} />
-        <ListadoSolicitudes
+        <SolicitudMap data={dataFiltered} setSelectedMarker={setSelectedMarker} />
+        <SolicitudList
           data={dataFiltered}
           count={count}
           filtersData={filtersData}

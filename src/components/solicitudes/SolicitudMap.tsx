@@ -15,12 +15,12 @@ function transformHelpRequestToPointFeature(request: any): GeoJSON.Feature<GeoJS
   };
 }
 
-type MapaSolicitudesProps = {
+type SolicitudListProps = {
   data: HelpRequestData[];
   setSelectedMarker: Dispatch<SetStateAction<HelpRequestData | null>>;
 };
 
-export default function MapaSolicitudes({ data, setSelectedMarker }: MapaSolicitudesProps) {
+export default function SolicitudList({ data, setSelectedMarker }: SolicitudListProps) {
   const solicitudesGeoJson = useMemo(
     () =>
       ({

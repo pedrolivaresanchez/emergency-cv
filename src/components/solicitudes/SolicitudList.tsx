@@ -1,25 +1,25 @@
 'use client';
 
 import { useCallback, ChangeEventHandler, useMemo } from 'react';
-import SolicitudCard from '@/components/SolicitudCard';
+import SolicitudCard from '@/components/solicitudes/SolicitudCard';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import { useTowns } from '@/context/TownProvider';
 import { Toggle } from '@/components/Toggle';
-import { FiltersData, FilterType } from './types';
 import TabNavigation, { TabNavigationCount } from '@/components/TabNavigation';
 import { HelpRequestData } from '@/types/Requests';
 import { Virtuoso } from 'react-virtuoso';
+import { FiltersData, FilterType } from '@/app/casos-activos/solicitudes/types';
 
 export const isStringTrue = (str: string): boolean => str === 'true';
 
-type ListadoSolicitudesProps = {
+type SolicitudListProps = {
   data: HelpRequestData[];
   count: TabNavigationCount;
   filtersData: FiltersData;
   onDataFilterChange: (type: FilterType, newFilter: string) => void;
 };
 
-export default function ListadoSolicitudes({ data, count, filtersData, onDataFilterChange }: ListadoSolicitudesProps) {
+export default function SolicitudList({ data, count, filtersData, onDataFilterChange }: SolicitudListProps) {
   const { towns } = useTowns();
 
   const hasFilters = useMemo(
