@@ -114,7 +114,7 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
     localStorage.setItem('refreshToken', response.data.session.refresh_token);
 
     setStatus({ isSubmitting: false, error: null, success: true });
-    setSession(response.data.user);
+    setSession(response.data);
 
     if (typeof onSuccessCallback === 'function') {
       onSuccessCallback();
