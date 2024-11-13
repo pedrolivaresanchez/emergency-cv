@@ -11,6 +11,7 @@ import AddressMap, { AddressDescriptor } from '@/components/AddressMap';
 import { LngLat } from '@/components/map/GeolocationMap';
 import { useSession } from '@/context/SessionProvider';
 import Unauthorized from '@/components/Unauthorized';
+import { CheckboxLegalText } from '../CheckboxLegalText';
 
 export type HelpRequestFormData = {
   nombre: string;
@@ -251,8 +252,8 @@ export default function HelpRequestForm({
         />
       </div>
       {/* Consentimiento */}
-      <div className="flex items-start">
-        <label className="ml-2 block text-sm text-gray-700 cursor-pointer">
+      <div className="flex items-start flex-col gap-y-2">
+        <label className="block text-sm text-gray-700 cursor-pointer">
           <input
             type="checkbox"
             name="consentimiento"
@@ -263,6 +264,7 @@ export default function HelpRequestForm({
           Doy mi consentimiento para el tratamiento de los datos proporcionados y confirmo que la información
           proporcionada es verídica.
         </label>
+        <CheckboxLegalText />
       </div>
 
       <button
