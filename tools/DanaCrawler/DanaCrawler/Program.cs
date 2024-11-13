@@ -10,6 +10,8 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.Configure<SupabaseConfig>(builder.Configuration.GetSection(SupabaseConfig.Supabase));
 builder.Services.Configure<GoogleApiConfig>(builder.Configuration.GetSection(GoogleApiConfig.GoogleApi));
+
+builder.Services.AddSingleton(new GoogleSheetsService(builder.Configuration["GoogleApi:CredentialsPath"]!, builder.Configuration["GoogleApi:SpreadsheetId"]!));
 builder.Services.AddSingleton<AjudaDanaService>();
 
 builder.Services.AddSerilog((services, logConfiguration) =>
