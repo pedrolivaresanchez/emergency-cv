@@ -104,12 +104,6 @@ export default function SolicitudCard({
                 </span>
               </div>
             )}
-            {caso.contact_info && (
-              <div className="flex items-start gap-2">
-                <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                <PhoneInfo isAdmin caseInfo={caso} />
-              </div>
-            )}
             {caso.help_type && (
               <div className="flex items-start gap-2">
                 <Megaphone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
