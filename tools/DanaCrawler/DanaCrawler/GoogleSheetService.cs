@@ -105,7 +105,7 @@ internal sealed class GoogleSheetsService
 
         var headerRow = new List<object>
         {
-            "Created At", "ID", "Status", "Town","Description", "Help Types",  "Number of People",
+            "Created At", "ID", "Avisos", "Status", "Town","Description", "Help Types",  "Number of People",
             "Name", "Location", "ContactInfo", "People Needed", "Notes"
         };
 
@@ -113,8 +113,8 @@ internal sealed class GoogleSheetsService
         rows.AddRange(requests.OrderBy(x => x.Id).Where(x => x.Type == "necesita").Select(request => new List<object>
         {
             request.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
-            request.Id,
-            //request.Type ?? "",
+            $"=HYPERLINK(\"https://ajudadana.es/solicitudes/{request.Id}\"; \"{request.Id}\")",
+            request.Avisos ?? "",
             request.CrmStatus ?? "",
             request.Town?.Name ?? "",
             request.Description ?? "",
@@ -123,9 +123,6 @@ internal sealed class GoogleSheetsService
             request.Name ?? "",
             request.Location ?? "",
             request.ContactInfo ?? "",
-            //request.Urgency ?? "",
-            //request.Latitude ?? "",
-            //request.Longitud ?? "",
             request.PeopleNeeded,
             request.Notes ?? "",
         }));
@@ -138,7 +135,7 @@ internal sealed class GoogleSheetsService
         var updateRequest = _sheetsService.Spreadsheets.Values.Update(
             valueRange,
             _spreadsheetId,
-            $"{sheetName}!A1:L"
+            $"{sheetName}!A1:M"
         );
         updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
 
@@ -147,7 +144,7 @@ internal sealed class GoogleSheetsService
 
     public async Task<List<HelpRequest>> GetSheetHelpRequests()
     {
-        var getRequest = _sheetsService.Spreadsheets.Values.Get(_spreadsheetId, "ANTIGUA - NecesitaCRMV2 Hoja de Trabajo!A1:L");
+        var getRequest = _sheetsService.Spreadsheets.Values.Get(_spreadsheetId, "NecesitaCRMV2 Hoja de Trabajo - 12/11!A1:M");
 
         var rows = await getRequest.ExecuteAsync();
 
@@ -166,26 +163,28 @@ internal sealed class GoogleSheetsService
                         : DateTime.Parse(rowsValue[0].ToString()),
                     DbId = string.IsNullOrEmpty(rowsValue[1]?.ToString())
                         ? 0
-                        : int.Parse(rowsValue[1].ToString()),
-                    Status = rowsValue[2]?.ToString() ?? "",
+                        : int.Parse(rowsValue[1].ToString().Split(";")[0]),
+                    Avisos = rowsValue[2]?.ToString() ?? "",
+                    CrmStatus = rowsValue[3]?.ToString() ?? "",
                     Town = new Town
                     {
                         Id = 0,
-                        Name = rowsValue[3]?.ToString() ?? ""
+                        Name = rowsValue[4]?.ToString() ?? ""
                     },
-                    Description = rowsValue[4]?.ToString() ?? "",
-                    HelpType = string.IsNullOrEmpty(rowsValue[5]?.ToString())
+                    Description = rowsValue[5]?.ToString() ?? "",
+                    HelpType = string.IsNullOrEmpty(rowsValue[6]?.ToString())
                         ? new List<string>()
-                        : rowsValue[5].ToString().Split(",").ToList(),
-                    // NumberOfPeople = string.IsNullOrEmpty(rowsValue[6]?.ToString())
-                    //     ? 0
-                    //     : int.Parse(rowsValue[6].ToString()),
-                    Name = rowsValue[7]?.ToString() ?? "",
-                    Location = rowsValue[8]?.ToString() ?? "",
-                    // ContactInfo = rowsValue[9]?.ToString() ?? "",
-                    PeopleNeeded = string.IsNullOrEmpty(rowsValue[10]?.ToString())
+                        : rowsValue[6].ToString().Split(",").ToList(),
+                    NumberOfPeople = string.IsNullOrEmpty(rowsValue[7]?.ToString())
                         ? 0
-                        : int.Parse(rowsValue[10].ToString()),
+                        : int.Parse(rowsValue[7].ToString()),
+                    Name = rowsValue[8]?.ToString() ?? "",
+                    Location = rowsValue[9]?.ToString() ?? "",
+                    ContactInfo = rowsValue[10]?.ToString() ?? "",
+                    PeopleNeeded = string.IsNullOrEmpty(rowsValue[11]?.ToString())
+                        ? 0
+                        : int.Parse(rowsValue[11].ToString()),
+                    Notes = rowsValue.Count >= 13 ? rowsValue[12]?.ToString() ?? "" : "",
                 });
             }
             catch (Exception e)

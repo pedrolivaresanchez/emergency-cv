@@ -79,6 +79,9 @@ internal sealed class HelpRequest : BaseModel
 
     [Column("notes")]
     public string Notes { get; set; }
+
+    [Column("avisos")]
+    public string Avisos { get; set; }
 }
 
 internal sealed class Resources

@@ -52,56 +52,23 @@ internal sealed class AjudaDanaService
     public async Task SyncCrmStatusWithDb(List<HelpRequest> helpRequests)
     {
         await _supabaseClient.Auth.SignIn(_config.Value.ServiceAccountEmail, _config.Value.ServiceAccountPassword);
-        var dbRequest = await _supabaseClient.From<HelpRequest>()
-            .Select("*")
-            .Where(request => request.Type == "necesita")
-            .Get();
 
-        helpRequests = RemoveDuplicatesKeepLongest(helpRequests, x => x.Description, x => x.Id);
         foreach (var helpRequest in helpRequests)
         {
-            if (string.IsNullOrWhiteSpace(helpRequest.Description)) continue;
-
-            var matchingRequests = dbRequest.Models
-                .Where(x => !string.IsNullOrWhiteSpace(x.Description) &&
-                            x.CreatedAt == helpRequest.CreatedAt.AddHours(1) &&
-                            NormalizeString(helpRequest.Description).Contains(NormalizeString(x.Description)))
-                .ToList();
-
-            if (matchingRequests.Count == 0)
+            var statusMapping = helpRequest.CrmStatus switch
             {
-                matchingRequests = dbRequest.Models
-                    .Where(x => !string.IsNullOrWhiteSpace(x.Description) &&
-                                helpRequest.Description.Split(" ").Length - x.Description.Split(" ").Length <= 20 &&
-                                NormalizeString(helpRequest.Description).Contains(NormalizeString(x.Description)))
-                    .ToList();
-            }
+                "active" => "active",
+                "finished" => "finished",
+                _ => "progress"
+            };
 
-            if (matchingRequests.Count == 0)
-            {
-                _logger.LogWarning("No matching requests for Id {Id} with description {Description}", helpRequest.Id, helpRequest.Description);
-                continue;
-            }
-
-            if (matchingRequests.Count > 1)
-            {
-                _logger.LogError("HAY MAS DE UNO ERNESTO JDOER PUTA SALBAGUARDA, QUE HAGO AHORA?");
-                _logger.LogError("Cannot update models with description {Description} and Ids = {Ids}", helpRequest.Description,
-                    string.Join(", ", matchingRequests.Select(x => x.Id)));
-                continue;
-            }
-
-            var matchingRequest = matchingRequests.FirstOrDefault();
-            if (matchingRequest != null)
-            {
-                var update = _supabaseClient.From<HelpRequest>()
-                    .Filter("id", Constants.Operator.Equals, matchingRequest.DbId)
-                    .Set(x => new KeyValuePair<object, object?>(x.CrmStatus, helpRequest.Status));
-
-                    update.Set(x => new KeyValuePair<object, object?>(x.Notes, helpRequest.Description.Replace(matchingRequest.Description, string.Empty).Trim()));
-
-                await update.Update();
-            }
+            var update = await _supabaseClient.From<HelpRequest>()
+                .Filter("id", Constants.Operator.Equals, helpRequest.DbId)
+                .Set(x => new KeyValuePair<object, object?>(x.Status, statusMapping)) // For web
+                .Set(x => new KeyValuePair<object, object?>(x.CrmStatus, helpRequest.CrmStatus))
+                .Set(x => new KeyValuePair<object, object?>(x.Notes, helpRequest.Notes))
+                .Set(x => new KeyValuePair<object, object?>(x.Avisos, helpRequest.Avisos))
+                .Update();
         }
     }
 
