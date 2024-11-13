@@ -46,6 +46,18 @@ export type PuntoDeEntrega = {
   status: string;
 };
 
+export type PuntoDeRecogida = {
+  name: string | null | undefined;
+  type: string;
+  location: string | null | undefined;
+  city: string | null;
+  contact_name: string | null;
+  contact_phone: string | null | undefined;
+  accepted_items: string[];
+  urgent_needs: string | null;
+  status: string;
+};
+
 export type OmitSelect<T, K extends string> = { [key in keyof Omit<T, K>]: T[key] };
 export type SelectStringBuilder<T, K extends string> = { [key in keyof Omit<T, K>]: true };
 

@@ -7,6 +7,7 @@ import {
   HelpRequestInsert,
   HelpRequestUpdate,
   PuntoDeEntrega,
+  PuntoDeRecogida,
   SelectedHelpData,
 } from '@/types/Requests';
 import { createClient } from './supabase/server';
@@ -250,6 +251,18 @@ export const puntosDeEntregaService = {
   async createPuntoDeEntrega(puntosDeEntrega: PuntoDeEntrega[]) {
     const supabase = await createClient();
     return await supabase.from('delivery_points').insert(puntosDeEntrega);
+  },
+};
+
+export const puntosDeRecogidaService = {
+  async getPuntosDeRecogida() {
+    const supabase = await createClient();
+    return await supabase.from('collection_points').select('*').order('created_at', { ascending: false });
+  },
+
+  async insertPuntoDeRecogida(puntosDeRecgida: PuntoDeRecogida[]) {
+    const supabase = await createClient();
+    return await supabase.from('collection_points').insert(puntosDeRecgida);
   },
 };
 
