@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import OfferCard from '@/components/OfferCard';
 import { useQuery } from '@tanstack/react-query';
 import { SelectedHelpData } from '@/types/Requests';
-import { helpRequestService } from '@/lib/service';
+import { getOne } from '../actions';
 
 export default function CasoDetalle() {
   const params = useParams();
@@ -16,7 +16,7 @@ export default function CasoDetalle() {
     error,
   } = useQuery<SelectedHelpData>({
     queryKey: ['help_requests', { id: id }],
-    queryFn: () => helpRequestService.getOne(Number(id)),
+    queryFn: () => getOne(Number(id)),
   });
   if (isLoading) {
     return (

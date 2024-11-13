@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
-import { supabase } from '@/lib/supabase/client';
 import { Truck, MapPin, Phone, Mail, Calendar, Package } from 'lucide-react';
 import AddressAutocomplete, { AddressDetails } from '@/components/AddressAutocomplete';
 import { DeliveryPointData, DeliveryPointInsert, isCoordinates } from '@/types/DataPoints';
+import { createPuntoDeEntrega, getPuntosDeEntrega } from './actions';
 
 export default function PuntosEntrega() {
   const initialFormData = {
@@ -39,10 +39,7 @@ export default function PuntosEntrega() {
 
   async function fetchPoints() {
     try {
-      let { data, error } = await supabase
-        .from('delivery_points')
-        .select('*')
-        .order('created_at', { ascending: false });
+      let { data, error } = await getPuntosDeEntrega();
 
       if (error) throw error;
       setPoints(data || []);
@@ -81,7 +78,7 @@ export default function PuntosEntrega() {
         status: 'active',
       };
 
-      const { error: insertError } = await supabase.from('delivery_points').insert([pointData]);
+      const { error: insertError } = await createPuntoDeEntrega([pointData]);
 
       if (insertError) throw insertError;
 
