@@ -58,6 +58,14 @@ export default function OfferCard({ caso, showLink = true, showEdit = false }: O
               </span>
             </div>
           )}
+          {caso.contact_info && (
+            <div className="flex items-start gap-2">
+              <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
+              <span className="break-words">
+                <span className="font-semibold">Contacto:</span> {caso.contact_info}
+              </span>
+            </div>
+          )}
           {caso.resources && (
             <>
               {(() => {
