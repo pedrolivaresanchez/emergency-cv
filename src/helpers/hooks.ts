@@ -105,10 +105,11 @@ export function useSessionManager() {
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
+      const { accessToken } = getTokens();
       const url = new URL(window.location.href);
       const code = url.searchParams.get('code');
 
-      if (code) {
+      if (code && isTokenExpired(accessToken)) {
         const session = await exchangeCodeForSession(code);
 
         const accessToken = session.data.session?.access_token;

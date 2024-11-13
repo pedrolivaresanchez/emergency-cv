@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { Provider } from '@supabase/auth-js';
 import { ReactNode } from 'react';
 import { signInWithOAuth } from '@/lib/actions';
+import { BASE_URL } from '@/helpers/constants';
 
 type SocialButtonProps = {
   provider: Provider;
@@ -9,13 +10,11 @@ type SocialButtonProps = {
   redirectUrl?: string;
 };
 export default function SocialButton({ provider, redirectUrl, children }: SocialButtonProps) {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_ENV === 'production' ? process.env.NEXT_PUBLIC_BASE_URL! : 'http://127.0.0.1:3000';
   const handleLogin = async (provider: Provider) => {
     const { data, error } = await signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${baseUrl + redirectUrl}`,
+        redirectTo: `${BASE_URL + redirectUrl}`,
       },
     });
     if (error) {
