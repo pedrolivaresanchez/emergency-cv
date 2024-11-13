@@ -112,6 +112,9 @@ const PhoneNumberDialog = () => {
 
   useEffect(() => {
     const fetchNumber = async () => {
+      if (typeof authService.getSessionUser === 'undefined') {
+        return;
+      }
       const { data: session, error: errorGettingUser } = await authService.getSessionUser();
       if (!session.user || errorGettingUser) {
         return;
@@ -125,7 +128,7 @@ const PhoneNumberDialog = () => {
     };
 
     fetchNumber();
-  }, [toggleModal]);
+  }, [toggleModal, authService.getSessionUser]);
 
   const handleSubmit = useCallback(
     async (phoneNumber: string, privacyPolicy: string) => {

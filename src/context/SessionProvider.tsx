@@ -17,6 +17,9 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
   const [subscription, setSubscription] = useState<Subscription | null>(null);
 
   useEffect(() => {
+    if (typeof authService.getSessionUser === 'undefined') {
+      return;
+    }
     // Fetch initial session
     const fetchSession = async () => {
       const { data } = await authService.getSessionUser();
@@ -37,7 +40,7 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
         subscription.unsubscribe();
       }
     };
-  }, []);
+  }, [authService.getSessionUser]);
   return <SessionContext.Provider value={session}>{children}</SessionContext.Provider>;
 };
 
