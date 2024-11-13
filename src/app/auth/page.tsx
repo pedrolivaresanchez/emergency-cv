@@ -2,7 +2,7 @@
 import { Suspense, useEffect } from 'react';
 import Login from '../../components/auth/Login';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { authService } from '@/lib/actions';
+import { getSessionUser } from '@/lib/actions';
 import { AlertTriangle } from 'lucide-react';
 
 export default function AUthPage() {
@@ -19,7 +19,7 @@ function Auth() {
   const redirect = searchParams.get('redirect') || '/';
   useEffect(() => {
     async function fetchSession() {
-      const { data: session } = await authService.getSessionUser();
+      const { data: session } = await getSessionUser();
       if (session.user) {
         router.push(redirect);
       }

@@ -1,7 +1,7 @@
 'use client';
 
 import HelpOfferForm, { HelpOfferFormData } from './HelpOfferForm';
-import { helpRequestService } from '@/lib/actions';
+import { editRequest } from '@/lib/actions';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -42,8 +42,7 @@ export default function EditHelpOffer({ request }: EditHelpOfferProps) {
   const router = useRouter();
 
   const mutation = useMutation({
-    mutationFn: (data: HelpOfferFormData) =>
-      helpRequestService.editRequest(formToDatabaseMap(request, data), request.id),
+    mutationFn: (data: HelpOfferFormData) => editRequest(formToDatabaseMap(request, data), request.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help_requests'] });
       router.push(`/ofertas/${request.id}`);

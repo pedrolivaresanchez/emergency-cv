@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { helpRequestService } from '@/lib/actions';
+import { removeComment } from '@/lib/actions';
 import { toast } from 'sonner';
 import { useSession } from '@/context/SessionProvider';
 import { HelpRequestComment } from '@/types/Requests';
@@ -14,7 +14,7 @@ export default function CommentForm({ comment }: DeleteCommentFormProps) {
   const { user } = useSession();
 
   const removeCommentMutation = useMutation({
-    mutationFn: async () => helpRequestService.removeComment(comment.id),
+    mutationFn: async () => removeComment(comment.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', { request_id: comment.help_request_id }] });
     },

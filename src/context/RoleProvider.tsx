@@ -2,7 +2,7 @@
 
 import React, { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { useSession } from './SessionProvider';
-import { roleService } from '../lib/actions';
+import { getRolesByUser } from '@/lib/actions';
 
 const RoleContext = createContext<string>('user');
 
@@ -14,7 +14,7 @@ export const RoleProvider = ({ children }: PropsWithChildren) => {
     const fetchRole = async () => {
       if (session && session.user) {
         try {
-          const { data, error } = await roleService.getRolesByUser(session.user.id);
+          const { data, error } = await getRolesByUser(session.user.id);
 
           if (error && error.code !== 'PGRST116') {
             console.error('Error fetching role:', error.message);

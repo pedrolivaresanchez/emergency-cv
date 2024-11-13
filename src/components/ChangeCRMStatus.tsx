@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { CRMStatus, CrmStatusActive, CrmStatusFinished } from '@/helpers/constants';
-import { helpRequestService } from '../lib/actions';
+import { updateHelpRequestCRMStatus } from '@/lib/actions';
 
 type ChangeCRMStatusRequestButtonProps = {
   helpRequestId: number;
@@ -27,11 +27,7 @@ export default function ChangeCRMStatus({
     } else if (newCrmStatus !== CrmStatusFinished && status == 'finished') {
       status = 'active';
     }
-    const { data, error } = await helpRequestService.updateHelpRequestCRMStatus(
-      String(helpRequestId),
-      status,
-      newCrmStatus,
-    );
+    const { data, error } = await updateHelpRequestCRMStatus(String(helpRequestId), status, newCrmStatus);
 
     onStatusUpdate(status);
 

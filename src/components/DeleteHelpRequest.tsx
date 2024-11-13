@@ -4,7 +4,7 @@ import { MouseEvent, useState } from 'react';
 import { Spinner } from '@/components/Spinner';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/ModalProvider';
-import { helpRequestService } from '../lib/actions';
+import { deleteHelpRequest } from '@/lib/actions';
 
 type DeleteRequestButtonProps = {
   helpRequestId: number;
@@ -20,7 +20,7 @@ export default function DeleteHelpRequest({ helpRequestId, onDelete }: DeleteReq
 
   async function handleDeleteSubmit(e: MouseEvent) {
     e.preventDefault();
-    const { data, error } = await helpRequestService.deleteHelpRequest(String(helpRequestId));
+    const { data, error } = await deleteHelpRequest(String(helpRequestId));
     if (error) {
       setError(error);
       return;

@@ -1,7 +1,7 @@
 'use client';
 
 import SignUp from '@/components/auth/SignUp';
-import { authService } from '@/lib/actions';
+import { updateUser, getSessionUser, signOut, signIn } from '@/lib/actions';
 import { FormEvent, useState } from 'react';
 import SocialButton from './SocialButton';
 
@@ -37,7 +37,7 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
   const [isPrivacyAccepted, setPrivacyAccepted] = useState<boolean>(true);
 
   const updatePrivacyPolicy = async (value: string) => {
-    const { data: session, error: errorGettingUser } = await authService.getSessionUser();
+    const { data: session, error: errorGettingUser } = await getSessionUser();
 
     if (!session.user || errorGettingUser) {
       throw new Error('Error a la hora de obtener el usuario');
@@ -46,7 +46,7 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
     const metadata = session.user.user_metadata;
     const metadataUpdated = { ...metadata, privacyPolicy: value };
 
-    const { error: updateUserError } = await authService.updateUser({
+    const { error: updateUserError } = await updateUser({
       data: metadataUpdated,
     });
 
@@ -56,7 +56,7 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
   };
 
   const getUserPrivacyPolicy = async () => {
-    const { data: session, error: errorGettingUser } = await authService.getSessionUser();
+    const { data: session, error: errorGettingUser } = await getSessionUser();
     if (!session.user || errorGettingUser) {
       throw new Error('Error a la hora de obtener el usuario');
     }
@@ -85,7 +85,7 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
       return;
     }
 
-    const response = await authService.signIn(formData.email, formData.password);
+    const response = await signIn(formData.email, formData.password);
 
     if (response.error) {
       setStatus({ isSubmitting: false, error: 'El email o contraseña son inválidos', success: false });
@@ -101,7 +101,7 @@ export default function Login({ onSuccessCallback, redirectUrl }: LoginProps) {
 
     if (!privacyPolicy) {
       setPrivacyAccepted(false);
-      await authService.signOut();
+      await signOut();
       setStatus({ isSubmitting: false, error: null, success: false });
 
       return;

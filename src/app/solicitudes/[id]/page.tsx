@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 import SolicitudComments from '@/components/Comments/SolicitudComments';
 import { useEffect, useState } from 'react';
 import { SelectedHelpData } from '../../../types/Requests';
-import { helpRequestService } from '@/lib/actions';
+import { getOne } from '@/lib/actions';
 
 export default function CasoDetalle() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -18,7 +18,7 @@ export default function CasoDetalle() {
       try {
         setLoading(true);
 
-        const requestResponse = await helpRequestService.getOne(Number(id));
+        const requestResponse = await getOne(Number(id));
         setData(requestResponse as SelectedHelpData);
 
         setLoading(false);

@@ -1,6 +1,6 @@
 import Unauthorized from '@/components/Unauthorized';
 import { createClient } from '@/lib/supabase/server';
-import { helpRequestService } from '@/lib/actions';
+import { getOneWithCoords } from '@/lib/actions';
 import EditHelpOffer from '@/components/HelpOffers/EditHelpOffer';
 
 export default async function EditarSolicitud({ params }: { params: Promise<{ id: string }> }) {
@@ -11,6 +11,6 @@ export default async function EditarSolicitud({ params }: { params: Promise<{ id
     return <Unauthorized />;
   }
   const numberId = Number(id);
-  const request = await helpRequestService.getOneWithCoords(numberId);
+  const request = await getOneWithCoords(numberId);
   return <EditHelpOffer request={request} />;
 }

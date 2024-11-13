@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from '@/context/SessionProvider';
 import { HelpRequestData } from '../types/Requests';
-import { helpRequestService } from '../lib/actions';
+import { getAssignments } from '@/lib/actions';
 
 type PhoneInfoProps = {
   caseInfo: HelpRequestData;
@@ -16,7 +16,7 @@ export default function PhoneInfo({ caseInfo, isAdmin }: PhoneInfoProps) {
     error,
   } = useQuery({
     queryKey: ['help_request_assignments', { id: caseInfo.id }],
-    queryFn: () => helpRequestService.getAssignments(caseInfo.id),
+    queryFn: () => getAssignments(caseInfo.id),
   });
 
   if (error || isLoading) return <></>;

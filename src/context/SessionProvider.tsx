@@ -2,7 +2,7 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/auth-js';
 import { Subscription } from '@supabase/supabase-js';
-import { authService } from '../lib/actions';
+import { onAuthStateChange, getSessionUser } from '@/lib/actions';
 
 const SessionContext = createContext<UserSession>({ user: null });
 
@@ -17,15 +17,12 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
   const [subscription, setSubscription] = useState<Subscription | null>(null);
 
   useEffect(() => {
-    if (typeof authService.getSessionUser === 'undefined') {
-      return;
-    }
     // Fetch initial session
     const fetchSession = async () => {
-      const { data } = await authService.getSessionUser();
+      const { data } = await getSessionUser();
       setSession(data);
 
-      const { data: authListener } = await authService.onAuthStateChange((event, session) => {
+      const { data: authListener } = await onAuthStateChange((event, session) => {
         setSession(() => ({ user: session?.user ?? null })); // Update the session in state
       });
       setSubscription(authListener?.subscription);
@@ -40,7 +37,7 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
         subscription.unsubscribe();
       }
     };
-  }, [authService.getSessionUser]);
+  }, []);
   return <SessionContext.Provider value={session}>{children}</SessionContext.Provider>;
 };
 

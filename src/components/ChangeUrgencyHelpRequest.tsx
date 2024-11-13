@@ -4,7 +4,7 @@ import { ChangeEvent, MouseEvent, useState } from 'react';
 import { Spinner } from '@/components/Spinner';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/ModalProvider';
-import { helpRequestService } from '../lib/actions';
+import { updateHelpRequestUrgency } from '@/lib/actions';
 
 type ChangeStatusRequestButtonProps = {
   helpRequestId: number;
@@ -26,7 +26,7 @@ export default function ChangeUrgencyHelpRequest({
 
   async function handleUpdateSubmit(e: MouseEvent) {
     e.preventDefault();
-    const { data, error } = await helpRequestService.updateHelpRequestUrgency(String(helpRequestId), status);
+    const { data, error } = await updateHelpRequestUrgency(String(helpRequestId), status);
     if (error) {
       setError(error);
       return;

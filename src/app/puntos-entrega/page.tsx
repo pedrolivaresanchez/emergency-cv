@@ -4,7 +4,7 @@ import { useState, useEffect, FormEvent } from 'react';
 import { Truck, MapPin, Phone, Mail, Calendar, Package } from 'lucide-react';
 import AddressAutocomplete, { AddressDetails } from '@/components/AddressAutocomplete';
 import { DeliveryPointData, DeliveryPointInsert, isCoordinates } from '@/types/DataPoints';
-import { puntosDeEntregaService } from '../../lib/actions';
+import { getPuntosDeEntrega, createPuntoDeEntrega } from '@/lib/actions';
 
 export default function PuntosEntrega() {
   const initialFormData = {
@@ -39,7 +39,7 @@ export default function PuntosEntrega() {
 
   async function fetchPoints() {
     try {
-      let { data, error } = await puntosDeEntregaService.getPuntosDeEntrega();
+      let { data, error } = await getPuntosDeEntrega();
 
       if (error) throw error;
       setPoints(data || []);
@@ -78,7 +78,7 @@ export default function PuntosEntrega() {
         status: 'active',
       };
 
-      const { error: insertError } = await puntosDeEntregaService.createPuntoDeEntrega([pointData]);
+      const { error: insertError } = await createPuntoDeEntrega([pointData]);
 
       if (insertError) throw insertError;
 

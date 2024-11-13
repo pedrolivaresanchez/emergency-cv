@@ -23,7 +23,7 @@ import UserInfo from '../UserInfo';
 import { useSession } from '@/context/SessionProvider';
 import { useQuery } from '@tanstack/react-query';
 import { SelectedHelpData } from '@/types/Requests';
-import { helpRequestService } from '@/lib/actions';
+import { getOffersByUser, getRequestsByUser } from '@/lib/actions';
 
 type SidebarProps = {
   isOpen: boolean;
@@ -38,11 +38,11 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
 
   const { data: requests } = useQuery<SelectedHelpData[]>({
     queryKey: ['help_requests', { user_id: userId, type: 'necesita' }],
-    queryFn: () => helpRequestService.getRequestsByUser(userId),
+    queryFn: () => getRequestsByUser(userId),
   });
   const { data: offers } = useQuery<SelectedHelpData[]>({
     queryKey: ['help_requests', { user_id: userId, type: 'ofrece' }],
-    queryFn: () => helpRequestService.getOffersByUser(userId),
+    queryFn: () => getOffersByUser(userId),
   });
   const hasRequests = (requests?.length ?? 0) > 0;
   const hasOffers = (offers?.length ?? 0) > 0;

@@ -3,7 +3,7 @@
 import React, { FormEvent, useCallback, useEffect, useState } from 'react';
 
 import Modal from '@/components/Modal';
-import { authService } from '@/lib/actions';
+import { getSessionUser, updateUser } from '@/lib/actions';
 import { useModal } from '@/context/ModalProvider';
 import { PhoneInput } from '@/components/input/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/utils';
@@ -112,10 +112,7 @@ const PhoneNumberDialog = () => {
 
   useEffect(() => {
     const fetchNumber = async () => {
-      if (typeof authService.getSessionUser === 'undefined') {
-        return;
-      }
-      const { data: session, error: errorGettingUser } = await authService.getSessionUser();
+      const { data: session, error: errorGettingUser } = await getSessionUser();
       if (!session.user || errorGettingUser) {
         return;
       }
@@ -128,11 +125,11 @@ const PhoneNumberDialog = () => {
     };
 
     fetchNumber();
-  }, [toggleModal, authService.getSessionUser]);
+  }, [toggleModal]);
 
   const handleSubmit = useCallback(
     async (phoneNumber: string, privacyPolicy: string) => {
-      const { data: session, error: errorGettingUser } = await authService.getSessionUser();
+      const { data: session, error: errorGettingUser } = await getSessionUser();
 
       if (!session.user || errorGettingUser) {
         throw new Error('Error a la hora de obtener el usuario');
@@ -141,7 +138,7 @@ const PhoneNumberDialog = () => {
       const metadata = session.user.user_metadata;
       const metadataWithPhone = { ...metadata, telefono: phoneNumber, privacyPolicy };
 
-      const { error: updateUserError } = await authService.updateUser({
+      const { error: updateUserError } = await updateUser({
         data: metadataWithPhone,
       });
 

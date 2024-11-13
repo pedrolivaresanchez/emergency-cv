@@ -1,6 +1,6 @@
 import { HelpRequestAssignmentData, HelpRequestComment, SelectedHelpData } from '@/types/Requests';
 import { useQuery } from '@tanstack/react-query';
-import { helpRequestService } from '@/lib/actions';
+import { getComments, getAssignments } from '@/lib/actions';
 import { useSession } from '@/context/SessionProvider';
 import SolicitudComment from '@/components/Comments/SolicitudComment';
 import CommentForm from '@/components/Comments/CommentForm';
@@ -17,7 +17,7 @@ export default function SolicitudComments({ request }: SolicitudCommentsProps) {
     error,
   } = useQuery<HelpRequestComment[]>({
     queryKey: ['comments', { request_id: request.id }],
-    queryFn: () => helpRequestService.getComments(request.id),
+    queryFn: () => getComments(request.id),
   });
 
   const { user } = useSession();
@@ -30,7 +30,7 @@ export default function SolicitudComments({ request }: SolicitudCommentsProps) {
     error: errorAssignments,
   } = useQuery<HelpRequestAssignmentData[]>({
     queryKey: ['help_request_assignments', { id: request.id }],
-    queryFn: () => helpRequestService.getAssignments(request.id),
+    queryFn: () => getAssignments(request.id),
   });
 
   if (!user) return null;

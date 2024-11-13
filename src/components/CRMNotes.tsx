@@ -4,7 +4,7 @@ import { ChangeEvent, MouseEvent, useCallback, useState } from 'react';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/ModalProvider';
 import { LimitedTextarea } from '@/components/input/LimitedTextarea';
-import { helpRequestService } from '../lib/actions';
+import { updateNotesRequest } from '@/lib/actions';
 
 type CRMNotesButtonProps = {
   helpRequestId: number;
@@ -22,7 +22,7 @@ export default function CRMNotes({ helpRequestId, currentNotes }: CRMNotesButton
   const handleSubmit = useCallback(
     async (e: MouseEvent) => {
       e.preventDefault();
-      const { data, error } = await helpRequestService.updateNotesRequest(newNotes, String(helpRequestId));
+      const { data, error } = await updateNotesRequest(newNotes, String(helpRequestId));
       if (error) {
         setError(error);
         return;

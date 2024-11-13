@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { helpRequestService } from '@/lib/actions';
+import { addComment } from '@/lib/actions';
 import { toast } from 'sonner';
 import { useSession } from '@/context/SessionProvider';
 
@@ -15,7 +15,7 @@ export default function CommentForm({ helpRequestId }: CommentFormProps) {
   const { user } = useSession();
 
   const addCommentMutation = useMutation({
-    mutationFn: async () => helpRequestService.addComment(helpRequestId, comment, isSolved),
+    mutationFn: async () => addComment(helpRequestId, comment, isSolved),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', { request_id: helpRequestId }] });
       setComment('');

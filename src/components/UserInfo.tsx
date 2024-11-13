@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { LogIn } from 'lucide-react';
-import { authService } from '@/lib/actions';
+import { signOut } from '@/lib/actions';
 import { useSession } from '@/context/SessionProvider';
 import Image from 'next/image';
 
@@ -15,7 +15,7 @@ export default function UserProfile({ toggleAction }: UserProfileProps) {
   const user = session.user;
 
   const handleLogout = async () => {
-    const response = await authService.signOut();
+    const response = await signOut();
     if (!response.error) {
       window.location.href = '/';
     }

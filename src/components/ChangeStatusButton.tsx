@@ -3,7 +3,7 @@
 import { MouseEvent, useState } from 'react';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/ModalProvider';
-import { helpRequestService } from '../lib/actions';
+import { updateHelpRequestStatus } from '../lib/actions';
 
 type ChangeStatusButtonProps = {
   helpRequestId: number;
@@ -18,7 +18,7 @@ export default function ChangeStatusButton({ helpRequestId, onUpdate, currentSta
 
   async function handleAcceptanceSubmit(e: MouseEvent) {
     e.preventDefault();
-    const { data, error } = await helpRequestService.updateHelpRequestStatus(String(helpRequestId), status);
+    const { data, error } = await updateHelpRequestStatus(String(helpRequestId), status);
     if (error) {
       setError(error);
       return;

@@ -6,7 +6,7 @@ import AddressAutocomplete, { AddressDetails } from '@/components/AddressAutocom
 import { isValidPhone } from '@/helpers/utils';
 import { PhoneInput } from '@/components/input/PhoneInput';
 import { CollectionPointData, CollectionPointInsert } from '@/types/DataPoints';
-import { puntosDeRecogidaService } from '../../lib/actions';
+import { insertPuntoDeRecogida, getPuntosDeRecogida } from '@/lib/actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,7 +42,7 @@ export default function PuntosRecogida() {
 
   async function fetchCollectionPoints() {
     try {
-      const { data, error } = await puntosDeRecogidaService.getPuntosDeRecogida();
+      const { data, error } = await getPuntosDeRecogida();
 
       if (error) throw error;
       setCollectionPoints(data || []);
@@ -82,7 +82,7 @@ export default function PuntosRecogida() {
         status: 'active',
       };
 
-      const { error: insertError } = await puntosDeRecogidaService.insertPuntoDeRecogida([pointData]);
+      const { error: insertError } = await insertPuntoDeRecogida([pointData]);
 
       if (insertError) throw insertError;
 

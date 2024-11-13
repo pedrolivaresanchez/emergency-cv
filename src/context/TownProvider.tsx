@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Town } from '@/types/Town';
-import { townService } from '../lib/actions';
+import { getTowns } from '@/lib/actions';
 
 export const useTowns = () => {
   const {
@@ -11,7 +11,7 @@ export const useTowns = () => {
     error,
   } = useQuery<Town[]>({
     queryKey: ['towns'],
-    queryFn: () => townService.getTowns(),
+    queryFn: () => getTowns(),
   });
 
   const getTownById = (id: number) => towns?.find((t) => t.id === id);
