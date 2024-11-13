@@ -1,7 +1,7 @@
 'use client';
 
 import SignUp from '@/components/auth/SignUp';
-import { authService } from '@/lib/service';
+import { authService } from '@/lib/actions';
 import { FormEvent, useState } from 'react';
 import SocialButton from './SocialButton';
 

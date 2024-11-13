@@ -2,7 +2,7 @@
 import { Suspense, useEffect } from 'react';
 import Login from '../../components/auth/Login';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { authService } from '@/lib/service';
+import { authService } from '@/lib/actions';
 import { AlertTriangle } from 'lucide-react';
 
 export default function AUthPage() {

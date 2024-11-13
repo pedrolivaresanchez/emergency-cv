@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { LogIn } from 'lucide-react';
-import { authService } from '@/lib/service';
+import { authService } from '@/lib/actions';
 import { useSession } from '@/context/SessionProvider';
 import Image from 'next/image';
 

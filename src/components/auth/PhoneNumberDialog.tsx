@@ -3,7 +3,7 @@
 import React, { FormEvent, useCallback, useEffect, useState } from 'react';
 
 import Modal from '@/components/Modal';
-import { authService } from '@/lib/service';
+import { authService } from '@/lib/actions';
 import { useModal } from '@/context/ModalProvider';
 import { PhoneInput } from '@/components/input/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/utils';

@@ -1,8 +1,8 @@
 'use client';
 
-import { supabase } from '@/lib/supabase/client';
 import { useState } from 'react';
 import { CRMStatus, CrmStatusActive, CrmStatusFinished } from '@/helpers/constants';
+import { helpRequestService } from '../lib/actions';
 
 type ChangeCRMStatusRequestButtonProps = {
   helpRequestId: number;
@@ -27,11 +27,11 @@ export default function ChangeCRMStatus({
     } else if (newCrmStatus !== CrmStatusFinished && status == 'finished') {
       status = 'active';
     }
-    const { data, error } = await supabase
-      .from('help_requests')
-      .update({ status, crm_status: newCrmStatus })
-      .eq('id', helpRequestId)
-      .select();
+    const { data, error } = await helpRequestService.updateHelpRequestCRMStatus(
+      String(helpRequestId),
+      status,
+      newCrmStatus,
+    );
 
     onStatusUpdate(status);
 

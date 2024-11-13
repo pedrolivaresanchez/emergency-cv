@@ -10,6 +10,7 @@ import {
   SelectedHelpData,
 } from '@/types/Requests';
 import { createClient } from './supabase/server';
+import { AuthChangeEvent, Session, SignInWithOAuthCredentials, Subscription } from '@supabase/supabase-js';
 
 export const helpRequestService = {
   async createRequest(requestData: HelpRequestInsert) {
@@ -31,6 +32,51 @@ export const helpRequestService = {
       .select(helpDataSelectFields as '*');
     if (error) throw error;
     return data[0] as SelectedHelpData;
+  },
+  async updateHelpRequestUrgency(helpRequestId: string, status: string) {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('help_requests')
+      .update({ urgency: status })
+      .eq('id', helpRequestId)
+      .select();
+
+    return { data, error };
+  },
+  async updateHelpRequestStatus(helpRequestId: string, status: string) {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('help_requests')
+      .update({ status: status })
+      .eq('id', helpRequestId)
+      .select();
+
+    return { data, error };
+  },
+  async updateHelpRequestCRMStatus(helpRequestId: string, status: string, crmStatus: string) {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('help_requests')
+      .update({ status, crm_status: crmStatus })
+      .eq('id', helpRequestId)
+      .select();
+
+    return { data, error };
+  },
+  async updateNotesRequest(newNotes: string, helpRequestId: string) {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('help_requests')
+      .update({ notes: newNotes })
+      .eq('id', helpRequestId)
+      .select();
+
+    return { data, error };
+  },
+  async deleteHelpRequest(helpRequestId: string) {
+    const supabase = await createClient();
+    const { data, error } = await supabase.from('help_requests').delete().eq('id', helpRequestId).select();
+    return { data, error };
   },
   async getOne(id: number) {
     const supabase = await createClient();
@@ -168,19 +214,6 @@ export const helpRequestService = {
   },
 };
 
-export const locationService = {
-  async getFormattedAddress(longitude: string, latitude: string) {
-    return await fetch('/api/address', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        longitude,
-        latitude,
-      }),
-    }).then((res) => res.json());
-  },
-};
-
 export const townService = {
   async getByName(townName: string) {
     const supabase = await createClient();
@@ -220,6 +253,13 @@ export const puntosDeEntregaService = {
   },
 };
 
+export const roleService = {
+  async getRolesByUser(userId: string) {
+    const supabase = await createClient();
+    return await supabase.from('user_roles').select('role').eq('user_id', userId).limit(1).single();
+  },
+};
+
 export const authService = {
   async getSessionUser() {
     const supabase = await createClient();
@@ -247,8 +287,20 @@ export const authService = {
     const supabase = await createClient();
     return supabase.auth.signInWithPassword({ email, password });
   },
+  async signInWithOAuth(credentials: SignInWithOAuthCredentials) {
+    const supabase = await createClient();
+    return supabase.auth.signInWithOAuth(credentials);
+  },
   async updateUser(metadata: any) {
     const supabase = await createClient();
     return supabase.auth.updateUser({ ...metadata });
+  },
+  async onAuthStateChange(callback: (event: AuthChangeEvent, session: Session | null) => void): Promise<{
+    data: {
+      subscription: Subscription;
+    };
+  }> {
+    const supabase = await createClient();
+    return supabase.auth.onAuthStateChange(callback);
   },
 };

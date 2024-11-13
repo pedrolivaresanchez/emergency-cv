@@ -2,7 +2,7 @@
 
 import { FormEvent, useCallback, useState } from 'react';
 import { ArrowBigLeft } from 'lucide-react';
-import { authService } from '@/lib/service';
+import { authService } from '@/lib/actions';
 
 import { PhoneInput } from '@/components/input/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/utils';

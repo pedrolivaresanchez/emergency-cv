@@ -1,10 +1,10 @@
 'use client';
 
-import { supabase } from '@/lib/supabase/client';
 import { ChangeEvent, MouseEvent, useCallback, useState } from 'react';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/ModalProvider';
 import { LimitedTextarea } from '@/components/input/LimitedTextarea';
+import { helpRequestService } from '../lib/actions';
 
 type CRMNotesButtonProps = {
   helpRequestId: number;
@@ -19,20 +19,10 @@ export default function CRMNotes({ helpRequestId, currentNotes }: CRMNotesButton
 
   const MODAL_NAME = `Actualizar-Notas-${helpRequestId}`;
 
-  const updateNotesRequest = async (newNotes: string) => {
-    const { data, error } = await supabase
-      .from('help_requests')
-      .update({ notes: newNotes })
-      .eq('id', helpRequestId)
-      .select();
-
-    return { data, error };
-  };
-
   const handleSubmit = useCallback(
     async (e: MouseEvent) => {
       e.preventDefault();
-      const { data, error } = await updateNotesRequest(newNotes);
+      const { data, error } = await helpRequestService.updateNotesRequest(newNotes, String(helpRequestId));
       if (error) {
         setError(error);
         return;
