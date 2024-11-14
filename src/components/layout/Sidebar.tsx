@@ -20,10 +20,10 @@ import {
   MessageCircleQuestion,
 } from 'lucide-react';
 import UserInfo from '../UserInfo';
-import { useSession } from '@/context/SessionProvider';
 import { useQuery } from '@tanstack/react-query';
 import { SelectedHelpData } from '@/types/Requests';
-import { helpRequestService } from '@/lib/service';
+import { getOffersByUser, getRequestsByUser } from '@/lib/actions';
+import { useSession } from '../../context/SessionProvider';
 
 export const SOLICITUDES_PATH = '/casos-activos/solicitudes'
 
@@ -35,16 +35,13 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const session = useSession();
-
-  const userId = session.user?.id;
-
   const { data: requests } = useQuery<SelectedHelpData[]>({
-    queryKey: ['help_requests', { user_id: userId, type: 'necesita' }],
-    queryFn: () => helpRequestService.getRequestsByUser(userId),
+    queryKey: ['help_requests', { user_id: session.user?.id, type: 'necesita' }],
+    queryFn: () => getRequestsByUser(session.user?.id),
   });
   const { data: offers } = useQuery<SelectedHelpData[]>({
-    queryKey: ['help_requests', { user_id: userId, type: 'ofrece' }],
-    queryFn: () => helpRequestService.getOffersByUser(userId),
+    queryKey: ['help_requests', { user_id: session.user?.id, type: 'ofrece' }],
+    queryFn: () => getOffersByUser(session.user?.id),
   });
   const hasRequests = (requests?.length ?? 0) > 0;
   const hasOffers = (offers?.length ?? 0) > 0;
@@ -213,10 +210,8 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
                   <button
                     key={item.path}
                     onClick={() => {
-                      router.push(item?.isLogged && !userId ? '/auth?redirect=' + item.path : item.path);
-                      if (window.innerWidth < 768 || item.closeOnClick) {
-                        toggleAction();
-                      }
+                      router.push(item?.isLogged && !session.user?.id ? '/auth?redirect=' + item.path : item.path);
+                      if (window.innerWidth < 768 || item.closeOnClick) toggleAction();
                     }}
                     className={`w-full text-left transition-colors ${
                       item.isHome

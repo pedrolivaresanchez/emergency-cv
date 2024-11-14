@@ -6,7 +6,7 @@ import { useSession } from '@/context/SessionProvider';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { SelectedHelpData } from '@/types/Requests';
-import { helpRequestService } from '@/lib/service';
+import { getSolicitudesByUser } from '@/lib/actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,7 +20,7 @@ export default function ListaSolicitudes() {
     error,
   } = useQuery<SelectedHelpData[]>({
     queryKey: ['help_requests', { user_id: userId, type: 'necesita' }],
-    queryFn: () => helpRequestService.getRequestsByUser(userId),
+    queryFn: () => getSolicitudesByUser(userId || ''),
   });
 
   if (isLoading) {

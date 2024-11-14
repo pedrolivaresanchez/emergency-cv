@@ -1,7 +1,7 @@
 'use client';
 
 import HelpOfferForm, { HelpOfferFormData } from './HelpOfferForm';
-import { helpRequestService } from '@/lib/service';
+import { createRequest } from '@/lib/actions';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -42,7 +42,7 @@ export default function CreateHelpOffer() {
   const mutation = useMutation({
     mutationFn: (data: HelpOfferFormData) => {
       if (!user) throw 'Sesión no iniciada';
-      return helpRequestService.createRequest(formToDatabaseMap(user, data));
+      return createRequest(formToDatabaseMap(user, data));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help_requests'] });

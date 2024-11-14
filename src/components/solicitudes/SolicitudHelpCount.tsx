@@ -1,7 +1,7 @@
 import { HelpRequestAssignmentData } from '@/types/Requests';
 import { useQuery } from '@tanstack/react-query';
-import { helpRequestService } from '@/lib/service';
 import { Spinner } from '@/components/Spinner';
+import { getAssignments } from '@/lib/actions';
 
 type SolicitudHelpCountProps = {
   id: number;
@@ -14,7 +14,7 @@ export default function SolicitudHelpCount({ id }: SolicitudHelpCountProps) {
     error,
   } = useQuery<HelpRequestAssignmentData[]>({
     queryKey: ['help_request_assignments', { id: id }],
-    queryFn: () => helpRequestService.getAssignments(id),
+    queryFn: () => getAssignments(id),
   });
 
   if (isLoading) return <Spinner />;

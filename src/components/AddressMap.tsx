@@ -1,12 +1,11 @@
 'use client';
 
 import GeoLocationMap, { LngLat } from '@/components/map/GeolocationMap';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { locationService } from '@/lib/service';
 import { useDebouncedFunction, useThrottledFunction } from '@/helpers/hooks';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { OnChangeValue } from 'react-select';
-import { supabase } from '../lib/supabase/client';
 
 export type AddressMapProps = {
   onNewAddressDescriptor: (onNewAddressDescriptor: AddressDescriptor) => void;

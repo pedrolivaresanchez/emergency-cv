@@ -30,15 +30,46 @@ export type HelpRequestResources = {
   availability?: string[];
 };
 
+export type PuntoDeEntrega = {
+  name: string;
+  location: string;
+  city: string;
+  contact_name: string | null;
+  contact_phone: string | null | undefined;
+  contact_email: string | null;
+  vehicle_type: string | null;
+  cargo_type: string | null;
+  schedule: string | null;
+  additional_info: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  status: string;
+};
+
+export type PuntoDeRecogida = {
+  name: string | null | undefined;
+  type: string;
+  location: string | null | undefined;
+  city: string | null;
+  contact_name: string | null;
+  contact_phone: string | null | undefined;
+  accepted_items: string[];
+  urgent_needs: string | null;
+  status: string;
+};
+
 export type OmitSelect<T, K extends string> = { [key in keyof Omit<T, K>]: T[key] };
 export type SelectStringBuilder<T, K extends string> = { [key in keyof Omit<T, K>]: true };
 
-export type OmitHelpDataFields = 'location' | 'coordinates' | 'latitude' | 'longitude' | 'contact_info';
-export type SelectHelpDataStringBuilder = SelectStringBuilder<HelpRequestData, OmitHelpDataFields>;
-export type SelectedHelpData = OmitSelect<HelpRequestData, OmitHelpDataFields>;
+export type SelectHelpDataStringBuilder = SelectStringBuilder<
+  HelpRequestData,
+  'location' | 'coordinates' | 'latitude' | 'longitude'
+>;
+export type SelectedHelpData = OmitSelect<HelpRequestData, 'location' | 'coordinates' | 'latitude' | 'longitude'>;
 export const helpDataSelectFieldsObject: SelectHelpDataStringBuilder = {
   additional_info: true,
   asignees_count: true,
+  contact_info: true,
   created_at: true,
   crm_status: true,
   description: true,

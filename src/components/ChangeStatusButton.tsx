@@ -1,11 +1,9 @@
 'use client';
 
-import { supabase } from '@/lib/supabase/client';
-import { useSession } from '@/context/SessionProvider';
 import { MouseEvent, useState } from 'react';
-import { Spinner } from '@/components/Spinner';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/ModalProvider';
+import { updateHelpRequestStatus } from '../lib/actions';
 
 type ChangeStatusButtonProps = {
   helpRequestId: number;
@@ -18,19 +16,9 @@ export default function ChangeStatusButton({ helpRequestId, onUpdate, currentSta
   const [status, setStatus] = useState<string>(currentStatus);
   const MODAL_NAME = `Actualizar-Estado-Solicitud-${helpRequestId}`;
 
-  const updateHelpRequest = async () => {
-    const { data, error } = await supabase
-      .from('help_requests')
-      .update({ status: status })
-      .eq('id', helpRequestId)
-      .select();
-
-    return { data, error };
-  };
-
   async function handleAcceptanceSubmit(e: MouseEvent) {
     e.preventDefault();
-    const { data, error } = await updateHelpRequest();
+    const { data, error } = await updateHelpRequestStatus(String(helpRequestId), status);
     if (error) {
       setError(error);
       return;

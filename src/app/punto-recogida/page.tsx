@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useCallback, useEffect, FormEvent } from 'react';
-import { supabase } from '@/lib/supabase/client';
 import { MapPin, Phone, Package, House, Contact, Megaphone } from 'lucide-react';
 import AddressAutocomplete, { AddressDetails } from '@/components/AddressAutocomplete';
 import { isValidPhone } from '@/helpers/utils';
 import { PhoneInput } from '@/components/input/PhoneInput';
 import { CollectionPointData, CollectionPointInsert } from '@/types/DataPoints';
+import { insertPuntoDeRecogida, getPuntosDeRecogida } from '@/lib/actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,10 +42,7 @@ export default function PuntosRecogida() {
 
   async function fetchCollectionPoints() {
     try {
-      let { data, error } = await supabase
-        .from('collection_points')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data, error } = await getPuntosDeRecogida();
 
       if (error) throw error;
       setCollectionPoints(data || []);
@@ -85,7 +82,7 @@ export default function PuntosRecogida() {
         status: 'active',
       };
 
-      const { error: insertError } = await supabase.from('collection_points').insert([pointData]);
+      const { error: insertError } = await insertPuntoDeRecogida([pointData]);
 
       if (insertError) throw insertError;
 

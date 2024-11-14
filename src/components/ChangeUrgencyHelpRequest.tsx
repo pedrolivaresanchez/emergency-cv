@@ -1,10 +1,10 @@
 'use client';
 
-import { supabase } from '@/lib/supabase/client';
 import { ChangeEvent, MouseEvent, useState } from 'react';
 import { Spinner } from '@/components/Spinner';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/ModalProvider';
+import { updateHelpRequestUrgency } from '@/lib/actions';
 
 type ChangeStatusRequestButtonProps = {
   helpRequestId: number;
@@ -24,19 +24,9 @@ export default function ChangeUrgencyHelpRequest({
 
   const MODAL_NAME = `Actualizar-Solicitud-${helpRequestId}`;
 
-  const updateHelpRequest = async () => {
-    const { data, error } = await supabase
-      .from('help_requests')
-      .update({ urgency: status })
-      .eq('id', helpRequestId)
-      .select();
-
-    return { data, error };
-  };
-
   async function handleUpdateSubmit(e: MouseEvent) {
     e.preventDefault();
-    const { data, error } = await updateHelpRequest();
+    const { data, error } = await updateHelpRequestUrgency(String(helpRequestId), status);
     if (error) {
       setError(error);
       return;

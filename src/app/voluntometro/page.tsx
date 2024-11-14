@@ -1,11 +1,11 @@
 import { HeartHandshake, Search, Thermometer } from 'lucide-react';
 import TownCardInfo from '@/components/TownCardInfo';
-import { helpRequestService } from '@/lib/service';
+import { getTodaysCountByTown } from '@/lib/actions';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Voluntometro() {
-  const towns = await helpRequestService.getTodaysCountByTown();
+  const towns = await getTodaysCountByTown();
 
   const getFechaHoy = () => {
     const fecha = new Date();

@@ -2,7 +2,7 @@
 
 import { FormEvent, useCallback, useState } from 'react';
 import { ArrowBigLeft } from 'lucide-react';
-import { authService } from '@/lib/service';
+import { signUp, signIn } from '@/lib/actions';
 
 import { PhoneInput } from '@/components/input/PhoneInput';
 import { formatPhoneNumber } from '@/helpers/utils';
@@ -98,7 +98,7 @@ export default function SignUp({ onBackButtonClicked, callback = () => {} }: Sig
     }
 
     // SEND SIGN-UP REQUEST TO AUTHENTICATION SERVICE
-    const response = await authService.signUp(
+    const response = await signUp(
       formData.email,
       formData.password,
       formData.nombre,
@@ -121,7 +121,7 @@ export default function SignUp({ onBackButtonClicked, callback = () => {} }: Sig
     setStatus({ isSubmitting: false, error: null, success: true });
 
     // SIGN IN WITH NEW USER CREATED
-    await authService.signIn(formData.email, formData.password);
+    await signIn(formData.email, formData.password);
     // REDIRECT USER TO HOME PAGE
     if (typeof callback === 'function') {
       callback();

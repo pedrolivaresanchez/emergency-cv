@@ -25,7 +25,7 @@ export default function PersonasAnimalesDesaparecidos() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Botón para Personas Desaparecidas */}
         <a
-          href="https://desaparecidosdana.pythonanywhere.com/"
+          href="https://www.google.com/maps/d/edit?mid=1WbP4DX7LKE4s_b7DqURdeDRu9GFi51c&usp=sharing"
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-col items-center justify-center bg-white border-l-4 border-blue-500 p-6 rounded-lg shadow hover:shadow-md transition-transform transform hover:-translate-y-1"

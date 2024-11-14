@@ -1,4 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { exchangeCodeForSession, refreshToken, getSessionUser } from '@/lib/actions';
+import { useEffect, useRef, useState } from 'react';
+import { User } from '@supabase/auth-js/src/lib/types';
+import { UserSession } from '@/context/SessionProvider';
 
 type CallbackFunction<T extends any[]> = (...args: T) => void;
 

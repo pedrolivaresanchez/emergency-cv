@@ -1,6 +1,7 @@
 'use client';
+
 import SignUp from '@/components/auth/SignUp';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { Suspense } from 'react';
 
 export default function SignUpPage() {
