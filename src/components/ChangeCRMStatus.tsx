@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { CRMStatus, CrmStatusActive, CrmStatusFinished } from '@/helpers/constants';
-import { updateHelpRequestCRMStatus } from '@/lib/actions';
+import { addCRMLog, updateHelpRequestCRMStatus } from '@/lib/actions';
+import { useSession } from '@/context/SessionProvider';
 
 type ChangeCRMStatusRequestButtonProps = {
   helpRequestId: number;
@@ -17,22 +18,33 @@ export default function ChangeCRMStatus({
   currentStatus,
   currentCrmStatus,
 }: ChangeCRMStatusRequestButtonProps) {
+  const { user } = useSession();
   const [crmStatus, setCrmStatus] = useState<string>(currentCrmStatus || CrmStatusActive);
   const [error, setError] = useState({});
 
-  const updateStatusRequest = async (newCrmStatus: string) => {
-    var status = currentStatus || 'active';
-    if (newCrmStatus === CrmStatusFinished) {
-      status = 'finished';
-    } else if (newCrmStatus !== CrmStatusFinished && status == 'finished') {
-      status = 'active';
-    }
-    const { data, error } = await updateHelpRequestCRMStatus(String(helpRequestId), status, newCrmStatus);
+  const updateStatusRequest = useCallback(
+    async (newCrmStatus: string) => {
+      var status = currentStatus || 'active';
+      if (newCrmStatus === CrmStatusFinished) {
+        status = 'finished';
+      } else if (newCrmStatus !== CrmStatusFinished && status == 'finished') {
+        status = 'active';
+      }
+      const { data, error } = await updateHelpRequestCRMStatus(String(helpRequestId), status, newCrmStatus);
+      if (user !== null) {
+        await addCRMLog(
+          'Estado cambiado de ' + crmStatus + ' a ' + newCrmStatus,
+          helpRequestId,
+          user.id,
+          (user.user_metadata.full_name || user.user_metadata.nombre) + ' ' + user.email,
+        );
+      }
+      onStatusUpdate(status);
 
-    onStatusUpdate(status);
-
-    return { data, error };
-  };
+      return { data, error };
+    },
+    [crmStatus, helpRequestId, user],
+  );
 
   async function handleUpdateSubmit(newStatus: string) {
     const { data, error } = await updateStatusRequest(newStatus);
