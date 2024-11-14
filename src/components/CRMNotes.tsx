@@ -4,7 +4,8 @@ import { ChangeEvent, MouseEvent, useCallback, useState } from 'react';
 import Modal from '@/components/Modal';
 import { useModal } from '@/context/ModalProvider';
 import { LimitedTextarea } from '@/components/input/LimitedTextarea';
-import { updateNotesRequest } from '@/lib/actions';
+import { updateNotesRequest, addCRMLog } from '@/lib/actions';
+import { useSession } from '@/context/SessionProvider';
 
 type CRMNotesButtonProps = {
   helpRequestId: number;
@@ -12,6 +13,7 @@ type CRMNotesButtonProps = {
 };
 
 export default function CRMNotes({ helpRequestId, currentNotes }: CRMNotesButtonProps) {
+  const { user } = useSession();
   const { toggleModal } = useModal();
   const [notes, setNotes] = useState<string>(currentNotes || '');
   const [newNotes, setNewNotes] = useState<string>(currentNotes || '');
@@ -27,10 +29,18 @@ export default function CRMNotes({ helpRequestId, currentNotes }: CRMNotesButton
         setError(error);
         return;
       }
+      if (user) {
+        await addCRMLog(
+          '---ANTES---\n' + notes + '\n---DESPUES---\n' + newNotes,
+          helpRequestId,
+          user.id,
+          (user.user_metadata.full_name || user.user_metadata.nombre) + ' ' + user.email,
+        );
+      }
       toggleModal(MODAL_NAME, false);
       setNotes(newNotes);
     },
-    [newNotes, setNotes, toggleModal],
+    [newNotes, setNotes, toggleModal, user],
   );
 
   async function handleOpenModal(e: MouseEvent) {

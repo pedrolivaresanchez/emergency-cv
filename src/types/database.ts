@@ -424,6 +424,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      crm_users_log: {
+        Row: {
+          id: number;
+          help_request_id: number;
+          created_at: string | null;
+          email: string;
+          user_id: string;
+          diff: string | null;
+        };
+        Insert: {
+          id: number | null;
+          help_request_id: number;
+          created_at?: string | null;
+          email: string;
+          user_id: string;
+          diff: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'crm_users_log_help_request_id_fkey';
+            columns: ['help_request_id'];
+            isOneToOne: false;
+            referencedRelation: 'help_requests';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       distinct_collection_cities: {
