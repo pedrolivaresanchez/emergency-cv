@@ -3,31 +3,41 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { Database } from '@/types/database';
 import { Solicitudes } from '.';
-import { HelpRequestData } from '@/types/Requests';
+import { HelpRequestData, HelpRequestDataWithAssignmentCount } from '@/types/Requests';
+import { getAllAssignments } from '@/lib/actions';
 
 export const dynamic = 'force-dynamic';
 
-function parseData(data: Database['public']['Tables']['help_requests']['Row'][]): HelpRequestData[] {
+function parseData(
+  data: Database['public']['Tables']['help_requests']['Row'][],
+  assignments: { id: string; help_request_id: string, people_count: number }[],
+): HelpRequestDataWithAssignmentCount[] {
   return data.map((d) => {
     // Remove unused properties to reduce the payload size
     const { coordinates, crm_status, resources, user_id, ...rest } = d;
+    const asignees_count = assignments.find((d) => d.help_request_id === d.id)?.people_count;
     return {
       ...rest,
       // Fix the coordinates to 3 decimals so locations have a 100m precision
       latitude: Number(d.latitude?.toFixed(3)),
       longitude: Number(d.longitude?.toFixed(3)),
-    } as HelpRequestData;
+      asignees_count,
+    } ;
   });
 }
 
 const getData = async (supabase: SupabaseClient<Database>) => {
   const { error, data } = await supabase.from('help_requests').select().eq('type', 'necesita');
+  const { data: assignments, error: assignmentError } = await getAllAssignments();
 
   if (error) {
     throw new Error('Error fetching solicita:', error);
   }
+  if (assignmentError) {
+    throw new Error('Error fetching assignments:', assignmentError);
+  }
 
-  return parseData(data);
+  return parseData(data, assignments);
 };
 
 const getCount = async (supabase: SupabaseClient<Database>) => {
