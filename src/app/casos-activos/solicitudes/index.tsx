@@ -8,13 +8,13 @@ import { useTowns } from '@/context/TownProvider';
 import { TabNavigationCount } from '@/components/TabNavigation';
 import Modal from '@/components/Modal';
 import { MAP_MODAL_NAME } from '@/components/map/map';
-import { HelpRequestData } from '@/types/Requests';
+import { HelpRequestData, HelpRequestDataWAssignmentCount } from '@/types/Requests';
 import SolicitudCard from '@/components/solicitudes/SolicitudCard';
 import SolicitudList, { isStringTrue } from '@/components/solicitudes/SolicitudList';
 import SolicitudMap from '@/components/solicitudes/SolicitudMap';
 
 type DataFilter = { keys: (keyof HelpRequestData)[]; value: string };
-function getDataFiltered(data: HelpRequestData[], filters: DataFilter[]) {
+function getDataFiltered(data: HelpRequestDataWAssignmentCount[], filters: DataFilter[]) {
   if (!filters || !filters.length) {
     return data;
   }
@@ -24,16 +24,16 @@ function getDataFiltered(data: HelpRequestData[], filters: DataFilter[]) {
 
 type SolicitudesProps = {
   count: TabNavigationCount;
-  data: HelpRequestData[];
+  data: HelpRequestDataWAssignmentCount[];
 };
 
 export function Solicitudes({ data, count }: SolicitudesProps) {
   const { towns } = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [selectedMarker, setSelectedMarker] = useState<HelpRequestData | null>(null);
+  const [selectedMarker, setSelectedMarker] = useState<HelpRequestDataWAssignmentCount | null>(null);
 
-  const [dataFiltered, setDataFiltered] = useState<HelpRequestData[]>(data);
+  const [dataFiltered, setDataFiltered] = useState<HelpRequestDataWAssignmentCount[]>(data);
 
   const [filtersData, setFiltersData] = useState({
     search: searchParams.get('search') || '',

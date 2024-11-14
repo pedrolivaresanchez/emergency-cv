@@ -4,14 +4,13 @@ import { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react';
 import InteractiveMap, { Layer, MapLayerMouseEvent, Source } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useModal } from '@/context/ModalProvider';
-import { HelpRequestData } from '@/types/Requests';
-import { InterpolationSpecification } from 'maplibre-gl';
+import { HelpRequestDataWAssignmentCount } from '@/types/Requests';
 
 export const MAP_MODAL_NAME = `map-marker`;
 
 type MapProps = {
   solicitudes?: GeoJSON.FeatureCollection<GeoJSON.Point>;
-  setSelectedMarker: Dispatch<SetStateAction<HelpRequestData | null>>;
+  setSelectedMarker: Dispatch<SetStateAction<HelpRequestDataWAssignmentCount | null>>;
 };
 
 const PAIPORTA_LAT = 39.42333;
@@ -31,7 +30,7 @@ const Map: FC<MapProps> = ({ solicitudes, setSelectedMarker }) => {
     if (e.features?.[0]) {
       console.log('e.features?.[0]:', e.features?.[0].properties);
       toggleModal(MAP_MODAL_NAME, true);
-      setSelectedMarker(e.features?.[0].properties as HelpRequestData);
+      setSelectedMarker(e.features?.[0].properties as HelpRequestDataWAssignmentCount);
     }
   };
 
@@ -55,7 +54,7 @@ const Map: FC<MapProps> = ({ solicitudes, setSelectedMarker }) => {
           id="solicitudes-circles"
           type="circle"
           paint={{
-            'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 12, 7,  20, 200],
+            'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 12, 7, 20, 200],
             'circle-color': {
               property: 'urgency',
               type: 'categorical',
@@ -75,7 +74,6 @@ const Map: FC<MapProps> = ({ solicitudes, setSelectedMarker }) => {
               ],
             },
             'circle-stroke-width': 1,
-
           }}
         />
       </Source>

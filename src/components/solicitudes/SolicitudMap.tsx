@@ -1,7 +1,7 @@
 'use client';
 
 import Map from '@/components/map/map';
-import { HelpRequestData } from '@/types/Requests';
+import { HelpRequestData, HelpRequestDataWAssignmentCount } from '@/types/Requests';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 
 function transformHelpRequestToPointFeature(request: any): GeoJSON.Feature<GeoJSON.Point> {
@@ -16,8 +16,8 @@ function transformHelpRequestToPointFeature(request: any): GeoJSON.Feature<GeoJS
 }
 
 type SolicitudListProps = {
-  data: HelpRequestData[];
-  setSelectedMarker: Dispatch<SetStateAction<HelpRequestData | null>>;
+  data: HelpRequestDataWAssignmentCount[];
+  setSelectedMarker: Dispatch<SetStateAction<HelpRequestDataWAssignmentCount | null>>;
 };
 
 export default function SolicitudList({ data, setSelectedMarker }: SolicitudListProps) {

@@ -191,6 +191,11 @@ export async function getAssignments(id: number) {
   return data;
 }
 
+export async function getAllAssignments() {
+  const supabase = await createClient();
+  return await supabase.from('help_request_assignments').select('*');
+}
+
 export async function assign(requestData: HelpRequestAssignmentInsert) {
   const supabase = await createClient();
   const { data, error } = await supabase.from('help_request_assignments').insert([requestData]).select();

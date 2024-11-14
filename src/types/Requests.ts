@@ -10,6 +10,9 @@ type HelpRequestJsonFields = {
 export type HelpRequestHelpType = Database['public']['Enums']['help_type_enum'];
 export type HelpRequestDbRow = Database['public']['Tables']['help_requests']['Row'];
 export type HelpRequestData = Omit<HelpRequestDbRow, 'additional_info' | 'resources'> & HelpRequestJsonFields;
+export type HelpRequestDataWAssignmentCount = Omit<HelpRequestData, 'coordinates' | 'location'> & {
+  help_request_assignment_count: number;
+};
 export type HelpRequestInsert = Database['public']['Tables']['help_requests']['Insert'] & HelpRequestJsonFields;
 export type HelpRequestUpdate = Database['public']['Tables']['help_requests']['Update'] & HelpRequestJsonFields;
 export type HelpRequestAssignmentData = Database['public']['Tables']['help_request_assignments']['Row'];
