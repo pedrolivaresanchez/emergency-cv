@@ -55,7 +55,7 @@ const Map: FC<MapProps> = ({ solicitudes, setSelectedMarker }) => {
           id="solicitudes-circles"
           type="circle"
           paint={{
-            'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 12, 7,  20, 200],
+            'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 12, 7, 20, 200],
             'circle-color': {
               property: 'urgency',
               type: 'categorical',
@@ -75,7 +75,6 @@ const Map: FC<MapProps> = ({ solicitudes, setSelectedMarker }) => {
               ],
             },
             'circle-stroke-width': 1,
-
           }}
         />
       </Source>
