@@ -21,7 +21,11 @@ function parseData(data: Database['public']['Tables']['help_requests']['Row'][])
 }
 
 const getData = async (supabase: SupabaseClient<Database>) => {
-  const { error, data } = await supabase.from('help_requests').select('*').eq('type', 'necesita');
+  const { error, data } = await supabase
+    .from('help_requests')
+    .select('*')
+    .eq('type', 'necesita')
+    .order('created_at', { ascending: false });
 
   if (error) {
     throw new Error('Error fetching solicita:', error);
