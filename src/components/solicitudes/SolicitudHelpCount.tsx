@@ -16,7 +16,7 @@ export default function SolicitudHelpCount({ id, count }: SolicitudHelpCountProp
   } = useQuery<HelpRequestAssignmentData[]>({
     queryKey: ['help_request_assignments', { id: id }],
     queryFn: () => getAssignments(id),
-    enabled: false //count === undefined,
+    enabled: count === undefined,
   });
 
   if (!count && isLoading) return <Spinner />;
