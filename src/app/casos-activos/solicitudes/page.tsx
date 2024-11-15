@@ -34,7 +34,6 @@ const getData = async (supabase: SupabaseClient<Database>, filters: FiltersData)
   }
 
   const { data, error } = await query.order('created_at', { ascending: false });
-  console.log('🚀 ~ getData ~ data:', data)
 
   if (error) {
     throw new Error('Error fetching solicita:', error);
