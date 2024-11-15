@@ -34,7 +34,11 @@ function parseData(data: HelpRequestData[], assignments: Assignment[]): HelpRequ
 }
 
 const getData = async (supabase: SupabaseClient<Database>) => {
-  const { error, data } = await supabase.from('help_requests').select('*').eq('type', 'necesita');
+  const { error, data } = await supabase
+    .from('help_requests')
+    .select('*')
+    .eq('type', 'necesita')
+    .order('created_at', { ascending: false });
   const { data: assignments, error: assignmentError } = await getAllAssignments();
 
   if (error) {

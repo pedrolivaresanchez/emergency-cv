@@ -1,6 +1,7 @@
 'use server';
 
 import {
+  CRMUsersLogRow,
   helpDataSelectFields,
   HelpRequestAssignmentInsert,
   HelpRequestData,
@@ -77,6 +78,26 @@ export async function updateNotesRequest(newNotes: string, helpRequestId: string
     .select();
 
   return { data, error };
+}
+
+export async function addCRMLog(diff: string, helpRequestId: number, userId: string, email: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('crm_users_log')
+    .insert([{ help_request_id: helpRequestId, user_id: userId, email, diff }]);
+  return { data, error };
+}
+
+export async function getCRMLogEntries(helpRequestId: number): Promise<CRMUsersLogRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('crm_users_log')
+    .select('*')
+    .eq('help_request_id', helpRequestId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
 }
 
 export async function deleteHelpRequest(helpRequestId: string) {

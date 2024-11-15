@@ -25,7 +25,7 @@ import { SelectedHelpData } from '@/types/Requests';
 import { getOffersByUser, getRequestsByUser } from '@/lib/actions';
 import { useSession } from '../../context/SessionProvider';
 
-export const SOLICITUDES_PATH = '/casos-activos/solicitudes'
+export const SOLICITUDES_PATH = '/casos-activos/solicitudes';
 
 type SidebarProps = {
   isOpen: boolean;
@@ -61,7 +61,7 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
       path: SOLICITUDES_PATH,
       color: 'text-orange-600',
       highlight: true,
-      closeOnClick: true
+      closeOnClick: true,
     },
     {
       icon: Inbox,
