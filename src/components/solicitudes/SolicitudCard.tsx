@@ -23,7 +23,7 @@ import { UserRoles } from '@/helpers/constants';
 import CRMNotes from '@/components/CRMNotes';
 
 type SolicitudCardProps = {
-  caso: HelpRequestDataWAssignmentCount;
+  caso: SelectedHelpData | HelpRequestData | HelpRequestDataWAssignmentCount;
   showLink?: boolean;
   showEdit?: boolean;
   format?: 'small' | 'large';
@@ -78,11 +78,10 @@ export default function SolicitudCard({
             </div>
           </div>
           <div className="flex flex-row justify-center items-center gap-2">
-            <div
-              className={`flex items-center justify-center rounded-full px-4 py-2 ${caso.help_request_assignment_count === 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}
-            >
-              <span className={`text-sm font-bold`}>{caso.help_request_assignment_count} VOLUNTARIOS</span>
-            </div>
+            {/* <SolicitudHelpCount
+              id={caso.id}
+              count={(caso as HelpRequestDataWAssignmentCount).help_request_assignment_count}
+            /> */}
             <div
               className={`flex items-center justify-center rounded-full px-4 py-2 ${
                 updateStatus === 'finished'
@@ -109,14 +108,14 @@ export default function SolicitudCard({
               <div className="flex items-start gap-2">
                 <MapPinned className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
                 <span className="break-words">
-                  <span className="font-semibold">Pueblo:</span> {getTownById(caso.town_id)?.name || ''}
+                  {/* <span className="font-semibold">Pueblo:</span> {getTownById(caso.town_id)?.name || ''} */}
                 </span>
               </div>
             )}
             {caso.contact_info && (
               <div className="flex items-start gap-2">
-                <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" />
-                <PhoneInfo isAdmin caseInfo={caso} />
+                {/* <Phone className="h-4 w-4 text-gray-500 flex-shrink-0 mt-1" /> */}
+                {/* <PhoneInfo isAdmin caseInfo={caso} /> */}
               </div>
             )}
             {caso.help_type && (
@@ -201,7 +200,7 @@ export default function SolicitudCard({
                 Ver solicitud
               </Link>
             )}
-            {!isCrmUser && <AsignarSolicitudButton helpRequest={caso} />}
+            {/* {!isCrmUser && <AsignarSolicitudButton helpRequest={caso} />} */}
             {isAdmin && (
               <ChangeUrgencyHelpRequest
                 onUpdate={setUpdateUrgency}

@@ -68,7 +68,7 @@ export default function CasoDetalle() {
         </button>
       </div>
       <SolicitudCard caso={data} showLink={false} showEdit={true} />
-      <SolicitudComments request={data} />
+      {/* <SolicitudComments request={data} /> */}
     </div>
   );
 }
