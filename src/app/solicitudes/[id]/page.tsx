@@ -1,7 +1,7 @@
 'use client';
 
 import { ArrowLeft } from 'lucide-react';
-import SolicitudCard from '@/components/SolicitudCard';
+import SolicitudCard from '@/components/solicitudes/SolicitudCard';
 import { useParams } from 'next/navigation';
 import SolicitudComments from '@/components/Comments/SolicitudComments';
 import { useEffect, useState } from 'react';

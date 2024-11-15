@@ -1,7 +1,7 @@
 'use client';
 
 import { Search } from 'lucide-react';
-import SolicitudCard from '@/components/SolicitudCard';
+import SolicitudCard from '@/components/solicitudes/SolicitudCard';
 import { useSession } from '@/context/SessionProvider';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';

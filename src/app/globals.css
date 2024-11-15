@@ -15,3 +15,7 @@ body {
 .maplibregl-ctrl-top-right div:nth-child(2) {
   display: none;
 }
+
+/* .maplibregl-ctrl-attrib {
+  display: none;
+} */

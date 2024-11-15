@@ -2,7 +2,8 @@
 import { HeartHandshake, Search, MapPin } from 'lucide-react';
 import Tab from './Tab';
 
-export default function TabNavigation({ count = { solicitudes: 0, ofertas: 0 } }) {
+export type TabNavigationCount = { solicitudes: number; ofertas: number };
+export default function TabNavigation({ count = { solicitudes: 0, ofertas: 0 } }: { count: TabNavigationCount }) {
   return (
     <>
       <div className="grid grid-cols-2 gap-2 bg-white p-2 rounded-lg shadow">

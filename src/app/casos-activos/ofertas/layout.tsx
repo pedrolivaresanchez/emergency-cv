@@ -3,6 +3,7 @@ import TabNavigation from '@/components/TabNavigation';
 import { PropsWithChildren } from 'react';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '@/types/database';
+
 const getCount = async (supabase: SupabaseClient<Database>) => {
   const { count: solicitaCount, error: solicitaError } = await supabase
     .from('help_requests')

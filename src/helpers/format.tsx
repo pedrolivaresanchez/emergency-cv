@@ -1,7 +1,7 @@
 import ReactDOMServer from 'react-dom/server';
 import { HelpRequestData } from '@/types/Requests';
 import { CollectionPointData } from '@/types/DataPoints';
-import SolicitudCard from '@/components/SolicitudCard';
+import SolicitudCard from '@/components/solicitudes/SolicitudCard';
 import { tiposAyudaOptions } from '@/helpers/constants';
 
 export const getMarkerBySolicitud = (solicitud: HelpRequestData) => {
