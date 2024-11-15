@@ -29,7 +29,6 @@ const Map: FC<MapProps> = ({ solicitudes, setSelectedMarker }) => {
 
   const onClickHandler = (e: MapLayerMouseEvent) => {
     if (e.features?.[0]) {
-      console.log('e.features?.[0]:', e.features?.[0].properties);
       toggleModal(MAP_MODAL_NAME, true);
       setSelectedMarker(e.features?.[0].properties as HelpRequestData);
     }

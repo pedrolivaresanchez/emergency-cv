@@ -4,7 +4,10 @@ import Map from '@/components/map/map';
 import { HelpRequestData } from '@/types/Requests';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 
-function transformHelpRequestToPointFeature(request: any): GeoJSON.Feature<GeoJSON.Point> {
+function transformHelpRequestToPointFeature(request: any): GeoJSON.Feature<GeoJSON.Point> | [] {
+  if (!request.latitude || !request.longitude) {
+    return [];
+  }
   return {
     type: 'Feature',
     geometry: {
@@ -25,7 +28,7 @@ export default function SolicitudList({ data, setSelectedMarker }: SolicitudList
     () =>
       ({
         type: 'FeatureCollection',
-        features: data.map(transformHelpRequestToPointFeature),
+        features: data.flatMap(transformHelpRequestToPointFeature),
       }) as GeoJSON.FeatureCollection<GeoJSON.Point>,
     [data],
   );
