@@ -3,7 +3,8 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { Database } from '@/types/database';
 import { Solicitudes } from '.';
-import { HelpRequestData } from '@/types/Requests';
+import { helpDataSelectFields, HelpRequestData } from '@/types/Requests';
+import { FiltersData } from './types';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,12 +21,19 @@ function parseData(data: Database['public']['Tables']['help_requests']['Row'][])
   });
 }
 
-const getData = async (supabase: SupabaseClient<Database>) => {
-  const { error, data } = await supabase
-    .from('help_requests')
-    .select('*')
+const getData = async (supabase: SupabaseClient<Database>, filters: FiltersData) => {
+  const query = supabase
+    .from('help_requests_with_assignment_count')
+    .select(helpDataSelectFields as '*', { count: 'exact' })
     .eq('type', 'necesita')
-    .order('created_at', { ascending: false });
+    .neq('status', 'finished');
+
+  // Solo agregar filtro si es true
+  if (filters.soloSinAsignar !== undefined && filters.soloSinAsignar === 'true') {
+    query.eq('assignments_count', 0);
+  }
+
+  const { data, error } = await query.order('created_at', { ascending: false });
 
   if (error) {
     throw new Error('Error fetching solicita:', error);
@@ -34,11 +42,16 @@ const getData = async (supabase: SupabaseClient<Database>) => {
   return parseData(data);
 };
 
-const getCount = async (supabase: SupabaseClient<Database>) => {
-  const { count: solicitaCount, error: solicitaError } = await supabase
-    .from('help_requests')
+const getCount = async (supabase: SupabaseClient<Database>, filters: FiltersData) => {
+  const query = supabase
+    .from('help_requests_with_assignment_count')
     .select('id', { count: 'exact' })
     .eq('type', 'necesita');
+  // Solo agregar filtro si es true
+  if (filters.soloSinAsignar !== undefined && filters.soloSinAsignar === 'true') {
+    query.eq('assignments_count', 0);
+  }
+  const { count: solicitaCount, error: solicitaError } = await query;
 
   const { count: ofreceCount, error: ofreceError } = await supabase
     .from('help_requests')
@@ -58,10 +71,11 @@ const getCount = async (supabase: SupabaseClient<Database>) => {
   };
 };
 
-export default async function SolicitudesPage() {
+export default async function SolicitudesPage(props: { searchParams: Promise<Record<string, string | undefined>> }) {
+  const searchParams = (await props.searchParams) as FiltersData;
   const supabase = await createClient();
-  const data = await getData(supabase);
-  const count = await getCount(supabase);
+  const data = await getData(supabase, searchParams);
+  const count = await getCount(supabase, searchParams);
 
   return (
     <Suspense

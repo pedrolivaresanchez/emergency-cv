@@ -47,7 +47,9 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
     (filter: FilterType, value: string | number) => {
       const params = new URLSearchParams(searchParams.toString());
       params.set(filter, value.toString());
-      router.push(`?${params.toString()}`);
+      if (filter === 'soloSinAsignar') {
+        router.push(`?${params.toString()}`);
+      }
     },
     [searchParams, router],
   );
