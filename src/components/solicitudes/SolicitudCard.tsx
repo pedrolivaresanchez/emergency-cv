@@ -16,6 +16,7 @@ import ChangeStatusButton from '../ChangeStatusButton';
 import ChangeCRMStatus from '../ChangeCRMStatus';
 import { UserRoles } from '@/helpers/constants';
 import CRMNotes from '@/components/CRMNotes';
+import CRMLog from '@/components/CRMLog';
 
 type SolicitudCardProps = {
   caso: SelectedHelpData;
@@ -209,6 +210,7 @@ export default function SolicitudCard({
               />
             )}
             {(isCrmUser || isAdmin) && <CRMNotes helpRequestId={caso.id} currentNotes={caso.notes} />}
+            {(isCrmUser || isAdmin) && <CRMLog helpRequestId={caso.id} />}
             {isAdmin && <DeleteHelpRequest helpRequestId={caso.id} onDelete={() => setDeleted(true)} />}
           </div>
         </div>

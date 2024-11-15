@@ -16,6 +16,7 @@ export type HelpRequestAssignmentData = Database['public']['Tables']['help_reque
 export type HelpRequestAssignmentInsert = Database['public']['Tables']['help_request_assignments']['Insert'];
 
 export type HelpRequestComment = Database['public']['Tables']['comments']['Row'];
+export type CRMUsersLogRow = Database['public']['Tables']['crm_users_log']['Row'];
 
 export type HelpRequestAdditionalInfo = {
   special_situations?: string;
