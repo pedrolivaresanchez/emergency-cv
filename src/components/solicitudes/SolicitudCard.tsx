@@ -10,7 +10,7 @@ import DeleteHelpRequest from '../DeleteHelpRequest';
 import { textWithEllipsis } from '@/helpers/utils';
 import { useTowns } from '@/context/TownProvider';
 import { useRole } from '@/context/RoleProvider';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import ChangeUrgencyHelpRequest from '../ChangeUrgencyHelpRequest';
 import ChangeStatusButton from '../ChangeStatusButton';
 import ChangeCRMStatus from '../ChangeCRMStatus';
@@ -18,11 +18,31 @@ import { UserRoles } from '@/helpers/constants';
 import CRMNotes from '@/components/CRMNotes';
 import CRMLog from '@/components/CRMLog';
 
+export const getHighlightedText = (text: string, highlight: string) => {
+  if (highlight === '') return text;
+  const regEscape = (v: string) => v.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+  const textChunks = text.split(new RegExp(regEscape(highlight), 'ig'));
+  let sliceIdx = 0;
+  return textChunks.map((chunk, index) => {
+    const currentSliceIdx = sliceIdx + chunk.length;
+    sliceIdx += chunk.length + highlight.length;
+    return (
+      <Fragment key={index}>
+        {chunk}
+        {currentSliceIdx < text.length && (
+          <span className="inline-block bg-blue-100">{text.slice(currentSliceIdx, sliceIdx)}</span>
+        )}
+      </Fragment>
+    );
+  });
+};
+
 type SolicitudCardProps = {
   caso: SelectedHelpData;
   showLink?: boolean;
   showEdit?: boolean;
   format?: 'small' | 'large';
+  highlightedText?: string;
 };
 
 export default function SolicitudCard({
@@ -30,6 +50,7 @@ export default function SolicitudCard({
   showLink = true,
   showEdit = false,
   format = 'large',
+  highlightedText = '',
 }: SolicitudCardProps) {
   const session = useSession();
   const role = useRole();
@@ -42,6 +63,8 @@ export default function SolicitudCard({
   const isMyRequest = session.user?.id && session.user.id === caso.user_id;
   const [updateUrgency, setUpdateUrgency] = useState(caso.urgency);
   const [updateStatus, setUpdateStatus] = useState(caso.status);
+
+  const description = format === 'small' ? textWithEllipsis(caso.description, 250) : caso.description;
   return (
     !deleted && (
       <div key={caso.id} className="rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5">
@@ -92,7 +115,7 @@ export default function SolicitudCard({
         </div>
         <div className="px-6 py-4">
           <p className="text-gray-700 first-letter:capitalize" style={{ wordBreak: 'break-word' }}>
-            {format === 'small' ? textWithEllipsis(caso.description, 250) : caso.description}
+            {description && getHighlightedText(description, highlightedText)}
           </p>
         </div>
         <div className="flex flex-col sm:flex-row justify-between items-start md:items-end gap-4 px-6 pb-4">

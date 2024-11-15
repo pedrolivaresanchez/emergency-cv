@@ -126,7 +126,13 @@ export default function SolicitudList({ data, count, filtersData, onDataFilterCh
             data={data}
             itemContent={(_, caso) => (
               <div key={caso.id} className="py-2">
-                <SolicitudCard format="small" showLink={true} showEdit={true} caso={caso as HelpRequestData} />
+                <SolicitudCard
+                  format="small"
+                  showLink={true}
+                  showEdit={true}
+                  caso={caso as HelpRequestData}
+                  highlightedText={filtersData.search}
+                />
               </div>
             )}
           />
