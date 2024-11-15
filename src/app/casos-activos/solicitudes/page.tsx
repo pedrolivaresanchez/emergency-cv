@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 function parseData(data: Database['public']['Tables']['help_requests']['Row'][]): HelpRequestData[] {
   return data.map((d) => {
     // Remove unused properties to reduce the payload size
-    const { coordinates, crm_status, resources, user_id, ...rest } = d;
+    const { coordinates, location, ...rest } = d;
     return {
       ...rest,
       // Fix the coordinates to 3 decimals so locations have a 100m precision
@@ -21,7 +21,7 @@ function parseData(data: Database['public']['Tables']['help_requests']['Row'][])
 }
 
 const getData = async (supabase: SupabaseClient<Database>) => {
-  const { error, data } = await supabase.from('help_requests').select().eq('type', 'necesita');
+  const { error, data } = await supabase.from('help_requests').select('*').eq('type', 'necesita');
 
   if (error) {
     throw new Error('Error fetching solicita:', error);
