@@ -19,7 +19,11 @@ function getDataFiltered(data: HelpRequestData[], filters: DataFilter[]) {
     return data;
   }
 
-  return filters.reduceRight((results, { value, keys }) => matchSorter(results, value, { keys }), data);
+  return filters.reduceRight(
+    (results, { value, keys }) =>
+      matchSorter(results, value, { keys, threshold: matchSorter.rankings.WORD_STARTS_WITH }),
+    data,
+  );
 }
 
 type SolicitudesProps = {
