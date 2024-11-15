@@ -19,7 +19,11 @@ function getDataFiltered(data: HelpRequestDataWAssignmentCount[], filters: DataF
     return data;
   }
 
-  return filters.reduceRight((results, { value, keys }) => matchSorter(results, value, { keys }), data);
+  return filters.reduceRight(
+    (results, { value, keys }) =>
+      matchSorter(results, value, { keys, threshold: matchSorter.rankings.WORD_STARTS_WITH }),
+    data,
+  );
 }
 
 type SolicitudesProps = {
@@ -47,7 +51,9 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
     (filter: FilterType, value: string | number) => {
       const params = new URLSearchParams(searchParams.toString());
       params.set(filter, value.toString());
-      router.push(`?${params.toString()}`);
+      if (filter === 'soloSinAsignar') {
+        router.push(`?${params.toString()}`);
+      }
     },
     [searchParams, router],
   );
