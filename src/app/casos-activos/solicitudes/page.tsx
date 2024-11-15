@@ -24,7 +24,7 @@ function parseData(data: Database['public']['Tables']['help_requests']['Row'][])
 const getData = async (supabase: SupabaseClient<Database>, filters: FiltersData) => {
   const query = supabase
     .from('help_requests_with_assignment_count')
-    .select(helpDataSelectFields as '*', { count: 'exact' })
+    .select('*', { count: 'exact' })
     .eq('type', 'necesita')
     .neq('status', 'finished');
 
@@ -34,6 +34,7 @@ const getData = async (supabase: SupabaseClient<Database>, filters: FiltersData)
   }
 
   const { data, error } = await query.order('created_at', { ascending: false });
+  console.log('🚀 ~ getData ~ data:', data)
 
   if (error) {
     throw new Error('Error fetching solicita:', error);
