@@ -8,7 +8,7 @@ import { useTowns } from '@/context/TownProvider';
 import { TabNavigationCount } from '@/components/TabNavigation';
 import Modal from '@/components/Modal';
 import { MAP_MODAL_NAME } from '@/components/map/map';
-import { HelpRequestData } from '@/types/Requests';
+import { HelpRequestData, HelpRequestWAssignments } from '@/types/Requests';
 import SolicitudCard from '@/components/solicitudes/SolicitudCard';
 import SolicitudList, { isStringTrue } from '@/components/solicitudes/SolicitudList';
 import SolicitudMap from '@/components/solicitudes/SolicitudMap';
@@ -28,14 +28,14 @@ function getDataFiltered(data: HelpRequestData[], filters: DataFilter[]) {
 
 type SolicitudesProps = {
   count: TabNavigationCount;
-  data: HelpRequestData[];
+  data: HelpRequestWAssignments[];
 };
 
 export function Solicitudes({ data, count }: SolicitudesProps) {
   const { towns } = useTowns();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [selectedMarker, setSelectedMarker] = useState<HelpRequestData | null>(null);
+  const [selectedMarker, setSelectedMarker] = useState<HelpRequestWAssignments | null>(null);
 
   const [dataFiltered, setDataFiltered] = useState<HelpRequestData[]>(data);
 
@@ -98,7 +98,7 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
       <div className="lg:flex lg:flex-row-reverse">
         <SolicitudMap data={dataFiltered} setSelectedMarker={setSelectedMarker} />
         <SolicitudList
-          data={dataFiltered}
+          data={dataFiltered as HelpRequestWAssignments[]}
           count={count}
           filtersData={filtersData}
           onDataFilterChange={changeDataFilter}

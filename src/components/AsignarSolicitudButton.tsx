@@ -1,8 +1,8 @@
 'use client';
 
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAssignmentData, SelectedHelpData } from '@/types/Requests';
-import { getAssignments, assign, unassign } from '@/lib/actions';
+import { SelectedHelpData, SelectedHelpDataWAssignment } from '@/types/Requests';
+import { assign, unassign, getSolicitudesWAssignemntsByUser } from '@/lib/actions';
 import { MouseEvent } from 'react';
 import { Spinner } from '@/components/Spinner';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -23,12 +23,12 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
   const router = useRouter();
 
   const {
-    data: assignments,
+    data: solicitudesUser,
     isLoading,
     error,
-  } = useQuery<HelpRequestAssignmentData[]>({
-    queryKey: ['help_request_assignments', { id: helpRequest.id }],
-    queryFn: () => getAssignments(helpRequest.id),
+  } = useQuery<SelectedHelpDataWAssignment[]>({
+    queryKey: ['help_requests', { user_id: userId, type: 'necesita' }],
+    queryFn: () => getSolicitudesWAssignemntsByUser(userId || ''),
   });
 
   const queryClient = useQueryClient();
@@ -84,9 +84,9 @@ export default function AsignarSolicitudButton({ helpRequest }: AsignarSolicitud
   }
 
   if (isLoading) return <Spinner />;
-  if (error || assignments === undefined) return <></>;
+  if (error || solicitudesUser === undefined) return <></>;
 
-  const userAssignment = assignments.find((x) => x.user_id === session.user?.id);
+  const userAssignment = solicitudesUser.find((x) => x.id === helpRequest.id);
   const userIsAssigned = !!userAssignment;
 
   if (!session || !session.user)

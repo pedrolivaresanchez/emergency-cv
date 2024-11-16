@@ -3,12 +3,12 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { Database } from '@/types/database';
 import { Solicitudes } from '.';
-import { helpDataSelectFields, HelpRequestData } from '@/types/Requests';
+import { HelpRequestWAssignments } from '@/types/Requests';
 import { FiltersData } from './types';
 
 export const dynamic = 'force-dynamic';
 
-function parseData(data: Database['public']['Tables']['help_requests']['Row'][]): HelpRequestData[] {
+function parseData(data: Database['public']['Tables']['help_requests']['Row'][]): HelpRequestWAssignments[] {
   return data.map((d) => {
     // Remove unused properties to reduce the payload size
     const { coordinates, location, ...rest } = d;
@@ -17,7 +17,7 @@ function parseData(data: Database['public']['Tables']['help_requests']['Row'][])
       // Fix the coordinates to 3 decimals so locations have a 100m precision
       latitude: Number(d.latitude?.toFixed(3)),
       longitude: Number(d.longitude?.toFixed(3)),
-    } as HelpRequestData;
+    } as HelpRequestWAssignments;
   });
 }
 

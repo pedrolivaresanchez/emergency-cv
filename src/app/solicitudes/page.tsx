@@ -5,8 +5,8 @@ import SolicitudCard from '@/components/solicitudes/SolicitudCard';
 import { useSession } from '@/context/SessionProvider';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { SelectedHelpData } from '@/types/Requests';
-import { getSolicitudesByUser } from '@/lib/actions';
+import { SelectedHelpDataWAssignment } from '@/types/Requests';
+import { getSolicitudesWAssignemntsByUser } from '@/lib/actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,9 +18,9 @@ export default function ListaSolicitudes() {
     data: requests,
     isLoading,
     error,
-  } = useQuery<SelectedHelpData[]>({
+  } = useQuery<SelectedHelpDataWAssignment[]>({
     queryKey: ['help_requests', { user_id: userId, type: 'necesita' }],
-    queryFn: () => getSolicitudesByUser(userId || ''),
+    queryFn: () => getSolicitudesWAssignemntsByUser(userId || ''),
   });
 
   if (isLoading) {

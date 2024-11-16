@@ -1,27 +1,31 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from '@/context/SessionProvider';
-import { getAssignments } from '@/lib/actions';
-import { SelectedHelpData } from '@/types/Requests';
+import { getSolicitudesWAssignemntsByUser } from '@/lib/actions';
+import { SelectedHelpDataWAssignment } from '@/types/Requests';
 
 type PhoneInfoProps = {
-  caseInfo: SelectedHelpData;
+  caseInfo: SelectedHelpDataWAssignment;
   isAdmin: boolean;
 };
 export default function PhoneInfo({ caseInfo, isAdmin }: PhoneInfoProps) {
   const session = useSession();
+  const userId = session?.user?.id;
 
   const {
-    data: assignments,
+    data: solicitudesUser,
     isLoading,
     error,
-  } = useQuery({
-    queryKey: ['help_request_assignments', { id: caseInfo.id }],
-    queryFn: () => getAssignments(caseInfo.id),
+  } = useQuery<SelectedHelpDataWAssignment[]>({
+    queryKey: ['help_requests', { user_id: userId, type: 'necesita' }],
+    queryFn: () => getSolicitudesWAssignemntsByUser(userId || ''),
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 
-  if (error || isLoading) return <></>;
+  if (error || isLoading || !solicitudesUser) return <></>;
 
-  const userAssignment = assignments?.find((x) => x.user_id === session.user?.id);
+  const userAssignment = solicitudesUser.find((x) => x.id === caseInfo.id);
+  const userIsAssigned = !!userAssignment;
 
   return (
     <span className="break-words">
@@ -29,7 +33,7 @@ export default function PhoneInfo({ caseInfo, isAdmin }: PhoneInfoProps) {
       {session && session.user
         ? isAdmin
           ? caseInfo.contact_info
-          : !!userAssignment
+          : !!userIsAssigned
             ? caseInfo.contact_info
             : 'Dale al botón "Quiero ayudar" para ver sus datos de contacto.'
         : 'Inicia sesion para ver este dato'}

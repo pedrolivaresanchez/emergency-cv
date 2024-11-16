@@ -3,6 +3,7 @@
 import {
   CRMUsersLogRow,
   helpDataSelectFields,
+  helpDataWithAssignmentsSelectFields,
   HelpRequestAssignmentInsert,
   HelpRequestData,
   HelpRequestInsert,
@@ -10,6 +11,7 @@ import {
   PuntoDeEntrega,
   PuntoDeRecogida,
   SelectedHelpData,
+  SelectedHelpDataWAssignment,
 } from '@/types/Requests';
 import { createClient } from './supabase/server';
 import { AuthChangeEvent, Session, SignInWithOAuthCredentials, Subscription } from '@supabase/supabase-js';
@@ -117,6 +119,17 @@ export async function getOne(id: number) {
   return data as SelectedHelpData;
 }
 
+export async function getOneWithAssignments(id: number) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('help_requests_with_assignment_count')
+    .select(helpDataSelectFields as '*')
+    .eq('id', id)
+    .single();
+  if (error) throw error;
+  return data as SelectedHelpDataWAssignment;
+}
+
 export async function getOneWithCoords(id: number) {
   const supabase = await createClient();
   const { data, error } = await supabase.from('help_requests').select('*').eq('id', id).single();
@@ -202,6 +215,18 @@ export async function getSolicitudesByUser(user_id: string | undefined) {
     .eq('user_id', user_id);
   if (requestsError) throw requestsError;
   return requests as SelectedHelpData[];
+}
+
+export async function getSolicitudesWAssignemntsByUser(user_id: string | undefined) {
+  const supabase = await createClient();
+  if (user_id === undefined) return [];
+  const { data: requests, error: requestsError } = await supabase
+    .from('help_requests_with_assignment_count')
+    .select(helpDataWithAssignmentsSelectFields as '*')
+    .eq('type', 'necesita')
+    .eq('user_id', user_id);
+  if (requestsError) throw requestsError;
+  return requests as SelectedHelpDataWAssignment[];
 }
 
 export async function getAssignments(id: number) {
