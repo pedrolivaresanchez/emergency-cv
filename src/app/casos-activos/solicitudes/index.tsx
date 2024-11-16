@@ -87,13 +87,15 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
 
     if (filtersData.pueblo && filtersData.pueblo !== 'todos') {
       const town = towns.find((t) => t.id === parseInt(filtersData.pueblo));
-      preFilteredData = town ? data.filter((d) => d.town_id === town.id) : data;
+      if(town) {
+        preFilteredData = preFilteredData.filter((d) => d.town_id === town.id);
+      }
     }
 
-    if(filtersData.soloSinAsignar === undefined || isStringTrue(filtersData.soloSinAsignar)) {
-      preFilteredData = data.filter((d) => d.asignees_count === 0);
+    if(isStringTrue(filtersData.soloSinAsignar)) {
+      preFilteredData = preFilteredData.filter((d) => d.asignees_count === 0);
     }
-    
+
     setDataFiltered(getDataFiltered(preFilteredData, filters));
   }, [data, filtersData, towns]);
 
