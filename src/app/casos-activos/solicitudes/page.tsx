@@ -28,8 +28,8 @@ const getData = async (supabase: SupabaseClient<Database>, filters: FiltersData)
     .eq('type', 'necesita')
     .neq('status', 'finished');
 
-  // Solo agregar filtro si es true
-  if (filters.soloSinAsignar !== undefined && filters.soloSinAsignar === 'true') {
+  // Solo agregar filtro si es true o no se especificó
+  if (filters.soloSinAsignar === undefined || filters.soloSinAsignar === 'true') {
     query.eq('assignments_count', 0);
   }
 
@@ -44,19 +44,22 @@ const getData = async (supabase: SupabaseClient<Database>, filters: FiltersData)
 
 const getCount = async (supabase: SupabaseClient<Database>, filters: FiltersData) => {
   const query = supabase
-    .from('help_requests_with_assignment_count')
-    .select('id', { count: 'exact' })
-    .eq('type', 'necesita');
-  // Solo agregar filtro si es true
-  if (filters.soloSinAsignar !== undefined && filters.soloSinAsignar === 'true') {
-    query.eq('assignments_count', 0);
+  .from('help_requests_with_assignment_count')
+  .select('id', { count: 'exact' })
+  .eq('type', 'necesita')
+  .neq('status', 'finished');
+  
+  // Solo agregar filtro si es true o no se especificó
+  if (filters.soloSinAsignar === undefined || filters.soloSinAsignar === 'true') {
+    query.eq('assignments_count', 0);    
   }
   const { count: solicitaCount, error: solicitaError } = await query;
 
   const { count: ofreceCount, error: ofreceError } = await supabase
     .from('help_requests')
     .select('id', { count: 'exact' })
-    .eq('type', 'ofrece');
+    .eq('type', 'ofrece')
+    .neq('status', 'finished');
 
   if (solicitaError) {
     throw new Error('Error fetching solicita:', solicitaError);
