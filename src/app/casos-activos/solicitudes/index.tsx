@@ -71,15 +71,12 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
 
   useEffect(() => {
     const filters: DataFilter[] = [];
+    let preFilteredData = data;
     if (filtersData.search) {
       filters.push({
         keys: ['description'],
         value: filtersData.search,
       });
-    }
-    if (filtersData.pueblo && filtersData.pueblo !== 'todos') {
-      const town = towns.find((t) => t.id === parseInt(filtersData.pueblo));
-      filters.push({ keys: ['location'], value: town?.name || '' });
     }
     if (filtersData.urgencia && filtersData.urgencia !== 'todas') {
       filters.push({ keys: ['urgency'], value: filtersData.urgencia });
@@ -87,9 +84,16 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
     if (filtersData.tipoAyuda && filtersData.tipoAyuda !== 'todas') {
       filters.push({ keys: ['help_type'], value: filtersData.tipoAyuda });
     }
-    const preFilteredData = isStringTrue(filtersData.soloSinAsignar)
-      ? data.filter((d) => d.asignees_count === 0)
-      : data;
+
+    if (filtersData.pueblo && filtersData.pueblo !== 'todos') {
+      const town = towns.find((t) => t.id === parseInt(filtersData.pueblo));
+      preFilteredData = town ? data.filter((d) => d.town_id === town.id) : data;
+    }
+
+    if(filtersData.soloSinAsignar === undefined || isStringTrue(filtersData.soloSinAsignar)) {
+      preFilteredData = data.filter((d) => d.asignees_count === 0);
+    }
+    
     setDataFiltered(getDataFiltered(preFilteredData, filters));
   }, [data, filtersData, towns]);
 
