@@ -72,6 +72,8 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
   useEffect(() => {
     const filters: DataFilter[] = [];
     let preFilteredData = data;
+    console.log('data:', data)
+    console.log('filtersData:', filtersData)
     if (filtersData.search) {
       filters.push({
         keys: ['description'],
