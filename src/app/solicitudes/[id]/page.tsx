@@ -40,10 +40,10 @@ export default function CasoDetalle() {
   }
   if (data === null) {
     return (
-      <div className="mt-14 sm:mt-0 space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
+      <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex justify-start">
           <button
-            className="flex flex-row items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+            className="ml-10 sm:ml-4 flex flex-row items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
             onClick={() => history.back()}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -57,10 +57,10 @@ export default function CasoDetalle() {
     );
   }
   return (
-    <div className="mt-14 sm:mt-0 space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
+    <div className="space-y-6 mx-auto max-w-7xl px-4 sm:px-6">
       <div className="flex justify-start">
         <button
-          className="flex flex-row items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+          className="ml-10 sm:ml-4 flex flex-row items-center px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
           onClick={() => history.back()}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
