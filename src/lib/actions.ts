@@ -219,7 +219,7 @@ export async function getSolicitudesByUser(user_id: string | undefined) {
 
 export async function getSolicitudesWAssignemntsByUser(user_id: string | undefined) {
   const supabase = await createClient();
-  if (user_id === undefined) return [];
+  if (!user_id) return [];
   const { data: requests, error: requestsError } = await supabase
     .from('help_requests_with_assignment_count')
     .select(helpDataWithAssignmentsSelectFields as '*')

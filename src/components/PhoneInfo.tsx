@@ -18,8 +18,6 @@ export default function PhoneInfo({ caseInfo, isAdmin }: PhoneInfoProps) {
   } = useQuery<SelectedHelpDataWAssignment[]>({
     queryKey: ['help_requests', { user_id: userId, type: 'necesita' }],
     queryFn: () => getSolicitudesWAssignemntsByUser(userId || ''),
-    staleTime: Infinity,
-    gcTime: Infinity,
   });
 
   if (error || isLoading || !solicitudesUser) return <></>;
