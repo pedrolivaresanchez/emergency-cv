@@ -44,7 +44,7 @@ export function Solicitudes({ data, count }: SolicitudesProps) {
     urgencia: searchParams.get('urgencia') || 'todas',
     tipoAyuda: searchParams.get('tipoAyuda') || 'todas',
     pueblo: searchParams.get('pueblo') || 'todos',
-    soloSinAsignar: searchParams.get('soloSinAsignar') || 'false',
+    soloSinAsignar: searchParams.get('soloSinAsignar') || 'true',
   });
 
   const updateFilter = useCallback(
