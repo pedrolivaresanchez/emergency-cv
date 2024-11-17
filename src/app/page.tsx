@@ -183,32 +183,6 @@ export default async function Home() {
         <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg shadow-lg">
           <div className="flex items-start gap-4">
             <AlertCircle className="h-6 w-6 text-red-500 flex-shrink-0" />
-            <div>
-              <h2 className="text-xl font-bold text-red-800 mb-2">EMERGENCIA ACTIVA - DANA</h2>
-              <div className="prose prose-sm text-red-700">
-                <p className="mb-2">
-                  AVISO ESPECIAL: LLUVIAS Y CHUBASCOS MUY FUERTES A TORRENCIALES DESDE MARTES 12 DE NOVIEMBRE
-                </p>
-                <p className="mb-2">
-                  SE RECOMIENDA DESALOJAR BAJOS Y LUGARES QUE SE HAYAN INUNDADO PREVIAMENTE. ABASTECERSE DE COMIDA,
-                  MEDICINAS Y SUMINISTRO PARA AL MENOS 4 DÍAS. DIFUNDE Y AYUDA EN TU COMUNIDAD EMERGENCIAS: 112
-                </p>
-                <p className="font-medium">
-                  SIGUE RECOMENDACIONES OFICIALES DE{' '}
-                  <a
-                    className="text-blue-600 font-bold hover:text-blue-800 space-x-2"
-                    href="https://www.aemet.es/es/eltiempo/prediccion/municipios/valencia-id46250"
-                  >
-                    AEMET
-                  </a>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg shadow-lg">
-          <div className="flex items-start gap-4">
-            <AlertCircle className="h-6 w-6 text-red-500 flex-shrink-0" />
             <div className="w-full">
               <h2 className="text-xl font-bold text-red-800 mb-2">PARA PERSONAS CON DIFICULTADES TECNICAS</h2>
               <div className="flex flex-col text-red-700 space-y-2">
