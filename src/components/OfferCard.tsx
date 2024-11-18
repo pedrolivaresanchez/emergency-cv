@@ -4,13 +4,15 @@ import Link from 'next/link';
 import { SelectedHelpData } from '@/types/Requests';
 import { useTowns } from '@/context/TownProvider';
 import { useSession } from '@/context/SessionProvider';
+import { getHighlightedText } from '@/helpers/format';
 
 type OfferCardProps = {
   caso: SelectedHelpData;
   showLink?: boolean;
   showEdit?: boolean;
+  highlightedText?: string;
 };
-export default function OfferCard({ caso, showLink = true, showEdit = false }: OfferCardProps) {
+export default function OfferCard({ caso, showLink = true, showEdit = false, highlightedText = '' }: OfferCardProps) {
   const { towns } = useTowns();
   const session = useSession();
   const isMyOffer = session.user?.id && session.user.id === caso.user_id;
@@ -44,7 +46,7 @@ export default function OfferCard({ caso, showLink = true, showEdit = false }: O
       </div>
       <div className="px-6 py-4">
         <p className="text-gray-700 first-letter:capitalize" style={{ wordBreak: 'break-word' }}>
-          {caso.description}
+        {caso.description && getHighlightedText(caso.description, highlightedText)}
         </p>
       </div>
       <div className="flex flex-col sm:flex-row justify-between items-start md:items-end gap-4 px-6 pb-4">
