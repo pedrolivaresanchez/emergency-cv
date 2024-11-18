@@ -17,25 +17,7 @@ import ChangeCRMStatus from '../ChangeCRMStatus';
 import { UserRoles } from '@/helpers/constants';
 import CRMNotes from '@/components/CRMNotes';
 import CRMLog from '@/components/CRMLog';
-
-export const getHighlightedText = (text: string, highlight: string) => {
-  if (highlight === '') return text;
-  const regEscape = (v: string) => v.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-  const textChunks = text.split(new RegExp(regEscape(highlight), 'ig'));
-  let sliceIdx = 0;
-  return textChunks.map((chunk, index) => {
-    const currentSliceIdx = sliceIdx + chunk.length;
-    sliceIdx += chunk.length + highlight.length;
-    return (
-      <Fragment key={index}>
-        {chunk}
-        {currentSliceIdx < text.length && (
-          <span className="inline-block bg-blue-100">{text.slice(currentSliceIdx, sliceIdx)}</span>
-        )}
-      </Fragment>
-    );
-  });
-};
+import { getHighlightedText } from '@/helpers/format';
 
 type SolicitudCardProps = {
   caso: SelectedHelpData;

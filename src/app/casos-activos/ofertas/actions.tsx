@@ -5,6 +5,7 @@ import { createClient } from '../../../lib/supabase/server';
 export type FiltroOfertas = {
   ayuda: string;
   pueblo: string;
+  search: string;
   paginacion: {
     currentPage: number;
     itemsPerPage: number;
@@ -15,6 +16,11 @@ export async function getOfertas(filter: FiltroOfertas) {
   const supabase = await createClient();
   // Comenzamos la consulta
   const query = supabase.from('help_requests').select('*', { count: 'exact' }).eq('type', 'ofrece');
+
+  // Solo agregar filtro de búsqueda si no es vacío
+  if (filter.search !== '') {
+    query.ilike('description', `%${filter.search}%`);
+  }
 
   // Solo agregar filtro de ayuda si no es "todos"
   if (filter.ayuda !== 'todas') {

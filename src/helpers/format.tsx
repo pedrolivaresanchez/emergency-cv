@@ -1,8 +1,7 @@
 import ReactDOMServer from 'react-dom/server';
 import { HelpRequestData } from '@/types/Requests';
-import { CollectionPointData } from '@/types/DataPoints';
 import SolicitudCard from '@/components/solicitudes/SolicitudCard';
-import { tiposAyudaOptions } from '@/helpers/constants';
+import { Fragment } from 'react';
 
 export const getMarkerBySolicitud = (solicitud: HelpRequestData) => {
   // TODO think if possible getLatLng from a given location
@@ -35,4 +34,23 @@ export const getMarkerDescriptionBySolicitudAndTowns = (solicitud: HelpRequestDa
   return ReactDOMServer.renderToString(
     <SolicitudCard key={solicitud.id} caso={solicitud} showEdit={false} showLink={true} />,
   );
+};
+
+export const getHighlightedText = (text: string, highlight: string) => {
+  if (highlight === '') return text;
+  const regEscape = (v: string) => v.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+  const textChunks = text.split(new RegExp(regEscape(highlight), 'ig'));
+  let sliceIdx = 0;
+  return textChunks.map((chunk, index) => {
+    const currentSliceIdx = sliceIdx + chunk.length;
+    sliceIdx += chunk.length + highlight.length;
+    return (
+      <Fragment key={index}>
+        {chunk}
+        {currentSliceIdx < text.length && (
+          <span className="inline-block bg-blue-100">{text.slice(currentSliceIdx, sliceIdx)}</span>
+        )}
+      </Fragment>
+    );
+  });
 };
