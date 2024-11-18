@@ -7,6 +7,7 @@ import { Toaster } from 'sonner';
 import { PropsWithChildren } from 'react';
 import { QueryClientProvider } from '@/context/QueryClientProvider';
 import { RoleProvider } from '@/context/RoleProvider';
+import { TownProvider } from '../context/TownProvider';
 
 export const metadata = {
   title: 'Ajuda Dana - Sistema de Coordinación',
@@ -21,9 +22,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <SessionProvider>
           <RoleProvider>
             <QueryClientProvider>
-              <ModalProvider>
-                <SidebarLayout>{children}</SidebarLayout>
-              </ModalProvider>
+              <TownProvider>
+                <ModalProvider>
+                  <SidebarLayout>{children}</SidebarLayout>
+                </ModalProvider>
+              </TownProvider>
             </QueryClientProvider>
           </RoleProvider>
         </SessionProvider>

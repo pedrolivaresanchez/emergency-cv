@@ -1,17 +1,16 @@
 'use client';
 
-import { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useState } from 'react';
 import InteractiveMap, { Layer, MapLayerMouseEvent, Source } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useModal } from '@/context/ModalProvider';
-import { HelpRequestData } from '@/types/Requests';
-import { InterpolationSpecification } from 'maplibre-gl';
+import { HelpRequestWAssignments } from '@/types/Requests';
 
 export const MAP_MODAL_NAME = `map-marker`;
 
 type MapProps = {
   solicitudes?: GeoJSON.FeatureCollection<GeoJSON.Point>;
-  setSelectedMarker: Dispatch<SetStateAction<HelpRequestData | null>>;
+  setSelectedMarker: Dispatch<SetStateAction<HelpRequestWAssignments | null>>;
 };
 
 const PAIPORTA_LAT = 39.42333;
@@ -30,7 +29,7 @@ const Map: FC<MapProps> = ({ solicitudes, setSelectedMarker }) => {
   const onClickHandler = (e: MapLayerMouseEvent) => {
     if (e.features?.[0]) {
       toggleModal(MAP_MODAL_NAME, true);
-      setSelectedMarker(e.features?.[0].properties as HelpRequestData);
+      setSelectedMarker(e.features?.[0].properties as HelpRequestWAssignments);
     }
   };
 

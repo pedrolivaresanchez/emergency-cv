@@ -13,6 +13,7 @@ export type HelpRequestData = Omit<HelpRequestDbRow, 'additional_info' | 'resour
 export type HelpRequestInsert = Database['public']['Tables']['help_requests']['Insert'] & HelpRequestJsonFields;
 export type HelpRequestUpdate = Database['public']['Tables']['help_requests']['Update'] & HelpRequestJsonFields;
 export type HelpRequestAssignmentData = Database['public']['Tables']['help_request_assignments']['Row'];
+export type HelpRequestWAssignments = HelpRequestData & { assignments_count: number };
 export type HelpRequestAssignmentInsert = Database['public']['Tables']['help_request_assignments']['Insert'];
 
 export type HelpRequestComment = Database['public']['Tables']['comments']['Row'];
@@ -67,6 +68,11 @@ export type SelectHelpDataStringBuilder = SelectStringBuilder<
   'location' | 'coordinates' | 'latitude' | 'longitude'
 >;
 export type SelectedHelpData = OmitSelect<HelpRequestData, 'location' | 'coordinates' | 'latitude' | 'longitude'>;
+export type SelectedHelpDataWAssignment = OmitSelect<
+  HelpRequestWAssignments,
+  'location' | 'coordinates' | 'latitude' | 'longitude'
+>;
+
 export const helpDataSelectFieldsObject: SelectHelpDataStringBuilder = {
   additional_info: true,
   asignees_count: true,
@@ -89,3 +95,6 @@ export const helpDataSelectFieldsObject: SelectHelpDataStringBuilder = {
   user_id: true,
 };
 export const helpDataSelectFields = Object.keys(helpDataSelectFieldsObject).join(',');
+export const helpDataWithAssignmentsSelectFields = Object.keys(helpDataSelectFieldsObject)
+  .join(',')
+  .concat(', assignments_count');

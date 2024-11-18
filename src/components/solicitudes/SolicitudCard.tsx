@@ -1,10 +1,9 @@
-import { AlertTriangle, MapPin, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
+import { AlertTriangle, MapPinned, Megaphone, Phone, Users } from 'lucide-react';
 import { tiposAyudaOptions } from '@/helpers/constants';
 import Link from 'next/link';
 import { useSession } from '@/context/SessionProvider';
-import { HelpRequestAdditionalInfo, HelpRequestData, SelectedHelpData } from '@/types/Requests';
+import { HelpRequestAdditionalInfo, SelectedHelpDataWAssignment } from '@/types/Requests';
 import AsignarSolicitudButton from '@/components/AsignarSolicitudButton';
-import SolicitudHelpCount from '@/components/solicitudes/SolicitudHelpCount';
 import PhoneInfo from '@/components/PhoneInfo';
 import DeleteHelpRequest from '../DeleteHelpRequest';
 import { textWithEllipsis } from '@/helpers/utils';
@@ -20,7 +19,7 @@ import CRMLog from '@/components/CRMLog';
 import { getHighlightedText } from '@/helpers/format';
 
 type SolicitudCardProps = {
-  caso: SelectedHelpData;
+  caso: SelectedHelpDataWAssignment;
   showLink?: boolean;
   showEdit?: boolean;
   format?: 'small' | 'large';
@@ -79,7 +78,11 @@ export default function SolicitudCard({
             </div>
           </div>
           <div className="flex flex-row justify-center items-center gap-2">
-            <SolicitudHelpCount id={caso.id} />
+            <div
+              className={`flex items-center justify-center rounded-full px-4 py-2 ${caso.assignments_count === 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}
+            >
+              <span className={`text-sm font-bold`}>{caso.assignments_count} VOLUNTARIOS</span>
+            </div>
             <div
               className={`flex items-center justify-center rounded-full px-4 py-2 ${
                 updateStatus === 'finished'

@@ -6,14 +6,14 @@ import { tiposAyudaOptions } from '@/helpers/constants';
 import { useTowns } from '@/context/TownProvider';
 import { Toggle } from '@/components/Toggle';
 import TabNavigation, { TabNavigationCount } from '@/components/TabNavigation';
-import { HelpRequestData } from '@/types/Requests';
+import { SelectedHelpDataWAssignment } from '@/types/Requests';
 import { Virtuoso } from 'react-virtuoso';
 import { FiltersData, FilterType } from '@/app/casos-activos/solicitudes/types';
 
 export const isStringTrue = (str: string): boolean => str === 'true';
 
 type SolicitudListProps = {
-  data: HelpRequestData[];
+  data: SelectedHelpDataWAssignment[];
   count: TabNavigationCount;
   filtersData: FiltersData;
   onDataFilterChange: (type: FilterType, newFilter: string) => void;
@@ -130,7 +130,7 @@ export default function SolicitudList({ data, count, filtersData, onDataFilterCh
                   format="small"
                   showLink={true}
                   showEdit={true}
-                  caso={caso as HelpRequestData}
+                  caso={caso}
                   highlightedText={filtersData.search}
                 />
               </div>

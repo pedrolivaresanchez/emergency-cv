@@ -43,18 +43,18 @@ export function useDebouncedFunction<T extends any[]>(callback: CallbackFunction
 
 export function useDebouncedValue<T>(value: T, delay: number, options?: { signal: AbortSignal }): T {
   // State and setters for debounced value
-  const [debouncedValue, setDebouncedValue] = useState(value)
+  const [debouncedValue, setDebouncedValue] = useState(value);
 
   useEffect(() => {
     // Set debouncedValue to value (passed in) after the specified delay
     const debounced = debounce(
       () => {
-        setDebouncedValue(value)
+        setDebouncedValue(value);
       },
       delay,
-      options
-    )
-    debounced()
+      options,
+    );
+    debounced();
 
     // Return a cleanup function that will be called every time ...
     // ... useEffect is re-called. useEffect will only be re-called ...
@@ -65,9 +65,9 @@ export function useDebouncedValue<T>(value: T, delay: number, options?: { signal
     // ... search box, we don't want the debouncedValue to update until ...
     // ... they've stopped typing for more than 500ms.
     return () => {
-      debounced.cancel()
-    }
-  }, [delay, options, value]) // ... need to be able to change that dynamically. // You could also add the "delay" var to inputs array if you ... // Only re-call effect if value changes
+      debounced.cancel();
+    };
+  }, [delay, options, value]); // ... need to be able to change that dynamically. // You could also add the "delay" var to inputs array if you ... // Only re-call effect if value changes
 
-  return debouncedValue
+  return debouncedValue;
 }

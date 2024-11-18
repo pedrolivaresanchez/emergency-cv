@@ -1,22 +1,5 @@
-import ReactDOMServer from 'react-dom/server';
 import { HelpRequestData } from '@/types/Requests';
-import SolicitudCard from '@/components/solicitudes/SolicitudCard';
 import { Fragment } from 'react';
-
-export const getMarkerBySolicitud = (solicitud: HelpRequestData) => {
-  // TODO think if possible getLatLng from a given location
-  if (!solicitud.latitude || !solicitud.longitude) {
-    return null;
-  }
-
-  return {
-    id: solicitud.id,
-    coordinates: [solicitud.longitude, solicitud.latitude],
-    descriptionHTML: getMarkerDescriptionBySolicitudAndTowns(solicitud),
-    color: getMarkerColorBySolicitud(solicitud),
-    width: '400px',
-  };
-};
 
 export const getMarkerColorBySolicitud = (solicitud: HelpRequestData) => {
   switch (solicitud.urgency) {
@@ -29,11 +12,6 @@ export const getMarkerColorBySolicitud = (solicitud: HelpRequestData) => {
     default:
       return '#000000';
   }
-};
-export const getMarkerDescriptionBySolicitudAndTowns = (solicitud: HelpRequestData) => {
-  return ReactDOMServer.renderToString(
-    <SolicitudCard key={solicitud.id} caso={solicitud} showEdit={false} showLink={true} />,
-  );
 };
 
 export const getHighlightedText = (text: string, highlight: string) => {

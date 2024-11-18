@@ -5,12 +5,12 @@ import SolicitudCard from '@/components/solicitudes/SolicitudCard';
 import { useParams } from 'next/navigation';
 import SolicitudComments from '@/components/Comments/SolicitudComments';
 import { useEffect, useState } from 'react';
-import { SelectedHelpData } from '../../../types/Requests';
-import { getOne } from '@/lib/actions';
+import { SelectedHelpDataWAssignment } from '../../../types/Requests';
+import { getOneWithAssignments } from '@/lib/actions';
 
 export default function CasoDetalle() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [data, setData] = useState<SelectedHelpData | null>(null);
+  const [data, setData] = useState<SelectedHelpDataWAssignment | null>(null);
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
@@ -18,8 +18,8 @@ export default function CasoDetalle() {
       try {
         setLoading(true);
 
-        const requestResponse = await getOne(Number(id));
-        setData(requestResponse as SelectedHelpData);
+        const requestResponse = await getOneWithAssignments(Number(id));
+        setData(requestResponse as SelectedHelpDataWAssignment);
 
         setLoading(false);
       } catch (err) {
