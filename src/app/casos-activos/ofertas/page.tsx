@@ -33,12 +33,12 @@ function Ofertas() {
   const [currentCount, setCurrentCount] = useState<number>(0);
   const [search, setSearch] = useState<string>('');
   const debouncedSearch = useDebouncedValue(search, 500);
-  
+
   const itemsPerPage = 10;
   const numPages = (count: number) => {
     return Math.ceil(count / itemsPerPage) || 0;
   };
-  
+
   const updateFilter = useCallback(
     (filter: 'ayuda' | 'pueblo' | 'search' | 'page', value: string | number) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -51,13 +51,13 @@ function Ofertas() {
     },
     [router, searchParams],
   );
-  
+
   const [filtroData, setFiltroData] = useState({
     ayuda: searchParams.get('acepta') || 'todas',
     pueblo: searchParams.get('pueblo') || 'todos',
     search: searchParams.get('search') || '',
   });
-  
+
   const changeDataFilter = useCallback(
     (type: 'ayuda' | 'pueblo' | 'search', newFilter: string) => {
       setFiltroData((prev) => ({
@@ -72,9 +72,8 @@ function Ofertas() {
   useEffect(() => {
     if (debouncedSearch !== filtroData.search) {
       changeDataFilter('search', debouncedSearch);
-    }    
+    }
   }, [debouncedSearch, changeDataFilter, filtroData.search]);
-
 
   function changePage(newPage: number) {
     setCurrentPage(newPage);
