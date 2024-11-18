@@ -44,14 +44,14 @@ const getData = async (supabase: SupabaseClient<Database>, filters: FiltersData)
 
 const getCount = async (supabase: SupabaseClient<Database>, filters: FiltersData) => {
   const query = supabase
-  .from('help_requests_with_assignment_count')
-  .select('id', { count: 'exact' })
-  .eq('type', 'necesita')
-  .neq('status', 'finished');
-  
+    .from('help_requests_with_assignment_count')
+    .select('id', { count: 'exact' })
+    .eq('type', 'necesita')
+    .neq('status', 'finished');
+
   // Solo agregar filtro si es true o no se especificó
   if (filters.soloSinAsignar === undefined || filters.soloSinAsignar === 'true') {
-    query.eq('assignments_count', 0);    
+    query.eq('assignments_count', 0);
   }
   const { count: solicitaCount, error: solicitaError } = await query;
 

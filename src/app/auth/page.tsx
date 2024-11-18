@@ -30,10 +30,7 @@ function Auth() {
         <div className="flex items-start">
           <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 mr-2" />
           <div>
-            <h2 className="text-red-800 font-bold">
-              POR MOTIVOS DE SEGURIDAD HEMOS DESHABILITADO LAS PUBLICACIONES ANONIMAS
-            </h2>
-            <p className="text-red-700 text-sm mt-1">Ahora debes registrarte para crear una publicacion.</p>
+            <p className="text-red-700 text-sm mt-1">Debes registrarte para crear una publicacion.</p>
             <p className="text-red-900 text-sm mt-1 font-medium">
               Por dificultades tecnicas, por favor escríbenos a info@ajudadana.es
             </p>
