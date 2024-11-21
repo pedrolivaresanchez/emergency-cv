@@ -6,7 +6,7 @@ grant all privileges on all tables in schema cron to postgres;
 
 select cron.schedule (
     'delete_expired_records', -- name of the cron job
-    '*/5 * * * *', -- Every day at 4:00am (GMT)
+    '0 4 * * *', -- Every day at 4:00am (GMT)
     $$ delete from public.help_requests where created_at < now() - interval '7 days'; $$
 );
 
