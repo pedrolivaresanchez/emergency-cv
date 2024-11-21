@@ -12,6 +12,7 @@ import { LngLat } from '@/components/map/GeolocationMap';
 import { useSession } from '@/context/SessionProvider';
 import Unauthorized from '@/components/Unauthorized';
 import { CheckboxLegalText } from '../CheckboxLegalText';
+import { InfoIcon } from 'lucide-react';
 
 export type HelpRequestFormData = {
   nombre: string;
@@ -276,6 +277,15 @@ export default function HelpRequestForm({
       >
         {isSubmitting ? buttonText[1] : buttonText[0]}
       </button>
+      <div className="pb-3 flex gap-4">
+        <InfoIcon className="h-6 w-6 text-blue-400 flex-shrink-0" />
+        <div>
+          <p className="text-sm text-gray-700">
+            Las solicitudes de ayuda se borrarán automáticamente a los 7 días. Si tras este plazo sigues necesitando
+            ayuda, crea una nueva solicitud con datos actualizados.
+          </p>
+        </div>
+      </div>
     </form>
   );
 }
