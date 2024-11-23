@@ -1,6 +1,6 @@
 // personas-animales-desaparecidos/page.tsx
 
-import { Users, PawPrint, Car, UserSearch } from 'lucide-react';
+import { Users, PawPrint, Car, UserSearch, Map } from 'lucide-react';
 
 export default function PersonasAnimalesDesaparecidos() {
   return (
@@ -54,6 +54,17 @@ export default function PersonasAnimalesDesaparecidos() {
         >
           <Car className="h-10 w-10 text-purple-500 mb-2" />
           <h2 className="text-lg font-bold text-purple-600 text-center">Vehículos Extraviados</h2>
+        </a>
+
+        {/* Botón para Mapa Desaparecidos */}
+        <a
+          href="https://www.google.com/maps/d/u/0/viewer?mid=1WbP4DX7LKE4s_b7DqURdeDRu9GFi51c&ll=39.48755099221443%2C-0.3798128440213966&z=12"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="col-span-1 md:col-start-2 flex flex-col items-center justify-center bg-white border-l-4 border-amber-500 p-6 rounded-lg shadow hover:shadow-md transition-transform transform hover:-translate-y-1"
+        >
+          <Map className="h-10 w-10 text-amber-500 mb-2" />
+          <h2 className="text-lg font-bold text-amber-600 text-center">Mapa Desaparecidos</h2>
         </a>
       </div>
     </div>
