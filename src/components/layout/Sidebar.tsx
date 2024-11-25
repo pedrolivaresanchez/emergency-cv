@@ -18,7 +18,7 @@ import {
   Landmark,
   Scale,
   MessageCircleQuestion,
-  Building2
+  Building2,
 } from 'lucide-react';
 import UserInfo from '../UserInfo';
 import { useQuery } from '@tanstack/react-query';
