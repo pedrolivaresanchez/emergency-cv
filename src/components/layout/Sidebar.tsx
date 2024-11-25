@@ -18,6 +18,7 @@ import {
   Landmark,
   Scale,
   MessageCircleQuestion,
+  Building2,
 } from 'lucide-react';
 import UserInfo from '../UserInfo';
 import { useQuery } from '@tanstack/react-query';
@@ -124,6 +125,14 @@ export default function Sidebar({ isOpen, toggleAction }: SidebarProps) {
       description: 'Para transportistas y logística',
       path: '/puntos-entrega',
       color: 'text-gray-800',
+    },
+    {
+      icon: Building2,
+      title: 'Ayuda a Empresas',
+      description: 'Colabora con empresas afectadas',
+      path: 'https://solidana.es/',
+      color: 'text-gray-800',
+      isHref: true,
     },
     {
       icon: Scale,
