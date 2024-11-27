@@ -2,9 +2,6 @@ import { AlertCircle, Clock, Cross, Heart, MapPin, Navigation, Package, Thermome
 
 import PhoneNumberDialog from '@/components/auth/PhoneNumberDialog';
 
-import Image from 'next/image';
-import { CallCenterLink } from '@/components/CallCenterLink';
-
 export default async function Home() {
   const emergencyNumbers = [
     { name: 'Emergencias', number: '112', description: 'Para situaciones de peligro inmediato' },
@@ -187,16 +184,8 @@ export default async function Home() {
               <h2 className="text-xl font-bold text-red-800 mb-2">PARA PERSONAS CON DIFICULTADES TECNICAS</h2>
               <div className="flex flex-col text-red-700 space-y-2">
                 <p className="font-bold">
-                  AVISO IMPORTANTE: Esta información es sólo para personas que tengan dificultades técnicas a la hora de
-                  pedir ayuda.
-                </p>
-                <p className="mb-2">
-                  Hemos habilitado el número <CallCenterLink /> para facilitar la petición de ayuda a aquellas personas
-                  que encuentren complicado usar la página web.{' '}
-                </p>
-                <p className="font-bold">
-                  ¡Importante! No saturéis el teléfono si podéis usar la página web, por favor. Si tenéis alguna duda
-                  sobre la página web o deseáis aportar nuevas ideas, por favor escríbenos a{' '}
+                  ¡Importante! Si tenéis alguna duda sobre la página web o deseáis aportar nuevas ideas, por favor
+                  escríbenos a{' '}
                   <a className="text-blue-600 hover:text-blue-800" href="mailto:info@ajudadana.es">
                     info@ajudadana.es
                   </a>
